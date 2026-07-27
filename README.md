@@ -1,0 +1,1 @@
+# voyage-japon-2026
