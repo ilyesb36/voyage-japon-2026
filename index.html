@@ -22,7 +22,6 @@ body { background:#FBFAF7; color:#2C2C2A; font-family:-apple-system,BlinkMacSyst
 .dream span { font-size:13.5px; color:#6b6a64; }
 .intro { font-size:16.5px; color:#444441; margin-top:36px; font-family:Georgia,serif; font-style:italic; text-align:center; max-width:640px; margin-left:auto; margin-right:auto; }
 .mapcard { background:#fff; border:1px solid #EAE8DF; border-radius:12px; padding:18px; margin-top:36px; }
-.mapcard svg { width:100%; height:auto; display:block; }
 h2 { font-family:Georgia,serif; font-weight:500; font-size:24px; margin:48px 0 4px; }
 .h2sub { color:#8a887f; font-size:14px; margin-bottom:16px; }
 .tl { display:flex; border-radius:10px; overflow:hidden; border:1px solid #EAE8DF; }
@@ -413,7 +412,7 @@ document.querySelectorAll('.cbody .food').forEach((f, ci) => {
 });
 
 const map = L.map('map', {scrollWheelZoom:false}).setView([36.0,137.5], 6);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution:'&copy; OpenStreetMap &middot; &copy; CARTO', maxZoom:18}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {attribution:'&copy; OpenStreetMap &middot; &copy; CARTO', maxZoom:18}).addTo(map);
 const badge = n => L.divIcon({className:'', html:'<div style="background:#D85A30;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">'+n+'</div>', iconSize:[26,26], iconAnchor:[13,13]});
 const stops = [
  [35.681,139.767,'1·8','<b>Tokyo</b><br>9–14 nov (5 nuits) puis 28 nov–2 déc (4 nuits)<br>Arrivée et départ Haneda'],
