@@ -69,7 +69,13 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 .flight span { color:#6b6a64; }
 .note { margin-top:16px; font-size:12.5px; color:#8a887f; font-style:italic; }
 @media (max-width:640px){ .cbody{grid-template-columns:1fr} .tl span{display:none} .hero h1{font-size:34px} .slides img{height:300px} }
+#map { height:520px; border-radius:10px; z-index:0; }
+.maplegend { font-size:12.5px; color:#8a887f; margin-top:10px; }
+.maplegend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin:0 6px 0 14px; border-radius:2px; }
+.maplegend i:first-child { margin-left:0; }
+@media (max-width:640px){ #map{height:380px} }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 
@@ -95,50 +101,8 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 <p class="intro">Une grande boucle du nord au sud, calée sur le front des couleurs d'automne : on suit les érables rouges de Nikko jusqu'à Nara, et on termine par un bain brûlant face au mont Fuji.</p>
 
 <div class="mapcard">
-  <svg viewBox="0 0 760 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Carte de l'itinéraire">
-    <defs><marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D85A30"/></marker><marker id="arA2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#EF9F27"/></marker></defs>
-    <path d="M 55,340 L 90,372 L 150,375 L 210,360 L 300,345 L 336,342 L 346,356 L 362,352 L 378,412 L 402,416 L 428,372 L 470,352 L 525,332 L 562,332 L 588,332 L 598,356 L 614,326 L 634,302 L 641,272 L 656,278 L 662,302 L 682,322 L 702,292 L 708,240 L 716,150 L 722,88 L 700,62 L 640,80 L 560,96 L 500,102 L 458,96 L 464,60 L 444,56 L 432,96 L 380,122 L 300,182 L 220,242 L 140,292 L 88,316 Z" fill="#F3F1EA" stroke="#DAD7CC" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M 130,402 L 210,396 L 300,408 L 322,432 L 260,452 L 160,446 L 108,420 Z" fill="#F3F1EA" stroke="#DAD7CC" stroke-width="1.5" stroke-linejoin="round"/>
-    <text x="180" y="70" font-size="12" font-style="italic" fill="#b0aea4" text-anchor="middle">Mer du Japon</text>
-    <text x="520" y="450" font-size="12" font-style="italic" fill="#b0aea4" text-anchor="middle">Océan Pacifique</text>
-    <path d="M 643,221 L 640,144" fill="none" stroke="#D85A30" stroke-width="2.2"/>
-    <path d="M 625,133 Q 530,110 436,146" fill="none" stroke="#D85A30" stroke-width="2.2"/>
-    <path d="M 413,162 Q 380,220 357,283" fill="none" stroke="#D85A30" stroke-width="2.2"/>
-    <path d="M 349,307 L 341,317" fill="none" stroke="#D85A30" stroke-width="2.2"/>
-    <path d="M 349,333 C 430,352 520,322 583,286" fill="none" stroke="#EF9F27" stroke-width="2.2"/>
-    <path d="M 606,271 L 634,264" fill="none" stroke="#EF9F27" stroke-width="2.2"/>
-    <path d="M 647,252 L 645,246" fill="none" stroke="#EF9F27" stroke-width="2.2"/>
-    <path d="M 638,244 L 627,290 M 345,328 L 361,331" fill="none" stroke="#1D9E75" stroke-width="2" stroke-dasharray="4 3"/>
-    <circle cx="646" cy="262" r="10" fill="#D85A30"/><text x="646" y="266" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">7</text><circle cx="624" cy="297" r="4" fill="#1D9E75"/><circle cx="368" cy="332" r="4" fill="#1D9E75"/>
-    <text x="652" y="187" font-size="11" font-style="italic" fill="#8a887f">2h</text>
-    <text x="528" y="105" font-size="11" font-style="italic" fill="#8a887f" text-anchor="middle">3h30</text>
-    <text x="392" y="224" font-size="11" font-style="italic" fill="#8a887f">2h15</text>
-    <text x="357" y="311" font-size="11" font-style="italic" fill="#8a887f">30 min</text>
-    <text x="465" y="352" font-size="11" font-style="italic" fill="#8a887f" text-anchor="middle">2h15 direct</text>
-    <text x="612" y="258" font-size="11" font-style="italic" fill="#8a887f" text-anchor="middle">20 min</text>
-    <text x="670" y="253" font-size="11" font-style="italic" fill="#8a887f">30 min</text>
-    <circle cx="644" cy="233" r="13" fill="#D85A30"/><text x="644" y="237" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">1·8</text>
-    <circle cx="639" cy="131" r="11" fill="#D85A30"/><text x="639" y="135" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">2</text>
-    <circle cx="420" cy="149" r="11" fill="#D85A30"/><text x="420" y="153" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">3</text>
-    <circle cx="355" cy="297" r="11" fill="#D85A30"/><text x="355" y="301" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">4</text>
-    <circle cx="335" cy="327" r="11" fill="#D85A30"/><text x="335" y="331" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">5</text>
-    <circle cx="595" cy="276" r="11" fill="#D85A30"/><text x="595" y="280" fill="#fff" font-size="11" text-anchor="middle" font-weight="500">6</text>
-    <text x="660" y="226" font-size="12" font-weight="500" fill="#2C2C2A">Tokyo</text><text x="660" y="239" font-size="11" fill="#8a887f">5 + 4 nuits</text>
-    <text x="652" y="128" font-size="12" font-weight="500" fill="#2C2C2A">Nikko</text><text x="652" y="141" font-size="11" fill="#8a887f">1 nuit</text>
-    <text x="420" y="116" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="middle">Kanazawa</text><text x="420" y="130" font-size="11" fill="#8a887f" text-anchor="middle">2 nuits</text>
-    <text x="340" y="290" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="end">Kyoto</text><text x="340" y="303" font-size="11" fill="#8a887f" text-anchor="end">5 nuits</text>
-    <text x="320" y="328" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="end">Osaka</text><text x="320" y="341" font-size="11" fill="#8a887f" text-anchor="end">3 nuits</text>
-    <text x="580" y="267" font-size="12" font-weight="500" fill="#2C2C2A" text-anchor="end">Hakone</text><text x="580" y="280" font-size="11" fill="#8a887f" text-anchor="end">2 nuits</text>
-    <text x="660" y="260" font-size="12" font-weight="500" fill="#2C2C2A">Yokohama</text><text x="660" y="273" font-size="11" fill="#8a887f">1 nuit</text>
-    <text x="632" y="308" font-size="11" fill="#8a887f">Kamakura</text>
-    <text x="376" y="336" font-size="11" fill="#8a887f">Nara</text>
-    <path d="M 40,472 L 78,472" stroke="#D85A30" stroke-width="2.5" marker-end="url(#arA)"/>
-    <text x="88" y="476" font-size="12" fill="#8a887f">Aller (1 → 5)</text>
-    <path d="M 175,472 L 213,472" stroke="#EF9F27" stroke-width="2.5" marker-end="url(#arA2)"/>
-    <text x="223" y="476" font-size="12" fill="#8a887f">Retour (5 → 8)</text>
-    <path d="M 330,472 L 370,472" stroke="#1D9E75" stroke-width="2" stroke-dasharray="4 3"/>
-    <text x="380" y="476" font-size="12" fill="#8a887f">Excursion à la journée</text>
-  </svg>
+  <div id="map"></div>
+  <p class="maplegend"><i style="background:#D85A30"></i>Aller (étapes 1 → 5) <i style="background:#EF9F27"></i>Retour (5 → 8) <i style="background:#1D9E75"></i>Excursions — cliquez sur les marqueurs pour le détail</p>
 </div>
 
 <h2>Le séjour en un coup d'œil</h2>
@@ -324,6 +288,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 </footer>
 
 </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const P = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
 const slides = [
@@ -446,6 +411,37 @@ document.querySelectorAll('.cbody .food').forEach((f, ci) => {
   f.appendChild(car);
   build(car, foods[ci]);
 });
+
+const map = L.map('map', {scrollWheelZoom:false}).setView([36.0,137.5], 6);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {attribution:'&copy; OpenStreetMap &middot; &copy; CARTO', maxZoom:18}).addTo(map);
+const badge = n => L.divIcon({className:'', html:'<div style="background:#D85A30;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">'+n+'</div>', iconSize:[26,26], iconAnchor:[13,13]});
+const stops = [
+ [35.681,139.767,'1·8','<b>Tokyo</b><br>9–14 nov (5 nuits) puis 28 nov–2 déc (4 nuits)<br>Arrivée et départ Haneda'],
+ [36.750,139.600,'2','<b>Nikko</b><br>14–15 nov (1 nuit)<br>Express Tobu depuis Asakusa, ~2h'],
+ [36.561,136.656,'3','<b>Kanazawa</b><br>15–17 nov (2 nuits)<br>Shinkansen Hokuriku via Omiya, ~3h30'],
+ [35.011,135.768,'4','<b>Kyoto</b><br>17–22 nov (5 nuits) — pic des momiji<br>Shinkansen + Thunderbird, ~2h15'],
+ [34.694,135.502,'5','<b>Osaka</b><br>22–25 nov (3 nuits)<br>30 min depuis Kyoto'],
+ [35.233,139.030,'6','<b>Hakone</b><br>25–27 nov (2 nuits en ryokan)<br>Shinkansen jusqu&#39;à Odawara, ~2h15'],
+ [35.454,139.638,'7','<b>Yokohama</b><br>27–28 nov (1 nuit)<br>20 min depuis Odawara']
+];
+stops.forEach(([la,lo,n,txt]) => L.marker([la,lo],{icon:badge(n)}).addTo(map).bindPopup(txt));
+const exc = [
+ [35.317,139.550,'<b>Kamakura</b><br>Excursion depuis Tokyo (fin de séjour)<br>Grand Bouddha, Hasedera, la côte'],
+ [34.685,135.840,'<b>Nara</b><br>Excursion depuis Osaka, le 24 nov<br>Todai-ji, daims, Kofuku-ji, Kasuga-taisha']
+];
+exc.forEach(([la,lo,txt]) => L.circleMarker([la,lo],{radius:7,color:'#fff',weight:2,fillColor:'#1D9E75',fillOpacity:1}).addTo(map).bindPopup(txt));
+const aller = [[[35.681,139.767],[36.750,139.600]],
+ [[36.750,139.600],[35.906,139.623],[36.322,139.013],[36.648,138.181],[36.561,136.656]],
+ [[36.561,136.656],[35.645,136.055],[35.011,135.768]],
+ [[35.011,135.768],[34.694,135.502]]];
+aller.forEach(c => L.polyline(c,{color:'#D85A30',weight:3,opacity:.85}).addTo(map));
+const retour = [[[34.694,135.502],[35.170,136.882],[34.971,138.383],[35.256,139.155],[35.233,139.030]],
+ [[35.233,139.030],[35.256,139.155],[35.454,139.638]],
+ [[35.454,139.638],[35.681,139.767]]];
+retour.forEach(c => L.polyline(c,{color:'#EF9F27',weight:3,opacity:.9}).addTo(map));
+L.polyline([[35.681,139.767],[35.317,139.550]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
+L.polyline([[34.694,135.502],[34.685,135.840]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
+map.on('click', () => map.scrollWheelZoom.enable());
 </script>
 </body>
 </html>
