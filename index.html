@@ -101,16 +101,15 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 
 <div class="mapcard">
   <div id="map"></div>
-  <p class="maplegend"><i style="background:#D85A30"></i>Aller (étapes 1 → 5) <i style="background:#EF9F27"></i>Retour (5 → 8) <i style="background:#1D9E75"></i>Excursions — cliquez sur les marqueurs pour le détail</p>
+  <p class="maplegend"><i style="background:#D85A30"></i>Aller (étapes 1 → 4) <i style="background:#EF9F27"></i>Retour (4 → 7) <i style="background:#1D9E75"></i>Excursions — cliquez sur les marqueurs pour le détail</p>
 </div>
 
 <h2>Le séjour en un coup d'œil</h2>
-<p class="h2sub">23 nuits · 8 étapes · ~11h de train réparties sur 3 semaines · 2 excursions à la journée</p>
+<p class="h2sub">23 nuits · 7 étapes · ~8h30 de train entre les étapes · 3 excursions à la journée</p>
 <div class="tl">
   <div style="flex:5;background:#E6F1FB"><b>Tokyo</b><span>9–14 nov</span></div>
-  <div style="flex:1.2;background:#FAECE7"><b>Nikko</b><span>14–15</span></div>
-  <div style="flex:2;background:#F1EFE8"><b>Kanazawa</b><span>15–17</span></div>
-  <div style="flex:5;background:#FBEAF0"><b>Kyoto</b><span>17–22</span></div>
+  <div style="flex:2;background:#F1EFE8"><b>Kanazawa</b><span>14–16</span></div>
+  <div style="flex:6;background:#FBEAF0"><b>Kyoto</b><span>16–22</span></div>
   <div style="flex:3;background:#FAEEDA"><b>Osaka</b><span>22–25</span></div>
   <div style="flex:2;background:#E1F5EE"><b>Hakone</b><span>25–27</span></div>
   <div style="flex:1.2;background:#F1EFE8"><b>Yokohama</b><span>27–28</span></div>
@@ -142,7 +141,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 </div>
 
 <div class="card">
-  <div class="chead" style="background:#FAECE7"><h3>Nikko</h3><span class="dates">14 → 15 nov</span><span class="pill" style="color:#712B13;background:#fff">1 nuit</span></div>
+  <div class="chead" style="background:#FAECE7"><h3>Nikko</h3><span class="dates">une journée depuis Tokyo · vers le 12 nov, quand les érables y sont au top</span><span class="pill" style="color:#712B13;background:#fff">excursion</span></div>
   <div class="carousel"></div>
   <div class="cbody">
     <div><h4>À voir absolument</h4><ul>
@@ -153,14 +152,13 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
     </ul></div>
     <div class="food"><h4>À table</h4><ul>
       <li>Yuba, la « peau de tofu » des moines — en sashimi, en soupe, en croquette</li>
-      <li>Dîner au calme du ryokan, temples déserts le soir</li>
     </ul></div>
-    <div class="train"><b>Accès :</b> express Tobu depuis Asakusa, ~2h</div>
+    <div class="train"><b>Accès :</b> express Tobu depuis Asakusa, ~2h — partir tôt (7h30) pour une journée pleine</div>
   </div>
 </div>
 
 <div class="card">
-  <div class="chead" style="background:#F1EFE8"><h3>Kanazawa</h3><span class="dates">15 → 17 nov</span><span class="pill" style="color:#444441;background:#fff">2 nuits</span></div>
+  <div class="chead" style="background:#F1EFE8"><h3>Kanazawa</h3><span class="dates">14 → 16 nov</span><span class="pill" style="color:#444441;background:#fff">2 nuits</span></div>
   <div class="carousel"></div>
   <div class="cbody">
     <div><h4>À voir absolument</h4><ul>
@@ -175,12 +173,12 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
       <li>Jibuni, le ragoût de canard local</li>
       <li>Glace à la feuille d'or (Kanazawa en produit 99 %)</li>
     </ul></div>
-    <div class="train"><b>Accès :</b> depuis Nikko via Omiya, shinkansen Hokuriku, ~3h30</div>
+    <div class="train"><b>Accès :</b> depuis Tokyo, shinkansen Kagayaki direct, 2h30</div>
   </div>
 </div>
 
 <div class="card">
-  <div class="chead" style="background:#FBEAF0"><h3>Kyoto</h3><span class="dates">17 → 22 nov · le pic des momiji</span><span class="pill" style="color:#72243E;background:#fff">5 nuits</span></div>
+  <div class="chead" style="background:#FBEAF0"><h3>Kyoto</h3><span class="dates">16 → 22 nov · le pic des momiji</span><span class="pill" style="color:#72243E;background:#fff">6 nuits</span></div>
   <div class="carousel"></div>
   <div class="cbody">
     <div><h4>À voir absolument</h4><ul>
@@ -415,22 +413,21 @@ const map = L.map('map', {scrollWheelZoom:false}).setView([36.0,137.5], 6);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {attribution:'&copy; OpenStreetMap &middot; &copy; CARTO', maxZoom:18}).addTo(map);
 const badge = n => L.divIcon({className:'', html:'<div style="background:#D85A30;color:#fff;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">'+n+'</div>', iconSize:[26,26], iconAnchor:[13,13]});
 const stops = [
- [35.681,139.767,'1·8','<b>Tokyo</b><br>9–14 nov (5 nuits) puis 28 nov–2 déc (4 nuits)<br>Arrivée et départ Haneda'],
- [36.750,139.600,'2','<b>Nikko</b><br>14–15 nov (1 nuit)<br>Express Tobu depuis Asakusa, ~2h'],
- [36.561,136.656,'3','<b>Kanazawa</b><br>15–17 nov (2 nuits)<br>Shinkansen Hokuriku via Omiya, ~3h30'],
- [35.011,135.768,'4','<b>Kyoto</b><br>17–22 nov (5 nuits) — pic des momiji<br>Shinkansen + Thunderbird, ~2h15'],
- [34.694,135.502,'5','<b>Osaka</b><br>22–25 nov (3 nuits)<br>30 min depuis Kyoto'],
- [35.233,139.030,'6','<b>Hakone</b><br>25–27 nov (2 nuits en ryokan)<br>Shinkansen jusqu&#39;à Odawara, ~2h15'],
- [35.454,139.638,'7','<b>Yokohama</b><br>27–28 nov (1 nuit)<br>20 min depuis Odawara']
+ [35.681,139.767,'1·7','<b>Tokyo</b><br>9–14 nov (5 nuits) puis 28 nov–2 déc (4 nuits)<br>Arrivée et départ Haneda'],
+ [36.561,136.656,'2','<b>Kanazawa</b><br>14–16 nov (2 nuits)<br>Shinkansen Kagayaki direct depuis Tokyo, 2h30'],
+ [35.011,135.768,'3','<b>Kyoto</b><br>16–22 nov (6 nuits) — pic des momiji<br>Shinkansen + Thunderbird, ~2h15'],
+ [34.694,135.502,'4','<b>Osaka</b><br>22–25 nov (3 nuits)<br>30 min depuis Kyoto'],
+ [35.233,139.030,'5','<b>Hakone</b><br>25–27 nov (2 nuits en ryokan)<br>Shinkansen jusqu&#39;à Odawara, ~2h15'],
+ [35.454,139.638,'6','<b>Yokohama</b><br>27–28 nov (1 nuit)<br>20 min depuis Odawara']
 ];
 stops.forEach(([la,lo,n,txt]) => L.marker([la,lo],{icon:badge(n)}).addTo(map).bindPopup(txt));
 const exc = [
+ [36.750,139.600,'<b>Nikko</b><br>Excursion depuis Tokyo, vers le 12 nov<br>Express Tobu ~2h — Toshogu, Rinno-ji, lac Chuzenji'],
  [35.317,139.550,'<b>Kamakura</b><br>Excursion depuis Tokyo (fin de séjour)<br>Grand Bouddha, Hasedera, la côte'],
  [34.685,135.840,'<b>Nara</b><br>Excursion depuis Osaka, le 24 nov<br>Todai-ji, daims, Kofuku-ji, Kasuga-taisha']
 ];
 exc.forEach(([la,lo,txt]) => L.circleMarker([la,lo],{radius:7,color:'#fff',weight:2,fillColor:'#1D9E75',fillOpacity:1}).addTo(map).bindPopup(txt));
-const aller = [[[35.681,139.767],[36.750,139.600]],
- [[36.750,139.600],[35.906,139.623],[36.322,139.013],[36.648,138.181],[36.561,136.656]],
+const aller = [[[35.681,139.767],[36.322,139.013],[36.648,138.181],[36.561,136.656]],
  [[36.561,136.656],[35.645,136.055],[35.011,135.768]],
  [[35.011,135.768],[34.694,135.502]]];
 aller.forEach(c => L.polyline(c,{color:'#D85A30',weight:3,opacity:.85}).addTo(map));
@@ -439,6 +436,7 @@ const retour = [[[34.694,135.502],[35.170,136.882],[34.971,138.383],[35.256,139.
  [[35.454,139.638],[35.681,139.767]]];
 retour.forEach(c => L.polyline(c,{color:'#EF9F27',weight:3,opacity:.9}).addTo(map));
 L.polyline([[35.681,139.767],[35.317,139.550]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
+L.polyline([[35.681,139.767],[36.750,139.600]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
 L.polyline([[34.694,135.502],[34.685,135.840]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
 map.on('click', () => map.scrollWheelZoom.enable());
 </script>
