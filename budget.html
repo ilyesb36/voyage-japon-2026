@@ -230,8 +230,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <p class="sub">Pour 2 personnes · 23 nuits · 24 jours sur place. Ajustez les curseurs, le total se met à jour tout seul.</p>
 
 <h2>Les postes</h2>
-<div class="brow fixed"><div class="bico">🏨</div><div class="bmid"><b>Hôtels réservés</b><span>Hop Inn 486 € · Center Point 165 € · Matatabi 683 € · 川HOUSE 160 € · Fukuya 1 198 € (dîners + petits-déj inclus)</span></div><div class="bsum">2 692 €</div></div>
-<div class="brow"><div class="bico">🌃</div><div class="bmid"><b>Tokyo final — à réserver</b><span>5 nuits · 27 nov → 2 déc</span></div><div class="bctl"><button class="step" data-f="tokyo" data-d="-25">−</button><input type="number" id="tokyo" value="500" min="0" step="10"><button class="step" data-f="tokyo" data-d="25">+</button><span class="bunit">€ les 5 nuits</span></div><div class="bsum" id="s-tokyo"></div></div>
+<div class="brow fixed"><div class="bico">🏨</div><div class="bmid"><b>Hôtels — tout est réservé ✓</b><span>Hop Inn 486 € · Center Point 165 € · Matatabi 683 € · 川HOUSE 160 € · Fukuya 1 198 € (repas inclus) · La Vita 548 €</span></div><div class="bsum">3 240 €</div></div>
 <div class="brow"><div class="bico">✈️</div><div class="bmid"><b>Vols</b><span>China Eastern via Shanghai, A/R</span></div><div class="bctl"><button class="step" data-f="vol" data-d="-25">−</button><input type="number" id="vol" value="950" min="0" step="10"><button class="step" data-f="vol" data-d="25">+</button><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-vol"></div></div>
 <div class="brow"><div class="bico">🚄</div><div class="bmid"><b>Transports intérieurs</b><span>Shinkansen à l’unité + Hakone Freepass + métros</span></div><div class="bctl"><button class="step" data-f="train" data-d="-10">−</button><input type="number" id="train" value="290" min="0" step="10"><button class="step" data-f="train" data-d="10">+</button><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-train"></div></div>
 <div class="brow"><div class="bico">🍜</div><div class="bmid"><b>Forfait bouffe</b><span>24 jours × 2 — les 2 dîners + petits-déj de Hakone sont déjà payés</span></div><div class="bctl"><button class="step" data-f="food" data-d="-5">−</button><input type="number" id="food" value="25" min="0" step="1"><button class="step" data-f="food" data-d="5">+</button><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-food"></div><div class="presets"><button class="preset" data-v="18">Éco · 18 €</button><button class="preset" data-v="25">Normal · 25 €</button><button class="preset" data-v="35">Plaisir · 35 €</button><button class="preset" data-v="50">Grand kiff · 50 €</button></div></div>
@@ -242,16 +241,15 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 </div>
 <script>
 const eur = n => n.toLocaleString('fr-FR')+' €';
-const FIELDS=['tokyo','vol','train','food','act'];
+const FIELDS=['vol','train','food','act'];
 function calc(){
   const g=id=>+document.getElementById(id).value||0;
-  const tokyo=g('tokyo'), vol=g('vol')*2, train=g('train')*2, food=g('food')*24*2, act=g('act')*24*2;
-  document.getElementById('s-tokyo').textContent=eur(tokyo);
-  document.getElementById('s-vol').textContent=eur(vol);
+  const vol=g('vol')*2, train=g('train')*2, food=g('food')*24*2, act=g('act')*24*2;
+    document.getElementById('s-vol').textContent=eur(vol);
   document.getElementById('s-train').textContent=eur(train);
   document.getElementById('s-food').textContent=eur(food);
   document.getElementById('s-act').textContent=eur(act);
-  const tot=2692+tokyo+vol+train+food+act;
+  const tot=3240+vol+train+food+act;
   document.getElementById('total').textContent=eur(tot);
   document.getElementById('pp').textContent=eur(Math.round(tot/2));
   document.querySelectorAll('.preset').forEach(p=>p.classList.toggle('on',+p.dataset.v===g('food')));
