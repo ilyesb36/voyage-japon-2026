@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jour par jour — Japon 2026</title>
+<title>Budget — Japon 2026</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
 :root { color-scheme:light;
@@ -187,47 +187,67 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .leaflet-bar a { border-radius:8px !important; }
 </style>
 <style>
-.phase { margin-top:44px; }
-.phase-h { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
-.phase-h h2 { margin:0; padding-top:16px; }
-.phase-h .ph-hotel { font-size:12.5px; color:var(--mut); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:4px 13px; }
-.day { display:flex; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-top:10px; }
-.day .dchip { flex:none; width:64px; text-align:center; align-self:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:8px 4px 7px; }
-.day .dchip b { display:block; font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1.1; }
-.day .dchip span { font-size:10.5px; font-weight:600; letter-spacing:1px; color:var(--mut); text-transform:uppercase; }
-.day .dbody { flex:1; min-width:0; }
-.day .dbody h3 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:5px; }
-.day .dbody h3 small { font-family:'Inter'; font-size:12px; color:var(--acc); font-weight:600; letter-spacing:.5px; margin-left:8px; }
-.day ul { list-style:none; }
-.day li { font-size:13.5px; padding:2.5px 0 2.5px 17px; position:relative; color:#3d3831; }
-.day li::before { content:""; position:absolute; left:1px; top:10px; width:6px; height:6px; border-radius:50%; background:var(--acc); }
-.day li.t::before { background:var(--gold); border-radius:2px; }
-.day .dtip { margin-top:8px; font-size:12.5px; background:#FDF6E7; border-left:3px solid var(--gold); color:#5C430F; padding:7px 11px; border-radius:0 9px 9px 0; line-height:1.55; }
-.day .dtip a { color:#8A5E0D; }
-.day.voyage { background:#F1EDE4; border-style:dashed; }
-@media (max-width:640px){ .day .dchip{width:54px} }
+.brow { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-top:10px; flex-wrap:wrap; }
+.brow .bico { flex:none; width:44px; height:44px; border-radius:12px; background:var(--accsoft); display:flex; align-items:center; justify-content:center; font-size:20px; }
+.brow .bmid { flex:1; min-width:170px; }
+.brow .bmid b { display:block; font-size:15px; font-weight:600; }
+.brow .bmid span { display:block; font-size:12.5px; color:var(--mut); }
+.brow .bctl { display:flex; align-items:center; gap:8px; }
+.brow input[type=number] { width:86px; padding:8px 10px; border:1px solid var(--line); border-radius:10px; font-family:'Inter'; font-size:14.5px; font-weight:600; text-align:right; background:var(--paper); color:var(--ink); }
+.brow input[type=range] { width:140px; accent-color:var(--acc); }
+.brow .bunit { font-size:12px; color:var(--mut); white-space:nowrap; }
+.brow .bsum { flex:none; min-width:96px; text-align:right; font-family:'Fraunces',serif; font-size:19px; font-weight:600; }
+.brow.fixed .bsum { color:var(--ink); }
+.btotal { margin-top:22px; background:var(--ink); color:#fff; border-radius:18px; padding:24px 26px; display:flex; align-items:baseline; gap:20px; flex-wrap:wrap; }
+.btotal .tt { font-size:14px; opacity:.8; }
+.btotal b { font-family:'Fraunces',serif; font-size:42px; font-weight:600; color:#FFD9A8; letter-spacing:-1px; }
+.btotal .pp { margin-left:auto; font-size:14px; opacity:.9; }
+.btotal .pp b { font-size:22px; }
+.bsub { font-size:12px; color:var(--mut); margin-top:10px; }
 </style>
 </head>
 <body>
 <nav class="topnav">
   <a href="index.html">Accueil</a>
-  <a href="guide.html" class="on">Le guide</a>
+  <a href="guide.html">Le guide</a>
   <a href="villes.html">Villes &amp; cartes</a>
   <a href="hotels.html">Hôtels</a>
-  <a href="budget.html">Budget</a>
+  <a href="budget.html" class="on">Budget</a>
 </nav>
 <div class="wrap" style="padding-top:40px">
-<h1 style="font-size:32px">Le voyage, jour par jour</h1>
-<p class="sub">Votre compagnon de route — 25 jours dans le bon ordre, avec les conseils de l’amie guide de Mathilde glissés au bon moment. Les puces <span style="color:var(--gold);font-weight:600">dorées</span> sont les options du soir et les bonus.</p>
-<div class="phase"><div class="phase-h"><h2>Le départ</h2><span class="ph-hotel">🏨 —</span></div><div class="day voyage"><div class="dchip"><b>8</b><span>nov</span></div><div class="dbody"><h3>Paris → Shanghai<small>VOL</small></h3><ul><li>Décollage CDG 20:05 (MU 570) — escale 2h50 à Shanghai</li><li>Prévoir carte sans frais (Wise/Revolut) et adaptateur type A</li></ul><div class="dtip">💡 Enregistrez les hôtels hors-ligne dans Google Maps, et installez Suica dans Wallet (iPhone) pour tous les métros et trains locaux.</div></div></div><div class="day voyage"><div class="dchip"><b>9</b><span>nov</span></div><div class="dbody"><h3>Arrivée à Tokyo<small>ASAKUSA</small></h3><ul><li>Atterrissage Haneda 20:50 (T3) — immigration, eSIM, Suica</li><li>Monorail ou ligne Asakusa direction Hop Inn (~40 min)</li><li>Dîner de konbini (onigiri, karaage) — le rite d’arrivée</li></ul></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Tokyo, l’arrivée · 9 → 14 nov</h2><span class="ph-hotel">🏨 Hop Inn Asakusa · Chambre Double</span></div><div class="day "><div class="dchip"><b>10</b><span>nov</span></div><div class="dbody"><h3>Asakusa & la vieille ville</h3><ul><li>Senso-ji à 7h30 avant la foule, Nakamise, ruelles rétro</li><li>Berges de la Sumida, vue sur la Skytree</li><li>Kappabashi, la rue des cuisiniers</li><li class="t">Soir : monjayaki à Tsukishima ou izakaya d’Asakusa</li></ul></div></div><div class="day "><div class="dchip"><b>11</b><span>nov</span></div><div class="dbody"><h3>Harajuku, Meiji & Shibuya</h3><ul><li>Meiji-jingu tôt — la forêt sacrée en plein Tokyo</li><li>Takeshita-dori puis Cat Street, du chaos au calme</li><li>Shibuya : le croisement mythique, Center-gai</li><li class="t">Coucher de soleil depuis Shibuya Sky (réserver)</li></ul></div></div><div class="day "><div class="dchip"><b>12</b><span>nov</span></div><div class="dbody"><h3>Nikko, les érables au sommet<small>EXCURSION</small></h3><ul><li>Premier express Tobu depuis Asakusa (~7h30, 2h)</li><li>Kanmangafuchi → villa Tamozawa → Toshogu → Yakushi-do → Futarasan → Rinnoji → jardin Shoyo-en (ferme tôt !) → pont Shinkyo</li><li class="t">Déjeuner yuba, la spécialité des moines</li></ul><div class="dtip">💡 Billets Toshogu <b>à l’avance sur Klook</b> (grosse queue évitée). Rentrer <b>à pied</b> à la gare (bus bondés), train ~17h30. <a href="https://maps.app.goo.gl/SsjrtjbcuU95uUcv6">Le resto conseillé par la guide</a>.</div></div></div><div class="day "><div class="dchip"><b>13</b><span>nov</span></div><div class="dbody"><h3>Ueno, Yanaka & l’art</h3><ul><li>Parc d’Ueno : étang Shinobazu, musée national ou zoo</li><li>Yanaka, le Tokyo rétro : ruelles, cimetière, chats</li><li>Kanda Myojin & Nezu-jinja, sanctuaires sans foule</li><li class="t">teamLab Planets le soir (réserver) ou Akihabara</li></ul></div></div><div class="day voyage"><div class="dchip"><b>14</b><span>nov</span></div><div class="dbody"><h3>→ Kanazawa<small>DÉPART</small></h3><ul><li>Matin : marché de Tsukiji, sushi au comptoir</li><li>Shinkansen Kagayaki (~13h, 2h30) — bento en gare !</li><li>Installation au studio de Katamachi</li><li class="t">Higashi Chaya au crépuscule, dîner à Katamachi</li></ul></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Kanazawa · 14 → 16 nov</h2><span class="ph-hotel">🏨 Center Point In · Studio 32 m², lave-linge</span></div><div class="day "><div class="dchip"><b>15</b><span>nov</span></div><div class="dbody"><h3>Kanazawa, la belle d’Edo</h3><ul><li>Kenroku-en à l’ouverture — les yukitsuri déjà dressés</li><li>Château, puis quartier samouraï Nagamachi (Nomura-ke)</li><li>Marché Omicho : crabe des neiges, la saison ouvre pile</li><li class="t">Temple ninja (réserver !), musée du 21e siècle</li><li class="t">Atelier feuille d’or à Higashi Chaya</li></ul><div class="dtip">💡 Au Kenroku-en, demandez un <b>guide bénévole gratuit</b> à l’entrée. <a href="https://maps.app.goo.gl/TRM6o2jvK37k5HEE7">L’atelier feuille d’or conseillé</a>. Lave-linge au studio — première lessive !</div></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Kyoto, le pic des momiji · 16 → 22 nov</h2><span class="ph-hotel">🏨 Matatabi Stay Nishinokyo · Appartement, lave-linge</span></div><div class="day voyage"><div class="dchip"><b>16</b><span>nov</span></div><div class="dbody"><h3>→ Kyoto & Nijo<small>DÉPART</small></h3><ul><li>Tsurugi + Thunderbird (~2h15), arrivée midi</li><li>Château de Nijō à pied — les parquets rossignols</li><li class="t">Soir : première balade à Gion, dîner le long de la Kamogawa</li></ul></div></div><div class="day "><div class="dchip"><b>17</b><span>nov</span></div><div class="dbody"><h3>Fushimi Inari & Higashiyama</h3><ul><li>Fushimi Inari à 7h — les dix mille torii pour vous</li><li>Kiyomizu-dera, pagode Hokan-ji, Sannenzaka</li><li class="t">Matcha & wagashi dans une maison de thé</li><li class="t">Soir : illuminations de Kodai-ji</li></ul></div></div><div class="day "><div class="dchip"><b>18</b><span>nov</span></div><div class="dbody"><h3>Arashiyama, dans l’ordre</h3><ul><li>Tenryu-ji → bambouseraie → déjeuner tôt au bord de la rivière</li><li>Pont Togetsukyo → singes → forêt de kimonos</li><li>Kinkaku-ji en fin de journée (moins de monde)</li><li class="t">Villa Okochi Sanso si le temps le permet</li></ul><div class="dtip">💡 L’ordre exact de la guide. <a href="https://maps.app.goo.gl/ZuPuU9oWL2mdogiK9">Son déjeuner au bord de la rivière</a> — y être avant midi.</div></div></div><div class="day "><div class="dchip"><b>19</b><span>nov</span></div><div class="dbody"><h3>Le chemin de la philosophie</h3><ul><li>Nanzen-ji et son aqueduc, puis le chemin au fil de l’eau</li><li>Honen-in, Ginkaku-ji — le pavillon d’argent</li><li class="t">Soir : illuminations d’Eikan-do, LE moment momiji du voyage</li></ul></div></div><div class="day "><div class="dchip"><b>20</b><span>nov</span></div><div class="dbody"><h3>Kyoto nord-ouest</h3><ul><li>Ryoan-ji, le jardin sec le plus célèbre du monde</li><li>Ninna-ji ou Daitoku-ji, monastères au calme</li><li>Marché Nishiki : tsukemono, tamagoyaki, thé</li><li class="t">Soir : Pontocho, la ruelle des lanternes</li></ul></div></div><div class="day "><div class="dchip"><b>21</b><span>nov</span></div><div class="dbody"><h3>Journée libre à Kyoto</h3><ul><li>Au choix : Uji (matcha, Byodo-in), 20 min de train</li><li>Ou Kurama → Kibune, la randonnée entre deux temples</li><li>Ou flânerie : Gion, boutiques, onsen urbain</li><li class="t">Dîner : le kaiseki ou l’obanzai pas encore fait</li></ul><div class="dtip">💡 <a href="https://maps.app.goo.gl/8zqhSE1fXVywR6YEA">Le resto de la guide à Gion</a> — réservez quelques jours avant.</div></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Osaka & Nara · 22 → 25 nov</h2><span class="ph-hotel">🏨 川HOUSE黒門 · Studio au bord du marché Kuromon</span></div><div class="day voyage"><div class="dchip"><b>22</b><span>nov</span></div><div class="dbody"><h3>→ Osaka, la cuisine du Japon<small>DÉPART</small></h3><ul><li>JR Special Rapid (30 min), installation à Nipponbashi</li><li>Marché Kuromon juste en bas — grignotage de bienvenue</li><li class="t">Soir : Dotonbori de nuit, Glico Man, takoyaki brûlants</li></ul></div></div><div class="day "><div class="dchip"><b>23</b><span>nov</span></div><div class="dbody"><h3>Osaka — jour férié</h3><ul><li>Château d’Osaka : douves et ginkgos dorés (extérieur)</li><li>Shitenno-ji, le plus vieux temple du pays (593)</li><li>Shinsekai : tour Tsutenkaku, kushikatsu — on ne re-trempe pas !</li><li class="t">Soir : Umeda Sky ou kabuki au Shochikuza selon programme</li></ul><div class="dtip">💡 Férié (Kinro Kansha no Hi) : commencez tôt. La guide dit : <b>ne payez pas l’intérieur du château</b> — lisez plutôt l’histoire de la dernière bataille avant d’y aller.</div></div></div><div class="day "><div class="dchip"><b>24</b><span>nov</span></div><div class="dbody"><h3>Nara & les daims<small>EXCURSION</small></h3><ul><li>Kintetsu depuis Namba (45 min), y être avant 10h</li><li>Todai-ji et le Grand Bouddha, parc aux daims</li><li>Kofuku-ji, lanternes de Kasuga-taisha</li><li class="t">Mochi pilés à la minute chez Nakatanidou</li><li class="t">Vue du Nigatsu-do, coucher de soleil avec les daims</li></ul><div class="dtip">💡 Un guide sur place vaut l’investissement. <a href="https://maps.app.goo.gl/Q2PMgejWP4Z3scJEA">Ses douceurs locales</a>. Et à Osaka : <a href="https://maps.app.goo.gl/w8Awu2bPg54QBnh59">son resto où la queue vaut le coup</a>.</div></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Hakone, la récompense · 25 → 27 nov</h2><span class="ph-hotel">🏨 Hananoyado Fukuya · Chambre japonaise, baignoire plein air, kaiseki inclus</span></div><div class="day voyage"><div class="dchip"><b>25</b><span>nov</span></div><div class="dbody"><h3>→ Hakone, mode onsen<small>DÉPART</small></h3><ul><li>Shinkansen Hikari → Odawara (~2h15), puis Hakone-Yumoto</li><li>Faire suivre les valises (luggage forwarding, gare Yumoto)</li><li>Check-in au ryokan : yukata, thé, premier bain</li><li class="t">Soir : dîner kaiseki en chambre — le grand soir du voyage</li></ul></div></div><div class="day "><div class="dchip"><b>26</b><span>nov</span></div><div class="dbody"><h3>La boucle du Freepass</h3><ul><li>Train Tozan → funiculaire → téléphérique vers Owakudani</li><li>Œufs noirs dans les fumerolles, le Fuji si le ciel est clair</li><li>Bateau pirate sur le lac Ashi → torii de Hakone-jinja</li><li class="t">Retour en bus Tozan (inclus dans le pass)</li><li class="t">Deuxième soirée : baignoire privée sous les étoiles</li></ul><div class="dtip">💡 S’il pleut : journée 100 % onsen — le <b>Tenzan</b>, superbe rotenburo public près de Yumoto, peut être le bain du 2e soir.</div></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Yokohama · 27 → 28 nov</h2><span class="ph-hotel">🏨 Hôtel à réserver (~100 €, Minato Mirai)</span></div><div class="day voyage"><div class="dchip"><b>27</b><span>nov</span></div><div class="dbody"><h3>→ Yokohama, l’escale plaisir<small>DÉPART</small></h3><ul><li>Matinée douce : musée en plein air (Picasso, bain de pieds)</li><li>Odawara → Yokohama (Tokaido, ~50 min)</li><li>Cup Noodles Museum : fabriquer son propre cup</li><li class="t">Soir : grande roue de Cosmo World, dîner à Chinatown</li></ul></div></div></div>
-<div class="phase"><div class="phase-h"><h2>Tokyo, le final · 28 nov → 2 déc</h2><span class="ph-hotel">🏨 Hôtel à réserver (~400 € les 4 nuits)</span></div><div class="day voyage"><div class="dchip"><b>28</b><span>nov</span></div><div class="dbody"><h3>Retour à Tokyo</h3><ul><li>Petit-déj face au port, parc Yamashita, entrepôts de brique</li><li>Yokohama → Tokyo (30 min), installation</li><li class="t">Ikebukuro : Sunshine City, Bandai Namco Cross Store</li><li class="t">Soir : izakaya de quartier</li></ul></div></div><div class="day "><div class="dchip"><b>29</b><span>nov</span></div><div class="dbody"><h3>Kamakura & Enoshima<small>EXCURSION</small></h3><ul><li>JR Yokosuka (~1h) : Grand Bouddha, Hase-dera face à la mer</li><li>Komachi-dori pour déjeuner</li><li>Si le rythme le permet : Enoshima — île, sanctuaire, vue mer</li><li class="t">Retour par la ligne Enoden le long de la côte</li></ul><div class="dtip">💡 Le combo conseillé par la guide — l’Enoden au coucher du soleil, c’est la carte postale.</div></div></div><div class="day "><div class="dchip"><b>30</b><span>nov</span></div><div class="dbody"><h3>Le Tokyo des sanctuaires</h3><ul><li>Gotoku-ji, le temple aux mille maneki-neko</li><li>Palais impérial & jardins de Kitanomaru</li><li>Kameido Tenjin ou Hie-jinja, hors des sentiers battus</li><li class="t">Tour de Tokyo au crépuscule</li></ul></div></div><div class="day "><div class="dchip"><b>1</b><span>déc</span></div><div class="dbody"><h3>Derniers feux</h3><ul><li>Rikugi-en, le jardin d’automne, illuminations le soir</li><li>Shopping final : Akihabara, Ikebukuro ou Ginza</li><li class="t">Dernier soir : Shibuya Sky ou l’izakaya préféré</li></ul></div></div><div class="day voyage"><div class="dchip"><b>2</b><span>déc</span></div><div class="dbody"><h3>Sayonara<small>VOL</small></h3><ul><li>Matinée légère selon l’hôtel</li><li>Départ pour Haneda (~15h, monorail ou Keikyu)</li><li>Décollage 20:15 (MU 540) — escale Shanghai</li><li>Arrivée CDG jeudi 3 déc à 06:00</li></ul><div class="dtip">💡 Gardez ~2 000 ¥ pour le dernier ramen à l’aéroport. Tax-free : passeport sur soi.</div></div></div></div>
-<p class="note" style="margin-top:30px">Rien n’est figé : c’est un fil conducteur, pas un contrat. Les journées libres absorbent la pluie, la fatigue et les coups de cœur.</p>
+<h1 style="font-size:32px">Le budget du voyage</h1>
+<p class="sub">Pour 2 personnes · 23 nuits · 24 jours sur place. Ajustez les curseurs, le total se met à jour tout seul.</p>
+
+<h2>Les postes</h2>
+<div class="brow fixed"><div class="bico">🏨</div><div class="bmid"><b>Hôtels réservés</b><span>Hop Inn 486 € · Center Point 165 € · Matatabi 683 € · 川HOUSE 160 € · Fukuya 1 198 € (dîners + petits-déj inclus)</span></div><div class="bsum">2 692 €</div></div>
+<div class="brow"><div class="bico">🌃</div><div class="bmid"><b>Tokyo final — à réserver</b><span>5 nuits · 27 nov → 2 déc</span></div><div class="bctl"><input type="number" id="tokyo" value="500" min="0" step="10"><span class="bunit">€ les 5 nuits</span></div><div class="bsum" id="s-tokyo"></div></div>
+<div class="brow"><div class="bico">✈️</div><div class="bmid"><b>Vols</b><span>China Eastern via Shanghai, A/R</span></div><div class="bctl"><input type="number" id="vol" value="950" min="0" step="10"><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-vol"></div></div>
+<div class="brow"><div class="bico">🚄</div><div class="bmid"><b>Transports intérieurs</b><span>Shinkansen à l’unité + Hakone Freepass + métros</span></div><div class="bctl"><input type="number" id="train" value="290" min="0" step="10"><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-train"></div></div>
+<div class="brow"><div class="bico">🍜</div><div class="bmid"><b>Forfait bouffe</b><span>24 jours × 2 — les 2 dîners + petits-déj de Hakone sont déjà payés</span></div><div class="bctl"><input type="range" id="foodr" value="25" min="10" max="60" step="1"><input type="number" id="food" value="25" min="0" step="1"><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-food"></div></div>
+<div class="brow"><div class="bico">⛩️</div><div class="bmid"><b>Visites &amp; activités</b><span>Temples ~3-8 €, Shibuya Sky, teamLab, onsen…</span></div><div class="bctl"><input type="number" id="act" value="8" min="0" step="1"><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-act"></div></div>
+
+<div class="btotal"><span class="tt">Total du voyage<br>(2 personnes)</span><b id="total"></b><span class="pp">soit <b id="pp"></b> / personne</span></div>
+<p class="bsub">Hors shopping et souvenirs — ça, c’est entre vous et Don Quijote. Prix hôtels = réservations réelles Booking.</p>
 </div>
+<script>
+const eur = n => n.toLocaleString('fr-FR')+' €';
+function calc(){
+  const g=id=>+document.getElementById(id).value||0;
+  const tokyo=g('tokyo'), vol=g('vol')*2, train=g('train')*2, food=g('food')*24*2, act=g('act')*24*2;
+  document.getElementById('s-tokyo').textContent=eur(tokyo);
+  document.getElementById('s-vol').textContent=eur(vol);
+  document.getElementById('s-train').textContent=eur(train);
+  document.getElementById('s-food').textContent=eur(food);
+  document.getElementById('s-act').textContent=eur(act);
+  const tot=2692+tokyo+vol+train+food+act;
+  document.getElementById('total').textContent=eur(tot);
+  document.getElementById('pp').textContent=eur(Math.round(tot/2));
+}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{
+  if(i.id==='foodr')document.getElementById('food').value=i.value;
+  if(i.id==='food')document.getElementById('foodr').value=i.value;
+  calc();}));
+calc();
+</script>
 </body>
 </html>
