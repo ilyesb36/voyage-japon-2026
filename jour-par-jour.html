@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour par jour — Japon 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+:root { color-scheme:light;
+  --paper:#F6F2EA; --card:#FFFEFA; --ink:#231F1A; --mut:#82796C; --line:#E8E0D0;
+  --acc:#B93A1B; --accsoft:#F6E3DA; --gold:#B98A2F; --goldsoft:#F4E9D2; --green:#2E7D5B; }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--paper); color:var(--ink); font-family:'Inter',-apple-system,sans-serif; line-height:1.65; font-size:15px; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:920px; margin:0 auto; padding:0 24px 70px; }
+
+/* ---- nav ---- */
+.topnav { position:sticky; top:12px; z-index:900; display:flex; gap:6px; justify-content:center; width:fit-content; margin:12px auto 0; padding:6px; background:rgba(255,254,250,.85); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:999px; box-shadow:0 8px 30px rgba(60,40,20,.10); }
+.topnav a { padding:8px 20px; border-radius:999px; font-size:13.5px; font-weight:500; color:var(--ink); text-decoration:none; transition:background .15s; }
+.topnav a:hover { background:var(--accsoft); }
+.topnav a.on { background:var(--ink); color:#fff; }
+
+/* ---- hero ---- */
+.hero { position:relative; height:540px; overflow:hidden; margin-top:-64px; }
+.hero img { width:100%; height:100%; object-fit:cover; object-position:center 65%; }
+.hero .veil { position:absolute; inset:0; background:linear-gradient(180deg, rgba(25,15,8,.30) 0%, rgba(25,15,8,.06) 40%, rgba(25,15,8,.68) 100%); }
+.hero .htxt { position:absolute; left:0; right:0; bottom:56px; text-align:center; color:#fff; padding:0 24px; }
+.kicker { font-size:12px; font-weight:600; letter-spacing:3.5px; opacity:.92; margin-bottom:14px; }
+.hero h1 { font-family:'Fraunces',Georgia,serif; font-weight:500; font-size:58px; line-height:1.08; letter-spacing:-1px; text-shadow:0 2px 18px rgba(0,0,0,.5); }
+.hero p { font-size:17.5px; opacity:.96; text-shadow:0 1px 10px rgba(0,0,0,.55); margin-top:12px; font-weight:400; }
+.hero .tiny { display:inline-block; margin-top:18px; font-size:12.5px; font-weight:500; letter-spacing:1.5px; padding:8px 20px; border:1px solid rgba(255,255,255,.55); border-radius:999px; backdrop-filter:blur(4px); background:rgba(255,255,255,.10); }
+
+/* ---- highlights ---- */
+.hl { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:-44px; position:relative; z-index:2; }
+.hl > div { display:flex; gap:13px; align-items:flex-start; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(60,40,20,.10); }
+.hl i { flex:none; font-style:normal; font-family:'Fraunces',serif; width:46px; height:46px; border-radius:12px; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:600; }
+.hl > div:nth-child(2) i { background:#E2EFEA; color:var(--green); }
+.hl > div:nth-child(3) i { background:var(--goldsoft); color:var(--gold); }
+.hl > div:nth-child(4) i { background:#E8ECF4; color:#3B5788; }
+.hl b { display:block; font-family:'Fraunces',serif; font-weight:600; font-size:15.5px; margin-bottom:2px; }
+.hl span { font-size:13px; color:var(--mut); line-height:1.5; display:block; }
+
+.intro { font-size:18px; color:#4d463c; margin:46px auto 0; font-family:'Fraunces',serif; font-style:italic; text-align:center; max-width:620px; line-height:1.7; }
+
+/* ---- sections ---- */
+h2 { font-family:'Fraunces',Georgia,serif; font-weight:600; font-size:29px; letter-spacing:-.3px; margin:60px 0 6px; position:relative; padding-top:16px; }
+h2::before { content:""; position:absolute; top:0; left:1px; width:34px; height:4px; border-radius:2px; background:var(--acc); }
+.h2sub { color:var(--mut); font-size:14px; margin-bottom:18px; max-width:640px; }
+h1 { font-family:'Fraunces',Georgia,serif; font-weight:600; letter-spacing:-.5px; }
+.sub { color:var(--mut); font-size:14.5px; margin:6px 0 8px; }
+
+/* ---- carte ---- */
+.mapcard { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-top:34px; box-shadow:0 6px 24px rgba(60,40,20,.06); }
+#map { height:560px; border-radius:12px; z-index:0; }
+.maplegend { font-size:12.5px; color:var(--mut); margin-top:12px; }
+.maplegend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin:0 6px 0 14px; border-radius:2px; }
+.maplegend i:first-child { margin-left:0; }
+
+/* ---- timeline ---- */
+.tl { display:flex; gap:4px; margin-top:6px; }
+.tl div { padding:12px 6px 10px; text-align:center; min-width:0; border-radius:10px; border:1px solid rgba(0,0,0,.045); }
+.tl b { display:block; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tl span { font-size:11px; color:#6d675c; white-space:nowrap; }
+
+/* ---- trajets ---- */
+.routes { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.leg { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 18px; }
+.leg .lday { flex:none; width:64px; font-size:11.5px; font-weight:600; letter-spacing:.4px; color:var(--mut); text-transform:uppercase; line-height:1.35; }
+.leg .lmid { flex:1; min-width:0; }
+.leg .lmid b { display:block; font-size:15px; font-weight:600; }
+.leg .lmid b em { font-style:normal; color:var(--acc); font-weight:600; }
+.leg .lmid span { display:block; font-size:12.5px; color:var(--mut); margin-top:1px; }
+.leg .lmeta { flex:none; display:flex; gap:8px; align-items:center; }
+.ldur { font-size:12.5px; font-weight:500; color:var(--ink); background:var(--paper); border:1px solid var(--line); padding:4px 12px; border-radius:999px; white-space:nowrap; }
+.lprix { font-size:13.5px; font-weight:600; color:var(--acc); background:var(--accsoft); padding:4px 12px; border-radius:999px; white-space:nowrap; }
+.leg.exc { background:#FBF7EE; border-style:dashed; }
+.leg.exc .lprix { color:var(--gold); background:var(--goldsoft); }
+.totbar { margin-top:14px; background:var(--ink); color:#fff; border-radius:14px; padding:15px 20px; font-size:14px; display:flex; flex-wrap:wrap; gap:6px 18px; align-items:baseline; }
+.totbar b { font-family:'Fraunces',serif; font-size:19px; font-weight:600; color:#FFD9A8; }
+.totbar span { opacity:.75; font-size:12.5px; }
+
+/* ---- explore ---- */
+.explore { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:18px; }
+.explore a { position:relative; display:block; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:24px 56px 22px 24px; text-decoration:none; color:var(--ink); box-shadow:0 6px 24px rgba(60,40,20,.06); transition:transform .15s, box-shadow .15s; }
+.explore a:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(60,40,20,.12); }
+.explore b { display:block; font-family:'Fraunces',serif; font-size:19px; font-weight:600; margin-bottom:5px; }
+.explore span { font-size:13.5px; color:var(--mut); }
+.explore i { position:absolute; right:20px; top:50%; transform:translateY(-50%); font-style:normal; width:34px; height:34px; border-radius:50%; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:17px; }
+
+/* ---- footer vols ---- */
+footer { margin-top:56px; padding:22px 24px; background:var(--card); border:1px solid var(--line); border-radius:18px; font-size:14px; }
+footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:10px; }
+.flight { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid #F1ECE1; flex-wrap:wrap; }
+.flight:last-of-type { border-bottom:none; }
+.flight span { color:var(--mut); }
+.note { margin-top:16px; font-size:12px; color:var(--mut); font-style:italic; }
+/* ---- cartes villes ---- */
+.card { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; margin-top:30px; box-shadow:0 8px 28px rgba(60,40,20,.07); scroll-margin-top:86px; }
+.chead { display:flex; align-items:baseline; gap:14px; padding:22px 24px 16px; flex-wrap:wrap; }
+.chead h3 { font-family:'Fraunces',serif; font-size:26px; font-weight:600; letter-spacing:-.3px; }
+.chead .dates { font-size:13.5px; color:var(--mut); }
+.pill { margin-left:auto; flex:none; font-size:12.5px; font-weight:600; padding:5px 15px; border-radius:999px; }
+.carousel { position:relative; }
+.slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
+.slides::-webkit-scrollbar { display:none; }
+.slides figure { flex:0 0 100%; scroll-snap-align:center; position:relative; margin:0; }
+.slides img { width:100%; height:500px; object-fit:cover; display:block; background:#F0EBDF; }
+.slides figcaption { position:absolute; left:0; right:0; bottom:0; padding:46px 24px 16px; color:#fff; background:linear-gradient(180deg, transparent, rgba(15,10,5,.78)); }
+.slides figcaption b { font-size:17px; font-weight:600; display:block; }
+.slides figcaption span { font-size:14px; opacity:.94; }
+.nav { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.95); color:var(--ink); font-size:24px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.2); transition:background .15s; }
+.nav:hover { background:#fff; }
+.nav.prev { left:14px; } .nav.next { right:14px; }
+.dots { position:absolute; bottom:10px; right:16px; display:flex; gap:5px; }
+.dots i { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.45); }
+.dots i.on { background:#fff; }
+.count { position:absolute; top:14px; right:16px; background:rgba(15,10,5,.55); color:#fff; font-size:11.5px; font-weight:500; padding:4px 11px; border-radius:999px; letter-spacing:.5px; backdrop-filter:blur(3px); }
+.cbody { padding:20px 24px 22px; display:grid; grid-template-columns:1.15fr 1fr; gap:6px 32px; }
+.cbody h4 { font-size:11.5px; text-transform:uppercase; letter-spacing:1.2px; color:var(--mut); font-weight:600; margin-bottom:8px; }
+.cbody ul { list-style:none; }
+.cbody li { font-size:14px; padding:3.5px 0 3.5px 18px; position:relative; }
+.cbody li::before { content:""; position:absolute; left:0; top:11px; width:6px; height:6px; border-radius:50%; background:var(--acc); }
+.cbody li b { font-weight:600; }
+.food li::before, .food-list li::before { background:var(--gold); border-radius:2px; }
+.train { grid-column:1 / -1; margin-top:12px; padding:10px 14px; border-radius:10px; background:var(--paper); font-size:13px; color:var(--mut); }
+.train b { font-weight:600; color:#4d463c; }
+.fcar { border-radius:12px; overflow:hidden; margin-top:4px; }
+.fcar .slides img { height:260px; }
+.fcar .slides figcaption { padding:28px 14px 10px; }
+.fcar .slides figcaption b { font-size:14px; }
+.fcar .slides figcaption span { font-size:12.5px; }
+.fcar .nav { width:30px; height:30px; font-size:17px; }
+.fcar .nav.prev { left:8px; } .fcar .nav.next { right:8px; }
+
+.citynav { position:sticky; top:74px; z-index:800; background:rgba(246,242,234,.92); backdrop-filter:blur(10px); display:flex; gap:8px; overflow-x:auto; padding:10px 2px; scrollbar-width:none; border-radius:0 0 12px 12px; }
+.citynav::-webkit-scrollbar { display:none; }
+.citynav a { padding:6px 15px; border:1px solid var(--line); border-radius:999px; font-size:13px; font-weight:500; color:#4d463c; text-decoration:none; white-space:nowrap; background:var(--card); }
+.citynav a:hover { border-color:var(--acc); color:var(--acc); }
+.citylbl { background:#fff; border:1px solid #D9D2C2; border-radius:6px; font-weight:600; font-size:12px; color:var(--ink); padding:2px 8px; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.citymap { height:400px; border-radius:12px; margin:16px 22px 0; z-index:0; border:1px solid var(--line); }
+.maplgd { font-size:12px; color:var(--mut); margin:10px 24px 0; }
+.maplgd i { display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:middle; margin:0 5px 0 12px; }
+.maplgd i:first-child { margin-left:0; }
+.mtip { margin:14px 22px 0; padding:13px 16px 13px 18px; background:#FDF6E7; border-left:4px solid var(--gold); border-radius:0 12px 12px 0; font-size:13.5px; color:#5C430F; line-height:1.6; }
+.mtip a { color:#8A5E0D; font-weight:500; }
+
+/* ---- hotels ---- */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin-top:16px; }
+.stats div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 16px 15px; text-align:center; box-shadow:0 6px 20px rgba(60,40,20,.05); }
+.stats b { display:block; font-family:'Fraunces',serif; font-size:27px; font-weight:600; color:var(--acc); letter-spacing:-.5px; }
+.stats div:nth-child(even) b { color:var(--ink); }
+.stats span { font-size:12px; color:var(--mut); display:block; margin-top:3px; line-height:1.45; }
+.hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px; margin-top:20px; }
+.hcard { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:0 8px 28px rgba(60,40,20,.07); }
+.hcard .imgs { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+.hcard .imgs img { width:100%; height:92px; object-fit:cover; display:block; background:#F0EBDF; }
+.hcard .imgs img:first-child { grid-column:1 / -1; height:210px; }
+.hcard .hbody { padding:16px 20px 18px; }
+.hcard h3 { font-family:'Fraunces',serif; font-size:19.5px; font-weight:600; }
+.hcard .hsub { font-size:13px; color:var(--mut); margin:3px 0 9px; }
+.hcard .room { font-size:12.5px; font-weight:500; background:var(--accsoft); color:#8A2B12; display:inline-block; padding:4px 12px; border-radius:999px; margin-bottom:9px; }
+.hcard .hprice { font-size:14.5px; }
+.hcard .hprice b { font-weight:600; font-family:'Fraunces',serif; font-size:18px; }
+.badge-ok { color:var(--green); font-size:12.5px; font-weight:500; }
+.badge-tbd { color:#A04A20; font-size:12.5px; font-weight:500; }
+
+@media (max-width:680px){
+  .cbody{grid-template-columns:1fr}
+  .tl span{display:none}
+  .hero{height:460px}
+  .hero h1{font-size:38px}
+  .kicker{letter-spacing:2.2px}
+  .slides img{height:330px}
+  #map{height:380px}
+  .leg{flex-wrap:wrap; gap:6px 14px}
+  .leg .lday{width:auto}
+  .leg .lmeta{margin-left:auto}
+  .topnav a{padding:7px 13px; font-size:12.5px}
+  h2{font-size:24px}
+}
+/* ---- leaflet pro ---- */
+.leaflet-popup-content-wrapper { border-radius:14px; box-shadow:0 10px 30px rgba(40,25,10,.25); border:1px solid var(--line); font-family:'Inter',sans-serif; }
+.leaflet-popup-content { margin:12px 16px; font-size:13px; line-height:1.55; color:var(--ink); }
+.leaflet-popup-content b { font-family:'Fraunces',serif; font-size:15px; font-weight:600; }
+.leaflet-popup-content a { color:var(--acc); font-weight:500; }
+.leaflet-container { font-family:'Inter',sans-serif; }
+.leaflet-bar a { border-radius:8px !important; }
+</style>
+<style>
+.phase { margin-top:44px; }
+.phase-h { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:4px; }
+.phase-h h2 { margin:0; padding-top:16px; }
+.phase-h .ph-hotel { font-size:12.5px; color:var(--mut); background:var(--card); border:1px solid var(--line); border-radius:999px; padding:4px 13px; }
+.day { display:flex; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; margin-top:10px; }
+.day .dchip { flex:none; width:64px; text-align:center; align-self:flex-start; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:8px 4px 7px; }
+.day .dchip b { display:block; font-family:'Fraunces',serif; font-size:19px; font-weight:600; line-height:1.1; }
+.day .dchip span { font-size:10.5px; font-weight:600; letter-spacing:1px; color:var(--mut); text-transform:uppercase; }
+.day .dbody { flex:1; min-width:0; }
+.day .dbody h3 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:5px; }
+.day .dbody h3 small { font-family:'Inter'; font-size:12px; color:var(--acc); font-weight:600; letter-spacing:.5px; margin-left:8px; }
+.day ul { list-style:none; }
+.day li { font-size:13.5px; padding:2.5px 0 2.5px 17px; position:relative; color:#3d3831; }
+.day li::before { content:""; position:absolute; left:1px; top:10px; width:6px; height:6px; border-radius:50%; background:var(--acc); }
+.day li.t::before { background:var(--gold); border-radius:2px; }
+.day .dtip { margin-top:8px; font-size:12.5px; background:#FDF6E7; border-left:3px solid var(--gold); color:#5C430F; padding:7px 11px; border-radius:0 9px 9px 0; line-height:1.55; }
+.day .dtip a { color:#8A5E0D; }
+.day.voyage { background:#F1EDE4; border-style:dashed; }
+@media (max-width:640px){ .day .dchip{width:54px} }
+</style>
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html">Accueil</a>
+  <a href="jour-par-jour.html" class="on">Jour par jour</a>
+  <a href="villes.html">Villes &amp; cartes</a>
+  <a href="hotels.html">Hôtels &amp; budget</a>
+</nav>
+<div class="wrap" style="padding-top:40px">
+<h1 style="font-size:32px">Le voyage, jour par jour</h1>
+<p class="sub">Votre compagnon de route — 25 jours dans le bon ordre, avec les conseils de l’amie guide de Mathilde glissés au bon moment. Les puces <span style="color:var(--gold);font-weight:600">dorées</span> sont les options du soir et les bonus.</p>
+<div class="phase"><div class="phase-h"><h2>Le départ</h2><span class="ph-hotel">🏨 —</span></div><div class="day voyage"><div class="dchip"><b>8</b><span>nov</span></div><div class="dbody"><h3>Paris → Shanghai<small>VOL</small></h3><ul><li>Décollage CDG 20:05 (MU 570) — escale 2h50 à Shanghai</li><li>Prévoir carte sans frais (Wise/Revolut) et adaptateur type A</li></ul><div class="dtip">💡 Enregistrez les hôtels hors-ligne dans Google Maps, et installez Suica dans Wallet (iPhone) pour tous les métros et trains locaux.</div></div></div><div class="day voyage"><div class="dchip"><b>9</b><span>nov</span></div><div class="dbody"><h3>Arrivée à Tokyo<small>ASAKUSA</small></h3><ul><li>Atterrissage Haneda 20:50 (T3) — immigration, eSIM, Suica</li><li>Monorail ou ligne Asakusa direction Hop Inn (~40 min)</li><li>Dîner de konbini (onigiri, karaage) — le rite d’arrivée</li></ul></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Tokyo, l’arrivée · 9 → 14 nov</h2><span class="ph-hotel">🏨 Hop Inn Asakusa · Chambre Double</span></div><div class="day "><div class="dchip"><b>10</b><span>nov</span></div><div class="dbody"><h3>Asakusa & la vieille ville</h3><ul><li>Senso-ji à 7h30 avant la foule, Nakamise, ruelles rétro</li><li>Berges de la Sumida, vue sur la Skytree</li><li>Kappabashi, la rue des cuisiniers</li><li class="t">Soir : monjayaki à Tsukishima ou izakaya d’Asakusa</li></ul></div></div><div class="day "><div class="dchip"><b>11</b><span>nov</span></div><div class="dbody"><h3>Harajuku, Meiji & Shibuya</h3><ul><li>Meiji-jingu tôt — la forêt sacrée en plein Tokyo</li><li>Takeshita-dori puis Cat Street, du chaos au calme</li><li>Shibuya : le croisement mythique, Center-gai</li><li class="t">Coucher de soleil depuis Shibuya Sky (réserver)</li></ul></div></div><div class="day "><div class="dchip"><b>12</b><span>nov</span></div><div class="dbody"><h3>Nikko, les érables au sommet<small>EXCURSION</small></h3><ul><li>Premier express Tobu depuis Asakusa (~7h30, 2h)</li><li>Kanmangafuchi → villa Tamozawa → Toshogu → Yakushi-do → Futarasan → Rinnoji → jardin Shoyo-en (ferme tôt !) → pont Shinkyo</li><li class="t">Déjeuner yuba, la spécialité des moines</li></ul><div class="dtip">💡 Billets Toshogu <b>à l’avance sur Klook</b> (grosse queue évitée). Rentrer <b>à pied</b> à la gare (bus bondés), train ~17h30. <a href="https://maps.app.goo.gl/SsjrtjbcuU95uUcv6">Le resto conseillé par la guide</a>.</div></div></div><div class="day "><div class="dchip"><b>13</b><span>nov</span></div><div class="dbody"><h3>Ueno, Yanaka & l’art</h3><ul><li>Parc d’Ueno : étang Shinobazu, musée national ou zoo</li><li>Yanaka, le Tokyo rétro : ruelles, cimetière, chats</li><li>Kanda Myojin & Nezu-jinja, sanctuaires sans foule</li><li class="t">teamLab Planets le soir (réserver) ou Akihabara</li></ul></div></div><div class="day voyage"><div class="dchip"><b>14</b><span>nov</span></div><div class="dbody"><h3>→ Kanazawa<small>DÉPART</small></h3><ul><li>Matin : marché de Tsukiji, sushi au comptoir</li><li>Shinkansen Kagayaki (~13h, 2h30) — bento en gare !</li><li>Installation au studio de Katamachi</li><li class="t">Higashi Chaya au crépuscule, dîner à Katamachi</li></ul></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Kanazawa · 14 → 16 nov</h2><span class="ph-hotel">🏨 Center Point In · Studio 32 m², lave-linge</span></div><div class="day "><div class="dchip"><b>15</b><span>nov</span></div><div class="dbody"><h3>Kanazawa, la belle d’Edo</h3><ul><li>Kenroku-en à l’ouverture — les yukitsuri déjà dressés</li><li>Château, puis quartier samouraï Nagamachi (Nomura-ke)</li><li>Marché Omicho : crabe des neiges, la saison ouvre pile</li><li class="t">Temple ninja (réserver !), musée du 21e siècle</li><li class="t">Atelier feuille d’or à Higashi Chaya</li></ul><div class="dtip">💡 Au Kenroku-en, demandez un <b>guide bénévole gratuit</b> à l’entrée. <a href="https://maps.app.goo.gl/TRM6o2jvK37k5HEE7">L’atelier feuille d’or conseillé</a>. Lave-linge au studio — première lessive !</div></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Kyoto, le pic des momiji · 16 → 22 nov</h2><span class="ph-hotel">🏨 Matatabi Stay Nishinokyo · Appartement, lave-linge</span></div><div class="day voyage"><div class="dchip"><b>16</b><span>nov</span></div><div class="dbody"><h3>→ Kyoto & Nijo<small>DÉPART</small></h3><ul><li>Tsurugi + Thunderbird (~2h15), arrivée midi</li><li>Château de Nijō à pied — les parquets rossignols</li><li class="t">Soir : première balade à Gion, dîner le long de la Kamogawa</li></ul></div></div><div class="day "><div class="dchip"><b>17</b><span>nov</span></div><div class="dbody"><h3>Fushimi Inari & Higashiyama</h3><ul><li>Fushimi Inari à 7h — les dix mille torii pour vous</li><li>Kiyomizu-dera, pagode Hokan-ji, Sannenzaka</li><li class="t">Matcha & wagashi dans une maison de thé</li><li class="t">Soir : illuminations de Kodai-ji</li></ul></div></div><div class="day "><div class="dchip"><b>18</b><span>nov</span></div><div class="dbody"><h3>Arashiyama, dans l’ordre</h3><ul><li>Tenryu-ji → bambouseraie → déjeuner tôt au bord de la rivière</li><li>Pont Togetsukyo → singes → forêt de kimonos</li><li>Kinkaku-ji en fin de journée (moins de monde)</li><li class="t">Villa Okochi Sanso si le temps le permet</li></ul><div class="dtip">💡 L’ordre exact de la guide. <a href="https://maps.app.goo.gl/ZuPuU9oWL2mdogiK9">Son déjeuner au bord de la rivière</a> — y être avant midi.</div></div></div><div class="day "><div class="dchip"><b>19</b><span>nov</span></div><div class="dbody"><h3>Le chemin de la philosophie</h3><ul><li>Nanzen-ji et son aqueduc, puis le chemin au fil de l’eau</li><li>Honen-in, Ginkaku-ji — le pavillon d’argent</li><li class="t">Soir : illuminations d’Eikan-do, LE moment momiji du voyage</li></ul></div></div><div class="day "><div class="dchip"><b>20</b><span>nov</span></div><div class="dbody"><h3>Kyoto nord-ouest</h3><ul><li>Ryoan-ji, le jardin sec le plus célèbre du monde</li><li>Ninna-ji ou Daitoku-ji, monastères au calme</li><li>Marché Nishiki : tsukemono, tamagoyaki, thé</li><li class="t">Soir : Pontocho, la ruelle des lanternes</li></ul></div></div><div class="day "><div class="dchip"><b>21</b><span>nov</span></div><div class="dbody"><h3>Journée libre à Kyoto</h3><ul><li>Au choix : Uji (matcha, Byodo-in), 20 min de train</li><li>Ou Kurama → Kibune, la randonnée entre deux temples</li><li>Ou flânerie : Gion, boutiques, onsen urbain</li><li class="t">Dîner : le kaiseki ou l’obanzai pas encore fait</li></ul><div class="dtip">💡 <a href="https://maps.app.goo.gl/8zqhSE1fXVywR6YEA">Le resto de la guide à Gion</a> — réservez quelques jours avant.</div></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Osaka & Nara · 22 → 25 nov</h2><span class="ph-hotel">🏨 川HOUSE黒門 · Studio au bord du marché Kuromon</span></div><div class="day voyage"><div class="dchip"><b>22</b><span>nov</span></div><div class="dbody"><h3>→ Osaka, la cuisine du Japon<small>DÉPART</small></h3><ul><li>JR Special Rapid (30 min), installation à Nipponbashi</li><li>Marché Kuromon juste en bas — grignotage de bienvenue</li><li class="t">Soir : Dotonbori de nuit, Glico Man, takoyaki brûlants</li></ul></div></div><div class="day "><div class="dchip"><b>23</b><span>nov</span></div><div class="dbody"><h3>Osaka — jour férié</h3><ul><li>Château d’Osaka : douves et ginkgos dorés (extérieur)</li><li>Shitenno-ji, le plus vieux temple du pays (593)</li><li>Shinsekai : tour Tsutenkaku, kushikatsu — on ne re-trempe pas !</li><li class="t">Soir : Umeda Sky ou kabuki au Shochikuza selon programme</li></ul><div class="dtip">💡 Férié (Kinro Kansha no Hi) : commencez tôt. La guide dit : <b>ne payez pas l’intérieur du château</b> — lisez plutôt l’histoire de la dernière bataille avant d’y aller.</div></div></div><div class="day "><div class="dchip"><b>24</b><span>nov</span></div><div class="dbody"><h3>Nara & les daims<small>EXCURSION</small></h3><ul><li>Kintetsu depuis Namba (45 min), y être avant 10h</li><li>Todai-ji et le Grand Bouddha, parc aux daims</li><li>Kofuku-ji, lanternes de Kasuga-taisha</li><li class="t">Mochi pilés à la minute chez Nakatanidou</li><li class="t">Vue du Nigatsu-do, coucher de soleil avec les daims</li></ul><div class="dtip">💡 Un guide sur place vaut l’investissement. <a href="https://maps.app.goo.gl/Q2PMgejWP4Z3scJEA">Ses douceurs locales</a>. Et à Osaka : <a href="https://maps.app.goo.gl/w8Awu2bPg54QBnh59">son resto où la queue vaut le coup</a>.</div></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Hakone, la récompense · 25 → 27 nov</h2><span class="ph-hotel">🏨 Hananoyado Fukuya · Chambre japonaise, baignoire plein air, kaiseki inclus</span></div><div class="day voyage"><div class="dchip"><b>25</b><span>nov</span></div><div class="dbody"><h3>→ Hakone, mode onsen<small>DÉPART</small></h3><ul><li>Shinkansen Hikari → Odawara (~2h15), puis Hakone-Yumoto</li><li>Faire suivre les valises (luggage forwarding, gare Yumoto)</li><li>Check-in au ryokan : yukata, thé, premier bain</li><li class="t">Soir : dîner kaiseki en chambre — le grand soir du voyage</li></ul></div></div><div class="day "><div class="dchip"><b>26</b><span>nov</span></div><div class="dbody"><h3>La boucle du Freepass</h3><ul><li>Train Tozan → funiculaire → téléphérique vers Owakudani</li><li>Œufs noirs dans les fumerolles, le Fuji si le ciel est clair</li><li>Bateau pirate sur le lac Ashi → torii de Hakone-jinja</li><li class="t">Retour en bus Tozan (inclus dans le pass)</li><li class="t">Deuxième soirée : baignoire privée sous les étoiles</li></ul><div class="dtip">💡 S’il pleut : journée 100 % onsen — le <b>Tenzan</b>, superbe rotenburo public près de Yumoto, peut être le bain du 2e soir.</div></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Yokohama · 27 → 28 nov</h2><span class="ph-hotel">🏨 Hôtel à réserver (~100 €, Minato Mirai)</span></div><div class="day voyage"><div class="dchip"><b>27</b><span>nov</span></div><div class="dbody"><h3>→ Yokohama, l’escale plaisir<small>DÉPART</small></h3><ul><li>Matinée douce : musée en plein air (Picasso, bain de pieds)</li><li>Odawara → Yokohama (Tokaido, ~50 min)</li><li>Cup Noodles Museum : fabriquer son propre cup</li><li class="t">Soir : grande roue de Cosmo World, dîner à Chinatown</li></ul></div></div></div>
+<div class="phase"><div class="phase-h"><h2>Tokyo, le final · 28 nov → 2 déc</h2><span class="ph-hotel">🏨 Hôtel à réserver (~400 € les 4 nuits)</span></div><div class="day voyage"><div class="dchip"><b>28</b><span>nov</span></div><div class="dbody"><h3>Retour à Tokyo</h3><ul><li>Petit-déj face au port, parc Yamashita, entrepôts de brique</li><li>Yokohama → Tokyo (30 min), installation</li><li class="t">Ikebukuro : Sunshine City, Bandai Namco Cross Store</li><li class="t">Soir : izakaya de quartier</li></ul></div></div><div class="day "><div class="dchip"><b>29</b><span>nov</span></div><div class="dbody"><h3>Kamakura & Enoshima<small>EXCURSION</small></h3><ul><li>JR Yokosuka (~1h) : Grand Bouddha, Hase-dera face à la mer</li><li>Komachi-dori pour déjeuner</li><li>Si le rythme le permet : Enoshima — île, sanctuaire, vue mer</li><li class="t">Retour par la ligne Enoden le long de la côte</li></ul><div class="dtip">💡 Le combo conseillé par la guide — l’Enoden au coucher du soleil, c’est la carte postale.</div></div></div><div class="day "><div class="dchip"><b>30</b><span>nov</span></div><div class="dbody"><h3>Le Tokyo des sanctuaires</h3><ul><li>Gotoku-ji, le temple aux mille maneki-neko</li><li>Palais impérial & jardins de Kitanomaru</li><li>Kameido Tenjin ou Hie-jinja, hors des sentiers battus</li><li class="t">Tour de Tokyo au crépuscule</li></ul></div></div><div class="day "><div class="dchip"><b>1</b><span>déc</span></div><div class="dbody"><h3>Derniers feux</h3><ul><li>Rikugi-en, le jardin d’automne, illuminations le soir</li><li>Shopping final : Akihabara, Ikebukuro ou Ginza</li><li class="t">Dernier soir : Shibuya Sky ou l’izakaya préféré</li></ul></div></div><div class="day voyage"><div class="dchip"><b>2</b><span>déc</span></div><div class="dbody"><h3>Sayonara<small>VOL</small></h3><ul><li>Matinée légère selon l’hôtel</li><li>Départ pour Haneda (~15h, monorail ou Keikyu)</li><li>Décollage 20:15 (MU 540) — escale Shanghai</li><li>Arrivée CDG jeudi 3 déc à 06:00</li></ul><div class="dtip">💡 Gardez ~2 000 ¥ pour le dernier ramen à l’aéroport. Tax-free : passeport sur soi.</div></div></div></div>
+<p class="note" style="margin-top:30px">Rien n’est figé : c’est un fil conducteur, pas un contrat. Les journées libres absorbent la pluie, la fatigue et les coups de cœur.</p>
+</div>
+</body>
+</html>

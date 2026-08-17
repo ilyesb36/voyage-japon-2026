@@ -5,119 +5,193 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Japon — l'automne des momiji · 2026</title>
 <style>
-:root { color-scheme: light; }
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+:root { color-scheme:light;
+  --paper:#F6F2EA; --card:#FFFEFA; --ink:#231F1A; --mut:#82796C; --line:#E8E0D0;
+  --acc:#B93A1B; --accsoft:#F6E3DA; --gold:#B98A2F; --goldsoft:#F4E9D2; --green:#2E7D5B; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { background:#FBFAF7; color:#2C2C2A; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.65; }
-.wrap { max-width:880px; margin:0 auto; padding:0 24px 60px; }
-.hero { position:relative; height:400px; overflow:hidden; }
+html { scroll-behavior:smooth; }
+body { background:var(--paper); color:var(--ink); font-family:'Inter',-apple-system,sans-serif; line-height:1.65; font-size:15px; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:920px; margin:0 auto; padding:0 24px 70px; }
+
+/* ---- nav ---- */
+.topnav { position:sticky; top:12px; z-index:900; display:flex; gap:6px; justify-content:center; width:fit-content; margin:12px auto 0; padding:6px; background:rgba(255,254,250,.85); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:999px; box-shadow:0 8px 30px rgba(60,40,20,.10); }
+.topnav a { padding:8px 20px; border-radius:999px; font-size:13.5px; font-weight:500; color:var(--ink); text-decoration:none; transition:background .15s; }
+.topnav a:hover { background:var(--accsoft); }
+.topnav a.on { background:var(--ink); color:#fff; }
+
+/* ---- hero ---- */
+.hero { position:relative; height:540px; overflow:hidden; margin-top:-64px; }
 .hero img { width:100%; height:100%; object-fit:cover; object-position:center 65%; }
-.hero .veil { position:absolute; inset:0; background:linear-gradient(180deg, rgba(20,15,10,.15) 0%, rgba(20,15,10,.55) 100%); }
-.hero .htxt { position:absolute; left:0; right:0; bottom:36px; text-align:center; color:#fff; padding:0 24px; }
-.hero h1 { font-family:Georgia,"Times New Roman",serif; font-weight:500; font-size:46px; letter-spacing:-0.5px; text-shadow:0 2px 14px rgba(0,0,0,.45); }
-.hero p { font-size:17px; opacity:.95; text-shadow:0 1px 8px rgba(0,0,0,.5); margin-top:6px; }
-.hero .tiny { font-size:13px; opacity:.8; margin-top:10px; letter-spacing:.5px; }
-.dream { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin-top:-34px; position:relative; z-index:2; }
-.dream div { background:#fff; border:1px solid #EAE8DF; border-radius:12px; padding:16px 18px; box-shadow:0 6px 18px rgba(60,45,30,.07); }
-.dream b { display:block; font-family:Georgia,serif; font-weight:500; font-size:16px; margin-bottom:4px; }
-.dream span { font-size:13.5px; color:#6b6a64; }
-.intro { font-size:16.5px; color:#444441; margin-top:36px; font-family:Georgia,serif; font-style:italic; text-align:center; max-width:640px; margin-left:auto; margin-right:auto; }
-.mapcard { background:#fff; border:1px solid #EAE8DF; border-radius:12px; padding:18px; margin-top:36px; }
-h2 { font-family:Georgia,serif; font-weight:500; font-size:24px; margin:48px 0 4px; }
-.h2sub { color:#8a887f; font-size:14px; margin-bottom:16px; }
-.tl { display:flex; border-radius:10px; overflow:hidden; border:1px solid #EAE8DF; }
-.tl div { padding:10px 6px 8px; text-align:center; min-width:0; }
-.tl b { display:block; font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.tl span { font-size:11.5px; color:#6b6a64; white-space:nowrap; }
-.card { background:#fff; border:1px solid #EAE8DF; border-radius:14px; overflow:hidden; margin-top:26px; }
-.chead { display:flex; align-items:baseline; gap:14px; padding:18px 22px 14px; flex-wrap:wrap; }
-.chead h3 { font-family:Georgia,serif; font-size:23px; font-weight:500; }
-.chead .dates { font-size:13.5px; color:#6b6a64; }
-.pill { margin-left:auto; flex:none; font-size:13px; font-weight:500; padding:4px 14px; border-radius:999px; }
+.hero .veil { position:absolute; inset:0; background:linear-gradient(180deg, rgba(25,15,8,.30) 0%, rgba(25,15,8,.06) 40%, rgba(25,15,8,.68) 100%); }
+.hero .htxt { position:absolute; left:0; right:0; bottom:56px; text-align:center; color:#fff; padding:0 24px; }
+.kicker { font-size:12px; font-weight:600; letter-spacing:3.5px; opacity:.92; margin-bottom:14px; }
+.hero h1 { font-family:'Fraunces',Georgia,serif; font-weight:500; font-size:58px; line-height:1.08; letter-spacing:-1px; text-shadow:0 2px 18px rgba(0,0,0,.5); }
+.hero p { font-size:17.5px; opacity:.96; text-shadow:0 1px 10px rgba(0,0,0,.55); margin-top:12px; font-weight:400; }
+.hero .tiny { display:inline-block; margin-top:18px; font-size:12.5px; font-weight:500; letter-spacing:1.5px; padding:8px 20px; border:1px solid rgba(255,255,255,.55); border-radius:999px; backdrop-filter:blur(4px); background:rgba(255,255,255,.10); }
+
+/* ---- highlights ---- */
+.hl { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:-44px; position:relative; z-index:2; }
+.hl > div { display:flex; gap:13px; align-items:flex-start; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(60,40,20,.10); }
+.hl i { flex:none; font-style:normal; font-family:'Fraunces',serif; width:46px; height:46px; border-radius:12px; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:600; }
+.hl > div:nth-child(2) i { background:#E2EFEA; color:var(--green); }
+.hl > div:nth-child(3) i { background:var(--goldsoft); color:var(--gold); }
+.hl > div:nth-child(4) i { background:#E8ECF4; color:#3B5788; }
+.hl b { display:block; font-family:'Fraunces',serif; font-weight:600; font-size:15.5px; margin-bottom:2px; }
+.hl span { font-size:13px; color:var(--mut); line-height:1.5; display:block; }
+
+.intro { font-size:18px; color:#4d463c; margin:46px auto 0; font-family:'Fraunces',serif; font-style:italic; text-align:center; max-width:620px; line-height:1.7; }
+
+/* ---- sections ---- */
+h2 { font-family:'Fraunces',Georgia,serif; font-weight:600; font-size:29px; letter-spacing:-.3px; margin:60px 0 6px; position:relative; padding-top:16px; }
+h2::before { content:""; position:absolute; top:0; left:1px; width:34px; height:4px; border-radius:2px; background:var(--acc); }
+.h2sub { color:var(--mut); font-size:14px; margin-bottom:18px; max-width:640px; }
+h1 { font-family:'Fraunces',Georgia,serif; font-weight:600; letter-spacing:-.5px; }
+.sub { color:var(--mut); font-size:14.5px; margin:6px 0 8px; }
+
+/* ---- carte ---- */
+.mapcard { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-top:34px; box-shadow:0 6px 24px rgba(60,40,20,.06); }
+#map { height:560px; border-radius:12px; z-index:0; }
+.maplegend { font-size:12.5px; color:var(--mut); margin-top:12px; }
+.maplegend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin:0 6px 0 14px; border-radius:2px; }
+.maplegend i:first-child { margin-left:0; }
+
+/* ---- timeline ---- */
+.tl { display:flex; gap:4px; margin-top:6px; }
+.tl div { padding:12px 6px 10px; text-align:center; min-width:0; border-radius:10px; border:1px solid rgba(0,0,0,.045); }
+.tl b { display:block; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tl span { font-size:11px; color:#6d675c; white-space:nowrap; }
+
+/* ---- trajets ---- */
+.routes { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.leg { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 18px; }
+.leg .lday { flex:none; width:64px; font-size:11.5px; font-weight:600; letter-spacing:.4px; color:var(--mut); text-transform:uppercase; line-height:1.35; }
+.leg .lmid { flex:1; min-width:0; }
+.leg .lmid b { display:block; font-size:15px; font-weight:600; }
+.leg .lmid b em { font-style:normal; color:var(--acc); font-weight:600; }
+.leg .lmid span { display:block; font-size:12.5px; color:var(--mut); margin-top:1px; }
+.leg .lmeta { flex:none; display:flex; gap:8px; align-items:center; }
+.ldur { font-size:12.5px; font-weight:500; color:var(--ink); background:var(--paper); border:1px solid var(--line); padding:4px 12px; border-radius:999px; white-space:nowrap; }
+.lprix { font-size:13.5px; font-weight:600; color:var(--acc); background:var(--accsoft); padding:4px 12px; border-radius:999px; white-space:nowrap; }
+.leg.exc { background:#FBF7EE; border-style:dashed; }
+.leg.exc .lprix { color:var(--gold); background:var(--goldsoft); }
+.totbar { margin-top:14px; background:var(--ink); color:#fff; border-radius:14px; padding:15px 20px; font-size:14px; display:flex; flex-wrap:wrap; gap:6px 18px; align-items:baseline; }
+.totbar b { font-family:'Fraunces',serif; font-size:19px; font-weight:600; color:#FFD9A8; }
+.totbar span { opacity:.75; font-size:12.5px; }
+
+/* ---- explore ---- */
+.explore { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:18px; }
+.explore a { position:relative; display:block; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:24px 56px 22px 24px; text-decoration:none; color:var(--ink); box-shadow:0 6px 24px rgba(60,40,20,.06); transition:transform .15s, box-shadow .15s; }
+.explore a:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(60,40,20,.12); }
+.explore b { display:block; font-family:'Fraunces',serif; font-size:19px; font-weight:600; margin-bottom:5px; }
+.explore span { font-size:13.5px; color:var(--mut); }
+.explore i { position:absolute; right:20px; top:50%; transform:translateY(-50%); font-style:normal; width:34px; height:34px; border-radius:50%; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:17px; }
+
+/* ---- footer vols ---- */
+footer { margin-top:56px; padding:22px 24px; background:var(--card); border:1px solid var(--line); border-radius:18px; font-size:14px; }
+footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:10px; }
+.flight { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid #F1ECE1; flex-wrap:wrap; }
+.flight:last-of-type { border-bottom:none; }
+.flight span { color:var(--mut); }
+.note { margin-top:16px; font-size:12px; color:var(--mut); font-style:italic; }
+/* ---- cartes villes ---- */
+.card { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; margin-top:30px; box-shadow:0 8px 28px rgba(60,40,20,.07); scroll-margin-top:86px; }
+.chead { display:flex; align-items:baseline; gap:14px; padding:22px 24px 16px; flex-wrap:wrap; }
+.chead h3 { font-family:'Fraunces',serif; font-size:26px; font-weight:600; letter-spacing:-.3px; }
+.chead .dates { font-size:13.5px; color:var(--mut); }
+.pill { margin-left:auto; flex:none; font-size:12.5px; font-weight:600; padding:5px 15px; border-radius:999px; }
 .carousel { position:relative; }
 .slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
 .slides::-webkit-scrollbar { display:none; }
 .slides figure { flex:0 0 100%; scroll-snap-align:center; position:relative; margin:0; }
-.slides img { width:100%; height:500px; object-fit:cover; display:block; background:#F3F1EA; }
-.slides figcaption { position:absolute; left:0; right:0; bottom:0; padding:40px 22px 14px; color:#fff; background:linear-gradient(180deg, transparent, rgba(15,10,5,.72)); }
-.slides figcaption b { font-size:17px; font-weight:500; display:block; }
-.slides figcaption span { font-size:14.5px; opacity:.94; }
-.nav { position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%; border:none; background:rgba(255,255,255,.94); color:#2C2C2A; font-size:26px; line-height:1; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.18); }
-.nav.prev { left:12px; } .nav.next { right:12px; }
-.dots { position:absolute; bottom:8px; right:14px; display:flex; gap:5px; }
+.slides img { width:100%; height:500px; object-fit:cover; display:block; background:#F0EBDF; }
+.slides figcaption { position:absolute; left:0; right:0; bottom:0; padding:46px 24px 16px; color:#fff; background:linear-gradient(180deg, transparent, rgba(15,10,5,.78)); }
+.slides figcaption b { font-size:17px; font-weight:600; display:block; }
+.slides figcaption span { font-size:14px; opacity:.94; }
+.nav { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.95); color:var(--ink); font-size:24px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.2); transition:background .15s; }
+.nav:hover { background:#fff; }
+.nav.prev { left:14px; } .nav.next { right:14px; }
+.dots { position:absolute; bottom:10px; right:16px; display:flex; gap:5px; }
 .dots i { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.45); }
 .dots i.on { background:#fff; }
-.cbody { padding:18px 22px 20px; display:grid; grid-template-columns:1.15fr 1fr; gap:6px 30px; }
-.cbody h4 { font-size:12px; text-transform:uppercase; letter-spacing:.9px; color:#8a887f; font-weight:500; margin-bottom:6px; }
+.count { position:absolute; top:14px; right:16px; background:rgba(15,10,5,.55); color:#fff; font-size:11.5px; font-weight:500; padding:4px 11px; border-radius:999px; letter-spacing:.5px; backdrop-filter:blur(3px); }
+.cbody { padding:20px 24px 22px; display:grid; grid-template-columns:1.15fr 1fr; gap:6px 32px; }
+.cbody h4 { font-size:11.5px; text-transform:uppercase; letter-spacing:1.2px; color:var(--mut); font-weight:600; margin-bottom:8px; }
 .cbody ul { list-style:none; }
-.cbody li { font-size:14.5px; padding:3px 0 3px 16px; position:relative; }
-.cbody li::before { content:""; position:absolute; left:0; top:11px; width:6px; height:6px; border-radius:50%; background:#D85A30; }
-.food li::before { background:#EF9F27; border-radius:2px; }
-.train { grid-column:1 / -1; margin-top:10px; padding-top:12px; border-top:1px dashed #EAE8DF; font-size:13.5px; color:#6b6a64; }
-.train b { font-weight:500; color:#444441; }
-.fcar { border-radius:10px; overflow:hidden; margin-top:4px; }
+.cbody li { font-size:14px; padding:3.5px 0 3.5px 18px; position:relative; }
+.cbody li::before { content:""; position:absolute; left:0; top:11px; width:6px; height:6px; border-radius:50%; background:var(--acc); }
+.cbody li b { font-weight:600; }
+.food li::before, .food-list li::before { background:var(--gold); border-radius:2px; }
+.train { grid-column:1 / -1; margin-top:12px; padding:10px 14px; border-radius:10px; background:var(--paper); font-size:13px; color:var(--mut); }
+.train b { font-weight:600; color:#4d463c; }
+.fcar { border-radius:12px; overflow:hidden; margin-top:4px; }
 .fcar .slides img { height:260px; }
 .fcar .slides figcaption { padding:28px 14px 10px; }
 .fcar .slides figcaption b { font-size:14px; }
 .fcar .slides figcaption span { font-size:12.5px; }
-.fcar .nav { width:30px; height:30px; font-size:18px; }
+.fcar .nav { width:30px; height:30px; font-size:17px; }
 .fcar .nav.prev { left:8px; } .fcar .nav.next { right:8px; }
-footer { margin-top:48px; padding:20px 22px; background:#fff; border:1px solid #EAE8DF; border-radius:12px; font-size:14px; }
-footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-bottom:10px; }
-.flight { display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px solid #F3F1EA; flex-wrap:wrap; }
-.flight:last-of-type { border-bottom:none; }
-.flight span { color:#6b6a64; }
-.count { position:absolute; top:12px; right:14px; background:rgba(15,10,5,.5); color:#fff; font-size:12px; padding:3px 10px; border-radius:999px; letter-spacing:.5px; }
-.cbody li b { font-weight:500; }
-.card { scroll-margin-top:70px; }
-.citynav { position:sticky; top:0; z-index:800; background:rgba(251,250,247,.94); backdrop-filter:blur(8px); display:flex; gap:8px; overflow-x:auto; padding:10px 0; border-bottom:1px solid #EAE8DF; scrollbar-width:none; }
-.citynav::-webkit-scrollbar { display:none; }
-.citynav a { padding:6px 14px; border:1px solid #D3D1C7; border-radius:999px; font-size:13px; color:#444441; text-decoration:none; white-space:nowrap; background:#fff; }
-.citynav a:hover { border-color:#D85A30; color:#D85A30; }
-.citylbl { background:#fff; border:1px solid #D3D1C7; border-radius:6px; font-weight:600; font-size:12px; color:#2C2C2A; padding:2px 8px; box-shadow:0 1px 4px rgba(0,0,0,.15); }
-.note { margin-top:16px; font-size:12.5px; color:#8a887f; font-style:italic; }
-@media (max-width:640px){ .cbody{grid-template-columns:1fr} .tl span{display:none} .hero h1{font-size:34px} .slides img{height:320px} }
-#map { height:560px; border-radius:10px; z-index:0; }
-.maplegend { font-size:12.5px; color:#8a887f; margin-top:10px; }
-.maplegend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin:0 6px 0 14px; border-radius:2px; }
-.maplegend i:first-child { margin-left:0; }
-@media (max-width:640px){ #map{height:380px} }
 
-.topnav { position:sticky; top:0; z-index:900; background:rgba(251,250,247,.96); backdrop-filter:blur(8px); display:flex; gap:8px; justify-content:center; padding:12px 16px; border-bottom:1px solid #EAE8DF; }
-.topnav a { padding:7px 18px; border:1px solid #D3D1C7; border-radius:999px; font-size:14px; color:#444441; text-decoration:none; background:#fff; }
-.topnav a.on { background:#2C2C2A; color:#fff; border-color:#2C2C2A; }
-.citymap { height:400px; border-radius:10px; margin:14px 20px 0; z-index:0; }
-.maplgd { font-size:12px; color:#8a887f; margin:8px 22px 0; }
+.citynav { position:sticky; top:74px; z-index:800; background:rgba(246,242,234,.92); backdrop-filter:blur(10px); display:flex; gap:8px; overflow-x:auto; padding:10px 2px; scrollbar-width:none; border-radius:0 0 12px 12px; }
+.citynav::-webkit-scrollbar { display:none; }
+.citynav a { padding:6px 15px; border:1px solid var(--line); border-radius:999px; font-size:13px; font-weight:500; color:#4d463c; text-decoration:none; white-space:nowrap; background:var(--card); }
+.citynav a:hover { border-color:var(--acc); color:var(--acc); }
+.citylbl { background:#fff; border:1px solid #D9D2C2; border-radius:6px; font-weight:600; font-size:12px; color:var(--ink); padding:2px 8px; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.citymap { height:400px; border-radius:12px; margin:16px 22px 0; z-index:0; border:1px solid var(--line); }
+.maplgd { font-size:12px; color:var(--mut); margin:10px 24px 0; }
 .maplgd i { display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:middle; margin:0 5px 0 12px; }
 .maplgd i:first-child { margin-left:0; }
-.mtip { margin:10px 22px 0; padding:10px 14px; background:#FAEEDA; border-radius:10px; font-size:13.5px; color:#633806; }
-.mtip a { color:#854F0B; }
-.ttable { width:100%; border-collapse:collapse; font-size:14.5px; background:#fff; }
-.ttable th, .ttable td { padding:10px 12px; border-bottom:1px solid #F3F1EA; text-align:left; }
-.ttable th { font-size:11.5px; text-transform:uppercase; letter-spacing:.7px; color:#8a887f; font-weight:500; }
-.ttable td b { font-weight:500; }
-.tcard { background:#fff; border:1px solid #EAE8DF; border-radius:12px; overflow:hidden; margin-top:16px; }
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-top:16px; }
-.stats div { background:#fff; border:1px solid #EAE8DF; border-radius:12px; padding:16px 18px; text-align:center; }
-.stats b { display:block; font-family:Georgia,serif; font-size:26px; font-weight:500; }
-.stats span { font-size:12.5px; color:#8a887f; }
-.hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; margin-top:18px; }
-.hcard { background:#fff; border:1px solid #EAE8DF; border-radius:14px; overflow:hidden; }
-.hcard .imgs { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
-.hcard .imgs img { width:100%; height:150px; object-fit:cover; display:block; background:#F3F1EA; }
-.hcard .hbody { padding:14px 18px 16px; }
-.hcard h3 { font-family:Georgia,serif; font-size:18px; font-weight:500; }
-.hcard .hsub { font-size:13px; color:#8a887f; margin:2px 0 8px; }
-.hcard .room { font-size:13.5px; background:#E6F1FB; color:#0C447C; display:inline-block; padding:3px 10px; border-radius:999px; margin-bottom:8px; }
-.hcard .hprice { font-size:15px; }
-.hcard .hprice b { font-weight:500; }
-.badge-ok { color:#3B6D11; font-size:12.5px; }
-.badge-tbd { color:#993C1D; font-size:12.5px; }
+.mtip { margin:14px 22px 0; padding:13px 16px 13px 18px; background:#FDF6E7; border-left:4px solid var(--gold); border-radius:0 12px 12px 0; font-size:13.5px; color:#5C430F; line-height:1.6; }
+.mtip a { color:#8A5E0D; font-weight:500; }
+
+/* ---- hotels ---- */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin-top:16px; }
+.stats div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 16px 15px; text-align:center; box-shadow:0 6px 20px rgba(60,40,20,.05); }
+.stats b { display:block; font-family:'Fraunces',serif; font-size:27px; font-weight:600; color:var(--acc); letter-spacing:-.5px; }
+.stats div:nth-child(even) b { color:var(--ink); }
+.stats span { font-size:12px; color:var(--mut); display:block; margin-top:3px; line-height:1.45; }
+.hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px; margin-top:20px; }
+.hcard { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:0 8px 28px rgba(60,40,20,.07); }
+.hcard .imgs { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+.hcard .imgs img { width:100%; height:92px; object-fit:cover; display:block; background:#F0EBDF; }
+.hcard .imgs img:first-child { grid-column:1 / -1; height:210px; }
+.hcard .hbody { padding:16px 20px 18px; }
+.hcard h3 { font-family:'Fraunces',serif; font-size:19.5px; font-weight:600; }
+.hcard .hsub { font-size:13px; color:var(--mut); margin:3px 0 9px; }
+.hcard .room { font-size:12.5px; font-weight:500; background:var(--accsoft); color:#8A2B12; display:inline-block; padding:4px 12px; border-radius:999px; margin-bottom:9px; }
+.hcard .hprice { font-size:14.5px; }
+.hcard .hprice b { font-weight:600; font-family:'Fraunces',serif; font-size:18px; }
+.badge-ok { color:var(--green); font-size:12.5px; font-weight:500; }
+.badge-tbd { color:#A04A20; font-size:12.5px; font-weight:500; }
+
+@media (max-width:680px){
+  .cbody{grid-template-columns:1fr}
+  .tl span{display:none}
+  .hero{height:460px}
+  .hero h1{font-size:38px}
+  .kicker{letter-spacing:2.2px}
+  .slides img{height:330px}
+  #map{height:380px}
+  .leg{flex-wrap:wrap; gap:6px 14px}
+  .leg .lday{width:auto}
+  .leg .lmeta{margin-left:auto}
+  .topnav a{padding:7px 13px; font-size:12.5px}
+  h2{font-size:24px}
+}
+/* ---- leaflet pro ---- */
+.leaflet-popup-content-wrapper { border-radius:14px; box-shadow:0 10px 30px rgba(40,25,10,.25); border:1px solid var(--line); font-family:'Inter',sans-serif; }
+.leaflet-popup-content { margin:12px 16px; font-size:13px; line-height:1.55; color:var(--ink); }
+.leaflet-popup-content b { font-family:'Fraunces',serif; font-size:15px; font-weight:600; }
+.leaflet-popup-content a { color:var(--acc); font-weight:500; }
+.leaflet-container { font-family:'Inter',sans-serif; }
+.leaflet-bar a { border-radius:8px !important; }
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
 <body>
 <nav class="topnav">
   <a href="index.html">Accueil</a>
+  <a href="jour-par-jour.html">Jour par jour</a>
   <a href="villes.html">Villes &amp; cartes</a>
   <a href="hotels.html" class="on">Hôtels &amp; budget</a>
 </nav>
@@ -138,7 +212,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 <h2>Vos chambres</h2>
 <div class="hgrid">
 <div class="hcard">
-  <div class="imgs"><img src="https://r-xx.bstatic.com/xdata/images/hotel/max300/520010878.jpg?k=5898ae52b47c52dc05a32062a75a79eb048b3e0c64012ce3fcd3ebd123cd581f&o=" alt="Hop Inn Tokyo Asakusa" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max300/517640960.webp?k=94f834a386df1e821afbceaff20004327b98cbb3e15169b6321b2acd4b83df5f&o=" alt="Hop Inn Tokyo Asakusa chambre" loading="lazy"></div>
+  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/520010878.jpg?k=5898ae52b47c52dc05a32062a75a79eb048b3e0c64012ce3fcd3ebd123cd581f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517640960.jpg?k=3ff5c96f6a18fa5090547a55bdf66a86792054061838288d205ffe3587bb1119&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517641580.jpg?k=efdffa0af0fb874107b2a5a1dc8023b16fbf9966e9b284aa4d356028ce4dc583&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/522024821.jpg?k=69c75e2a9202d4b17d69b6dfb6dae122f5e4b700832e3b0428c144612ab3f72f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"></div>
   <div class="hbody">
     <h3>Hop Inn Tokyo Asakusa</h3>
     <div class="hsub">Tokyo · 9 → 14 nov · 5 nuits</div>
@@ -148,7 +222,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://q-xx.bstatic.com/xdata/images/hotel/max300/630416295.jpg?k=5e7fe54b67835ad6774c49615785f91428cb6e78c0fcc44b70ec3dcc11ec35fe&o=" alt="Center Point In Kanazawa" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/square200/486563164.jpg?k=7f190179298afd78f4171b712715b6c4eadad578f660e10131c398fa56031b3b&o=" alt="Center Point In Kanazawa chambre" loading="lazy"></div>
+  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/630416295.jpg?k=5e7fe54b67835ad6774c49615785f91428cb6e78c0fcc44b70ec3dcc11ec35fe&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488165.jpg?k=0fb3dcd29802a051ac59bf1581f0e8348e0c4d82c0e45510d192df3ed3ff6961&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488138.jpg?k=daaabdf5d050f37f7db47aed1ceed796f065a02fc65bcc63c3a85f192e231c22&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486489435.jpg?k=b1a2f2055453c05b828a4fcbc50a428767f0911528b61f5dabdddcb26693e319&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"></div>
   <div class="hbody">
     <h3>Center Point In Kanazawa</h3>
     <div class="hsub">Kanazawa · 14 → 16 nov · 2 nuits</div>
@@ -158,7 +232,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://q-xx.bstatic.com/xdata/images/hotel/max300/513151229.jpg?k=10401022f25657b6f52fff643044019551b425572858f83a48991c8216af14c2&o=" alt="Matatabi Stay Nishinokyo" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max300/513151490.webp?k=54b6cb72707d69d0eb0c0192bc07c9bd87257e635418da3d616b93199cf34927&o=" alt="Matatabi Stay Nishinokyo chambre" loading="lazy"></div>
+  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151229.jpg?k=10401022f25657b6f52fff643044019551b425572858f83a48991c8216af14c2&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151490.jpg?k=2c2b54f0ffe0e7968a629dd36f3af0f4ee2a5861c126480094b9c5ac9fd14652&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151443.jpg?k=9c563967ad8a366e0472110b60618b49588a97979902ebb0a983f36813dfbe50&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151399.jpg?k=0f8ba9d881b5772ed15e5692edaf16f398c9269472aa40248a54c6140f7167f0&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"></div>
   <div class="hbody">
     <h3>Matatabi Stay Nishinokyo</h3>
     <div class="hsub">Kyoto · 16 → 22 nov · 6 nuits</div>
@@ -168,7 +242,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://r-xx.bstatic.com/xdata/images/hotel/max300/770905763.jpg?k=9da02f987c7a240f60285c059744e07b7ddd3c24659566dfb4a829b143f577fe&o=" alt="川HOUSE Kuromon" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max300/855803020.webp?k=864478b68e31bec0db590199a8a23dd9addfaa0933b7cdad509cc2fe609637c9&o=" alt="川HOUSE Kuromon chambre" loading="lazy"></div>
+  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905763.jpg?k=9da02f987c7a240f60285c059744e07b7ddd3c24659566dfb4a829b143f577fe&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/855803020.jpg?k=7a710836887a7a3aeb3df2c661217eeb5a6bc07b7463e08c1d3e143902fafd07&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770906595.jpg?k=cbe39f7d5a7c0244f86dcc6c3b6a37263c6c99fdc71975011c5e5bc6900a7d67&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905841.jpg?k=a5870c4d90525fe2f5a7bb6cd4f13557aa98ff6b8beb81c4e3f0f5426dc3bf20&o=" alt="川HOUSE黒門 — Studio" loading="lazy"></div>
   <div class="hbody">
     <h3>川HOUSE Kuromon</h3>
     <div class="hsub">Osaka · 22 → 25 nov · 3 nuits</div>
@@ -178,7 +252,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://q-xx.bstatic.com/xdata/images/hotel/max300/221100649.jpg?k=44a5c62a9394f94ba9cd9df1289b7e17cadb129da10c080e91261a082ba7c13e&o=" alt="Hananoyado Fukuya" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max300/516043370.webp?k=39758e6e327bb83050d562f9ad3319c0f517942a317ff347d78df6dba651f5d6&o=" alt="Hananoyado Fukuya chambre" loading="lazy"></div>
+  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/221100649.jpg?k=44a5c62a9394f94ba9cd9df1289b7e17cadb129da10c080e91261a082ba7c13e&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/516043370.jpg?k=ce588392019a5a447dd1c75f3addc1fbbc2121e7957c1e34a496e03d177d903e&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517294926.jpg?k=a1bb46c4c3cdabb0ff7369fe880eb3869ddc6bf794dec0319615117eb94c666b&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/516044846.jpg?k=8e5c0f42ee431b7c23fc10fbec3284c93ec4c4225dd986067996e5cd0ddb0740&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"></div>
   <div class="hbody">
     <h3>Hananoyado Fukuya</h3>
     <div class="hsub">Hakone · 25 → 27 nov · 2 nuits</div>
@@ -204,7 +278,7 @@ footer h4 { font-family:Georgia,serif; font-size:16px; font-weight:500; margin-b
 <script>
 const HOTELS=[[35.7147,139.8005,'Hop Inn Tokyo Asakusa','Tokyo · 9 → 14 nov · 5 nuits'],[36.5589,136.6486,'Center Point In Kanazawa','Kanazawa · 14 → 16 nov · 2 nuits'],[35.0125,135.733,'Matatabi Stay Nishinokyo','Kyoto · 16 → 22 nov · 6 nuits'],[34.665,135.507,'川HOUSE Kuromon','Osaka · 22 → 25 nov · 3 nuits'],[35.232,139.1046,'Hananoyado Fukuya','Hakone · 25 → 27 nov · 2 nuits']];
 const hmap = L.map('hotelsmap', {scrollWheelZoom:false});
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap · © CARTO'}).addTo(hmap);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap · © CARTO'}).addTo(hmap);
 HOTELS.forEach(([la,lo,n,v])=>{
   L.marker([la,lo],{icon:L.divIcon({className:'',html:'<div style="background:#185FA5;color:#fff;padding:2px 8px;border-radius:8px;font-size:11px;font-weight:600;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);white-space:nowrap">🏨</div>',iconSize:[30,22],iconAnchor:[15,11]})}).addTo(hmap).bindPopup('<b>'+n+'</b><br>'+v);
 });
