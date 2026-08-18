@@ -190,6 +190,21 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .leaflet-popup-content a { color:var(--acc); font-weight:500; }
 .leaflet-container { font-family:'Inter',sans-serif; }
 .leaflet-bar a { border-radius:8px !important; }
+
+.gcard{cursor:pointer}
+#gmx{position:fixed;inset:0;background:rgba(20,16,12,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+#gmx.on{display:flex}
+#gmx .box{background:var(--card);border-radius:20px;max-width:440px;width:100%;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.35);position:relative}
+#gmx img{width:100%;height:235px;object-fit:cover;display:block}
+#gmx .bd{padding:18px 20px 20px}
+#gmx h4{font-family:'Fraunces',serif;font-size:21px;margin:0 0 7px;color:var(--ink)}
+#gmx p{margin:0 0 15px;color:var(--mut);font-size:14px;line-height:1.55}
+#gmx .go{display:inline-block;background:var(--acc);color:#fff;padding:9px 18px;border-radius:999px;font-size:13.5px;font-weight:600;text-decoration:none}
+#gmx .x{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.45);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer}
+#gmx .pr{margin-bottom:9px}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 6px}
+.fchip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-size:12.5px;cursor:pointer;color:var(--mut);font-family:'Inter',sans-serif}
+.fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 </style>
 <style>
 .gtabs { display:flex; gap:8px; flex-wrap:wrap; margin:22px 0 4px; }
@@ -246,5 +261,50 @@ document.querySelectorAll(".gtab").forEach(b=>b.addEventListener("click",()=>{
 }));
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+
+<script>
+(function(){
+const gmx=document.createElement('div');gmx.id='gmx';
+gmx.innerHTML='<div class="box"><button class="x">✕</button><img><div class="bd"><div class="pr"></div><h4></h4><p></p><a class="go" target="_blank" rel="noopener"></a></div></div>';
+document.body.appendChild(gmx);
+function off(){gmx.classList.remove('on');}
+gmx.addEventListener('click',function(e){if(e.target===gmx)off();});
+gmx.querySelector('.x').onclick=off;
+document.addEventListener('keydown',function(e){if(e.key==='Escape')off();});
+document.addEventListener('click',function(e){
+ var a=e.target.closest('a.gcard');if(!a)return;
+ e.preventDefault();
+ var im=a.querySelector('img');gmx.querySelector('img').src=im?im.src:'';
+ var b=a.querySelector('b');gmx.querySelector('h4').textContent=b?b.textContent:'';
+ var s=a.querySelector('span');gmx.querySelector('p').textContent=s?s.textContent:'';
+ var pr=a.querySelector('.prio');gmx.querySelector('.pr').innerHTML=pr?pr.outerHTML:'';
+ var go=gmx.querySelector('.go');go.href=a.href;
+ go.textContent=a.querySelector('.gl')?'🎟 Réserver / voir l’activité':'📍 Voir le lieu sur Google Maps';
+ gmx.classList.add('on');
+});
+var PRIO=['ob','top','symp','niche'];
+var PL={ob:'🔴 Obligatoire',top:'🟠 À voir',symp:'🟢 Sympa',niche:'🟣 Niche'};
+document.querySelectorAll('.gpanel').forEach(function(p){
+ var bar=document.createElement('div');bar.className='fbar';
+ bar.innerHTML='<button class="fchip on" data-f="all">Tout</button>'+PRIO.map(function(k){return '<button class="fchip" data-f="'+k+'">'+PL[k]+'</button>'}).join('')+'<button class="fchip" data-f="sort">↕ Trier par priorité</button>';
+ p.insertBefore(bar,p.firstChild);
+ bar.addEventListener('click',function(e){
+  var b=e.target.closest('.fchip');if(!b)return;
+  if(b.dataset.f==='sort'){
+   p.querySelectorAll('.ggrid').forEach(function(g){
+    Array.from(g.children).sort(function(a,c){return PRIO.indexOf(a.dataset.p)-PRIO.indexOf(c.dataset.p)}).forEach(function(el){g.appendChild(el)});});
+   return;}
+  bar.querySelectorAll('.fchip').forEach(function(c){c.classList.toggle('on',c===b)});
+  var f=b.dataset.f;
+  p.querySelectorAll('.gcard').forEach(function(c){c.style.display=(f==='all'||c.dataset.p===f)?'':'none'});
+  p.querySelectorAll('.ggrid').forEach(function(g){
+   var any=Array.from(g.children).some(function(c){return c.style.display!=='none'});
+   g.style.display=any?'':'none';
+   var h=g.previousElementSibling;
+   if(h&&h.classList.contains('gcity'))h.style.display=any?'':'none';});
+ });
+});
+})();
+</script>
 </body>
 </html>

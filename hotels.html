@@ -192,6 +192,17 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .leaflet-popup-content a { color:var(--acc); font-weight:500; }
 .leaflet-container { font-family:'Inter',sans-serif; }
 .leaflet-bar a { border-radius:8px !important; }
+
+.imgs img{cursor:pointer;transition:opacity .15s}.imgs img:hover{opacity:.85}
+#lbx{position:fixed;inset:0;background:rgba(20,16,12,.93);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column}
+#lbx.on{display:flex}
+#lbx img{max-width:88vw;max-height:74vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#lbx .lbt{color:#fff;font-family:'Fraunces',serif;font-size:19px;margin-bottom:14px}
+#lbx .lbc{color:#fff;font-size:13px;margin-top:14px;opacity:.8}
+.lbb{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.14);border:none;color:#fff;font-size:26px;width:48px;height:48px;border-radius:50%;cursor:pointer}
+.lbb:hover{background:rgba(255,255,255,.28)}
+#lbprev{left:18px}#lbnext{right:18px}
+#lbclose{position:absolute;top:16px;right:20px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
@@ -304,5 +315,29 @@ hmap.fitBounds(HOTELS.map(h=>[h[0],h[1]]),{padding:[40,40]});
 hmap.on('click',()=>hmap.scrollWheelZoom.enable());
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+
+<script>
+(function(){
+const lbx=document.createElement('div');lbx.id='lbx';
+lbx.innerHTML='<button id="lbclose">✕</button><button class="lbb" id="lbprev">‹</button><div class="lbt"></div><img><div class="lbc"></div><button class="lbb" id="lbnext">›</button>';
+document.body.appendChild(lbx);
+let L=[],li=0,lt='';
+function show(){lbx.querySelector('img').src=L[li];lbx.querySelector('.lbc').textContent=(li+1)+' / '+L.length;lbx.querySelector('.lbt').textContent=lt;}
+function off(){lbx.classList.remove('on');}
+document.querySelectorAll('.hcard').forEach(function(c){
+ var ims=Array.from(c.querySelectorAll('.imgs img'));
+ var name=(c.querySelector('h3')||{}).textContent||'';
+ ims.forEach(function(im,ix){im.addEventListener('click',function(){L=ims.map(function(i){return i.src});li=ix;lt=name;lbx.classList.add('on');show();});});
+});
+lbx.querySelector('#lbnext').onclick=function(e){e.stopPropagation();li=(li+1)%L.length;show();};
+lbx.querySelector('#lbprev').onclick=function(e){e.stopPropagation();li=(li-1+L.length)%L.length;show();};
+lbx.querySelector('#lbclose').onclick=off;
+lbx.addEventListener('click',function(e){if(e.target===lbx)off();});
+document.addEventListener('keydown',function(e){if(!lbx.classList.contains('on'))return;
+ if(e.key==='Escape')off();
+ if(e.key==='ArrowRight'){li=(li+1)%L.length;show();}
+ if(e.key==='ArrowLeft'){li=(li-1+L.length)%L.length;show();}});
+})();
+</script>
 </body>
 </html>
