@@ -279,8 +279,8 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <h2>Les postes</h2>
 <div class="brow fixed"><div class="bico">🏨</div><div class="bmid"><b>Hôtels — tout est réservé ✓</b><span>Hop Inn 486 € · Center Point 165 € · Matatabi 683 € · 川HOUSE 160 € · Fukuya 1 198 € (repas inclus) · La Vita 548 €</span></div><div class="bsum">3 240 €</div></div>
 <div class="brow"><div class="bico">✈️</div><div class="bmid"><b>Vols</b><span>China Eastern via Shanghai, A/R</span></div><div class="bctl"><button class="step" data-f="vol" data-d="-25">−</button><input type="number" id="vol" value="950" min="0" step="10"><button class="step" data-f="vol" data-d="25">+</button><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-vol"></div></div>
-<div class="brow"><div class="bico">🚄</div><div class="bmid"><b>Transports intérieurs</b><span>Shinkansen à l’unité + Hakone Freepass + métros</span></div><div class="bctl"><button class="step" data-f="train" data-d="-10">−</button><input type="number" id="train" value="290" min="0" step="10"><button class="step" data-f="train" data-d="10">+</button><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-train"></div></div>
-<div class="brow"><div class="bico">🍜</div><div class="bmid"><b>Forfait bouffe</b><span>24 jours × 2 — les 2 dîners + petits-déj de Hakone sont déjà payés</span></div><div class="bctl"><button class="step" data-f="food" data-d="-5">−</button><input type="number" id="food" value="25" min="0" step="1"><button class="step" data-f="food" data-d="5">+</button><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-food"></div><div class="presets"><button class="preset" data-v="18">Éco · 18 €</button><button class="preset" data-v="25">Normal · 25 €</button><button class="preset" data-v="35">Plaisir · 35 €</button><button class="preset" data-v="50">Grand kiff · 50 €</button></div></div>
+<div class="brow"><div class="bico">🚄</div><div class="bmid"><b>Transports intérieurs</b><span>Shinkansen à l’unité + métros — hors pass ci-dessous</span></div><div class="bctl"><button class="step" data-f="train" data-d="-10">−</button><input type="number" id="train" value="245" min="0" step="10"><button class="step" data-f="train" data-d="10">+</button><span class="bunit">€ / pers.</span></div><div class="bsum" id="s-train"></div></div>
+<div class="brow fixed"><div class="bico">🎫</div><div class="bmid"><b>Pass day trips — réservés à l’avance</b><span>Hakone Freepass 2 j (~5 000 ¥/pers.) + Nikko Pass World Heritage (~2 120 ¥/pers.)</span></div><div class="bsum">88 €</div></div><div class="brow"><div class="bico">🍜</div><div class="bmid"><b>Forfait bouffe</b><span>24 jours × 2 — les 2 dîners + petits-déj de Hakone sont déjà payés</span></div><div class="bctl"><button class="step" data-f="food" data-d="-5">−</button><input type="number" id="food" value="25" min="0" step="1"><button class="step" data-f="food" data-d="5">+</button><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-food"></div><div class="presets"><button class="preset" data-v="18">Éco · 18 €</button><button class="preset" data-v="25">Normal · 25 €</button><button class="preset" data-v="35">Plaisir · 35 €</button><button class="preset" data-v="50">Grand kiff · 50 €</button></div></div>
 <div class="brow"><div class="bico">⛩️</div><div class="bmid"><b>Visites &amp; activités</b><span>Temples ~3-8 €, Shibuya Sky, teamLab, onsen…</span></div><div class="bctl"><button class="step" data-f="act" data-d="-2">−</button><input type="number" id="act" value="8" min="0" step="1"><button class="step" data-f="act" data-d="2">+</button><span class="bunit">€ / jour / pers.</span></div><div class="bsum" id="s-act"></div></div>
 
 <div class="btotal"><span class="tt">Total du voyage<br>(2 personnes)</span><b id="total"></b><span class="pp">soit <b id="pp"></b> / personne</span></div>
@@ -293,7 +293,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
   <p class="paysub">Coche ce qui est réglé (mémorisé sur cet appareil). Clique sur une catégorie pour la replier.</p>
   <div id="paylist"></div>
   <div class="pgtot">
-    <div class="row"><div class="pd"><span>Déjà payé</span><br><b id="paid">0 €</b></div><div class="lft"><span>Reste à payer</span><br><b id="left">0 €</b></div></div>
+    <div class="row"><div class="pd"><span>Déjà payé</span><br><b id="paid">0 €</b><br><span id="paidpp" style="font-size:11.5px;opacity:.65"></span></div><div class="lft"><span>Reste à payer</span><br><b id="left">0 €</b><br><span id="leftpp" style="font-size:11.5px;opacity:.65"></span></div></div>
     <div class="gbar"><i id="gfill"></i></div>
     <div class="pct" id="gpct"></div>
   </div>
@@ -308,12 +308,13 @@ function calc(){
   document.getElementById('s-train').textContent=eur(train);
   document.getElementById('s-food').textContent=eur(food);
   document.getElementById('s-act').textContent=eur(act);
-  const tot=3240+vol+train+food+act;
+  const tot=3240+88+vol+train+food+act;
   document.getElementById('total').textContent=eur(tot);
   document.getElementById('pp').textContent=eur(Math.round(tot/2));
   document.querySelectorAll('.preset').forEach(p=>p.classList.toggle('on',+p.dataset.v===g('food')));
   try{FIELDS.forEach(f=>localStorage.setItem('bdg_'+f,g(f)));}catch(e){}
 }
+try{if(localStorage.getItem('bdg_train')==='290')localStorage.setItem('bdg_train','245');}catch(e){}
 try{FIELDS.forEach(f=>{const v=localStorage.getItem('bdg_'+f);if(v!==null)document.getElementById(f).value=v;});}catch(e){}
 document.querySelectorAll('input[type=number]').forEach(i=>i.addEventListener('input',calc));
 document.querySelectorAll('.step').forEach(b=>b.addEventListener('click',()=>{
@@ -341,8 +342,8 @@ var CATS=[
   {key:'h5',label:'La Vita Ikebukuro Residence',sub:'Tokyo · annulation gratuite',fix:548}]},
  {id:'vols',ico:'✈️',name:'Vols',sub:'China Eastern via Shanghai',items:[
   {key:'vol',label:'Billets A/R × 2 pers.',sub:'PVG · bagages inclus',dyn:'vol'}]},
- {id:'dep',ico:'🚄',name:'Déplacements',sub:'Shinkansen, Freepass Hakone, métros',items:[
-  {key:'train',label:'Trains & JR × 2 pers.',sub:'billets à l’unité, achat sur place ou en ligne',dyn:'train'}]},
+ {id:'dep',ico:'🚄',name:'Déplacements',sub:'pass, Shinkansen et métros',items:[
+  {key:'hak',label:'Hakone Freepass',sub:'2 jours depuis Odawara · ~5 000 ¥/pers.',fix:62},{key:'nik',label:'Nikko Pass World Heritage',sub:'2 jours depuis Asakusa · ~2 120 ¥/pers.',fix:26},{key:'train',label:'Trains & JR × 2 pers.',sub:'billets à l’unité, hors pass',dyn:'train'}]},
  {id:'place',ico:'🍜',name:'Sur place',sub:'à dépenser pendant le voyage',items:[
   {key:'food',label:'Forfait bouffe',sub:'24 jours × 2 pers.',dyn:'food'},
   {key:'act',label:'Activités & entrées',sub:'24 jours × 2 pers.',dyn:'act'}]}];
@@ -382,8 +383,8 @@ function upd(){
   box.querySelector('.pbar i').style.width=(ct?Math.round(cp/ct*100):0)+'%';
   paid+=cp;tot+=ct;
  });
- document.getElementById('paid').textContent=E(paid);
- document.getElementById('left').textContent=E(tot-paid);
+ document.getElementById('paid').textContent=E(paid);document.getElementById('paidpp').textContent='soit '+E(paid/2)+' / pers.';
+ document.getElementById('left').textContent=E(tot-paid);document.getElementById('leftpp').textContent='soit '+E((tot-paid)/2)+' / pers.';
  document.getElementById('gfill').style.width=(tot?Math.round(paid/tot*100):0)+'%';
  document.getElementById('gpct').textContent=(tot?Math.round(paid/tot*100):0)+' % du voyage déjà réglé';
 }
