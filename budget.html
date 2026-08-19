@@ -207,6 +207,36 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .paytot b{font-family:'Fraunces',serif;font-size:22px}
 .paytot .left b{color:var(--acc)}
 .paytot .ok b{color:var(--green)}
+
+.pcat{border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden;background:var(--card)}
+.pchead{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;background:var(--paper)}
+.pchead .pico{font-size:20px}
+.pchead .pnm{flex:1}
+.pchead .pnm b{font-family:'Fraunces',serif;font-size:16.5px}
+.pchead .pnm small{display:block;color:var(--mut);font-size:11.5px;margin-top:1px}
+.pchead .psum{text-align:right;font-size:12.5px;color:var(--mut)}
+.pchead .psum b{display:block;font-family:'Fraunces',serif;font-size:15px;color:var(--ink)}
+.pchead .car{color:var(--mut);font-size:12px;transition:transform .2s}
+.pcat.fold .car{transform:rotate(-90deg)}
+.pbar{height:5px;background:var(--line)}
+.pbar i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
+.pitems{padding:2px 18px}
+.pcat.fold .pitems{display:none}
+.payrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.payrow:last-child{border-bottom:none}
+.payrow input{width:19px;height:19px;accent-color:var(--green);cursor:pointer;flex:none;pointer-events:none}
+.payrow label{flex:1;font-size:14.5px;color:var(--ink);pointer-events:none}
+.payrow label small{display:block;color:var(--mut);font-size:12px}
+.payrow .amt{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;white-space:nowrap;pointer-events:none}
+.payrow.done label,.payrow.done .amt{text-decoration:line-through;opacity:.45}
+.pgtot{margin-top:6px;background:var(--ink);color:#fff;border-radius:18px;padding:20px 24px}
+.pgtot .row{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pgtot .row span{font-size:13px;opacity:.75}
+.pgtot .row b{font-family:'Fraunces',serif;font-size:24px}
+.pgtot .row .lft b{color:#F0B9A4}
+.pgtot .gbar{height:9px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden}
+.pgtot .gbar i{display:block;height:100%;background:#7FC7A4;border-radius:99px;width:0;transition:width .3s}
+.pgtot .pct{font-size:11.5px;opacity:.7;margin-top:7px}
 </style>
 <style>
 .brow { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-top:10px; flex-wrap:wrap; }
@@ -257,13 +287,15 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <p class="bsub">Hors shopping et souvenirs — ça, c’est entre vous et Don Quijote. Prix hôtels = réservations réelles Booking.</p>
 </div>
 
+
 <div class="paycard">
-  <h2>💳 Déjà payé ?</h2>
-  <p class="paysub">Coche ce qui est réglé — le reste à payer se met à jour tout seul (et c’est mémorisé).</p>
+  <h2>💳 Suivi des paiements</h2>
+  <p class="paysub">Coche ce qui est réglé (mémorisé sur cet appareil). Clique sur une catégorie pour la replier.</p>
   <div id="paylist"></div>
-  <div class="paytot">
-    <div class="ok"><span>Déjà payé</span><b id="paid">0 €</b></div>
-    <div class="left"><span>Reste à payer</span><b id="left">0 €</b></div>
+  <div class="pgtot">
+    <div class="row"><div class="pd"><span>Déjà payé</span><br><b id="paid">0 €</b></div><div class="lft"><span>Reste à payer</span><br><b id="left">0 €</b></div></div>
+    <div class="gbar"><i id="gfill"></i></div>
+    <div class="pct" id="gpct"></div>
   </div>
 </div>
 <script>
@@ -298,33 +330,62 @@ calc();
 <script>
 (function(){
 var E=function(n){return Math.round(n).toLocaleString('fr-FR')+' €'};
-var HOTELS=[['Hop Inn Tokyo Asakusa',486,'Tokyo · non remboursable'],['Center Point In Kanazawa',165,'Kanazawa'],['Matatabi Stay Nishinokyo',683,'Kyoto · non remboursable'],['川HOUSE Kuromon',160,'Osaka'],['Hananoyado Fukuya',1198,'Hakone · ryokan'],['La Vita Ikebukuro Residence',548,'Tokyo · dernières nuits']];
-var DYN=[['vol','✈️ Vols (2 pers.)'],['train','🚄 Trains & JR (2 pers.)'],['food','🍜 Food (24 j × 2)'],['act','🎡 Activités (24 j × 2)']];
+function dv(k){var v=+document.getElementById(k).value||0;return (k==='food'||k==='act')?v*24*2:v*2;}
+var CATS=[
+ {id:'heb',ico:'🏨',name:'Hébergement',sub:'6 réservations · 23 nuits',items:[
+  {key:'h0',label:'Hop Inn Tokyo Asakusa',sub:'Tokyo · non remboursable',fix:486},
+  {key:'h1',label:'Center Point In Kanazawa',sub:'Kanazawa · annulation gratuite',fix:165},
+  {key:'h2',label:'Matatabi Stay Nishinokyo',sub:'Kyoto · non remboursable',fix:683},
+  {key:'h3',label:'川HOUSE Kuromon',sub:'Osaka · annulation gratuite',fix:160},
+  {key:'h4',label:'Hananoyado Fukuya',sub:'Hakone · ryokan, repas inclus',fix:1198},
+  {key:'h5',label:'La Vita Ikebukuro Residence',sub:'Tokyo · annulation gratuite',fix:548}]},
+ {id:'vols',ico:'✈️',name:'Vols',sub:'China Eastern via Shanghai',items:[
+  {key:'vol',label:'Billets A/R × 2 pers.',sub:'PVG · bagages inclus',dyn:'vol'}]},
+ {id:'dep',ico:'🚄',name:'Déplacements',sub:'Shinkansen, Freepass Hakone, métros',items:[
+  {key:'train',label:'Trains & JR × 2 pers.',sub:'billets à l’unité, achat sur place ou en ligne',dyn:'train'}]},
+ {id:'place',ico:'🍜',name:'Sur place',sub:'à dépenser pendant le voyage',items:[
+  {key:'food',label:'Forfait bouffe',sub:'24 jours × 2 pers.',dyn:'food'},
+  {key:'act',label:'Activités & entrées',sub:'24 jours × 2 pers.',dyn:'act'}]}];
 var st={};try{st=JSON.parse(localStorage.getItem('bdg_paid')||'{}')}catch(e){}
-function dynVal(k){var v=+document.getElementById(k).value||0;return (k==='food'||k==='act')?v*24*2:v*2;}
+var fold={};try{fold=JSON.parse(localStorage.getItem('bdg_payfold')||'{}')}catch(e){}
 var list=document.getElementById('paylist');
-var rows=[];
-HOTELS.forEach(function(h,i){rows.push({key:'h'+i,label:'🏨 '+h[0],sub:h[2],val:function(){return h[1]}});});
-DYN.forEach(function(d){rows.push({key:d[0],label:d[1],sub:'',val:function(){return dynVal(d[0])}});});
-rows.forEach(function(r){
- var div=document.createElement('div');div.className='payrow';
- div.innerHTML='<input type="checkbox" id="pay-'+r.key+'"><label for="pay-'+r.key+'">'+r.label+(r.sub?'<small>'+r.sub+'</small>':'')+'</label><span class="amt"></span>';
- list.appendChild(div);
- var cb=div.querySelector('input');cb.checked=!!st[r.key];
- cb.addEventListener('change',function(){st[r.key]=cb.checked;try{localStorage.setItem('bdg_paid',JSON.stringify(st))}catch(e){};upd();});
- r.el=div;
+CATS.forEach(function(c){
+ var box=document.createElement('div');box.className='pcat'+(fold[c.id]?' fold':'');box.id='pc-'+c.id;
+ var rows=c.items.map(function(it){
+  return '<div class="payrow" data-k="'+it.key+'"><input type="checkbox"'+(st[it.key]?' checked':'')+'><label>'+it.label+(it.sub?'<small>'+it.sub+'</small>':'')+'</label><span class="amt"></span></div>';
+ }).join('');
+ box.innerHTML='<div class="pchead"><span class="pico">'+c.ico+'</span><div class="pnm"><b>'+c.name+'</b><small>'+c.sub+'</small></div><div class="psum"><b class="cb"></b><span class="cs"></span></div><span class="car">▼</span></div><div class="pbar"><i></i></div><div class="pitems">'+rows+'</div>';
+ list.appendChild(box);
+ box.querySelector('.pchead').addEventListener('click',function(){
+  box.classList.toggle('fold');fold[c.id]=box.classList.contains('fold');
+  try{localStorage.setItem('bdg_payfold',JSON.stringify(fold))}catch(e){}});
+ box.querySelectorAll('.payrow').forEach(function(row){
+  row.addEventListener('click',function(){
+   var k=row.dataset.k;st[k]=!st[k];row.querySelector('input').checked=!!st[k];
+   try{localStorage.setItem('bdg_paid',JSON.stringify(st))}catch(e){};upd();});});
 });
 function upd(){
  var paid=0,tot=0;
- rows.forEach(function(r){
-  var v=r.val();tot+=v;
-  r.el.querySelector('.amt').textContent=E(v);
-  var on=!!st[r.key];
-  r.el.classList.toggle('done',on);
-  if(on)paid+=v;
+ CATS.forEach(function(c){
+  var cp=0,ct=0,n=0;
+  var box=document.getElementById('pc-'+c.id);
+  c.items.forEach(function(it){
+   var v=it.fix!==undefined?it.fix:dv(it.dyn);
+   ct+=v;
+   var row=box.querySelector('.payrow[data-k="'+it.key+'"]');
+   row.querySelector('.amt').textContent=E(v);
+   var on=!!st[it.key];row.classList.toggle('done',on);
+   if(on){cp+=v;n++;}
+  });
+  box.querySelector('.cb').textContent=E(ct-cp)+' restants';
+  box.querySelector('.cs').textContent=n+'/'+c.items.length+' payé'+(n>1?'s':'');
+  box.querySelector('.pbar i').style.width=(ct?Math.round(cp/ct*100):0)+'%';
+  paid+=cp;tot+=ct;
  });
  document.getElementById('paid').textContent=E(paid);
  document.getElementById('left').textContent=E(tot-paid);
+ document.getElementById('gfill').style.width=(tot?Math.round(paid/tot*100):0)+'%';
+ document.getElementById('gpct').textContent=(tot?Math.round(paid/tot*100):0)+' % du voyage déjà réglé';
 }
 document.querySelectorAll('input[type=number]').forEach(function(i){i.addEventListener('input',upd)});
 document.querySelectorAll('.preset,.step').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,50)})});
