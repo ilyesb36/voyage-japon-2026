@@ -190,6 +190,23 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .leaflet-popup-content a { color:var(--acc); font-weight:500; }
 .leaflet-container { font-family:'Inter',sans-serif; }
 .leaflet-bar a { border-radius:8px !important; }
+
+.paycard{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px 26px}
+.paycard h2{font-family:'Fraunces',serif;font-size:22px;margin:0 0 4px}
+.paysub{color:var(--mut);font-size:13.5px;margin:0 0 16px}
+.payrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.payrow:last-child{border-bottom:none}
+.payrow input{width:19px;height:19px;accent-color:var(--green);cursor:pointer;flex:none}
+.payrow label{flex:1;cursor:pointer;font-size:14.5px;color:var(--ink)}
+.payrow label small{display:block;color:var(--mut);font-size:12px}
+.payrow .amt{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;white-space:nowrap}
+.payrow.done label,.payrow.done .amt{text-decoration:line-through;opacity:.45}
+.paytot{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+.paytot>div{flex:1;min-width:140px;border-radius:14px;padding:14px 18px;background:var(--paper);border:1px solid var(--line)}
+.paytot span{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}
+.paytot b{font-family:'Fraunces',serif;font-size:22px}
+.paytot .left b{color:var(--acc)}
+.paytot .ok b{color:var(--green)}
 </style>
 <style>
 .brow { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-top:10px; flex-wrap:wrap; }
@@ -239,6 +256,16 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <div class="btotal"><span class="tt">Total du voyage<br>(2 personnes)</span><b id="total"></b><span class="pp">soit <b id="pp"></b> / personne</span></div>
 <p class="bsub">Hors shopping et souvenirs — ça, c’est entre vous et Don Quijote. Prix hôtels = réservations réelles Booking.</p>
 </div>
+
+<div class="paycard">
+  <h2>💳 Déjà payé ?</h2>
+  <p class="paysub">Coche ce qui est réglé — le reste à payer se met à jour tout seul (et c’est mémorisé).</p>
+  <div id="paylist"></div>
+  <div class="paytot">
+    <div class="ok"><span>Déjà payé</span><b id="paid">0 €</b></div>
+    <div class="left"><span>Reste à payer</span><b id="left">0 €</b></div>
+  </div>
+</div>
 <script>
 const eur = n => n.toLocaleString('fr-FR')+' €';
 const FIELDS=['vol','train','food','act'];
@@ -267,5 +294,42 @@ document.querySelectorAll('.preset').forEach(b=>b.addEventListener('click',()=>{
 calc();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+
+<script>
+(function(){
+var E=function(n){return Math.round(n).toLocaleString('fr-FR')+' €'};
+var HOTELS=[['Hop Inn Tokyo Asakusa',486,'Tokyo · non remboursable'],['Center Point In Kanazawa',165,'Kanazawa'],['Matatabi Stay Nishinokyo',683,'Kyoto · non remboursable'],['川HOUSE Kuromon',160,'Osaka'],['Hananoyado Fukuya',1198,'Hakone · ryokan'],['La Vita Ikebukuro Residence',548,'Tokyo · dernières nuits']];
+var DYN=[['vol','✈️ Vols (2 pers.)'],['train','🚄 Trains & JR (2 pers.)'],['food','🍜 Food (24 j × 2)'],['act','🎡 Activités (24 j × 2)']];
+var st={};try{st=JSON.parse(localStorage.getItem('bdg_paid')||'{}')}catch(e){}
+function dynVal(k){var v=+document.getElementById(k).value||0;return (k==='food'||k==='act')?v*24*2:v*2;}
+var list=document.getElementById('paylist');
+var rows=[];
+HOTELS.forEach(function(h,i){rows.push({key:'h'+i,label:'🏨 '+h[0],sub:h[2],val:function(){return h[1]}});});
+DYN.forEach(function(d){rows.push({key:d[0],label:d[1],sub:'',val:function(){return dynVal(d[0])}});});
+rows.forEach(function(r){
+ var div=document.createElement('div');div.className='payrow';
+ div.innerHTML='<input type="checkbox" id="pay-'+r.key+'"><label for="pay-'+r.key+'">'+r.label+(r.sub?'<small>'+r.sub+'</small>':'')+'</label><span class="amt"></span>';
+ list.appendChild(div);
+ var cb=div.querySelector('input');cb.checked=!!st[r.key];
+ cb.addEventListener('change',function(){st[r.key]=cb.checked;try{localStorage.setItem('bdg_paid',JSON.stringify(st))}catch(e){};upd();});
+ r.el=div;
+});
+function upd(){
+ var paid=0,tot=0;
+ rows.forEach(function(r){
+  var v=r.val();tot+=v;
+  r.el.querySelector('.amt').textContent=E(v);
+  var on=!!st[r.key];
+  r.el.classList.toggle('done',on);
+  if(on)paid+=v;
+ });
+ document.getElementById('paid').textContent=E(paid);
+ document.getElementById('left').textContent=E(tot-paid);
+}
+document.querySelectorAll('input[type=number]').forEach(function(i){i.addEventListener('input',upd)});
+document.querySelectorAll('.preset,.step').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,50)})});
+upd();
+})();
+</script>
 </body>
 </html>
