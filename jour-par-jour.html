@@ -190,6 +190,19 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .leaflet-popup-content a { color:var(--acc); font-weight:500; }
 .leaflet-container { font-family:'Inter',sans-serif; }
 .leaflet-bar a { border-radius:8px !important; }
+
+/*polish-v2*/
+::selection{background:var(--accsoft);color:var(--ink)}
+html{scroll-behavior:smooth}
+body::before{content:'';position:fixed;inset:0 0 auto 0;height:260px;background:linear-gradient(180deg,rgba(185,58,27,.05),transparent);pointer-events:none;z-index:0}
+#pgbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--gold));width:0;z-index:9999}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--mut)}
+a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box-shadow .15s ease}
+.rvl{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .18s ease}
+.rvl.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rvl{opacity:1;transform:none;transition:none}}
 </style>
 <style>
 .phase { margin-top:44px; }
@@ -236,5 +249,17 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <p class="note" style="margin-top:30px">Rien n’est figé : c’est un fil conducteur, pas un contrat. Les journées libres absorbent la pluie, la fatigue et les coups de cœur.</p>
 </div>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+
+<script>/*polish-v2*/
+(function(){
+var b=document.createElement('div');b.id='pgbar';document.body.appendChild(b);
+addEventListener('scroll',function(){var h=document.documentElement;var p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);b.style.width=(p*100)+'%';},{passive:true});
+var els=document.querySelectorAll('.hcard,.gcard,details.day,.brow,.pcat,.hl,.card,.leg,.paycard,.mapcard');
+if('IntersectionObserver' in window){
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+els.forEach(function(el,i){el.classList.add('rvl');el.style.transitionDelay=Math.min(i%6*40,200)+'ms';io.observe(el);});
+}
+})();
+</script>
 </body>
 </html>

@@ -159,7 +159,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .hcard { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:0 8px 28px rgba(60,40,20,.07); }
 .hcard .imgs { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
 .hcard .imgs img { width:100%; height:92px; object-fit:cover; display:block; background:#F0EBDF; }
-.hcard .imgs img:first-of-type { grid-column:1 / -1; height:210px; }
+.hcard .imgs img:first-child { grid-column:1 / -1; height:210px; }
 .hcard .hbody { padding:16px 20px 18px; }
 .hcard h3 { font-family:'Fraunces',serif; font-size:19.5px; font-weight:600; }
 .hcard .hsub { font-size:13px; color:var(--mut); margin:3px 0 9px; }
@@ -216,6 +216,19 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .tdot{display:block;position:relative;z-index:2;width:18px;height:18px;border-radius:50%;background:var(--acc);border:4px solid var(--accsoft);margin:0 auto 8px;box-sizing:border-box}
 .tstep b{display:block;font-size:12.5px;font-weight:600}
 .tstep span{font-size:11px;color:var(--mut)}
+
+/*polish-v2*/
+::selection{background:var(--accsoft);color:var(--ink)}
+html{scroll-behavior:smooth}
+body::before{content:'';position:fixed;inset:0 0 auto 0;height:260px;background:linear-gradient(180deg,rgba(185,58,27,.05),transparent);pointer-events:none;z-index:0}
+#pgbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--gold));width:0;z-index:9999}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--mut)}
+a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box-shadow .15s ease}
+.rvl{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .18s ease}
+.rvl.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rvl{opacity:1;transform:none;transition:none}}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
@@ -358,6 +371,18 @@ document.addEventListener('keydown',function(e){if(!lbx.classList.contains('on')
  if(e.key==='Escape')off();
  if(e.key==='ArrowRight'){li=(li+1)%L.length;show();}
  if(e.key==='ArrowLeft'){li=(li-1+L.length)%L.length;show();}});
+})();
+</script>
+
+<script>/*polish-v2*/
+(function(){
+var b=document.createElement('div');b.id='pgbar';document.body.appendChild(b);
+addEventListener('scroll',function(){var h=document.documentElement;var p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);b.style.width=(p*100)+'%';},{passive:true});
+var els=document.querySelectorAll('.hcard,.gcard,details.day,.brow,.pcat,.hl,.card,.leg,.paycard,.mapcard');
+if('IntersectionObserver' in window){
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+els.forEach(function(el,i){el.classList.add('rvl');el.style.transitionDelay=Math.min(i%6*40,200)+'ms';io.observe(el);});
+}
 })();
 </script>
 </body>
