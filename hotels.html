@@ -203,6 +203,19 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 .lbb:hover{background:rgba(255,255,255,.28)}
 #lbprev{left:18px}#lbnext{right:18px}
 #lbclose{position:absolute;top:16px;right:20px;background:none;border:none;color:#fff;font-size:30px;cursor:pointer}
+
+.hcard{transition:transform .18s ease,box-shadow .18s ease}
+.hcard:hover{transform:translateY(-4px);box-shadow:0 18px 46px rgba(60,40,20,.14)}
+.imgs{position:relative}
+.htag{position:absolute;top:12px;left:12px;z-index:5;background:rgba(35,31,26,.82);color:#fff;font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:999px;backdrop-filter:blur(4px)}
+.hnum{position:absolute;top:12px;right:12px;z-index:5;width:27px;height:27px;border-radius:50%;background:#fff;color:var(--acc);font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.25);font-family:'Fraunces',serif}
+.tline{display:flex;margin:30px 0 8px;overflow-x:auto;padding-bottom:4px}
+.tstep{flex:1;min-width:92px;text-align:center;position:relative}
+.tstep::before{content:'';position:absolute;top:9px;left:50%;width:100%;height:2px;background:var(--line)}
+.tstep:last-child::before{display:none}
+.tdot{display:block;position:relative;z-index:2;width:18px;height:18px;border-radius:50%;background:var(--acc);border:4px solid var(--accsoft);margin:0 auto 8px;box-sizing:border-box}
+.tstep b{display:block;font-size:12.5px;font-weight:600}
+.tstep span{font-size:11px;color:var(--mut)}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
@@ -218,7 +231,14 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 </nav>
 <div class="wrap" style="padding-top:34px">
 <h1 style="font-size:30px">Hôtels &amp; budget</h1>
-<p class="sub">6 réservations confirmées · 23 nuits sur 23 — complet ! Les chambres exactes que vous avez réservées</p>
+<p class="sub">6 réservations confirmées · 23 nuits sur 23 — complet ! Les chambres exactes que vous avez réservées</p><div class="tline">
+<div class="tstep"><i class="tdot"></i><b>Tokyo</b><span>9→14 nov · 5 n</span></div>
+<div class="tstep"><i class="tdot"></i><b>Kanazawa</b><span>14→16 · 2 n</span></div>
+<div class="tstep"><i class="tdot"></i><b>Kyoto</b><span>16→22 · 6 n</span></div>
+<div class="tstep"><i class="tdot"></i><b>Osaka</b><span>22→25 · 3 n</span></div>
+<div class="tstep"><i class="tdot"></i><b>Hakone</b><span>25→27 · 2 n</span></div>
+<div class="tstep"><i class="tdot"></i><b>Tokyo</b><span>27→2 déc · 5 n</span></div>
+</div>
 
 <h2>Le budget hébergement</h2>
 <div class="stats">
@@ -233,7 +253,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 <h2>Vos chambres</h2>
 <div class="hgrid">
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/520010878.jpg?k=5898ae52b47c52dc05a32062a75a79eb048b3e0c64012ce3fcd3ebd123cd581f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517640960.jpg?k=3ff5c96f6a18fa5090547a55bdf66a86792054061838288d205ffe3587bb1119&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517641580.jpg?k=efdffa0af0fb874107b2a5a1dc8023b16fbf9966e9b284aa4d356028ce4dc583&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/522024821.jpg?k=69c75e2a9202d4b17d69b6dfb6dae122f5e4b700832e3b0428c144612ab3f72f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Tokyo · Asakusa</span><span class="hnum">1</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/520010878.jpg?k=5898ae52b47c52dc05a32062a75a79eb048b3e0c64012ce3fcd3ebd123cd581f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517640960.jpg?k=3ff5c96f6a18fa5090547a55bdf66a86792054061838288d205ffe3587bb1119&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/517641580.jpg?k=efdffa0af0fb874107b2a5a1dc8023b16fbf9966e9b284aa4d356028ce4dc583&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/522024821.jpg?k=69c75e2a9202d4b17d69b6dfb6dae122f5e4b700832e3b0428c144612ab3f72f&o=" alt="Hop Inn Tokyo Asakusa — Chambre Double" loading="lazy"></div>
   <div class="hbody">
     <h3>Hop Inn Tokyo Asakusa</h3>
     <div class="hsub">Tokyo · 9 → 14 nov · 5 nuits</div>
@@ -244,7 +264,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/516915667.jpg?k=537b9bdc566947d5c510e1a88f970192675b95f5b213835d9068bd586deb1c00&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488138.jpg?k=daaabdf5d050f37f7db47aed1ceed796f065a02fc65bcc63c3a85f192e231c22&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488160.jpg?k=910de9370bedca403758725cc88e7ecf89004d40eb41aa874ac853741f9c4fec&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486490791.jpg?k=8d9fc5fcc257e5252a99d906c927193f254db10d56dea045fa58ee587bd891bb&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Kanazawa</span><span class="hnum">2</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/516915667.jpg?k=537b9bdc566947d5c510e1a88f970192675b95f5b213835d9068bd586deb1c00&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488138.jpg?k=daaabdf5d050f37f7db47aed1ceed796f065a02fc65bcc63c3a85f192e231c22&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486488160.jpg?k=910de9370bedca403758725cc88e7ecf89004d40eb41aa874ac853741f9c4fec&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/486490791.jpg?k=8d9fc5fcc257e5252a99d906c927193f254db10d56dea045fa58ee587bd891bb&o=" alt="Center Point In Kanazawa — Studio" loading="lazy"></div>
   <div class="hbody">
     <h3>Center Point In Kanazawa</h3>
     <div class="hsub">Kanazawa · 14 → 16 nov · 2 nuits</div>
@@ -255,7 +275,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/569523821.jpg?k=b6ca8047f7c8bd5ae1f0f0a1ef198ba88e88983cb7722b25d428b3873d5e309b&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151229.jpg?k=10401022f25657b6f52fff643044019551b425572858f83a48991c8216af14c2&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151344.jpg?k=c16ca43ec118c65daf0d6a4618559ec93a7ec59bdea4be1982e7a5046503a251&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151385.jpg?k=af0ef538a7a749f0546e20b0f8cae682d5a5732ec12b9265e3532dd53976ea5d&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Kyoto</span><span class="hnum">3</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/569523821.jpg?k=b6ca8047f7c8bd5ae1f0f0a1ef198ba88e88983cb7722b25d428b3873d5e309b&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151229.jpg?k=10401022f25657b6f52fff643044019551b425572858f83a48991c8216af14c2&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151344.jpg?k=c16ca43ec118c65daf0d6a4618559ec93a7ec59bdea4be1982e7a5046503a251&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/513151385.jpg?k=af0ef538a7a749f0546e20b0f8cae682d5a5732ec12b9265e3532dd53976ea5d&o=" alt="Matatabi Stay Nishinokyo — Appartement" loading="lazy"></div>
   <div class="hbody">
     <h3>Matatabi Stay Nishinokyo</h3>
     <div class="hsub">Kyoto · 16 → 22 nov · 6 nuits</div>
@@ -266,7 +286,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770907317.jpg?k=b2ae3a7264a2a933817f79aa83dda3b17a621f5281cb921653d3a6da24cfd3fb&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905763.jpg?k=9da02f987c7a240f60285c059744e07b7ddd3c24659566dfb4a829b143f577fe&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905841.jpg?k=a5870c4d90525fe2f5a7bb6cd4f13557aa98ff6b8beb81c4e3f0f5426dc3bf20&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/459467368.jpg?k=c102d0ec9c777351ba67d19b756ba2ae720863c0343463f57bae69379a544a0b&o=" alt="川HOUSE黒門 — Studio" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Osaka</span><span class="hnum">4</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770907317.jpg?k=b2ae3a7264a2a933817f79aa83dda3b17a621f5281cb921653d3a6da24cfd3fb&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905763.jpg?k=9da02f987c7a240f60285c059744e07b7ddd3c24659566dfb4a829b143f577fe&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/770905841.jpg?k=a5870c4d90525fe2f5a7bb6cd4f13557aa98ff6b8beb81c4e3f0f5426dc3bf20&o=" alt="川HOUSE黒門 — Studio" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/459467368.jpg?k=c102d0ec9c777351ba67d19b756ba2ae720863c0343463f57bae69379a544a0b&o=" alt="川HOUSE黒門 — Studio" loading="lazy"></div>
   <div class="hbody">
     <h3>川HOUSE Kuromon</h3>
     <div class="hsub">Osaka · 22 → 25 nov · 3 nuits</div>
@@ -277,7 +297,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
   </div>
 </div>
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66024941.jpg?k=94c2eef98f665acced068979a1832ed7f40412be845e00ce60cb1f7e982aef3b&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057916.jpg?k=27c03d9b2466b32f22b6b6aa971b368315f529ffd0a023ad1cf0d6670b753a21&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057919.jpg?k=e67a806062bfa5a2bf18496811c910fc3566f2902c0d399ef6db08acb1ec4228&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057918.jpg?k=20661675aaaf5757e035650f9761ccab408e46901660f9852c929856169a6309&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Hakone · lac Ashi</span><span class="hnum">5</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66024941.jpg?k=94c2eef98f665acced068979a1832ed7f40412be845e00ce60cb1f7e982aef3b&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057916.jpg?k=27c03d9b2466b32f22b6b6aa971b368315f529ffd0a023ad1cf0d6670b753a21&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057919.jpg?k=e67a806062bfa5a2bf18496811c910fc3566f2902c0d399ef6db08acb1ec4228&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/66057918.jpg?k=20661675aaaf5757e035650f9761ccab408e46901660f9852c929856169a6309&o=" alt="Hananoyado Fukuya — Chambre japonaise avec baignoire plein air" loading="lazy"></div>
   <div class="hbody">
     <h3>Hananoyado Fukuya</h3>
     <div class="hsub">Hakone · 25 → 27 nov · 2 nuits</div>
@@ -289,7 +309,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 </div>
 
 <div class="hcard">
-  <div class="imgs"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844706982.jpg?k=31b10ca2f045b2fc234154ea28779f4fdf5bff08f660dffc1ca2ba5f29fea3f1&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792635.jpg?k=f82335ccc51824805517e0034e1cd9d931d937f5d2f114407ed314a279f85456&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792606.jpg?k=2fb66bf866a9a619dc16e2ef51a5db62e917bd4a05b2a41dcce97c54905abcbf&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792538.jpg?k=cf91c830a14b2ae2535d4fefad8d53161cdbc5e88124e9ef33cd2e3193f9e5c9&o=" alt="La Vita Ikebukuro Residence" loading="lazy"></div>
+  <div class="imgs"><span class="htag">Tokyo · Ikebukuro</span><span class="hnum">6</span><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844706982.jpg?k=31b10ca2f045b2fc234154ea28779f4fdf5bff08f660dffc1ca2ba5f29fea3f1&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792635.jpg?k=f82335ccc51824805517e0034e1cd9d931d937f5d2f114407ed314a279f85456&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792606.jpg?k=2fb66bf866a9a619dc16e2ef51a5db62e917bd4a05b2a41dcce97c54905abcbf&o=" alt="La Vita Ikebukuro Residence" loading="lazy"><img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/844792538.jpg?k=cf91c830a14b2ae2535d4fefad8d53161cdbc5e88124e9ef33cd2e3193f9e5c9&o=" alt="La Vita Ikebukuro Residence" loading="lazy"></div>
   <div class="hbody">
     <h3>La Vita Ikebukuro Residence</h3>
     <div class="hsub">Tokyo · 27 nov → 2 déc · 5 nuits</div>
