@@ -283,7 +283,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
     <div class="hsub">Hakone · 25 → 27 nov · 2 nuits</div>
     <span class="room">Chambre avec Baignoire en Plein Air (attribuée à l’arrivée) — 42 m², vue lac, dîner kaiseki + petit-déj inclus</span>
     <div class="hprice"><b>1 232 €</b> · 616 €/nuit — <span class="badge-ok">✓ Confirmée · Annulation gratuite</span></div>
-    <div class="hsub" style="margin-top:8px">📍 Hakone-Yumoto, au bord de la rivière · 10 min à pied de la gare (ou navette) · départ de la boucle Freepass</div>
+    <div class="hsub" style="margin-top:8px">📍 Moto-Hakone, au bord du lac Ashi · navette depuis Motohakone Port (les appeler du 7-Eleven) · torii de Hakone-jinja à pied</div>
     <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Hananoyado%20Fukuya%20Hakone" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
@@ -306,7 +306,7 @@ footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margi
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const HOTELS=[[35.73236,139.69732,'La Vita Ikebukuro Residence','Tokyo · 27 nov → 2 déc · 5 nuits'],[35.71333,139.79830,'Hop Inn Tokyo Asakusa','Tokyo · 9 → 14 nov · 5 nuits'],[36.55543,136.65906,'Center Point In Kanazawa','Kanazawa · 14 → 16 nov · 2 nuits'],[35.0125,135.733,'Matatabi Stay Nishinokyo','Kyoto · 16 → 22 nov · 6 nuits'],[34.665,135.507,'川HOUSE Kuromon','Osaka · 22 → 25 nov · 3 nuits'],[35.232,139.1046,'Hananoyado Fukuya','Hakone · 25 → 27 nov · 2 nuits']];
+const HOTELS=[[35.73236,139.69732,'La Vita Ikebukuro Residence','Tokyo · 27 nov → 2 déc · 5 nuits'],[35.71333,139.79830,'Hop Inn Tokyo Asakusa','Tokyo · 9 → 14 nov · 5 nuits'],[36.55543,136.65906,'Center Point In Kanazawa','Kanazawa · 14 → 16 nov · 2 nuits'],[35.0125,135.733,'Matatabi Stay Nishinokyo','Kyoto · 16 → 22 nov · 6 nuits'],[34.665,135.507,'川HOUSE Kuromon','Osaka · 22 → 25 nov · 3 nuits'],[35.199,139.0312,'Hananoyado Fukuya','Hakone · 25 → 27 nov · 2 nuits']];
 const hmap = L.map('hotelsmap', {scrollWheelZoom:false});
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap · © CARTO'}).addTo(hmap);
 HOTELS.forEach(([la,lo,n,v])=>{
