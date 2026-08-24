@@ -229,6 +229,16 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 .rvl{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .18s ease}
 .rvl.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.rvl{opacity:1;transform:none;transition:none}}
+
+.troute{margin:14px 0 0;border-top:1px dashed var(--line)}
+.troute summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 0 9px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.troute summary::-webkit-details-marker{display:none}
+.tsub{font-weight:500;color:var(--mut);font-size:12.5px}
+.car2{margin-left:auto;color:var(--mut);font-size:11px;transition:transform .2s}
+.troute[open] .car2{transform:rotate(180deg)}
+.trtxt{font-size:13px;color:var(--mut);line-height:1.6;margin:2px 0 10px}
+.trtxt b{color:var(--ink)}
+.tmap{height:200px;border-radius:12px;border:1px solid var(--line);z-index:0;margin-bottom:6px}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 </head>
@@ -273,7 +283,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Chambre Double — SDB privative avec baignoire</span>
     <div class="hprice"><b>486 €</b> · 97 €/nuit — <span class="badge-ok">✓ Confirmée · Non remboursable</span></div>
     <div class="hsub" style="margin-top:8px">📍 Asakusa, 200 m de la porte Hozomon · métro Asakusa (Ginza line) à 550 m · gare Tobu (Nikko) à pied</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Hop%20Inn%20Tokyo%20Asakusa" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="0"><summary>🚆 Y aller <span class="tsub">· depuis Haneda · ~40 min · ~4 €/pers.</span><span class="car2">▼</span></summary><div class="trtxt">Depuis <b>Haneda</b> : Keikyu Airport Line → ligne Asakusa, direct jusqu’à <b>Asakusa</b> — l’hôtel est à 200 m de la porte Hozomon.</div><div class="tmap" id="tm0"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Hop%20Inn%20Tokyo%20Asakusa" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 <div class="hcard">
@@ -284,7 +294,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Studio 32 m² — appartement entier, cuisine + lave-linge privé</span>
     <div class="hprice"><b>165 €</b> · 82 €/nuit — <span class="badge-ok">✓ Confirmée · Annulation gratuite</span></div>
     <div class="hsub" style="margin-top:8px">📍 Katamachi, plein centre · Kenroku-en et château à 15 min à pied · bus gare ⇄ Katamachi ~10 min</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Center%20Point%20In%20Kanazawa" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="1"><summary>🚆 Y aller <span class="tsub">· depuis Hop Inn · 2h45 · ~86 €/pers.</span><span class="car2">▼</span></summary><div class="trtxt">Ginza Line → <b>Tokyo Station</b> (15 min), puis <b>Hokuriku Shinkansen Kagayaki</b> direct → <b>Kanazawa</b> (2h30, ~86 €). Bus boucle gare ⇄ <b>Katamachi</b> (~10 min).</div><div class="tmap" id="tm1"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Center%20Point%20In%20Kanazawa" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 <div class="hcard">
@@ -295,7 +305,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Appartement 1 Chambre — 15 m², lave-linge dans le logement</span>
     <div class="hprice"><b>683 €</b> · 114 €/nuit — <span class="badge-ok">✓ Confirmée · Non remboursable</span></div>
     <div class="hsub" style="margin-top:8px">📍 Nishinokyo (quartier Nijo) · château de Nijō à pied · métro Tozai → Higashiyama/Gion en ~10 min</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Matatabi%20Stay%20Nishinokyo%20Kyoto" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="2"><summary>🚆 Y aller <span class="tsub">· depuis Center Point · 2h30 · ~57 €/pers.</span><span class="car2">▼</span></summary><div class="trtxt">Shinkansen <b>Tsurugi</b> → Tsuruga, puis <b>Thunderbird</b> → <b>Kyoto</b> (2h15, ~57 €). Métro Karasuma puis Tozai → <b>Nijojo-mae</b>, 8 min à pied.</div><div class="tmap" id="tm2"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Matatabi%20Stay%20Nishinokyo%20Kyoto" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 <div class="hcard">
@@ -306,7 +316,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Studio — appartement entier, au bord du marché Kuromon</span>
     <div class="hprice"><b>160 €</b> · 53 €/nuit — <span class="badge-ok">✓ Confirmée · Annulation gratuite</span></div>
     <div class="hsub" style="margin-top:8px">📍 Nipponbashi · marché Kuromon à 1 min · Dotonbori à 10 min à pied · Kintetsu Namba (Nara direct) à côté</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=%E5%B7%9DHOUSE%E9%BB%92%E9%96%80%20Osaka" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="3"><summary>🚆 Y aller <span class="tsub">· depuis Matatabi · ~50 min · ~5 €/pers.</span><span class="car2">▼</span></summary><div class="trtxt">JR Kyoto Line <b>Special Rapid</b> → <b>Osaka</b> (30 min, ~3,50 €), puis métro Midosuji → Namba/<b>Nipponbashi</b> — l’appart touche le marché Kuromon.</div><div class="tmap" id="tm3"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=%E5%B7%9DHOUSE%E9%BB%92%E9%96%80%20Osaka" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 <div class="hcard">
@@ -317,7 +327,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Chambre avec Baignoire en Plein Air (attribuée à l’arrivée) — 42 m², vue lac, dîner kaiseki + petit-déj inclus</span>
     <div class="hprice"><b>1 232 €</b> · 616 €/nuit — <span class="badge-ok">✓ Confirmée · Annulation gratuite</span></div>
     <div class="hsub" style="margin-top:8px">📍 Moto-Hakone, au bord du lac Ashi · navette depuis Motohakone Port (les appeler du 7-Eleven) · torii de Hakone-jinja à pied</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Hananoyado%20Fukuya%20Hakone" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="4"><summary>🚆 Y aller <span class="tsub">· depuis 川HOUSE · ~3h30 · ~78 €/pers. + Freepass</span><span class="car2">▼</span></summary><div class="trtxt">Métro → <b>Shin-Osaka</b>, <b>Shinkansen Hikari</b> → <b>Odawara</b> (2h15, ~78 €), puis bus Hakone Tozan → <b>Motohakone Port</b> (~1h, couvert par le Freepass 2 j). Appelle le ryokan depuis le 7-Eleven en face : navette gratuite.</div><div class="tmap" id="tm4"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=Hananoyado%20Fukuya%20Hakone" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 
@@ -329,7 +339,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
     <span class="room">Appartement 1 Chambre — 24 m², cuisine + lave-linge privé</span>
     <div class="hprice"><b>548 €</b> · 110 €/nuit — <span class="badge-ok">✓ Confirmée · Annulation gratuite</span></div>
     <div class="hsub" style="margin-top:8px">📍 Kanamecho — métro Fukutoshin à 3 min (direct Shinjuku &amp; Shibuya) · Ikebukuro à 1 station</div>
-    <a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=La%20Vita%20Ikebukuro%20Residence%20Kanamecho%20Tokyo" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
+    <details class="troute" data-i="5"><summary>🚆 Y aller <span class="tsub">· depuis Fukuya · ~2h45 · ~10-25 €/pers.</span><span class="car2">▼</span></summary><div class="trtxt">Bus → <b>Odawara</b> (Freepass), puis <b>Odakyu</b> → Shinjuku (~1h30, ~9 € · Romancecar +~8 €), enfin ligne <b>Fukutoshin</b> → <b>Kanamecho</b> — l’appart est à 3 min de la sortie.</div><div class="tmap" id="tm5"></div></details><a class="hmaps" href="https://www.google.com/maps/search/?api=1&query=La%20Vita%20Ikebukuro%20Residence%20Kanamecho%20Tokyo" target="_blank" rel="noopener">📍 Ouvrir dans Google Maps</a>
   </div>
 </div>
 </div>
@@ -347,6 +357,29 @@ HOTELS.forEach(([la,lo,n,v])=>{
 });
 hmap.fitBounds(HOTELS.map(h=>[h[0],h[1]]),{padding:[40,40]});
 hmap.on('click',()=>hmap.scrollWheelZoom.enable());
+</script>
+<script>
+(function(){
+var PTS=[[[35.5494,139.7798,'Haneda'],[35.71333,139.79830,'Hop Inn']],
+[[35.71333,139.79830,'Hop Inn'],[36.55543,136.65906,'Center Point']],
+[[36.55543,136.65906,'Center Point'],[35.01043,135.74652,'Matatabi']],
+[[35.01043,135.74652,'Matatabi'],[34.66252,135.50962,'川HOUSE']],
+[[34.66252,135.50962,'川HOUSE'],[35.199,139.0312,'Fukuya']],
+[[35.199,139.0312,'Fukuya'],[35.73236,139.69732,'La Vita']]];
+document.querySelectorAll('details.troute').forEach(function(d){
+ var i=+d.dataset.i,done=false;
+ d.addEventListener('toggle',function(){
+  if(!d.open||done||!window.L)return;done=true;
+  var m=L.map('tm'+i,{scrollWheelZoom:false});
+  L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OSM · CARTO'}).addTo(m);
+  var a=PTS[i][0],b=PTS[i][1];
+  L.circleMarker([a[0],a[1]],{radius:6,color:'#82796C',fillColor:'#82796C',fillOpacity:.9}).addTo(m).bindPopup('Départ : '+a[2]);
+  L.circleMarker([b[0],b[1]],{radius:8,color:'#fff',weight:2,fillColor:'#B93A1B',fillOpacity:1}).addTo(m).bindPopup('<b>'+b[2]+'</b>').openPopup();
+  L.polyline([[a[0],a[1]],[b[0],b[1]]],{color:'#B93A1B',weight:3,opacity:.5,dashArray:'7 8'}).addTo(m);
+  m.fitBounds([[a[0],a[1]],[b[0],b[1]]],{padding:[30,30]});
+ });
+});
+})();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 

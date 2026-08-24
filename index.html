@@ -320,6 +320,20 @@ L.polyline([[35.681,139.767],[36.750,139.600]],{color:'#1D9E75',weight:2.5,dashA
 L.polyline([[34.694,135.502],[34.685,135.840]],{color:'#1D9E75',weight:2.5,dashArray:'6 6'}).addTo(map);
 map.on('click', () => map.scrollWheelZoom.enable());
 </script>
+<script>
+(function(){
+var dep=new Date('2026-11-08T00:00:00'),ret=new Date('2026-12-03T23:59:59'),now=new Date();
+var c=document.createElement('div');c.id='jchip';
+c.style.cssText='display:inline-block;margin-top:16px;background:rgba(35,31,26,.85);color:#fff;border-radius:999px;padding:9px 20px;font-size:13.5px;font-weight:600;backdrop-filter:blur(4px)';
+var txt;
+if(now<dep){txt='🍁 Départ dans '+Math.ceil((dep-now)/864e5)+' jours';}
+else if(now<=ret){txt='🇯🇵 Jour '+(Math.floor((now-dep)/864e5)+1)+' / 26 du voyage';}
+else{txt='🍂 C’était il y a '+Math.floor((now-ret)/864e5)+' jours — okaeri !';}
+c.textContent=txt;
+var h=document.querySelector('.hero h1')||document.querySelector('h1');
+if(h)h.insertAdjacentElement('afterend',c);
+})();
+</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 
 <script>/*polish-v2*/
