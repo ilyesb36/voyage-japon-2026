@@ -171,7 +171,7 @@ let META={},DEF={};
 try{const m=gsrc.match(/var META=\{[\s\S]*?\};/);if(m)META=Function(m[0]+'return META;')();
 const dd=gsrc.match(/var DEF=\{[\s\S]*?\};/);if(dd)DEF=Function(dd[0]+'return DEF;')();}catch(e){}
 const doc=new DOMParser().parseFromString(gsrc,'text/html');
-const TAB={'p-t0':'Monuments','p-t1':'Food','p-t2':'Day trips','p-t3':'Expériences','p-t4':'Shopping','p-t5':'Photos'};
+const TAB={'t0':'Monuments','t1':'Food','t2':'Day trips','t3':'Expériences','t4':'Shopping','t5':'Photos'};
 const cards=[];
 doc.querySelectorAll('.gpanel').forEach(function(p){
  p.querySelectorAll('a.gcard').forEach(function(a){
@@ -218,7 +218,7 @@ cards.forEach(function(c){
  groups[c.tab].addLayer(mk);
 });
 const bar=document.getElementById('spotbar');
-const DEFON={'p-t0':1,'p-t3':1,'p-t5':1};
+const DEFON={'t0':1,'t3':1,'t5':1};
 Object.keys(TAB).forEach(function(t){
  if(!groups[t])return;
  const b=document.createElement('button');b.className='fchip'+(DEFON[t]?' on':'');b.textContent=TAB[t]+' · '+groups[t].getLayers().length;
