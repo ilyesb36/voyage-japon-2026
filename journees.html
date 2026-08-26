@@ -135,6 +135,19 @@ function apply(){
 });
 })();
 </script>
+<script>/*anch*/
+(function(){
+var cities=[].slice.call(document.querySelectorAll('h2.city'));
+if(!cities.length)return;
+var bar=document.createElement('div');bar.className='fbar';
+cities.forEach(function(h){
+ var b=document.createElement('button');b.className='fchip';b.textContent=h.firstChild.textContent.trim();
+ b.addEventListener('click',function(){h.scrollIntoView({behavior:'smooth',block:'start'});});
+ bar.appendChild(b);});
+var ref=document.getElementById('fprio');
+if(ref)ref.insertAdjacentElement('afterend',bar);
+})();
+</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 
 <script>/*polish-v2*/

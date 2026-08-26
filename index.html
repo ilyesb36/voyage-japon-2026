@@ -336,6 +336,19 @@ var h=document.querySelector('.hero h1')||document.querySelector('h1');
 if(h)h.insertAdjacentElement('afterend',c);
 })();
 </script>
+<script>/*reorg*/
+(function(){
+var h2s=[].slice.call(document.querySelectorAll('h2'));
+var exp=h2s.filter(function(h){return /Explorer le voyage/.test(h.textContent)})[0];
+var tra=h2s.filter(function(h){return /trajets, ligne par ligne/.test(h.textContent)})[0];
+if(!exp||!tra)return;
+var nodes=[],n=exp;
+while(n&&!(n!==exp&&n.tagName==='H2')&&n.tagName!=='FOOTER'){nodes.push(n);n=n.nextElementSibling;}
+var dash=exp.previousElementSibling;if(dash&&dash.tagName!=='H2'&&dash.offsetHeight<20)nodes.unshift(dash);
+var target=(tra.previousElementSibling&&tra.previousElementSibling.offsetHeight<20)?tra.previousElementSibling:tra;
+nodes.forEach(function(el){target.parentNode.insertBefore(el,target);});
+})();
+</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 
 <script>/*polish-v2*/

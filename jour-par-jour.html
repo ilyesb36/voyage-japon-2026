@@ -251,6 +251,22 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 <div class="phase"><div class="phase-h"><h2>Tokyo, le final · 28 nov → 2 déc</h2><span class="ph-hotel">🏨 La Vita Ikebukuro · appart 24 m², lave-linge — réservé ✓</span></div><div class="day voyage"><div class="dchip"><b>27</b><span>nov</span></div><div class="dbody"><h3>→ Tokyo, installation à Ikebukuro<small>DÉPART</small></h3><ul><li>Matinée douce : musée en plein air de Hakone (Picasso, bain de pieds)</li><li>Odawara → Tokyo (shinkansen ~35 min), métro jusqu’à Kanamecho</li><li>Installation à La Vita — lessive lancée, thé posé</li><li class="t">Soir : premier tour d’Ikebukuro — Sunshine City, izakayas</li></ul></div></div><div class="day"><div class="dchip"><b>28</b><span>nov</span></div><div class="dbody"><h3>Yokohama, le day trip<small>EXCURSION</small></h3><ul><li>Direct depuis Ikebukuro/Shinjuku (~40 min)</li><li>Cup Noodles Museum : fabriquer SON cup</li><li>Minato Mirai, parc Yamashita, entrepôts de brique rouge</li><li class="t">Soir : grande roue de Cosmo World puis dîner à Chinatown, retour Tokyo</li></ul></div></div><div class="day "><div class="dchip"><b>29</b><span>nov</span></div><div class="dbody"><h3>Kamakura & Enoshima<small>EXCURSION</small></h3><ul><li>JR Yokosuka (~1h) : Grand Bouddha, Hase-dera face à la mer</li><li>Komachi-dori pour déjeuner</li><li>Si le rythme le permet : Enoshima — île, sanctuaire, vue mer</li><li class="t">Retour par la ligne Enoden le long de la côte</li></ul><div class="dtip">💡 Le combo conseillé par la guide — l’Enoden au coucher du soleil, c’est la carte postale.</div></div></div><div class="day "><div class="dchip"><b>30</b><span>nov</span></div><div class="dbody"><h3>Le Tokyo des sanctuaires</h3><ul><li>Gotoku-ji, le temple aux mille maneki-neko</li><li>Palais impérial & jardins de Kitanomaru</li><li>Kameido Tenjin ou Hie-jinja, hors des sentiers battus</li><li class="t">Tour de Tokyo au crépuscule</li></ul></div></div><div class="day "><div class="dchip"><b>1</b><span>déc</span></div><div class="dbody"><h3>Derniers feux</h3><ul><li>Rikugi-en, le jardin d’automne, illuminations le soir</li><li>Shopping final : Akihabara, Ikebukuro ou Ginza</li><li class="t">Dernier soir : Shibuya Sky ou l’izakaya préféré</li></ul></div></div><div class="day voyage"><div class="dchip"><b>2</b><span>déc</span></div><div class="dbody"><h3>Sayonara<small>VOL</small></h3><ul><li>Matinée légère selon l’hôtel</li><li>Départ pour Haneda (~15h, monorail ou Keikyu)</li><li>Décollage 20:15 (MU 540) — escale Shanghai</li><li>Arrivée CDG jeudi 3 déc à 06:00</li></ul><div class="dtip">💡 Gardez ~2 000 ¥ pour le dernier ramen à l’aéroport. Tax-free : passeport sur soi.</div></div></div></div>
 <p class="note" style="margin-top:30px">Rien n’est figé : c’est un fil conducteur, pas un contrat. Les journées libres absorbent la pluie, la fatigue et les coups de cœur.</p>
 </div>
+<script>/*anch*/
+(function(){
+var stops=[['Tokyo','9 nov'],['Kanazawa','14 nov'],['Kyoto','16 nov'],['Osaka','22 nov'],['Hakone','25 nov'],['Retour Tokyo','27 nov']];
+var days=[].slice.call(document.querySelectorAll('.day'));
+if(!days.length)return;
+var bar=document.createElement('div');bar.className='fbar';
+stops.forEach(function(s){
+ var target=days.filter(function(d){return d.textContent.indexOf(s[1])>-1})[0];
+ if(!target)return;
+ var b=document.createElement('button');b.className='fchip';b.textContent=s[0];
+ b.addEventListener('click',function(){target.scrollIntoView({behavior:'smooth',block:'start'});});
+ bar.appendChild(b);});
+var h1=document.querySelector('h1');var sub=h1&&h1.nextElementSibling;
+(sub||h1).insertAdjacentElement('afterend',bar);
+})();
+</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 
 <script>/*polish-v2*/
