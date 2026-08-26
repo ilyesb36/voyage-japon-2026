@@ -104,10 +104,10 @@ var SEGS=[
 {f:4,t:5,mode:'exp',lbl:'Bus → Odawara, Odakyu → Shinjuku, Fukutoshin',dur:'~2h45',prix:'~10-25 €/pers.',via:[[35.2565,139.1554],[35.6896,139.7006]]}];
 var COL={shk:'#B93A1B',exp:'#B98A2F',loc:'#2E7D5B'};
 var NAME={shk:'Shinkansen',exp:'Express',loc:'Local'};
-var map=L.map('bigmap',{scrollWheelZoom:true});
+var map=window.map=L.map('bigmap',{scrollWheelZoom:true});
 L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OSM · CARTO'}).addTo(map);
 function icon(n,exc){return L.divIcon({className:'',html:'<div style="width:30px;height:30px;border-radius:50%;'+(exc?'background:#FFFEFA;border:3px solid #B93A1B;color:#B93A1B;':'background:#B93A1B;border:3px solid #fff;color:#fff;')+'display:flex;align-items:center;justify-content:center;font:700 13px Fraunces,serif;box-shadow:0 2px 8px rgba(0,0,0,.3)">'+n+'</div>',iconSize:[30,30],iconAnchor:[15,15]});}
-var markers=[],bounds=[];
+var markers=window.markers=[],bounds=[];
 STEPS.forEach(function(s,i){
  var m=L.marker(s.ll,{icon:icon(s.n,false)}).addTo(map).bindPopup('<b>'+s.n+'. '+s.city+'</b><br>'+s.dates+' · '+s.nuits+'<br>'+s.hotel);
  m.on('click',function(){openIt(i);});
@@ -146,6 +146,7 @@ function openIt(i){
  var el=document.querySelector('.it[data-i="'+i+'"]');
  if(el){el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 }
+window.openIt=openIt;window.STEPS=STEPS;
 IT.addEventListener('click',function(ev){
  var head=ev.target.closest('.ithead');if(!head)return;
  var it=head.parentElement;
