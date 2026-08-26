@@ -1,4 +1,4 @@
-const C='jp2026-v4';
+const C='jp2026-v5';
 const PAGES=['./','index.html','guide.html','jour-par-jour.html','journees.html','villes.html','hotels.html','budget.html','manifest.webmanifest','theme.css','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(PAGES)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!=='jp-img').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
