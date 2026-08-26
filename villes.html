@@ -1,210 +1,55 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Japon — l'automne des momiji · 2026</title>
+<title>La carte — Japon 2026</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F6F2EA">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
-:root { color-scheme:light;
-  --paper:#F6F2EA; --card:#FFFEFA; --ink:#231F1A; --mut:#82796C; --line:#E8E0D0;
-  --acc:#B93A1B; --accsoft:#F6E3DA; --gold:#B98A2F; --goldsoft:#F4E9D2; --green:#2E7D5B; }
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body { background:var(--paper); color:var(--ink); font-family:'Inter',-apple-system,sans-serif; line-height:1.65; font-size:15px; -webkit-font-smoothing:antialiased; }
-.wrap { max-width:1200px; margin:0 auto; padding:0 24px 70px; }
-
-/* ---- nav ---- */
-.topnav { position:sticky; top:12px; z-index:900; display:flex; gap:6px; justify-content:center; width:fit-content; margin:12px auto 0; padding:6px; background:rgba(255,254,250,.85); backdrop-filter:blur(12px); border:1px solid var(--line); border-radius:999px; box-shadow:0 8px 30px rgba(60,40,20,.10); }
-.topnav a { padding:8px 20px; border-radius:999px; font-size:13.5px; font-weight:500; color:var(--ink); text-decoration:none; transition:background .15s; }
-.topnav a:hover { background:var(--accsoft); }
-.topnav a.on { background:var(--ink); color:#fff; }
-
-/* ---- hero ---- */
-.hero { position:relative; height:540px; overflow:hidden; margin-top:-64px; }
-.hero img { width:100%; height:100%; object-fit:cover; object-position:center 65%; }
-.hero .veil { position:absolute; inset:0; background:linear-gradient(180deg, rgba(25,15,8,.30) 0%, rgba(25,15,8,.06) 40%, rgba(25,15,8,.68) 100%); }
-.hero .htxt { position:absolute; left:0; right:0; bottom:56px; text-align:center; color:#fff; padding:0 24px; }
-.kicker { font-size:12px; font-weight:600; letter-spacing:3.5px; opacity:.92; margin-bottom:14px; }
-.hero h1 { font-family:'Fraunces',Georgia,serif; font-weight:500; font-size:58px; line-height:1.08; letter-spacing:-1px; text-shadow:0 2px 18px rgba(0,0,0,.5); }
-.hero p { font-size:17.5px; opacity:.96; text-shadow:0 1px 10px rgba(0,0,0,.55); margin-top:12px; font-weight:400; }
-.hero .tiny { display:inline-block; margin-top:18px; font-size:12.5px; font-weight:500; letter-spacing:1.5px; padding:8px 20px; border:1px solid rgba(255,255,255,.55); border-radius:999px; backdrop-filter:blur(4px); background:rgba(255,255,255,.10); }
-
-/* ---- highlights ---- */
-.hl { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:-44px; position:relative; z-index:2; }
-.hl > div { display:flex; gap:13px; align-items:flex-start; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(60,40,20,.10); }
-.hl i { flex:none; font-style:normal; font-family:'Fraunces',serif; width:46px; height:46px; border-radius:12px; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:600; }
-.hl > div:nth-child(2) i { background:#E2EFEA; color:var(--green); }
-.hl > div:nth-child(3) i { background:var(--goldsoft); color:var(--gold); }
-.hl > div:nth-child(4) i { background:#E8ECF4; color:#3B5788; }
-.hl b { display:block; font-family:'Fraunces',serif; font-weight:600; font-size:15.5px; margin-bottom:2px; }
-.hl span { font-size:13px; color:var(--mut); line-height:1.5; display:block; }
-
-.intro { font-size:18px; color:#4d463c; margin:46px auto 0; font-family:'Fraunces',serif; font-style:italic; text-align:center; max-width:620px; line-height:1.7; }
-
-/* ---- sections ---- */
-h2 { font-family:'Fraunces',Georgia,serif; font-weight:600; font-size:29px; letter-spacing:-.3px; margin:60px 0 6px; position:relative; padding-top:16px; }
-h2::before { content:""; position:absolute; top:0; left:1px; width:34px; height:4px; border-radius:2px; background:var(--acc); }
-.h2sub { color:var(--mut); font-size:14px; margin-bottom:18px; max-width:640px; }
-h1 { font-family:'Fraunces',Georgia,serif; font-weight:600; letter-spacing:-.5px; }
-.sub { color:var(--mut); font-size:14.5px; margin:6px 0 8px; }
-
-/* ---- carte ---- */
-.mapcard { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-top:34px; box-shadow:0 6px 24px rgba(60,40,20,.06); }
-#map { height:560px; border-radius:12px; z-index:0; }
-.maplegend { font-size:12.5px; color:var(--mut); margin-top:12px; }
-.maplegend i { display:inline-block; width:22px; height:3px; vertical-align:middle; margin:0 6px 0 14px; border-radius:2px; }
-.maplegend i:first-child { margin-left:0; }
-
-/* ---- timeline ---- */
-.tl { display:flex; gap:4px; margin-top:6px; }
-.tl div { padding:12px 6px 10px; text-align:center; min-width:0; border-radius:10px; border:1px solid rgba(0,0,0,.045); }
-.tl b { display:block; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.tl span { font-size:11px; color:#6d675c; white-space:nowrap; }
-
-/* ---- trajets ---- */
-.routes { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
-.leg { display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:13px 18px; }
-.leg .lday { flex:none; width:64px; font-size:11.5px; font-weight:600; letter-spacing:.4px; color:var(--mut); text-transform:uppercase; line-height:1.35; }
-.leg .lmid { flex:1; min-width:0; }
-.leg .lmid b { display:block; font-size:15px; font-weight:600; }
-.leg .lmid b em { font-style:normal; color:var(--acc); font-weight:600; }
-.leg .lmid span { display:block; font-size:12.5px; color:var(--mut); margin-top:1px; }
-.leg .lmeta { flex:none; display:flex; gap:8px; align-items:center; }
-.ldur { font-size:12.5px; font-weight:500; color:var(--ink); background:var(--paper); border:1px solid var(--line); padding:4px 12px; border-radius:999px; white-space:nowrap; }
-.lprix { font-size:13.5px; font-weight:600; color:var(--acc); background:var(--accsoft); padding:4px 12px; border-radius:999px; white-space:nowrap; }
-.leg.exc { background:#FBF7EE; border-style:dashed; }
-.leg.exc .lprix { color:var(--gold); background:var(--goldsoft); }
-.totbar { margin-top:14px; background:var(--ink); color:#fff; border-radius:14px; padding:15px 20px; font-size:14px; display:flex; flex-wrap:wrap; gap:6px 18px; align-items:baseline; }
-.totbar b { font-family:'Fraunces',serif; font-size:19px; font-weight:600; color:#FFD9A8; }
-.totbar span { opacity:.75; font-size:12.5px; }
-
-/* ---- explore ---- */
-.explore { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:18px; }
-.explore a { position:relative; display:block; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:24px 56px 22px 24px; text-decoration:none; color:var(--ink); box-shadow:0 6px 24px rgba(60,40,20,.06); transition:transform .15s, box-shadow .15s; }
-.explore a:hover { transform:translateY(-2px); box-shadow:0 14px 34px rgba(60,40,20,.12); }
-.explore b { display:block; font-family:'Fraunces',serif; font-size:19px; font-weight:600; margin-bottom:5px; }
-.explore span { font-size:13.5px; color:var(--mut); }
-.explore i { position:absolute; right:20px; top:50%; transform:translateY(-50%); font-style:normal; width:34px; height:34px; border-radius:50%; background:var(--accsoft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-size:17px; }
-
-/* ---- footer vols ---- */
-footer { margin-top:56px; padding:22px 24px; background:var(--card); border:1px solid var(--line); border-radius:18px; font-size:14px; }
-footer h4 { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:10px; }
-.flight { display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-bottom:1px solid #F1ECE1; flex-wrap:wrap; }
-.flight:last-of-type { border-bottom:none; }
-.flight span { color:var(--mut); }
-.note { margin-top:16px; font-size:12px; color:var(--mut); font-style:italic; }
-/* ---- cartes villes ---- */
-.card { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; margin-top:30px; box-shadow:0 8px 28px rgba(60,40,20,.07); scroll-margin-top:86px; }
-.chead { display:flex; align-items:baseline; gap:14px; padding:22px 24px 16px; flex-wrap:wrap; }
-.chead h3 { font-family:'Fraunces',serif; font-size:26px; font-weight:600; letter-spacing:-.3px; }
-.chead .dates { font-size:13.5px; color:var(--mut); }
-.pill { margin-left:auto; flex:none; font-size:12.5px; font-weight:600; padding:5px 15px; border-radius:999px; }
-.carousel { position:relative; }
-.slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; }
-.slides::-webkit-scrollbar { display:none; }
-.slides figure { flex:0 0 100%; scroll-snap-align:center; position:relative; margin:0; }
-.slides img { width:100%; height:500px; object-fit:cover; display:block; background:#F0EBDF; }
-.slides figcaption { position:absolute; left:0; right:0; bottom:0; padding:46px 24px 16px; color:#fff; background:linear-gradient(180deg, transparent, rgba(15,10,5,.78)); }
-.slides figcaption b { font-size:17px; font-weight:600; display:block; }
-.slides figcaption span { font-size:14px; opacity:.94; }
-.nav { position:absolute; top:50%; transform:translateY(-50%); width:44px; height:44px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,.95); color:var(--ink); font-size:24px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.2); transition:background .15s; }
-.nav:hover { background:#fff; }
-.nav.prev { left:14px; } .nav.next { right:14px; }
-.dots { position:absolute; bottom:10px; right:16px; display:flex; gap:5px; }
-.dots i { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.45); }
-.dots i.on { background:#fff; }
-.count { position:absolute; top:14px; right:16px; background:rgba(15,10,5,.55); color:#fff; font-size:11.5px; font-weight:500; padding:4px 11px; border-radius:999px; letter-spacing:.5px; backdrop-filter:blur(3px); }
-.cbody { padding:20px 24px 22px; display:grid; grid-template-columns:1.15fr 1fr; gap:6px 32px; }
-.cbody h4 { font-size:11.5px; text-transform:uppercase; letter-spacing:1.2px; color:var(--mut); font-weight:600; margin-bottom:8px; }
-.cbody ul { list-style:none; }
-.cbody li { font-size:14px; padding:3.5px 0 3.5px 18px; position:relative; }
-.cbody li::before { content:""; position:absolute; left:0; top:11px; width:6px; height:6px; border-radius:50%; background:var(--acc); }
-.cbody li b { font-weight:600; }
-.food li::before, .food-list li::before { background:var(--gold); border-radius:2px; }
-.train { grid-column:1 / -1; margin-top:12px; padding:10px 14px; border-radius:10px; background:var(--paper); font-size:13px; color:var(--mut); }
-.train b { font-weight:600; color:#4d463c; }
-.fcar { border-radius:12px; overflow:hidden; margin-top:4px; }
-.fcar .slides img { height:260px; }
-.fcar .slides figcaption { padding:28px 14px 10px; }
-.fcar .slides figcaption b { font-size:14px; }
-.fcar .slides figcaption span { font-size:12.5px; }
-.fcar .nav { width:30px; height:30px; font-size:17px; }
-.fcar .nav.prev { left:8px; } .fcar .nav.next { right:8px; }
-
-.citynav { position:sticky; top:74px; z-index:800; background:rgba(246,242,234,.92); backdrop-filter:blur(10px); display:flex; gap:8px; overflow-x:auto; padding:10px 2px; scrollbar-width:none; border-radius:0 0 12px 12px; }
-.citynav::-webkit-scrollbar { display:none; }
-.citynav a { padding:6px 15px; border:1px solid var(--line); border-radius:999px; font-size:13px; font-weight:500; color:#4d463c; text-decoration:none; white-space:nowrap; background:var(--card); }
-.citynav a:hover { border-color:var(--acc); color:var(--acc); }
-.citylbl { background:#fff; border:1px solid #D9D2C2; border-radius:6px; font-weight:600; font-size:12px; color:var(--ink); padding:2px 8px; box-shadow:0 1px 4px rgba(0,0,0,.15); }
-.citymap { height:400px; border-radius:12px; margin:16px 22px 0; z-index:0; border:1px solid var(--line); }
-.maplgd { font-size:12px; color:var(--mut); margin:10px 24px 0; }
-.maplgd i { display:inline-block; width:10px; height:10px; border-radius:50%; vertical-align:middle; margin:0 5px 0 12px; }
-.maplgd i:first-child { margin-left:0; }
-.mtip { margin:14px 22px 0; padding:13px 16px 13px 18px; background:#FDF6E7; border-left:4px solid var(--gold); border-radius:0 12px 12px 0; font-size:13.5px; color:#5C430F; line-height:1.6; }
-.mtip a { color:#8A5E0D; font-weight:500; }
-
-/* ---- hotels ---- */
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:14px; margin-top:16px; }
-.stats div { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 16px 15px; text-align:center; box-shadow:0 6px 20px rgba(60,40,20,.05); }
-.stats b { display:block; font-family:'Fraunces',serif; font-size:27px; font-weight:600; color:var(--acc); letter-spacing:-.5px; }
-.stats div:nth-child(even) b { color:var(--ink); }
-.stats span { font-size:12px; color:var(--mut); display:block; margin-top:3px; line-height:1.45; }
-.hgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px; margin-top:20px; }
-.hcard { background:var(--card); border:1px solid var(--line); border-radius:20px; overflow:hidden; box-shadow:0 8px 28px rgba(60,40,20,.07); }
-.hcard .imgs { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
-.hcard .imgs img { width:100%; height:92px; object-fit:cover; display:block; background:#F0EBDF; }
-.hcard .imgs img:first-child { grid-column:1 / -1; height:210px; }
-.hcard .hbody { padding:16px 20px 18px; }
-.hcard h3 { font-family:'Fraunces',serif; font-size:19.5px; font-weight:600; }
-.hcard .hsub { font-size:13px; color:var(--mut); margin:3px 0 9px; }
-.hcard .room { font-size:12.5px; font-weight:500; background:var(--accsoft); color:#8A2B12; display:inline-block; padding:4px 12px; border-radius:999px; margin-bottom:9px; }
-.hcard .hprice { font-size:14.5px; }
-.hcard .hprice b { font-weight:600; font-family:'Fraunces',serif; font-size:18px; }
-.badge-ok { color:var(--green); font-size:12.5px; font-weight:500; }
-.badge-tbd { color:#A04A20; font-size:12.5px; font-weight:500; }
-
-@media (max-width:680px){
-  .cbody{grid-template-columns:1fr}
-  .tl span{display:none}
-  .hero{height:460px}
-  .hero h1{font-size:38px}
-  .kicker{letter-spacing:2.2px}
-  .slides img{height:330px}
-  #map{height:380px}
-  .leg{flex-wrap:wrap; gap:6px 14px}
-  .leg .lday{width:auto}
-  .leg .lmeta{margin-left:auto}
-  .topnav a{padding:7px 13px; font-size:12.5px}
-  h2{font-size:24px}
-}
-/* ---- leaflet pro ---- */
-.leaflet-popup-content-wrapper { border-radius:14px; box-shadow:0 10px 30px rgba(40,25,10,.25); border:1px solid var(--line); font-family:'Inter',sans-serif; }
-.leaflet-popup-content { margin:12px 16px; font-size:13px; line-height:1.55; color:var(--ink); }
-.leaflet-popup-content b { font-family:'Fraunces',serif; font-size:15px; font-weight:600; }
-.leaflet-popup-content a { color:var(--acc); font-weight:500; }
-.leaflet-container { font-family:'Inter',sans-serif; }
-.leaflet-bar a { border-radius:8px !important; }
-
-/*polish-v2*/
-::selection{background:var(--accsoft);color:var(--ink)}
-html{scroll-behavior:smooth}
-body::before{content:'';position:fixed;inset:0 0 auto 0;height:260px;background:linear-gradient(180deg,rgba(185,58,27,.05),transparent);pointer-events:none;z-index:0}
-#pgbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--acc),var(--gold));width:0;z-index:9999}
-::-webkit-scrollbar{width:10px;height:10px}
-::-webkit-scrollbar-thumb{background:var(--line);border-radius:99px}
-::-webkit-scrollbar-thumb:hover{background:var(--mut)}
-a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box-shadow .15s ease}
-.rvl{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease,box-shadow .18s ease}
-.rvl.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.rvl{opacity:1;transform:none;transition:none}}
-</style>
+<meta name="theme-color" content="#F6F2EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{--paper:#F6F2EA;--card:#FFFEFA;--ink:#231F1A;--mut:#82796C;--line:#E8E0D0;--acc:#B93A1B;--accsoft:#F6E3DA;--gold:#B98A2F;--green:#2E7D5B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px 70px}
+.topnav{position:sticky;top:12px;z-index:1100;display:flex;gap:6px;justify-content:center;width:fit-content;margin:12px auto 0;padding:6px;background:rgba(255,254,250,.85);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;box-shadow:0 8px 30px rgba(60,40,20,.10);flex-wrap:wrap}
+.topnav a{padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none}
+.topnav a:hover{background:var(--accsoft)}
+.topnav a.on{background:var(--ink);color:#fff}
+h1{font-family:'Fraunces',serif;margin:12px 0 6px}
+.dsub{color:var(--mut);font-size:15px;margin:0 0 22px;max-width:64ch}
+.split{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:start}
+.mapcol{position:sticky;top:84px}
+#bigmap{height:calc(100vh - 190px);min-height:460px;border-radius:20px;border:1px solid var(--line);z-index:0}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--mut)}
+.legend span{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px}
+.legend i{display:inline-block;width:26px;height:0;border-top:3px solid}
+.legend b{color:var(--ink);font-weight:600}
+.allbtn{margin-top:12px;display:inline-block;background:var(--ink);color:#fff;border:none;padding:10px 20px;border-radius:999px;font:600 13px Inter,sans-serif;cursor:pointer}
+.allbtn:hover{background:var(--acc)}
+.side h2{font-family:'Fraunces',serif;font-size:22px;margin:0 0 4px}
+.side .hint{color:var(--mut);font-size:13px;margin:0 0 16px}
+.it{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:box-shadow .15s ease}
+.it:hover{box-shadow:0 8px 24px rgba(60,40,20,.08)}
+.ithead{display:flex;gap:13px;align-items:center;padding:14px 16px;cursor:pointer}
+.itnum{flex:none;width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:14px}
+.it.exc .itnum{background:transparent;border:2px solid var(--acc);color:var(--acc);font-size:11px}
+.itmid{flex:1;min-width:0}
+.itmid b{font-family:'Fraunces',serif;font-size:16.5px;display:block}
+.itmid span{font-size:12.5px;color:var(--mut)}
+.itn{font-size:11px;color:var(--mut);white-space:nowrap}
+.itbody{display:none;padding:0 16px 15px;border-top:1px solid var(--line)}
+.it.open .itbody{display:block}
+.trow{display:flex;gap:10px;align-items:baseline;font-size:13px;color:var(--mut);padding:10px 0;border-bottom:1px dashed var(--line)}
+.trow b{color:var(--ink);font-weight:600}
+.qk{margin-top:12px}
+.qk a{display:inline-block;font-size:12px;font-weight:600;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 14px;margin:0 6px 6px 0}
+.qk a:hover{border-color:var(--acc);color:var(--acc)}
+@media(max-width:900px){.split{grid-template-columns:1fr}.mapcol{position:static}#bigmap{height:52vh}}
+</style>
 <link rel="stylesheet" href="theme.css">
 </head>
 <body>
@@ -214,482 +59,107 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
   <a href="guide.html">Le guide</a>
   <a href="jour-par-jour.html">Jour par jour</a>
   <a href="journees.html">Journées</a>
-  <a href="villes.html" class="on">Villes &amp; cartes</a>
+  <a href="villes.html" class="on">Carte</a>
   <a href="hotels.html">Hôtels</a>
   <a href="budget.html">Budget</a>
 </nav>
-<div class="wrap" style="padding-top:34px">
+<div class="wrap">
 <div class="kick">Japon · 8 nov — 3 déc 2026</div>
-<h1 style="font-size:30px">Ville par ville</h1>
-<p class="sub">Photos, cartes interactives, spots cliquables — pour Ilyès &amp; Mathilde — avec les conseils de pro de l'amie guide de Mathilde</p>
-<h2>Ville par ville</h2>
-<p class="h2sub">Faites défiler les photos — chaque étape a son ambiance et sa table</p>
-<nav class="citynav">
-  <a href="#v-tokyo1">Tokyo</a><a href="#v-nikko">Nikko</a><a href="#v-kanazawa">Kanazawa</a><a href="#v-kyoto">Kyoto</a><a href="#v-osaka">Osaka &amp; Nara</a><a href="#v-hakone">Hakone</a><a href="#v-yokohama">Yokohama</a><a href="#v-tokyo2">Tokyo, le final</a>
-</nav>
-
-
-<div class="card" id="v-tokyo1">
-  <div class="chead" style="background:#E6F1FB"><h3>Tokyo</h3><span class="dates">9 → 14 nov · l'arrivée</span><span class="pill" style="color:#0C447C;background:#fff">5 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-tokyo1"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Shibuya</b> — le croisement mythique, Center-gai et la vue depuis les hauteurs</li>
-      <li><b>Senso-ji &amp; Asakusa</b> — le temple tôt le matin, la Nakamise, les ruelles rétro</li>
-      <li><b>Harajuku &amp; Meiji-jingu</b> — la forêt sacrée, puis la folie de Takeshita-dori</li>
-      <li><b>Ueno</b> — le parc, l'étang Shinobazu, les musées (zoo si envie de pandas)</li>
-      <li><b>Rikugi-en &amp; Shinjuku Gyoen</b> — jardins d'automne, illuminations le soir à Rikugi-en</li>
-      <li><b>Kanda Myojin &amp; Nezu-jinja</b> — sanctuaires de quartier, torii vermillon sans la foule</li>
-      <li><b>teamLab &amp; Tsukiji</b> — l'art immersif (réserver) et le marché du petit-déjeuner</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Sushi du matin au marché de Tsukiji</li>
-      <li>Ramen fumants dans une échoppe de Shinjuku</li>
-      <li>Monjayaki de Tsukishima, l'anti-carte-postale</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> arrivée à Haneda le 9 nov à 20h50, terminal 3</div>
+<h1>La carte du voyage</h1>
+<p class="dsub">Six étapes, quatre excursions. Sélectionne une étape ou un trajet : la carte se recentre et le détail s’ouvre.</p>
+<div class="split">
+  <div class="mapcol">
+    <div id="bigmap"></div>
+    <div class="legend" id="legend"></div>
+    <button class="allbtn" id="allbtn">Voir tout le parcours</button>
+  </div>
+  <div class="side">
+    <h2>Itinéraire</h2>
+    <p class="hint">Étapes numérotées = nuits sur place · cercles creux = excursions à la journée.</p>
+    <div id="itin"></div>
   </div>
 </div>
-
-<div class="card" id="v-nikko">
-  <div class="chead" style="background:#FAECE7"><h3>Nikko</h3><span class="dates">une journée depuis Tokyo · vers le 12 nov, quand les érables y sont au top</span><span class="pill" style="color:#712B13;background:#fff">excursion</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-nikko"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>Conseils de l'amie guide de Mathilde</b> : premier train Tobu du matin · billets Toshogu <b>à l'avance sur Klook</b> (grosse queue évitée) · ordre : abysses de Kanmangafuchi → villa Tamozawa → Toshogu → Yakushi-do → Futarasan (extérieurs) → Rinnoji → jardin Shoyo-en (ferme tôt !) → pont Shinkyo · <b>rentrer à pied à la gare</b> (bus pleins), train ~17h30. <a href="https://maps.app.goo.gl/SsjrtjbcuU95uUcv6" target="_blank">Son resto conseillé</a></div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Toshogu</b> — le mausolée d'Ieyasu, or et sculptures à l'excès dans les cèdres</li>
-      <li><b>Rinno-ji, Futarasan &amp; Taiyu-in</b> — le trio voisin, plus calme et tout aussi beau</li>
-      <li><b>Pont Shinkyo</b> — l'arche laquée rouge sur la rivière Daiya</li>
-      <li><b>Lac Chuzenji &amp; cascade Kegon</b> — 97 m de chute à 1 200 m d'altitude (bus 45 min)</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Yuba, la « peau de tofu » des moines — en sashimi, en soupe, en croquette</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> express Tobu depuis Asakusa, ~2h — partir tôt (7h30) pour une journée pleine</div>
-  </div>
-</div>
-
-<div class="card" id="v-kanazawa">
-  <div class="chead" style="background:#F1EFE8"><h3>Kanazawa</h3><span class="dates">14 → 16 nov</span><span class="pill" style="color:#444441;background:#fff">2 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-kanazawa"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>La guide</b> : <a href="https://maps.app.goo.gl/TRM6o2jvK37k5HEE7" target="_blank">atelier feuille d'or</a> à Higashi Chaya · Kenroku-en avec un <b>guide bénévole gratuit</b> · <b>temple ninja à réserver à l'avance</b> (panneaux FR disponibles) · visiter au moins une maison de samouraï (Nomura-ke).</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Kenroku-en</b> — l'un des trois grands jardins du Japon, yukitsuri dressés pour l'hiver</li>
-      <li><b>Higashi Chaya</b> — maisons de thé en bois sombre et ateliers de feuille d'or</li>
-      <li><b>Nagamachi</b> — murs de terre et résidences samouraï préservées</li>
-      <li><b>Marché Omicho</b> — 300 ans d'âge, 170 étals, le garde-manger de la mer du Japon</li>
-      <li><b>Musée du 21e siècle</b> — l'art contemporain et la fameuse « piscine » d'Erlich</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Crabe des neiges — la saison ouvre mi-novembre, pile à votre passage</li>
-      <li>Sashimi de la mer du Japon au marché Omicho</li>
-      <li>Jibuni, le ragoût de canard local</li>
-      <li>Glace à la feuille d'or (Kanazawa en produit 99 %)</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> depuis Tokyo, shinkansen Kagayaki direct, 2h30</div>
-  </div>
-</div>
-
-<div class="card" id="v-kyoto">
-  <div class="chead" style="background:#FBEAF0"><h3>Kyoto</h3><span class="dates">16 → 22 nov · le pic des momiji</span><span class="pill" style="color:#72243E;background:#fff">6 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-kyoto"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>La guide</b> : visiter <b>par secteurs</b> (nord-ouest, centre, sud-est) · journée Arashiyama dans l'ordre : Tenryu-ji → bambous → <a href="https://maps.app.goo.gl/ZuPuU9oWL2mdogiK9" target="_blank">déjeuner tôt au bord de la rivière</a> → pont Togetsukyo → singes → forêt de kimonos → <b>Kinkaku-ji en fin de journée</b> (moins de monde) · <a href="https://maps.app.goo.gl/8zqhSE1fXVywR6YEA" target="_blank">son resto à Gion</a>.</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Fushimi Inari</b> — y être à 7h : les dix mille torii pour vous seuls</li>
-      <li><b>Arashiyama</b> — bambouseraie, Tenryu-ji et la villa Okochi Sanso, sublime en automne</li>
-      <li><b>Kinkaku-ji &amp; Ryoan-ji</b> — le pavillon d'or puis le jardin sec le plus célèbre du monde</li>
-      <li><b>Château de Nijō</b> — parquets « rossignols » et salons dorés des shoguns</li>
-      <li><b>Higashiyama</b> — Kiyomizu-dera, pagode Hokan-ji, escaliers de Sannenzaka</li>
-      <li><b>Chemin de la philosophie</b> — de Nanzen-ji au pavillon d'argent, au fil de l'eau</li>
-      <li><b>Le soir</b> — illuminations d'Eikan-do ou Kodai-ji, puis Gion et la Kamogawa</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Kaiseki, la haute cuisine japonaise en petites assiettes</li>
-      <li>Yudofu, le tofu mijoté des temples zen</li>
-      <li>Matcha et pâtisseries wagashi dans une maison de thé</li>
-      <li>Obanzai, la cuisine familiale de Kyoto</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> depuis Kanazawa, shinkansen + Thunderbird, ~2h15</div>
-  </div>
-</div>
-
-<div class="card" id="v-osaka">
-  <div class="chead" style="background:#FAEEDA"><h3>Osaka <span style="font-size:15px;color:#8a887f">&amp; Nara</span></h3><span class="dates">22 → 25 nov</span><span class="pill" style="color:#633806;background:#fff">3 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-osaka"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>La guide</b> : l'aquarium Kaiyukan est très chouette · <b>ne pas payer l'intérieur du château</b> (extérieur + lire l'histoire de la dernière bataille avant) · <a href="https://maps.app.goo.gl/w8Awu2bPg54QBnh59" target="_blank">son resto (la queue vaut le coup)</a> · À Nara : un guide vaut l'investissement, <a href="https://maps.app.goo.gl/Q2PMgejWP4Z3scJEA" target="_blank">douceurs locales</a>, vue du <b>Nigatsu-do</b> et coucher de soleil avec les daims (dernière entrée ~17h).</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Dotonbori</b> — néons, Glico Man et odeur de takoyaki : y aller à la nuit tombée</li>
-      <li><b>Château d'Osaka</b> — le donjon au-dessus des douves, ginkgos dorés en novembre</li>
-      <li><b>Shitenno-ji</b> — le plus vieux temple bouddhiste du pays, fondé en 593</li>
-      <li><b>Shinsekai &amp; Kuromon</b> — le quartier rétro populaire et le marché-cantine</li>
-      <li><b>Nara en excursion</b> — Todai-ji, daims, Kofuku-ji, lanternes de Kasuga (le 24)</li>
-      <li><b>Kabuki au Shochikuza</b> — selon le programme, une soirée inoubliable</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Takoyaki brûlants sur le pouce</li>
-      <li>Okonomiyaki version Osaka</li>
-      <li>Kushikatsu de Shinsekai — interdit de re-tremper !</li>
-      <li>À Nara : mochi pilés à la minute chez Nakatanidou</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> depuis Kyoto, 30 min · Nara à 45 min (visez le 24, le 23 est férié)</div>
-  </div>
-</div>
-
-<div class="card" id="v-hakone">
-  <div class="chead" style="background:#E1F5EE"><h3>Hakone</h3><span class="dates">25 → 27 nov · la récompense</span><span class="pill" style="color:#085041;background:#fff">2 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-hakone"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>La guide</b> : s'il pleut, journée 100 % onsen · le <b>Tenzan onsen</b> (rotenburo public superbe, près de Yumoto) peut être votre bain du 2e soir · incontournables = sanctuaire Hakone + torii immergé, fumerolles d'Owakudani (bateau puis téléphérique — pile votre Freepass).</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Le ryokan</b> — onsen, yukata, kaiseki en chambre : le vrai but de l'étape</li>
-      <li><b>Lac Ashi</b> — croisière et torii de Hakone-jinja les pieds dans l'eau</li>
-      <li><b>Owakudani</b> — téléphérique au-dessus des fumerolles, œufs noirs à déguster</li>
-      <li><b>Le Fuji</b> — enneigé et net dans l'air le plus pur de l'année</li>
-      <li><b>Musée en plein air</b> — sculptures dans la montagne, Picasso et bain de pieds thermal</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul>
-      <li>Kaiseki du ryokan, le grand soir du voyage</li>
-      <li>Œufs noirs d'Owakudani — 7 ans de vie en plus, dit la légende</li>
-      <li>Tofu de source et eaux thermales</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> depuis Shin-Osaka, shinkansen direct jusqu'à Odawara, ~2h15 · Yokohama à 20 min en repartant</div>
-  </div>
-</div>
-
-<div class="card" id="v-yokohama">
-  <div class="chead" style="background:#F1EFE8"><h3>Yokohama</h3><span class="dates">day trip depuis Tokyo · fin nov</span><span class="pill" style="color:#444441;background:#fff">excursion</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-yokohama"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 <b>La guide</b> conseille surtout <b>Kamakura et Enoshima</b> à côté — Kamakura est déjà prévu depuis Tokyo, Enoshima peut s'y ajouter. Yokohama reste VOTRE envie (Chinatown, grande roue, Cup Noodles) : assumez !</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Cup Noodles Museum</b> — fabriquer son propre cup, régression assumée</li>
-      <li><b>Cosmo World</b> — la grande roue illuminée au-dessus du port, le soir</li>
-      <li><b>Minato Mirai</b> — Landmark Tower, entrepôts de brique rouge, front de mer</li>
-      <li><b>Chinatown</b> — le plus grand du Japon, 600 adresses pour le dîner</li>
-      <li><b>Parc Yamashita</b> — la balade digestive le long des quais</li>
-    </ul></div>
-    <div class="food-list"><h4>À table</h4><ul>
-      <li>Dîner dans le Chinatown : baozi vapeur, canard laqué, nikuman géants</li>
-      <li>Petit-déjeuner face au port avant de filer à Tokyo</li>
-    </ul></div>
-    <div class="train"><b>Accès :</b> ~30 min depuis Tokyo (ligne Tokaido / Keihin-Tohoku) — parfait à la journée, retour le soir</div>
-  </div>
-</div>
-
-<div class="card" id="v-tokyo2">
-  <div class="chead" style="background:#E6F1FB"><h3>Tokyo</h3><span class="dates">27 nov → 2 déc · le final</span><span class="pill" style="color:#0C447C;background:#fff">5 nuits</span></div>
-  <div class="carousel"></div>
-  <div class="citymap" id="map-tokyo2"></div>
-  <p class="maplgd"><i style="background:#B93A1B"></i>Culture &amp; temples <i style="background:#1D9E75"></i>Nature &amp; vues <i style="background:#B98A2F"></i>Food &amp; marchés <i style="background:#D4537E"></i>Quartiers <i style="background:#185FA5"></i>Votre hôtel — cliquez sur les points</p>
-<div class="mtip">💡 Excursion Kamakura : Grand Bouddha + Hase-dera, et si le rythme le permet, continuer jusqu'à <b>Enoshima</b> (île, sanctuaire, vue mer — recommandé par la guide).</div>
-  <div class="cbody">
-    <div><h4>À voir absolument</h4><ul>
-      <li><b>Kamakura</b> — Grand Bouddha, Hase-dera et la côte (1h de train)</li>
-      <li><b>Gotoku-ji</b> — le temple aux mille maneki-neko</li>
-      <li><b>Ikebukuro</b> — Sunshine City, Namjatown et Bandai Namco Cross Store</li>
-      <li><b>Palais impérial &amp; Kitanomaru</b> — puis la tour de Tokyo au crépuscule</li>
-      <li><b>Kameido Tenjin &amp; Hie-jinja</b> — deux sanctuaires hors des sentiers battus</li>
-      <li><b>Dernier soir</b> — Shibuya Sky ou izakaya de quartier, valises pleines</li>
-    </ul></div>
-    <div class="food"><h4>À table</h4><ul></ul></div>
-    <div class="train"><b>Accès :</b> depuis Odawara, ~35 min de shinkansen (ou Tokaido ~1h30) · départ de Haneda le 2 déc à 20h15</div>
-  </div>
-</div>
-
-
-</div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const P = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
-const slides = [
- [
-  ['8/88/Shibuya_Crossing%2C_Aerial.jpg/960px-Shibuya_Crossing%2C_Aerial.jpg','Le croisement de Shibuya','3 000 personnes à chaque feu vert — le grand frisson urbain, à savourer d\'un café en hauteur.'],
-  ['4/43/Sensoji_2023.jpg/960px-Sensoji_2023.jpg','Senso-ji, Asakusa','Le plus vieux temple de Tokyo : encens, lanterne géante et allée Nakamise pour flâner.'],
-  ['8/8b/Meiji_Jingu_2023-3.jpg/960px-Meiji_Jingu_2023-3.jpg','Meiji-jingu','Une forêt de 100 000 arbres en pleine ville — on n\'entend plus que le gravier sous ses pas.'],
-  ['8/8d/G2_Street_20090626_2.jpg/960px-G2_Street_20090626_2.jpg','Golden Gai, Shinjuku','Deux cents micro-bars dans six ruelles : le Tokyo d\'après-guerre, un verre à la main.'],
-  ['2/2b/Rikugien-10-2009-fujishirotoge02.jpg/960px-Rikugien-10-2009-fujishirotoge02.jpg','Rikugi-en','Le jardin lettré des shoguns — érables illuminés à la nuit tombée fin novembre.'],
-  ['9/9d/Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG/960px-Shinjuku_Gyoen_National_Garden_-_sakura_3.JPG','Shinjuku Gyoen','Une oasis immense à deux pas de la gare la plus fréquentée du monde.'],
-  ['1/18/Ueno_park.jpg/960px-Ueno_park.jpg','Parc d\'Ueno','Musées, temples et étang Shinobazu — le poumon culturel de Tokyo.'],
-  ['6/60/Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png/960px-Sotokanda%2C_Akihabara_Electric_Town_at_night_20231114.png','Akihabara','Néons, retrogaming et anime sur huit étages — la ville électrique.'],
-  ['2/21/Tsukiji_2015.jpg/960px-Tsukiji_2015.jpg','Marché de Tsukiji','Le marché extérieur au petit matin : couteaux, thon et tamagoyaki brûlants.'],
- ],
- [
-  ['2/26/200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg/960px-200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg','Toshogu','Or, laques et cèdres centenaires : le mausolée des shoguns dans la montagne.'],
-  ['8/8a/Lake_chuzenji_and_kegon_waterfall.jpg/960px-Lake_chuzenji_and_kegon_waterfall.jpg','Lac Chuzenji &amp; cascade de Kegon','À 1 200 m d\'altitude, 97 mètres de chute dans les brumes d\'automne.'],
-  ['d/dd/NikkoRinnoji5390.jpg/960px-NikkoRinnoji5390.jpg','Rinno-ji','Le grand temple rouge aux trois bouddhas d\'or, voisin du Toshogu.']
- ],
- [
-  ['3/31/Stone_lantern_Kenrokuen.jpg/960px-Stone_lantern_Kenrokuen.jpg','Kenroku-en','La lanterne kotoji et les pins sous leurs cordages d\'hiver — l\'un des trois plus beaux jardins du pays.'],
-  ['8/88/Kanazawa-M-5937.jpg/960px-Kanazawa-M-5937.jpg','Château de Kanazawa','Murs blancs et toits de plomb, face au jardin.'],
-  ['b/b2/21st_Century_Museum_of_Contemporary_Art%2C_Kanazawa011.jpg/960px-21st_Century_Museum_of_Contemporary_Art%2C_Kanazawa011.jpg','Musée du 21e siècle','L\'art contemporain en cercle de verre — et la fameuse « piscine » de Leandro Erlich.']
- ],
- [
-  ['0/0e/Torii_path_with_lantern_at_Fushimi_Inari_Taisha_Shrine%2C_Kyoto%2C_Japan.jpg/960px-Torii_path_with_lantern_at_Fushimi_Inari_Taisha_Shrine%2C_Kyoto%2C_Japan.jpg','Fushimi Inari','Dix mille torii vermillon qui grimpent dans la montagne. À l\'aube, vous serez seuls.'],
-  ['c/c2/Arashiyama%2C_Part_II_-_Arashiyama7534.jpg/960px-Arashiyama%2C_Part_II_-_Arashiyama7534.jpg','Arashiyama','La bambouseraie au petit matin, quand la lumière tombe en rayons.'],
-  ['0/0f/Golden_Pavilion_Kinkaku-ji_water_mirror_2024.jpg/960px-Golden_Pavilion_Kinkaku-ji_water_mirror_2024.jpg','Kinkaku-ji','Le pavillon d\'or posé sur son miroir d\'eau.'],
-  ['3/3c/Kiyomizu.jpg/960px-Kiyomizu.jpg','Kiyomizu-dera','La terrasse de bois suspendue au-dessus d\'un océan d\'érables rouges.'],
-  ['7/76/TofukujiHondo.jpg/960px-TofukujiHondo.jpg','Tofuku-ji','Le rendez-vous des momiji : un pont couvert au-dessus d\'une vallée d\'érables.'],
-  ['2/23/150124_Gion_Kyoto_Japan01s3.jpg/960px-150124_Gion_Kyoto_Japan01s3.jpg','Gion','Bois sombre et lanternes — au crépuscule, on y croise parfois une geiko.'],
-  ['d/dd/NinomaruPalace.jpg/960px-NinomaruPalace.jpg','Château de Nijō','Parquets « rossignols » qui chantent sous les pas, salons dorés des shoguns.'],
-  ['2/2c/251213_Nanzen-ji_Kyoto_Japan01s3.jpg/960px-251213_Nanzen-ji_Kyoto_Japan01s3.jpg','Nanzen-ji','Le grand portail San-mon et l\'aqueduc de brique au milieu des érables.'],
-  ['9/92/Japan_Kyoto_philosophers_walk_DSC00297.jpg/960px-Japan_Kyoto_philosophers_walk_DSC00297.jpg','Chemin de la philosophie','Deux kilomètres au fil de l\'eau, de Nanzen-ji au pavillon d\'argent.'],
-  ['0/06/Ginkakuji_Kyoto03-r.jpg/960px-Ginkakuji_Kyoto03-r.jpg','Ginkaku-ji','Le pavillon d\'argent et son jardin de sable — la sobriété faite temple.'],
-  ['5/5c/Kare-sansui_zen_garden%2C_Ry%C5%8Dan-ji%2C_Kyoto_20190416_1.jpg/960px-Kare-sansui_zen_garden%2C_Ry%C5%8Dan-ji%2C_Kyoto_20190416_1.jpg','Ryoan-ji','Quinze pierres sur du gravier ratissé — le jardin zen dont on ne voit jamais tout.'],
-  ['4/42/Tenryuji_Kyoto.jpg/960px-Tenryuji_Kyoto.jpg','Tenryu-ji','Le jardin-paysage de Muso Soseki, inchangé depuis 700 ans, momiji en prime.'],
-  ['0/0e/Eikando_Zenrinji-temple_Tahoto.JPG/960px-Eikando_Zenrinji-temple_Tahoto.JPG','Eikan-do','LE temple des érables — sa pagode émerge d\'une mer rouge, illuminée le soir.'],
- ],
- [
-  ['f/f4/Osaka_Dotonbori_Ebisu_Bridge.jpg/960px-Osaka_Dotonbori_Ebisu_Bridge.jpg','Dotonbori','Néons, enseignes géantes, odeur de takoyaki : la nuit la plus vivante du Japon.'],
-  ['c/ca/Osaka_Castle_03bs3200.jpg/960px-Osaka_Castle_03bs3200.jpg','Château d\'Osaka','La forteresse de Hideyoshi au-dessus des douves, ginkgos dorés en novembre.'],
-  ['9/95/Shinsekai_and_Tsutenkaku_at_night_2019-04-12.jpg/960px-Shinsekai_and_Tsutenkaku_at_night_2019-04-12.jpg','Shinsekai','Rétro, populaire, délicieux : le royaume du kushikatsu sous la tour Tsutenkaku.'],
-  ['f/f9/2018_Umeda_Sky_Building.jpg/960px-2018_Umeda_Sky_Building.jpg','Umeda Sky Building','Deux tours reliées à 173 m — Osaka à 360° au couchant.'],
-  ['2/2f/T%C5%8Ddai-ji_Kon-d%C5%8D.jpg/960px-T%C5%8Ddai-ji_Kon-d%C5%8D.jpg','Nara — Todai-ji','L\'un des plus grands bâtiments en bois du monde, et son Bouddha de quinze mètres.'],
-  ['b/b4/Nara_Park_-_panoramio_%282%29.jpg/960px-Nara_Park_-_panoramio_%282%29.jpg','Nara — les daims','1 200 daims en liberté, qui s\'inclinent poliment pour un biscuit.'],
-  ['c/c6/Shitennoji_%26_Abeno_Harukas.jpg/960px-Shitennoji_%26_Abeno_Harukas.jpg','Shitenno-ji','La pagode fondée en 593, l\'aîné des temples du Japon, face aux tours modernes.'],
-  ['0/0d/Kasuga-taisha11bs3200.jpg/960px-Kasuga-taisha11bs3200.jpg','Nara — Kasuga-taisha','Trois mille lanternes de pierre et de bronze sous les arbres.'],
-  ['7/77/Kofukuji12st5s3200.jpg/960px-Kofukuji12st5s3200.jpg','Nara — Kofuku-ji','La pagode à cinq étages qui veille sur l\'étang Sarusawa.'],
- ],
- [
-  ['2/23/260505_Moto-Hakone_Hakone_Japan01s3.jpg/960px-260505_Moto-Hakone_Hakone_Japan01s3.jpg','Lac Ashi','Le torii les pieds dans l\'eau, les bateaux qui glissent, le Fuji en toile de fond.'],
-  ['c/c7/Hakonejinja_-01.jpg/960px-Hakonejinja_-01.jpg','Hakone-jinja','Le sanctuaire dans les cèdres, au bord du lac.'],
-  ['6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/960px-Owakudani_-_Hakone_%2827369344357%29.jpg','Owakudani','Fumerolles, odeur de soufre et œufs noirs cuits dans la source.'],
-  ['f/f8/View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg/960px-View_of_Mount_Fuji_from_%C5%8Cwakudani_20211202.jpg','Le Fuji, début décembre','Vu d\'Owakudani par l\'air pur de fin d\'automne — la meilleure saison pour le rencontrer.'],
-  ['9/91/Hakone5.jpg/960px-Hakone5.jpg','Musée en plein air','Des sculptures dans la montagne, un pavillon Picasso, et un bain de pieds thermal.'],
-  ['a/ad/Hakonetozan-1002.JPG/960px-Hakonetozan-1002.JPG','Hakone Tozan','Le petit train qui grimpe en lacets dans la montagne — un voyage en soi.'],
- ] ,[
-  ['a/a1/Minato_Mirai_In_Blue.jpg/960px-Minato_Mirai_In_Blue.jpg','Minato Mirai','La grande roue Cosmo Clock et le front de mer illuminés — le meilleur de Yokohama, c\'est de nuit.'],
-  ['4/4b/Yokohama_Chinatown_signage_2015.jpg/960px-Yokohama_Chinatown_signage_2015.jpg','Chinatown','Le plus grand quartier chinois du Japon : 600 boutiques et restaurants sous les portes colorées.'],
-  ['3/3f/Parque_Yamashita_2.JPG/960px-Parque_Yamashita_2.JPG','Parc Yamashita','Le jardin au bord de l\'eau, face aux paquebots du port.'],
-  ['9/92/Akarenga_Yokohama_2012.jpg/960px-Akarenga_Yokohama_2012.jpg','Entrepôts de brique rouge','Les docks 1900 reconvertis en boutiques et cafés, face à la baie.']
- ]
- ,[
-  ['c/cf/230128_Kamakura_Daibutsu_Japan04s3.jpg/960px-230128_Kamakura_Daibutsu_Japan04s3.jpg','Kamakura — le Grand Bouddha','Treize mètres de bronze qui méditent face à la mer depuis 1252.'],
-  ['8/84/Tokyo_Skytree_2014_%E2%85%A2.jpg/960px-Tokyo_Skytree_2014_%E2%85%A2.jpg','Tokyo Skytree','634 mètres — la ville à l\'infini, au coucher du soleil.'],
-  ['6/6a/Gotokuji.jpg/960px-Gotokuji.jpg','Gotoku-ji','Des milliers de maneki-neko — le temple qui a inventé le chat porte-bonheur.'],
-  ['5/58/Tokyo_Tower_2023.jpg/960px-Tokyo_Tower_2023.jpg','Tour de Tokyo','La dame de fer rouge et blanche, plus belle à la nuit tombée.'],
-  ['0/0b/HasederaKannondo20120716.jpg/960px-HasederaKannondo20120716.jpg','Kamakura — Hase-dera','La terrasse fleurie et sa vue sur la baie de Sagami.']
- ]
-];
-const foods = [
- [
-  ['6/60/Sushi_platter.jpg/960px-Sushi_platter.jpg','Sushi','Au marché de Tsukiji, le poisson sort de la criée du matin.'],
-  ['c/c3/Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg/960px-Shoyu_Ramen%EF%BC%88Tokyo_Ramen%EF%BC%89_-_01.jpg','Ramen shoyu','Le bol tokyoïte par excellence — comptoir, vapeur et bruits de slurp.'],
-  ['7/77/Monjayaki_Before.JPG/960px-Monjayaki_Before.JPG','Monjayaki','La crêpe coulante de Tsukishima, qu\'on racle à la petite spatule.'] 
- ],
- [
-  ['3/3e/Yuba_by_Abrilon.jpg/960px-Yuba_by_Abrilon.jpg','Yuba','La « peau de tofu » des moines de Nikko — en sashimi, en soupe, en croquette.']
- ],
- [
-  ['0/0b/Kaisendon.jpg/960px-Kaisendon.jpg','Kaisendon','Bol de riz couvert de la pêche du matin, au marché Omicho — et le crabe des neiges dont la saison s\'ouvre.'],
-  ['9/9f/Jibuni_01.jpg/960px-Jibuni_01.jpg','Jibuni','Canard mijoté au wasabi frais : le plat des samouraïs de Kaga.']
- ],
- [
-  ['d/d9/Matcha_Scoop.jpg/960px-Matcha_Scoop.jpg','Matcha','Fouetté minute dans une maison de thé, dans un silence délicieux.'],
-  ['d/d4/Wagashi_closeup_14.jpg/960px-Wagashi_closeup_14.jpg','Wagashi','Pâtisseries de saison — trop jolies pour être mangées, mangées quand même.'],
-  ['1/10/Yatsuhashi_20160422.JPG/960px-Yatsuhashi_20160422.JPG','Yatsuhashi','Cannelle et pâte de haricot rouge : LE souvenir sucré de Kyoto.'],
-  ['0/03/Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG/960px-Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG','Yudofu','Le tofu soyeux mijoté des temples zen, spécialité d\'Arashiyama.']
- ],
- [
-  ['5/5c/%E3%82%BD%E3%83%BC%E3%82%B9%E3%81%A8%E3%83%9D%E3%83%B3%E9%85%A2%E3%81%AE%E3%81%9F%E3%81%93%E7%84%BC%E3%81%8D.jpg/960px-%E3%82%BD%E3%83%BC%E3%82%B9%E3%81%A8%E3%83%9D%E3%83%B3%E9%85%A2%E3%81%AE%E3%81%9F%E3%81%93%E7%84%BC%E3%81%8D.jpg','Takoyaki','Boules de poulpe brûlantes, copeaux de bonite qui dansent.'],
-  ['5/59/Okonomiyaki_001.jpg/960px-Okonomiyaki_001.jpg','Okonomiyaki','La « crêpe comme vous l\'aimez », quadrillée de mayo — version Osaka.'],
-  ['f/f4/KushikatsuDaruma01.jpg/960px-KushikatsuDaruma01.jpg','Kushikatsu','Brochettes panées de Shinsekai. Règle d\'or : interdit de re-tremper !'],
-  ['f/ff/Mochi_002.jpg/960px-Mochi_002.jpg','Mochi de Nara','Pilés à grands coups de maillet chez Nakatanidou — tièdes, poudrés, parfaits.']
- ],
- [
-  ['6/69/Jisaku_Kaiseki_Ryori_01.jpg/960px-Jisaku_Kaiseki_Ryori_01.jpg','Kaiseki du ryokan','Servi en chambre, en yukata, après le bain : le grand soir du voyage.'],
-  ['8/8a/Onsen_tamago_at_minshuku_Korakuen%2C_Nagano_by_Blue_Lotus.jpg/960px-Onsen_tamago_at_minshuku_Korakuen%2C_Nagano_by_Blue_Lotus.jpg','Onsen tamago','L\'œuf cuit dans la source — cousin des fameux œufs noirs d\'Owakudani.']
- ]
- ,[
-  ['2/2e/Tempura_01.jpg/960px-Tempura_01.jpg','Tempura','Friture aérienne trempée dans le dashi — un art, pas un fast-food.']
- ]
-];
-function build(car, data){
-  const sl = document.createElement('div'); sl.className = 'slides';
-  sl.innerHTML = data.map(([u,t,d]) => `<figure><img src="${P}${u}" alt="${t}" loading="lazy"><figcaption><b>${t}</b><span>${d}</span></figcaption></figure>`).join('');
-  car.appendChild(sl);
-  if (data.length > 1) {
-    const prev = document.createElement('button'); prev.className='nav prev'; prev.innerHTML='&#8249;'; prev.setAttribute('aria-label','Précédent');
-    const next = document.createElement('button'); next.className='nav next'; next.innerHTML='&#8250;'; next.setAttribute('aria-label','Suivant');
-    const dots = document.createElement('div'); dots.className='dots';
-    dots.innerHTML = data.map((_,i)=>'<i'+(i===0?' class="on"':'')+'></i>').join('');
-    const cnt = document.createElement('div'); cnt.className='count'; cnt.textContent='1 / '+data.length;
-    car.append(prev, next, dots, cnt);
-    const go = d => sl.scrollBy({left: d * sl.clientWidth, behavior:'smooth'});
-    prev.onclick = () => go(-1); next.onclick = () => go(1);
-    sl.addEventListener('scroll', () => {
-      const i = Math.round(sl.scrollLeft / sl.clientWidth);
-      dots.querySelectorAll('i').forEach((el,j)=>el.classList.toggle('on', j===i));
-      cnt.textContent = (i+1)+' / '+data.length;
-    }, {passive:true});
-  }
-}
-document.querySelectorAll('.carousel').forEach((car, ci) => build(car, slides[ci]));
-document.querySelectorAll('.cbody .food').forEach((f, ci) => {
-  const h4 = f.querySelector('h4');
-  f.innerHTML = '';
-  f.appendChild(h4);
-  const car = document.createElement('div'); car.className = 'carousel fcar';
-  f.appendChild(car);
-  build(car, foods[ci]);
-});
-
-const SPOTS = {
-'map-tokyo1': [
- [35.7147,139.8005,'h','Hop Inn (votre hôtel)','Votre base 5 nuits, à 200 m de la porte Hozomon.'],
- [35.7148,139.7967,'t','Senso-ji','Le plus vieux temple de Tokyo — à l\'aube ou le soir illuminé, il est à vous.'],
- [35.6595,139.7005,'q','Croisement de Shibuya','3 000 personnes par feu vert. Vue plongeante depuis Shibuya Sky ou le Mag\'s Park.'],
- [35.6764,139.6993,'t','Meiji-jingu','Forêt sacrée de 100 000 arbres — enchaîner avec Takeshita-dori à Harajuku.'],
- [35.6852,139.7100,'n','Shinjuku Gyoen','Immense jardin aux érables — parfait pour souffler entre deux quartiers.'],
- [35.7333,139.7460,'n','Rikugi-en','Jardin de lettrés : illuminations des momiji à la nuit tombée fin novembre.'],
- [35.7156,139.7745,'n','Parc d\'Ueno','Étang Shinobazu, musées nationaux, Kan\'ei-ji — et pandas au zoo si envie.'],
- [35.7020,139.7679,'t','Kanda Myojin','Sanctuaire vermillon des geeks et des affaires — entre Ueno et Akihabara.'],
- [35.7280,139.7610,'t','Nezu-jinja','Tunnel de petits torii sans la foule de Kyoto — quartier Yanaka à côté.'],
- [35.6984,139.7731,'q','Akihabara','Électro, rétrogaming, anime — la ville électrique, folle de nuit.'],
- [35.6654,139.7707,'f','Marché de Tsukiji','Petit-déj sushi/tamagoyaki au marché extérieur — y aller avant 9h.'],
- [35.6494,139.7898,'t','teamLab Planets','L\'art immersif pieds dans l\'eau — réserver le créneau à l\'avance.'],
- [35.6938,139.7049,'f','Golden Gai','200 micro-bars dans six ruelles — un verre dans le Tokyo d\'après-guerre.'],
- [35.6812,139.7671,'q','Gare de Tokyo (Marunouchi)','La façade 1914 en brique — et la Character Street au sous-sol.']
-],
-'map-nikko': [
- [36.7581,139.5989,'t','Toshogu','Le mausolée d\'Ieyasu — billets à l\'avance sur Klook (conseil de la guide).'],
- [36.7547,139.6005,'t','Rinno-ji','Le grand temple aux trois bouddhas d\'or.'],
- [36.7590,139.5960,'t','Futarasan-jinja','Les extérieurs suffisent (conseil de la guide) — beau passage forestier.'],
- [36.7597,139.5936,'t','Taiyu-in','Mausolée du petit-fils — souvent oublié, souvent préféré.'],
- [36.7539,139.6011,'n','Jardin Shoyo-en','Sublime en automne — attention, ferme tôt.'],
- [36.7530,139.6070,'t','Pont Shinkyo','L\'arche laquée rouge sur la Daiya — sur le chemin du retour.'],
- [36.7420,139.5926,'n','Abysses de Kanmangafuchi','Gorge volcanique bordée de jizo en bonnets rouges — y aller en premier (conseil de la guide).'],
- [36.7487,139.5947,'t','Villa impériale Tamozawa','Refuge de l\'empereur pendant la guerre — 106 pièces et un jardin superbe.'],
- [36.7479,139.6191,'g','Gare Tobu-Nikko','Retour à pied conseillé (bus bondés), train ~17h30.']
-],
-'map-kanazawa': [
- [36.5589,136.6486,'h','Center Point (votre appart)','Studio 32 m² avec lave-linge, au cœur de Katamachi.'],
- [36.5621,136.6624,'n','Kenroku-en','L\'un des trois grands jardins du Japon — yukitsuri dressés. Guide bénévole gratuit (conseil de la guide).'],
- [36.5658,136.6588,'t','Château de Kanazawa','Murs blancs et toits de plomb, face au jardin.'],
- [36.5722,136.6669,'q','Higashi Chaya','Maisons de thé en bois — atelier feuille d\'or conseillé par la guide.'],
- [36.5608,136.6483,'t','Nagamachi & Nomura-ke','Quartier samouraï — visiter la résidence Nomura et son mini-jardin.'],
- [36.5541,136.6483,'t','Myoryu-ji (temple ninja)','Passages secrets et trappes — réserver à l\'avance, panneaux en français.'],
- [36.5714,136.6555,'f','Marché Omicho','300 ans, 170 étals — kaisendon le matin, saison du crabe ouverte.'],
- [36.5608,136.6584,'t','Musée du 21e siècle','L\'art contemporain et la « piscine » d\'Erlich.'],
- [36.5578,136.6631,'n','Musée D.T. Suzuki','Le bassin zen minimaliste — le spot ressourcement.'],
- [36.5654,136.6537,'t','Oyama-jinja','La porte aux vitraux, insolite.'],
- [36.5556,136.6446,'q','Nishi Chaya','Le petit quartier de geishas sans touristes, de l\'autre côté de la Sai.'],
- [36.5709,136.6620,'q','Kazue-machi','La rue de maisons de thé au bord de l\'Asano.'],
- [36.5780,136.6486,'g','Gare de Kanazawa','La porte Tsuzumi — bus fréquents vers Katamachi.']
-],
-'map-kyoto': [
- [35.0125,135.7330,'h','Matatabi Stay (votre appart)','Nishinokyo, à deux pas du château de Nijō — métro Tozai direct vers Gion.'],
- [34.9671,135.7727,'t','Fushimi Inari','Les 10 000 torii — y être à 7h, vous serez presque seuls.'],
- [35.0394,135.7292,'t','Kinkaku-ji','Le pavillon d\'or — en fin de journée, moins de monde (conseil de la guide).'],
- [35.0345,135.7182,'t','Ryoan-ji','Le jardin sec le plus célèbre du monde — 15 pierres, jamais toutes visibles.'],
- [35.0142,135.7481,'t','Château de Nijō','Parquets rossignols et salons des shoguns — à côté de chez vous.'],
- [35.0159,135.6739,'t','Tenryu-ji','Commencer Arashiyama par son jardin (conseil de la guide).'],
- [35.0170,135.6710,'n','Bambouseraie d\'Arashiyama','Traverser vers les points de vue sur la montagne.'],
- [35.0126,135.6776,'n','Pont Togetsukyo','Le pont sur la Katsura, montagnes rouges en toile de fond.'],
- [35.0087,135.6772,'n','Parc aux singes Iwatayama','Les macaques en liberté, vue sur tout Kyoto.'],
- [35.0157,135.6785,'q','Forêt de kimonos','600 colonnes de tissus près de la gare Randen.'],
- [34.9949,135.7850,'t','Kiyomizu-dera','La terrasse au-dessus d\'un océan d\'érables — Sannenzaka pour monter.'],
- [34.9982,135.7793,'t','Pagode Hokan-ji','LA silhouette de Kyoto dans les ruelles de Higashiyama.'],
- [35.0111,135.7943,'t','Nanzen-ji','Grand portail et aqueduc de brique dans les érables.'],
- [35.0142,135.7936,'n','Eikan-do','Le temple des momiji — illuminations le soir, réserver du temps.'],
- [35.0270,135.7982,'t','Ginkaku-ji','Le pavillon d\'argent au bout du chemin de la philosophie.'],
- [35.0037,135.7751,'q','Gion','Bois sombre et lanternes au crépuscule — resto conseillé par la guide.'],
- [34.9764,135.7740,'n','Tofuku-ji','Le pont au-dessus d\'une vallée d\'érables — bondé mais légendaire.'],
- [34.9858,135.7588,'g','Gare de Kyoto','Hub Shinkansen + la vue depuis le grand escalier.']
-],
-'map-osaka': [
- [34.6650,135.5070,'h','川HOUSE (votre appart)','Au bord du marché Kuromon — Dotonbori à 10 min à pied.'],
- [34.6687,135.5013,'q','Dotonbori','Néons, Glico Man, odeur de takoyaki — le soir, évidemment.'],
- [34.6873,135.5262,'t','Château d\'Osaka','L\'extérieur et le parc suffisent — ne pas payer l\'intérieur (conseil de la guide).'],
- [34.6654,135.5063,'f','Marché Kuromon','Votre cantine du matin : wagyu grillé, oursins, fruits parfaits.'],
- [34.6525,135.5063,'q','Shinsekai','Rétro et populaire sous la tour Tsutenkaku — kushikatsu obligatoire.'],
- [34.6533,135.5164,'t','Shitenno-ji','Le plus vieux temple bouddhiste du Japon (593).'],
- [34.7052,135.4893,'n','Umeda Sky Building','Osaka à 360° au couchant.'],
- [34.6545,135.4290,'n','Aquarium Kaiyukan','Très chouette selon la guide — requin-baleine dans un bassin géant.'],
- [34.6890,135.8398,'t','Nara — Todai-ji','Le Grand Bouddha dans un des plus grands bâtiments en bois du monde.'],
- [34.6892,135.8443,'n','Nara — Nigatsu-do','La vue à ne pas louper (conseil de la guide) — gratuite, au-dessus du Todai-ji.'],
- [34.6851,135.8430,'n','Nara — le parc aux daims','1 200 daims qui s\'inclinent pour un biscuit. Coucher de soleil conseillé.'],
- [34.6813,135.8484,'t','Nara — Kasuga-taisha','3 000 lanternes sous les arbres.'],
- [34.6832,135.8318,'t','Nara — Kofuku-ji','La pagode à cinq étages sur l\'étang.'],
- [34.6785,135.8296,'q','Nara — Naramachi','Les maisons anciennes de marchands.'],
- [34.6822,135.8271,'f','Nara — Nakatanidou','Les mochi pilés à grands coups de maillet, tièdes.']
-],
-'map-hakone': [
- [35.2320,139.1046,'h','Hananoyado Fukuya (votre ryokan)','Votre chambre avec baignoire en plein air + kaiseki — au bord de la rivière de Yumoto.'],
- [35.2330,139.1060,'q','Rue de Hakone-Yumoto','Onsen manju, boutiques, vapeur — le village vivant le soir.'],
- [35.2258,139.0906,'n','Tenzan Onsen','Le rotenburo public culte conseillé par la guide — bain du 2e soir ?'],
- [35.2446,139.0507,'t','Musée en plein air','Sculptures dans la montagne, pavillon Picasso, bain de pieds.'],
- [35.2503,139.0430,'g','Gora','Terminus du train, départ du funiculaire vers la ropeway.'],
- [35.2444,139.0194,'n','Owakudani','Fumerolles, soufre et œufs noirs — l\'arrêt du téléphérique.'],
- [35.2464,138.9958,'g','Togendai','L\'embarcadère du bateau pirate, au bord du lac.'],
- [35.2046,139.0256,'t','Hakone-jinja & torii','Le torii immergé — la photo se mérite (file d\'attente le matin).'],
- [35.2029,139.0290,'n','Moto-Hakone','Le port, la vue sur le Fuji par temps clair, bus retour Yumoto.']
-],
-'map-yokohama': [
- [35.4553,139.6367,'q','Minato Mirai & Cosmo World','La grande roue illuminée au-dessus du port — le soir.'],
- [35.4553,139.6389,'t','Cup Noodles Museum','Fabriquer son propre cup — la régression assumée.'],
- [35.4527,139.6427,'q','Entrepôts de brique rouge','Docks 1900 reconvertis — cafés et boutiques face à la baie.'],
- [35.4460,139.6503,'n','Parc Yamashita','La promenade le long des quais.'],
- [35.4426,139.6459,'f','Chinatown','Le plus grand du Japon — baozi, canard laqué, nikuman géants.']
-],
-'map-tokyo2': [[35.73236,139.69732,'h','La Vita Residence 🏨','Votre appart — 24 m², lave-linge, métro Fukutoshin à 3 min (direct Shinjuku/Shibuya)'],
- [35.6489,139.6485,'t','Gotoku-ji','Le temple aux mille maneki-neko — l\'origine du chat porte-bonheur.'],
- [35.7295,139.7175,'q','Ikebukuro — Sunshine City','Namjatown, Bandai Namco Cross Store — l\'après-midi geek.'],
- [35.6586,139.7454,'n','Tour de Tokyo','La dame de fer rouge, plus belle de nuit.'],
- [35.6852,139.7528,'n','Palais impérial & Kitanomaru','Les douves, les ginkgos dorés, le Budokan.'],
- [35.7031,139.8270,'t','Kameido Tenjin','Le sanctuaire aux ponts rouges en dos d\'âne.'],
- [35.6744,139.7398,'t','Hie-jinja','L\'escalier aux torii vermillon en plein Akasaka.'],
- [35.3167,139.5357,'t','Kamakura — Grand Bouddha','13 m de bronze face à la mer depuis 1252 (excursion ~1h de train).'],
- [35.3126,139.5330,'t','Kamakura — Hase-dera','Terrasse fleurie, vue sur la baie.'],
- [35.2997,139.4805,'n','Enoshima','L\'île-sanctuaire au bout de la plage — l\'ajout conseillé par la guide.']
-]};
-const CATCOL = {t:'#B93A1B', n:'#1D9E75', f:'#B98A2F', q:'#D4537E', h:'#185FA5', g:'#888780'};
-Object.entries(SPOTS).forEach(([id,pts])=>{
-  const el=document.getElementById(id); if(!el) return;
-  const m=L.map(id,{scrollWheelZoom:false});
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap · © CARTO'}).addTo(m);
-  pts.forEach(([la,lo,cat,nom,desc])=>{
-    const isH = cat==='h';
-    const mk = isH
-      ? L.marker([la,lo],{icon:L.divIcon({className:'',html:'<div style="background:#185FA5;color:#fff;padding:3px 9px;border-radius:9px;font-size:12px;font-weight:700;border:2px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.4)">🏨</div>',iconSize:[34,24],iconAnchor:[17,12]})})
-      : L.circleMarker([la,lo],{radius:8,color:'#fff',weight:2,fillColor:CATCOL[cat]||'#888',fillOpacity:1});
-    mk.addTo(m).bindPopup('<b>'+nom+'</b><br><span style="font-size:13px">'+desc+'</span><br><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(nom+' Japan')+'" target="_blank" style="font-size:12px">Ouvrir dans Google Maps ↗</a>');
-  });
-  m.fitBounds(pts.map(p=>[p[0],p[1]]),{padding:[35,35]});
-  m.on('click',()=>m.scrollWheelZoom.enable());
-});
-
-</script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
-
-<script>/*polish-v2*/
 (function(){
-var b=document.createElement('div');b.id='pgbar';document.body.appendChild(b);
-addEventListener('scroll',function(){var h=document.documentElement;var p=h.scrollTop/(h.scrollHeight-h.clientHeight||1);b.style.width=(p*100)+'%';},{passive:true});
-var els=document.querySelectorAll('.hcard,.gcard,details.day,.brow,.pcat,.hl,.card,.leg,.paycard,.mapcard');
-if('IntersectionObserver' in window){
-var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
-els.forEach(function(el,i){el.classList.add('rvl');el.style.transitionDelay=Math.min(i%6*40,200)+'ms';io.observe(el);});
+var STEPS=[
+{n:1,city:'Tokyo · Asakusa',pref:'Kantō',dates:'9 → 14 nov',nuits:'5 nuits',hotel:'Hop Inn Tokyo Asakusa',mq:'Hop Inn Tokyo Asakusa',ll:[35.7133,139.7983]},
+{n:2,city:'Kanazawa',pref:'Ishikawa',dates:'14 → 16 nov',nuits:'2 nuits',hotel:'Center Point In Kanazawa',mq:'Center Point In Kanazawa',ll:[36.5554,136.6591]},
+{n:3,city:'Kyoto · Nishinokyo',pref:'Kansai',dates:'16 → 22 nov',nuits:'6 nuits',hotel:'Matatabi Stay Nishinokyo',mq:'Matatabi Stay Nishinokyo Kyoto',ll:[35.0104,135.7465]},
+{n:4,city:'Osaka · Nipponbashi',pref:'Kansai',dates:'22 → 25 nov',nuits:'3 nuits',hotel:'川HOUSE Kuromon',mq:'CHUANHouse Kuromon Osaka',ll:[34.6625,135.5096]},
+{n:5,city:'Hakone · Moto-Hakone',pref:'Kanagawa',dates:'25 → 27 nov',nuits:'2 nuits · ryokan',hotel:'Hananoyado Fukuya',mq:'Hananoyado Fukuya Hakone',ll:[35.199,139.0312]},
+{n:6,city:'Tokyo · Ikebukuro',pref:'Kantō',dates:'27 nov → 2 déc',nuits:'5 nuits',hotel:'La Vita Ikebukuro Residence',mq:'La Vita Ikebukuro Residence Tokyo',ll:[35.7324,139.6973]}];
+var EXC=[
+{city:'Nikko',date:'12 nov',from:0,ll:[36.758,139.599],hook:'Toshogu, lac Chuzenji · Nikko Pass'},
+{city:'Nara',date:'24 nov',from:3,ll:[34.685,135.843],hook:'Daims, Todai-ji · Kintetsu direct'},
+{city:'Yokohama',date:'28 nov',from:5,ll:[35.4544,139.6382],hook:'Cup Noodles, Chinatown · F-Liner direct'},
+{city:'Kamakura · Enoshima',date:'29 nov',from:5,ll:[35.3167,139.5358],hook:'Bouddha, Enoden, coucher de soleil'}];
+var SEGS=[
+{f:0,t:1,mode:'shk',lbl:'Hokuriku Shinkansen Kagayaki',dur:'2h30',prix:'~86 €/pers.',via:[[35.6812,139.7671],[36.3229,139.0128],[36.6486,138.1948],[36.7008,137.2137]]},
+{f:1,t:2,mode:'exp',lbl:'Tsurugi + Thunderbird via Tsuruga',dur:'2h15',prix:'~57 €/pers.',via:[[36.0641,136.2196],[35.6454,136.0553]]},
+{f:2,t:3,mode:'loc',lbl:'JR Special Rapid',dur:'30 min',prix:'~3,50 €/pers.',via:[]},
+{f:3,t:4,mode:'shk',lbl:'Hikari → Odawara, puis bus Tozan',dur:'~3h30',prix:'~78 €/pers. + Freepass',via:[[34.7338,135.5002],[35.1709,136.8815],[34.9756,138.3827],[35.2565,139.1554]]},
+{f:4,t:5,mode:'exp',lbl:'Bus → Odawara, Odakyu → Shinjuku, Fukutoshin',dur:'~2h45',prix:'~10-25 €/pers.',via:[[35.2565,139.1554],[35.6896,139.7006]]}];
+var COL={shk:'#B93A1B',exp:'#B98A2F',loc:'#2E7D5B'};
+var NAME={shk:'Shinkansen',exp:'Express',loc:'Local'};
+var map=L.map('bigmap',{scrollWheelZoom:true});
+L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OSM · CARTO'}).addTo(map);
+function icon(n,exc){return L.divIcon({className:'',html:'<div style="width:30px;height:30px;border-radius:50%;'+(exc?'background:#FFFEFA;border:3px solid #B93A1B;color:#B93A1B;':'background:#B93A1B;border:3px solid #fff;color:#fff;')+'display:flex;align-items:center;justify-content:center;font:700 13px Fraunces,serif;box-shadow:0 2px 8px rgba(0,0,0,.3)">'+n+'</div>',iconSize:[30,30],iconAnchor:[15,15]});}
+var markers=[],bounds=[];
+STEPS.forEach(function(s,i){
+ var m=L.marker(s.ll,{icon:icon(s.n,false)}).addTo(map).bindPopup('<b>'+s.n+'. '+s.city+'</b><br>'+s.dates+' · '+s.nuits+'<br>'+s.hotel);
+ m.on('click',function(){openIt(i);});
+ markers.push(m);bounds.push(s.ll);
+});
+EXC.forEach(function(e){
+ L.marker(e.ll,{icon:icon('◦',true)}).addTo(map).bindPopup('<b>Excursion · '+e.city+'</b><br>'+e.date+'<br>'+e.hook);
+ L.polyline([STEPS[e.from].ll,e.ll],{color:'#82796C',weight:2.5,opacity:.65,dashArray:'5 7'}).addTo(map);
+ bounds.push(e.ll);
+});
+var km={shk:0,exp:0,loc:0};
+function hav(a,b){var R=6371,dLa=(b[0]-a[0])*Math.PI/180,dLo=(b[1]-a[1])*Math.PI/180;var x=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+SEGS.forEach(function(g){
+ var pts=[STEPS[g.f].ll].concat(g.via).concat([STEPS[g.t].ll]);
+ for(var i=1;i<pts.length;i++)km[g.mode]+=hav(pts[i-1],pts[i]);
+ L.polyline(pts,{color:COL[g.mode],weight:4,opacity:.75}).addTo(map).bindPopup('<b>'+STEPS[g.f].city.split(' ·')[0]+' → '+STEPS[g.t].city.split(' ·')[0]+'</b><br>'+g.lbl+'<br>'+g.dur+' · '+g.prix);
+});
+document.getElementById('legend').innerHTML=Object.keys(COL).map(function(k){return '<span><i style="border-color:'+COL[k]+'"></i>'+NAME[k]+' <b>'+Math.round(km[k])+' km</b></span>'}).join('')+'<span><i style="border-color:#82796C;border-top-style:dashed"></i>Excursions <b>4</b></span>';
+function fitAll(){map.fitBounds(bounds,{padding:[36,36]});}
+fitAll();
+document.getElementById('allbtn').addEventListener('click',function(){fitAll();document.querySelectorAll('.it').forEach(function(x){x.classList.remove('open')});});
+var IT=document.getElementById('itin');var html='';
+STEPS.forEach(function(s,i){
+ var seg=SEGS.filter(function(g){return g.t===i})[0];
+ html+='<div class="it" data-i="'+i+'"><div class="ithead"><div class="itnum">'+s.n+'</div><div class="itmid"><b>'+s.city+'</b><span>'+s.dates+' · '+s.nuits+'</span></div><div class="itn">'+s.pref+'</div></div><div class="itbody">'
+ +(seg?'<div class="trow">Arrivée : <b>'+seg.lbl+'</b> · '+seg.dur+' · '+seg.prix+'</div>':'<div class="trow">Arrivée de Haneda : <b>Keikyu + ligne Asakusa</b> · ~40 min · ~4 €</div>')
+ +'<div class="trow">Hébergement : <b>'+s.hotel+'</b></div>'
+ +'<div class="qk"><a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(s.mq)+'">Hôtel sur Maps</a><a href="guide.html">Le guide</a><a href="journees.html">Journées type</a></div></div></div>';
+ EXC.filter(function(e){return e.from===i}).forEach(function(e){
+  html+='<div class="it exc" data-exc="'+e.city+'"><div class="ithead"><div class="itnum">◦</div><div class="itmid"><b>'+e.city+'</b><span>Excursion · '+e.date+'</span></div><div class="itn">à la journée</div></div><div class="itbody"><div class="trow">'+e.hook+'</div><div class="qk"><a href="journees.html">La journée type</a></div></div></div>';
+ });
+});
+IT.innerHTML=html;
+function openIt(i){
+ document.querySelectorAll('.it').forEach(function(x){x.classList.remove('open')});
+ var el=document.querySelector('.it[data-i="'+i+'"]');
+ if(el){el.classList.add('open');el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 }
+IT.addEventListener('click',function(ev){
+ var head=ev.target.closest('.ithead');if(!head)return;
+ var it=head.parentElement;
+ var wasOpen=it.classList.contains('open');
+ document.querySelectorAll('.it').forEach(function(x){x.classList.remove('open')});
+ if(!wasOpen)it.classList.add('open');
+ if(!it.classList.contains('exc')&&it.dataset.i!==undefined){
+  var s=STEPS[+it.dataset.i];
+  map.flyTo(s.ll,11,{duration:.8});markers[+it.dataset.i].openPopup();
+ }else if(it.dataset.exc){
+  var e=EXC.filter(function(x){return x.city===it.dataset.exc})[0];
+  if(e)map.flyTo(e.ll,11,{duration:.8});
+ }
+});
 })();
 </script>
-<footer class="foot"><div class="fin"><b>Japon 2026</b><span>8 novembre — 3 décembre · Tokyo · Kanazawa · Kyoto · Osaka · Hakone</span><nav><a href="guide.html">Guide</a><a href="journees.html">Journées</a><a href="jour-par-jour.html">Itinéraire</a><a href="hotels.html">Hôtels</a><a href="budget.html">Budget</a></nav><small>Fait maison, pour Ilyès &amp; Mathilde.</small></div></footer>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 </body>
 </html>
