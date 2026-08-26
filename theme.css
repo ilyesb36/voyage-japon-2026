@@ -173,3 +173,11 @@ details.day summary:hover{background:rgba(224,90,53,.05)}
 .day.voyage{background:var(--card)!important;color:var(--ink)!important;border:1px solid var(--line)}
 .chead{background:var(--card)!important;color:var(--ink)!important;border-bottom:1px solid var(--line)}
 [class="on"]{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}
+/* fiche modale : méta durée/budget/moment */
+#gmx .mt{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 16px}
+#gmx .mt div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+#gmx .mt span{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+#gmx .mt b{font-size:12.5px;font-weight:600;line-height:1.3}
+@media(max-width:480px){#gmx .mt{grid-template-columns:1fr 1fr}}
+/* onglets guide collants */
+.gtabs{position:sticky;top:70px;z-index:800;background:rgba(22,18,14,.88);backdrop-filter:blur(12px);padding:10px;border-radius:18px;border:1px solid var(--line);box-shadow:var(--sh-2)}

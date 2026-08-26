@@ -283,19 +283,32 @@ document.querySelectorAll(".gtab").forEach(b=>b.addEventListener("click",()=>{
 <script>
 (function(){
 const gmx=document.createElement('div');gmx.id='gmx';
-gmx.innerHTML='<div class="box"><button class="x">✕</button><img><div class="bd"><div class="pr"></div><h4></h4><p></p><a class="go" target="_blank" rel="noopener"></a></div></div>';
+gmx.innerHTML='<div class="box"><button class="x">✕</button><img><div class="bd"><div class="pr"></div><h4></h4><p></p><div class="mt"></div><a class="go" target="_blank" rel="noopener"></a></div></div>';
 document.body.appendChild(gmx);
 function off(){gmx.classList.remove('on');}
 gmx.addEventListener('click',function(e){if(e.target===gmx)off();});
 gmx.querySelector('.x').onclick=off;
 document.addEventListener('keydown',function(e){if(e.key==='Escape')off();});
+
+var META={
+'Senso-ji':['45 min','gratuit','à l’aube ou le soir'],'Meiji-jingu':['1h','gratuit','tôt le matin'],'Rikugi-en':['1h','~300 ¥','illuminations fin nov'],'Shinjuku Gyoen':['1h30','500 ¥','en journée'],'Gotoku-ji':['30 min','gratuit','matin'],'Tour de Tokyo':['1h','1 200–3 000 ¥','crépuscule'],'Skytree':['1h30','2 100–3 100 ¥','coucher de soleil'],'Kanda Myojin':['30 min','gratuit','—'],'Palais impérial':['1h','gratuit','journée'],'Zojo-ji':['30 min','gratuit','crépuscule'],'Yanaka':['2h','gratuit','fin d’après-midi'],
+'Kenroku-en':['1h30','320 ¥','à l’ouverture'],'Higashi Chaya':['1h','gratuit','avant 10h'],'Château de Kanazawa':['1h','320 ¥','—'],'Nagamachi':['45 min','550 ¥ (Nomura-ke)','—'],'Temple ninja':['45 min','1 200 ¥ · résa tél.','—'],'Musée du 21e siècle':['1h30','450 ¥ + expos','—'],'Oyama-jinja':['20 min','gratuit','illuminé le soir'],'D.T. Suzuki':['45 min','310 ¥','au calme'],
+'Fushimi Inari':['2–3h la boucle','gratuit','avant 7h'],'Kinkaku-ji':['45 min','500 ¥','à l’ouverture'],'Arashiyama':['30 min','gratuit','avant 8h'],'Kiyomizu-dera':['1h','500 ¥','à l’aube'],'Eikan-do':['1h','1 000 ¥ en nov','illuminations'],'Gion':['1h','gratuit','en soirée'],'Ryoan-ji':['45 min','600 ¥','matin'],'Château de Nijō':['1h15','1 300 ¥','—'],'Chemin de la philosophie':['45 min','gratuit','—'],'Tofuku-ji':['1h','1 000 ¥ en nov','avant 10h'],'Ginkaku-ji':['45 min','500 ¥','—'],'Kodai-ji':['45 min','600 ¥','illuminations'],'Rurikō-in':['45 min','2 000 ¥ · résa','créneau du matin'],'Otagi':['40 min','500 ¥','—'],'Kifune':['45 min','gratuit','—'],'Byodo-in':['1h','700 ¥','—'],'Uji':['demi-journée','~1 000 ¥ + train','matin'],
+'Château d’Osaka':['1h30','600 ¥ · parc gratuit','—'],'Shitenno-ji':['45 min','300 ¥','—'],'Tsutenkaku':['45 min','1 200 ¥','le soir'],'Sumiyoshi':['45 min','gratuit','—'],'Umeda Sky':['1h','2 000 ¥','coucher de soleil'],'Kaiyukan':['2h','2 700 ¥','réserver'],'Universal Studios':['la journée','~8 900 ¥ + Express','résa obligatoire'],'teamLab Botanical':['1h30','1 800 ¥ · résa','à la nuit'],'Spa World':['2–3h','1 500 ¥+','soirée'],'Grand Green':['1h','gratuit','—'],'Dotonbori':['1h','gratuit','de nuit'],'Nakazakicho':['1h30','gratuit','après-midi'],
+'Owakudani':['45 min','ropeway via Freepass','œufs noirs ~500 ¥'],'Hakone-jinja':['30 min','gratuit','tôt, avant les cars'],'Musée en plein air':['2h','2 000 ¥','—'],'Pola':['1h30','2 200 ¥','—'],'Bateau pirate':['30 min','inclus Freepass','—'],'Yosegi':['1h','~3 000 ¥ l’atelier','réserver'],
+'teamLab Planets':['1h30','3 800–4 800 ¥','résa créneau matin'],'Borderless':['2h','4 000–5 000 ¥','résa ~12 sem avant'],'Shibuya Sky':['1h','2 200–2 500 ¥','créneau coucher, résa'],'Golden Gai':['2h','cover 500–1 000 ¥ + consos','après 20h'],'Omoide':['1h30','2 000–3 000 ¥','tôt le soir'],'Karaoke':['1h+','800–1 500 ¥/h','la nuit'],'Sento':['1h','~550 ¥','le soir'],'Ghibli':['2h','1 000 ¥ · résa lointaine','—'],'yakatabune':['2h30','10 000–13 000 ¥ dîner','réserver'],'Sumo':['1h','gratuit–3 000 ¥','avant 9h'],'PokéPark':['demi-journée','~6 500 ¥','résa obligatoire'],'Dream Park':['2h','selon expos','—'],'Hozu':['2h','~6 000 ¥','réserver'],'Kurama':['demi-journée','~470 ¥ Eizan','partir le matin'],
+'Fuunji':['30–45 min de file','~1 200 ¥','avant 11h'],'Tsujihan':['30 min','1 500–2 000 ¥','avant midi'],'Daikokuya':['45 min','~2 000 ¥','déjeuner'],'Afuri':['30 min','~1 300 ¥','—'],'Uobei':['45 min','~1 500 ¥','—'],'Benitsuru':['~1h avec la file','~1 500 ¥','dès l’ouverture'],'Bongo':['45–90 min de file','800–1 500 ¥','hors rush'],'Morimori':['45 min','3 000–5 000 ¥','—'],'Omicho':['30 min','2 000–3 000 ¥','7h–9h'],'Nakatanidou':['10 min','~200 ¥','—'],'Rikuro':['15 min','965 ¥','tout chaud'],'Daruma':['45 min','~2 000 ¥','—'],'551 Horai':['10 min','~420 ¥','—'],
+'Nikko':['la journée','pass ~2 120 ¥ + entrées ~1 600 ¥','départ avant 8h'],'Kamakura':['la journée','~2 000 ¥ transport','départ avant 8h'],'Nara':['la journée','~1 360 ¥ A/R + 800 ¥ Todai-ji','coucher au Nigatsu-do'],'Enoshima':['demi-journée','Enopass 1 100 ¥','coucher de soleil'],'Yokohama':['demi-journée','~1 200 ¥ A/R','après-midi → soir'],'Himeji':['la journée','1 000 ¥ le château','—'],'Kobe':['demi-journée','bœuf 3 000–8 000 ¥ le midi','déjeuner'],'Chureito':['demi-journée','bus ~4 000 ¥ A/R','matin clair'],'Kawaguchiko':['demi-journée','avec Chureito','matin']};
+var DEF={'p-t0':['45 min–1h','300–600 ¥','plutôt le matin'],'p-t1':['30–60 min','1 000–2 000 ¥','midi ou soir'],'p-t2':['demi-journée à journée','transport en sus','partir tôt'],'p-t3':['1–2h','variable','résa conseillée'],'p-t4':['30–60 min','selon budget','après-midi'],'p-t5':['30 min','gratuit','lumière du matin ou du soir']};
+function findMeta(nm,pid){for(var k in META){if(nm.indexOf(k)>-1||k.indexOf(nm)>-1)return META[k];}return DEF[pid]||null;}
 document.addEventListener('click',function(e){
  var a=e.target.closest('a.gcard');if(!a)return;
  e.preventDefault();
  var im=a.querySelector('img');gmx.querySelector('img').src=im?im.src:'';
  var b=a.querySelector('b');gmx.querySelector('h4').textContent=b?b.textContent:'';
  var s=a.querySelector('span');gmx.querySelector('p').textContent=s?s.textContent:'';
- var pr=a.querySelector('.prio');gmx.querySelector('.pr').innerHTML=pr?pr.outerHTML:'';
+ var pid=(a.closest('.gpanel')||{}).id||'';var mm=findMeta(b?b.textContent:'',pid);var mtEl=gmx.querySelector('.mt');if(mm){mtEl.innerHTML='<div><span>Durée</span><b>'+mm[0]+'</b></div><div><span>Budget / pers.</span><b>'+mm[1]+'</b></div><div><span>Le bon moment</span><b>'+mm[2]+'</b></div>';mtEl.style.display='';}else{mtEl.style.display='none';}
+var pr=a.querySelector('.prio');gmx.querySelector('.pr').innerHTML=pr?pr.outerHTML:'';
  var go=gmx.querySelector('.go');go.href=a.href;
  go.textContent=a.querySelector('.gl')?'Réserver l’activité':'Voir sur Google Maps';
  gmx.classList.add('on');
