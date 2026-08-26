@@ -275,10 +275,11 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 .preset.on, .preset:hover { background:var(--accsoft); border-color:var(--acc); color:var(--acc); }
 .bsub { font-size:12px; color:var(--mut); margin-top:10px; }
 </style>
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 <nav class="topnav">
-  <a href="index.html">Accueil</a>
+  <a href="index.html" class="brand">Japon 2026</a>
   <a href="guide.html">Le guide</a>
   <a href="jour-par-jour.html">Jour par jour</a>
   <a href="journees.html">Journées</a>
@@ -287,6 +288,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
   <a href="budget.html" class="on">Budget</a>
 </nav>
 <div class="wrap" style="padding-top:40px">
+<div class="kick">Japon · 8 nov — 3 déc 2026</div>
 <h1 style="font-size:32px">Le budget du voyage</h1>
 <p class="sub">Pour 2 personnes · 23 nuits · 24 jours sur place. Ajustez les curseurs, le total se met à jour tout seul.</p>
 
@@ -303,7 +305,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 
 
 <div class="paycard">
-  <h2>💳 Suivi des paiements</h2>
+  <h2>Suivi des paiements</h2>
   <p class="paysub">Coche ce qui est réglé (mémorisé sur cet appareil). Clique sur une catégorie pour la replier.</p>
   <div id="paylist"></div>
   <div class="pgtot">
@@ -342,7 +344,7 @@ calc();
 </script>
 
 <div class="paycard">
-  <h2>💴 Convertisseur express</h2>
+  <h2>Convertisseur express</h2>
   <p class="paysub">Pour savoir en un clin d’œil ce que coûte ce ramen. Taux modifiable, mémorisé.</p>
   <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:14px">
     <label style="display:flex;align-items:center;gap:7px"><input id="cyen" type="number" value="10000" step="100" style="width:110px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);font:inherit;text-align:right"> ¥</label>
@@ -441,5 +443,6 @@ els.forEach(function(el,i){el.classList.add('rvl');el.style.transitionDelay=Math
 }
 })();
 </script>
+<footer class="foot"><div class="fin"><b>Japon 2026</b><span>8 novembre — 3 décembre · Tokyo · Kanazawa · Kyoto · Osaka · Hakone</span><nav><a href="guide.html">Guide</a><a href="journees.html">Journées</a><a href="jour-par-jour.html">Itinéraire</a><a href="hotels.html">Hôtels</a><a href="budget.html">Budget</a></nav><small>Fait maison, pour Ilyès &amp; Mathilde.</small></div></footer>
 </body>
 </html>

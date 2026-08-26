@@ -1,0 +1,35 @@
+/* Japon 2026 — design system v3 (tokens + composants) */
+:root{--r-s:10px;--r-m:14px;--r-l:20px;
+ --sh-1:0 1px 2px rgba(35,31,26,.05),0 2px 8px rgba(35,31,26,.04);
+ --sh-2:0 2px 6px rgba(35,31,26,.06),0 10px 28px rgba(35,31,26,.08);
+ --sh-3:0 6px 16px rgba(35,31,26,.09),0 22px 48px rgba(35,31,26,.12);}
+body{font-size:15.5px;line-height:1.6}
+h1,h2,h3{letter-spacing:-.01em}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+.topnav{gap:2px;padding:5px;background:rgba(255,254,250,.8);box-shadow:var(--sh-2);border:1px solid rgba(232,224,208,.9)}
+.topnav a{padding:8px 16px;font-size:13.5px}
+.topnav a.brand{font-family:Fraunces,serif;font-weight:700;font-size:15px;padding-right:18px;margin-right:4px;border-right:1px solid var(--line);border-radius:999px 0 0 999px}
+.hcard,details.day,.paycard,.pcat,.brow,.card{border-radius:var(--r-l)}
+.hcard,details.day,.paycard{box-shadow:var(--sh-1)}
+.hcard:hover{box-shadow:var(--sh-3)}
+.fchip,.preset,.gtab{border-radius:999px;font-weight:500;line-height:1.2;padding:8px 15px;font-size:13px}
+.fchip.on,.gtab.on,.preset.on{box-shadow:var(--sh-1)}
+.hmaps,#gmx .go{box-shadow:var(--sh-1)}
+.hmaps:hover,#gmx .go:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
+.step{border-radius:10px}
+input[type=number]{border-radius:var(--r-s)!important}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+.prio,.htag,.dtag{letter-spacing:.05em}
+.pico{display:none}
+.kick{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:46px 0 0}
+.kick+h1{margin-top:10px}
+.foot{margin-top:84px;border-top:1px solid var(--line);background:var(--card)}
+.fin{max-width:1200px;margin:0 auto;padding:34px 24px 40px;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:baseline;font-size:13px;color:var(--mut)}
+.fin b{font-family:Fraunces,serif;font-size:17px;color:var(--ink)}
+.fin nav{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+.fin a{color:var(--mut);text-decoration:none}
+.fin a:hover{color:var(--acc)}
+.fin small{width:100%;opacity:.7;font-size:11.5px}
+#pgbar{height:2px}
+#lbx,#gmx{backdrop-filter:blur(3px)}
+@media(max-width:640px){.topnav{border-radius:18px}.topnav a.brand{border-right:none}}

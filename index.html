@@ -205,10 +205,11 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 @media (prefers-reduced-motion:reduce){.rvl{opacity:1;transform:none;transition:none}}
 </style>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 <nav class="topnav">
-  <a href="index.html" class="on">Accueil</a>
+  <a href="index.html" class="on brand">Japon 2026</a>
   <a href="guide.html">Le guide</a>
   <a href="jour-par-jour.html">Jour par jour</a>
   <a href="journees.html">Journées</a>
@@ -326,9 +327,9 @@ var dep=new Date('2026-11-08T00:00:00'),ret=new Date('2026-12-03T23:59:59'),now=
 var c=document.createElement('div');c.id='jchip';
 c.style.cssText='display:inline-block;margin-top:16px;background:rgba(35,31,26,.85);color:#fff;border-radius:999px;padding:9px 20px;font-size:13.5px;font-weight:600;backdrop-filter:blur(4px)';
 var txt;
-if(now<dep){txt='🍁 Départ dans '+Math.ceil((dep-now)/864e5)+' jours';}
-else if(now<=ret){txt='🇯🇵 Jour '+(Math.floor((now-dep)/864e5)+1)+' / 26 du voyage';}
-else{txt='🍂 C’était il y a '+Math.floor((now-ret)/864e5)+' jours — okaeri !';}
+if(now<dep){txt='Départ dans '+Math.ceil((dep-now)/864e5)+' jours';}
+else if(now<=ret){txt='Jour '+(Math.floor((now-dep)/864e5)+1)+' / 26 du voyage';}
+else{txt='C’était il y a '+Math.floor((now-ret)/864e5)+' jours';}
 c.textContent=txt;
 var h=document.querySelector('.hero h1')||document.querySelector('h1');
 if(h)h.insertAdjacentElement('afterend',c);
@@ -347,5 +348,6 @@ els.forEach(function(el,i){el.classList.add('rvl');el.style.transitionDelay=Math
 }
 })();
 </script>
+<footer class="foot"><div class="fin"><b>Japon 2026</b><span>8 novembre — 3 décembre · Tokyo · Kanazawa · Kyoto · Osaka · Hakone</span><nav><a href="guide.html">Guide</a><a href="journees.html">Journées</a><a href="jour-par-jour.html">Itinéraire</a><a href="hotels.html">Hôtels</a><a href="budget.html">Budget</a></nav><small>Fait maison, pour Ilyès &amp; Mathilde.</small></div></footer>
 </body>
 </html>
