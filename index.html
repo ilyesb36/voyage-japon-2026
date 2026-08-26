@@ -210,6 +210,7 @@ a,button{transition:background .15s ease,color .15s ease,transform .15s ease,box
 <body>
 <nav class="topnav">
   <a href="index.html" class="on brand">Japon 2026</a>
+  <a href="aujourdhui.html">Aujourd’hui</a>
   <a href="guide.html">Le guide</a>
   <a href="jour-par-jour.html">Jour par jour</a>
   <a href="journees.html">Journées</a>
@@ -330,7 +331,7 @@ var txt;
 if(now<dep){txt='Départ dans '+Math.ceil((dep-now)/864e5)+' jours';}
 else if(now<=ret){txt='Jour '+(Math.floor((now-dep)/864e5)+1)+' / 26 du voyage';}
 else{txt='C’était il y a '+Math.floor((now-ret)/864e5)+' jours';}
-c.textContent=txt;
+c.textContent=txt+' →';c.style.cursor='pointer';c.addEventListener('click',function(){location.href='aujourdhui.html'});
 var h=document.querySelector('.hero h1')||document.querySelector('h1');
 if(h)h.insertAdjacentElement('afterend',c);
 })();

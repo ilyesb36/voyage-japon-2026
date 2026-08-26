@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aujourd’hui — Japon 2026</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#F6F2EA">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F2EA;--card:#FFFEFA;--ink:#231F1A;--mut:#82796C;--line:#E8E0D0;--acc:#B93A1B;--accsoft:#F6E3DA;--gold:#B98A2F;--green:#2E7D5B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 70px}
+.topnav{position:sticky;top:12px;z-index:900;display:flex;gap:6px;justify-content:center;width:fit-content;margin:12px auto 0;padding:6px;background:rgba(255,254,250,.85);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:999px;box-shadow:0 8px 30px rgba(60,40,20,.10);flex-wrap:wrap}
+.topnav a{padding:8px 16px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:none}
+.topnav a:hover{background:var(--accsoft)}
+.topnav a.on{background:var(--ink);color:#fff}
+h1{font-family:'Fraunces',serif;margin:14px 0 6px}
+.state{font-family:'Fraunces',serif;font-size:clamp(26px,3.4vw,38px);margin:8px 0 4px}
+.dsub{color:var(--mut);font-size:15px;margin:0 0 26px}
+.aj{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.aj .full{grid-column:1/-1}
+.ac{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 22px;box-shadow:0 4px 18px rgba(60,40,20,.05)}
+.ac h3{font-family:'Fraunces',serif;font-size:17px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.ac h3 small{font-family:'Inter',sans-serif;font-weight:500;color:var(--mut);font-size:12px;margin-left:auto}
+.wx{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.wx b{font-family:'Fraunces',serif;font-size:34px}
+.wx .wdesc{font-size:14px;color:var(--mut)}
+.wrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--mut)}
+.wrow span b{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--ink);font-weight:600}
+.plist{margin:0;padding:0;list-style:none}
+.plist li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14.5px;line-height:1.5}
+.plist li:last-child{border-bottom:none}
+.plist li b{font-weight:600}
+.hrow{display:flex;gap:14px;align-items:center}
+.hrow img{width:86px;height:64px;border-radius:12px;object-fit:cover}
+.hrow .hi b{display:block;font-family:'Fraunces',serif;font-size:16px}
+.hrow .hi span{font-size:12.5px;color:var(--mut)}
+.btn{display:inline-block;background:var(--ink);color:#fff;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;text-decoration:none;margin:10px 8px 0 0}
+.btn:hover{background:var(--acc)}
+.btn.o{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.o:hover{border-color:var(--acc);color:var(--acc);background:transparent}
+.check{margin:0;padding:0;list-style:none}
+.check li{padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px;align-items:baseline}
+.check li:last-child{border:none}
+.check li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc);flex:none;transform:translateY(-1px)}
+.mini{font-size:12px;color:var(--mut);margin-top:14px}
+@media(max-width:640px){.aj{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="theme.css">
+</head>
+<body>
+<nav class="topnav">
+  <a href="index.html" class="brand">Japon 2026</a>
+  <a href="aujourdhui.html" class="on">Aujourd’hui</a>
+  <a href="guide.html">Le guide</a>
+  <a href="jour-par-jour.html">Jour par jour</a>
+  <a href="journees.html">Journées</a>
+  <a href="villes.html">Villes &amp; cartes</a>
+  <a href="hotels.html">Hôtels</a>
+  <a href="budget.html">Budget</a>
+</nav>
+<div class="wrap">
+<div class="kick">Japon · 8 nov — 3 déc 2026</div>
+<h1 id="ttl" class="state">Aujourd’hui</h1>
+<p class="dsub" id="dsub"></p>
+<div class="aj" id="content"></div>
+<p class="mini" id="minote"></p>
+</div><script>
+(function(){
+var H_HOP=['Hop Inn Tokyo Asakusa','Chambre double · taxe de séjour à régler sur place','Hop Inn Tokyo Asakusa'];
+var H_CP=['Center Point In Kanazawa','Studio 32 m² · prévenir si arrivée après 19h','Center Point In Kanazawa'];
+var H_MT=['Matatabi Stay Nishinokyo','Appartement 1 chambre · self check-in (code envoyé 2 j avant)','Matatabi Stay Nishinokyo Kyoto'];
+var H_KW=['川HOUSE Kuromon','Studio · pre-check-in en ligne obligatoire','CHUANHouse Kuromon Osaka'];
+var H_FK=['Hananoyado Fukuya','Chambre bain plein air · navette depuis Motohakone Port (7-Eleven)','Hananoyado Fukuya Hakone'];
+var H_LV=['La Vita Ikebukuro Residence','Appartement 1 chambre · code key box envoyé 3 j avant','La Vita Ikebukuro Residence Tokyo'];
+var DAYS=[
+['2026-11-08','En route',35.68,139.75,['Vol Paris → Tokyo via Shanghai','Passeports, batterie chargée','Adresse du premier hôtel notée hors-ligne'],null,['Relire l’itinéraire','jour-par-jour.html']],
+['2026-11-09','Tokyo · Asakusa',35.68,139.75,['Arrivée, Keikyu + ligne Asakusa direct','Check-in Hop Inn dès 15h','Soirée douce : Senso-ji illuminé, ramen'],H_HOP,['Journée type : Asakusa','journees.html']],
+['2026-11-10','Tokyo',35.68,139.75,['Meiji-jingu tôt, Harajuku, Cat Street','Shibuya : 109, Don Quijote','Shibuya Sky au coucher (résa)'],H_HOP,['Journée type : Shibuya → Harajuku','journees.html']],
+['2026-11-11','Tokyo',35.68,139.75,['Shinjuku Gyoen (momiji)','Fuunji avant 11h','Tocho gratuit, Omoide Yokocho, Golden Gai'],H_HOP,['Journée type : Shinjuku','journees.html']],
+['2026-11-12','Nikko (day trip)',36.75,139.60,['Tobu depuis Asakusa ~7h (Nikko Pass)','Toshogu, yuba au déjeuner','Lac Chuzenji + cascade Kegon'],H_HOP,['Journée type : Nikko','journees.html']],
+['2026-11-13','Tokyo',35.68,139.75,['Au choix : journée geek (Akihabara)','ou Tokyo moderne : teamLab, Ginza','Dernier soir à Asakusa'],H_HOP,['Journées type : geek / moderne','journees.html']],
+['2026-11-14','→ Kanazawa',36.56,136.66,['Kagayaki 2h30 depuis Tokyo Station','Check-in Center Point (avant 19h)','Omicho en fin d’après-midi, oden le soir'],H_CP,['Journée type : samouraïs & jardins','journees.html']],
+['2026-11-15','Kanazawa',36.56,136.66,['Kenroku-en à l’ouverture','Higashi Chaya, feuille d’or','Temple ninja (résa) ou musée 21e'],H_CP,['Journée type : geishas & or','journees.html']],
+['2026-11-16','→ Kyoto',35.01,135.76,['Tsurugi + Thunderbird 2h15','Check-in Matatabi (self check-in)','Gion by night pour commencer'],H_MT,['Journée type : Higashiyama','journees.html']],
+['2026-11-17','Kyoto',35.01,135.76,['Fushimi Inari à l’aube (6h)','Tofuku-ji avant 10h — LE momiji','Saké à Fushimi, Pontocho le soir'],H_MT,['Journée type : Fushimi & le sud','journees.html']],
+['2026-11-18','Kyoto',35.01,135.76,['Bambouseraie avant 8h','Otagi Nenbutsu-ji, déjeuner rivière','Kimono Forest, Hozu si réservé'],H_MT,['Journée type : Arashiyama','journees.html']],
+['2026-11-19','Kyoto',35.01,135.76,['Kinkaku-ji à l’ouverture, Ryoan-ji','Château de Nijō','Nishiki, Katsukura le soir'],H_MT,['Journée type : Kinkaku & zen','journees.html']],
+['2026-11-20','Kyoto',35.01,135.76,['Rurikō-in (résa créneau matin)','Rando Kurama → Kibune','Kifune-jinja, retour Eizan'],H_MT,['Journée type : Rurikō-in & montagnes','journees.html']],
+['2026-11-21','Kyoto',35.01,135.76,['Marché Kobo-san au To-ji (le 21 !)','Shopping artisanat : Aritsugu, Ichizawa','ou Uji spécial matcha'],H_MT,['Journées type : shopping / Uji','journees.html']],
+['2026-11-22','→ Osaka',34.67,135.50,['Special Rapid 30 min','Check-in 川HOUSE dès 16h','Dotonbori by night, Rikuro tout chaud'],H_KW,['Journée type : Osaka classique','journees.html']],
+['2026-11-23','Osaka',34.67,135.50,['Château le matin, Kuromon à midi','Shinsekai + kushikatsu','ou USJ si réservé'],H_KW,['Journées type : classique / USJ','journees.html']],
+['2026-11-24','Nara (day trip)',34.69,135.84,['Kintetsu depuis Namba ~8h','Daims, Todai-ji, mochi Nakatanidou','Coucher de soleil au Nigatsu-do'],H_KW,['Journée type : Nara','journees.html']],
+['2026-11-25','→ Hakone',35.20,139.03,['Hikari → Odawara, bus → Motohakone Port','Appeler le ryokan du 7-Eleven (navette)','Onsen puis kaiseki à 18h30'],H_FK,['La carte Hakone','villes.html']],
+['2026-11-26','Hakone',35.23,139.02,['La grande boucle : Tozan, ropeway','Owakudani (œufs noirs), bateau pirate','Torii de Hakone-jinja, onsen, kaiseki'],H_FK,['Journée type : la grande boucle','journees.html']],
+['2026-11-27','→ Tokyo · Ikebukuro',35.73,139.70,['Bus → Odawara, Odakyu → Shinjuku','Check-in La Vita (code key box)','Soirée Ikebukuro : Bongo, Sunshine'],H_LV,['Journée type : Ikebukuro','journees.html']],
+['2026-11-28','Yokohama (day trip)',35.45,139.64,['F-Liner direct depuis Ikebukuro','Cup Noodles, Chinatown','Marché de Noël aux entrepôts, Cosmo World'],H_LV,['Journée type : Yokohama','journees.html']],
+['2026-11-29','Kamakura (day trip)',35.32,139.55,['JR Yokosuka Line ~8h','Hokoku-ji, Grand Bouddha, Enoden','Coucher de soleil à Enoshima'],H_LV,['Journée type : Kamakura & Enoshima','journees.html']],
+['2026-11-30','Tokyo',35.68,139.75,['Fripes Shimokitazawa → Koenji','ou rando Mont Takao (momiji)','Izakaya le soir'],H_LV,['Journées type : fripes / Takao','journees.html']],
+['2026-12-01','Tokyo',35.68,139.75,['Derniers incontournables au choix','Rikugi-en illuminé le soir','Onigiri Bongo si pas encore fait'],H_LV,['Le guide, filtre Obligatoire','guide.html']],
+['2026-12-02','Tokyo → vol retour',35.68,139.75,['Checkout 10h, bagagerie La Vita','Derniers achats : Tokyo Character Street','Keikyu/monorail → Haneda'],null,['Journée type : derniers achats','journees.html']],
+['2026-12-03','Retour',35.68,139.75,['Arrivée en France via Shanghai','Okaeri — tri des 4 000 photos'],null,['Revoir le voyage','jour-par-jour.html']]];
+var WC={0:'Grand ciel bleu',1:'Plutôt dégagé',2:'Quelques nuages',3:'Couvert',45:'Brume',48:'Brouillard',51:'Bruine légère',53:'Bruine',55:'Bruine dense',61:'Pluie légère',63:'Pluie',65:'Forte pluie',71:'Neige légère',73:'Neige',75:'Forte neige',80:'Averses légères',81:'Averses',82:'Fortes averses',95:'Orage'};
+var dep=new Date('2026-11-08T00:00:00'),ret=new Date('2026-12-03T23:59:59'),now=new Date();
+var C=document.getElementById('content'),T=document.getElementById('ttl'),S=document.getElementById('dsub'),MN=document.getElementById('minote');
+function card(cls,html){return '<div class="ac '+cls+'">'+html+'</div>';}
+function fmt(d){return d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});}
+if(now<dep){
+ var j=Math.ceil((dep-now)/864e5);
+ T.textContent='J−'+j+' avant le départ';
+ S.textContent=fmt(now)+' — le voyage commence le dimanche 8 novembre.';
+ C.innerHTML=card('full','<h3>À faire avant de partir</h3><ul class="check"><li>Réserver Rurikō-in (créneau du 20 nov)</li><li>teamLab Borderless / Planets — résa ~12 semaines avant</li><li>USJ + Express Pass si Nintendo World (23 nov)</li><li>Musée Ghibli — résa très en avance</li><li>Pre-check-in 川HOUSE + répondre aux messages hôtels</li><li>Shibuya Sky créneau coucher de soleil (~10 nov)</li></ul><a class="btn" href="budget.html">Suivi des paiements</a><a class="btn o" href="guide.html">Repérer dans le guide</a>')
+ +card('','<h3>Météo attendue</h3><div class="wx"><b>8–16°</b><div class="wdesc">Mi-novembre : frais le matin, doux l’après-midi, peu de pluie. La météo réelle s’affichera ici 10 jours avant chaque journée.</div></div>')
+ +card('','<h3>Le premier jour</h3><ul class="plist"><li>Vol via Shanghai, arrivée le 9 au matin</li><li>Keikyu + ligne Asakusa, direct vers l’hôtel</li><li><b>Hop Inn Tokyo Asakusa</b> — check-in 15h</li></ul><a class="btn o" href="hotels.html">Voir les hôtels</a>');
+}else if(now<=ret){
+ var idx=Math.min(Math.floor((now-dep)/864e5),DAYS.length-1);
+ var d=DAYS[idx];
+ T.textContent='Jour '+(idx+1)+' / 26 — '+d[1];
+ S.textContent=fmt(now);
+ var prog='<h3>Le programme</h3><ul class="plist">'+d[4].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'+(d[6]?'<a class="btn" href="'+d[6][1]+'">'+d[6][0]+'</a>':'');
+ var hot=d[5]?'<h3>Ce soir</h3><div class="hrow"><div class="hi"><b>'+d[5][0]+'</b><span>'+d[5][1]+'</span></div></div><a class="btn o" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(d[5][2])+'">Itinéraire vers l’hôtel</a>':'<h3>Ce soir</h3><p style="color:var(--mut);font-size:14px">Nuit en transit — bon vol.</p>';
+ C.innerHTML=card('full','<h3>Météo à '+d[1].replace('→ ','')+' <small id="wxs">chargement…</small></h3><div class="wx" id="wxbox"><div class="wdesc">Récupération de la météo…</div></div><div class="wrow" id="wxrow"></div>')+card('',prog)+card('',hot);
+ fetch('https://api.open-meteo.com/v1/forecast?latitude='+d[2]+'&longitude='+d[3]+'&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset&timezone=Asia%2FTokyo&forecast_days=2')
+ .then(function(r){return r.json()}).then(function(w){
+   document.getElementById('wxbox').innerHTML='<b>'+Math.round(w.daily.temperature_2m_min[0])+'° / '+Math.round(w.daily.temperature_2m_max[0])+'°</b><div class="wdesc">'+(WC[w.daily.weather_code[0]]||'—')+'</div>';
+   document.getElementById('wxrow').innerHTML='<span>Pluie <b>'+w.daily.precipitation_probability_max[0]+'%</b></span><span>Lever <b>'+w.daily.sunrise[0].slice(11)+'</b></span><span>Coucher <b>'+w.daily.sunset[0].slice(11)+'</b></span>';
+   document.getElementById('wxs').textContent='Open-Meteo · heure du Japon';
+ }).catch(function(){document.getElementById('wxbox').innerHTML='<div class="wdesc">Météo indisponible hors ligne.</div>';});
+ MN.textContent='Astuce : ajoute cette page à ton écran d’accueil — c’est le réflexe du matin.';
+}else{
+ T.textContent='Okaeri.';
+ S.textContent='Le voyage s’est terminé le 3 décembre 2026 — 26 jours, 6 étapes.';
+ C.innerHTML=card('full','<h3>Pour revivre tout ça</h3><a class="btn" href="jour-par-jour.html">L’itinéraire complet</a><a class="btn o" href="hotels.html">Les hôtels</a><a class="btn o" href="guide.html">Le guide</a>');
+}
+})();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
+</body>
+</html>
