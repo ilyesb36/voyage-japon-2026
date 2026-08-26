@@ -1,25 +1,23 @@
-/* ================= Japon 2026 — DA v4 ================= */
-/* Tokens */
+/* ================= Japon 2026 — DA v5 ================= */
 :root{--r-s:10px;--r-m:16px;--r-l:22px;
- --sh-1:0 1px 2px rgba(35,31,26,.04),0 2px 10px rgba(35,31,26,.05);
- --sh-2:0 4px 12px rgba(35,31,26,.07),0 14px 34px rgba(35,31,26,.09);
- --sh-3:0 10px 24px rgba(35,31,26,.10),0 30px 60px rgba(35,31,26,.14);}
-body{font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
-h1{letter-spacing:-.022em;line-height:1.06}
+ --sh-1:0 1px 2px rgba(0,0,0,.3),0 3px 12px rgba(0,0,0,.25);
+ --sh-2:0 6px 16px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.35);
+ --sh-3:0 12px 28px rgba(0,0,0,.4),0 36px 72px rgba(0,0,0,.5);
+ --paper:#16120E;--card:#211B15;--ink:#F2EBDF;--mut:#A29685;--line:#382F26;--acc:#E05A35;--accsoft:#3B241A;--gold:#D6A44A;--green:#63BD92}
+/* Sumi & Momiji — édition sombre */
+body{background:var(--paper);color:var(--ink);font-size:15.5px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{background:linear-gradient(180deg,rgba(224,90,53,.09),transparent);height:320px}
+h1{letter-spacing:-.022em;line-height:1.06;font-size:clamp(40px,5.6vw,64px)}
 h2{letter-spacing:-.015em}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
-::selection{background:var(--accsoft);color:var(--ink)}
-
-/* ---- Navigation ---- */
-.topnav{gap:2px;padding:6px;background:rgba(255,254,250,.72);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(232,224,208,.8);box-shadow:0 12px 40px rgba(60,40,20,.10)}
-.topnav a{padding:9px 16px;font-size:13.5px;font-weight:500;color:#4A443B}
-.topnav a:hover{background:rgba(185,58,27,.07);color:var(--ink)}
-.topnav a.on{background:var(--ink);color:#FFFEFA;font-weight:600}
-.topnav a.brand{font-family:Fraunces,serif;font-weight:700;font-size:15.5px;color:var(--ink);padding-right:20px;margin-right:6px;border-right:1px solid var(--line);border-radius:999px 0 0 999px;letter-spacing:-.01em}
+::selection{background:#3B241A;color:var(--ink)}
+.topnav{gap:2px;padding:6px;background:rgba(22,18,14,.72);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(56,47,38,.9);box-shadow:0 14px 44px rgba(0,0,0,.45)}
+.topnav a{padding:9px 16px;font-size:13.5px;font-weight:500;color:#CBC0AF}
+.topnav a:hover{background:rgba(224,90,53,.12);color:var(--ink)}
+.topnav a.on{background:var(--acc);color:#fff;font-weight:600}
+.topnav a.brand{font-family:Fraunces,serif;font-weight:700;font-size:15.5px;color:var(--ink);padding-right:20px;margin-right:6px;border-right:1px solid var(--line);border-radius:999px 0 0 999px}
 .topnav a.brand::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--acc);margin-right:9px;vertical-align:2px}
 .topnav a.brand.on{background:transparent;color:var(--ink)}
-
-/* ---- Kicker / titres / footer ---- */
 .kick{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--acc);font-weight:700;margin:52px 0 0}
 .kick+h1{margin-top:12px}
 .sub{font-size:16px;max-width:64ch;line-height:1.6}
@@ -30,139 +28,74 @@ h2{letter-spacing:-.015em}
 .fin a{color:var(--mut);text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:10.5px;font-weight:600}
 .fin a:hover{color:var(--acc)}
 .fin small{width:100%;opacity:.6;font-size:11px}
-
-/* ---- Cartes guide ---- */
 .gcard{overflow:hidden;border:1px solid var(--line);border-radius:var(--r-m);background:var(--card);box-shadow:none;transition:transform .18s ease,box-shadow .18s ease}
 .gcard[data-p]{border-bottom:1px solid var(--line)}
 .gcard:hover{transform:translateY(-3px);box-shadow:var(--sh-2)}
-.gcard img{transition:transform .35s ease}
+.gcard img{transition:transform .35s ease;filter:saturate(1.02) contrast(.98)}
 .gcard:hover img{transform:scale(1.045)}
 .gtxt{padding:11px 14px 13px}
 .gtxt b{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
 .gtxt span{font-size:12.5px;line-height:1.45}
-.prio{font-size:9px;letter-spacing:.09em;padding:4px 9px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.gg,.gl{box-shadow:0 2px 8px rgba(0,0,0,.14)}
-
-/* ---- Filtres / chips / onglets ---- */
-.fchip,.preset,.gtab{border-radius:999px;font-weight:500;line-height:1.2;padding:9px 16px;font-size:13px;border:1px solid var(--line);background:transparent;color:#5A5348;transition:all .15s ease}
-.fchip:hover,.gtab:hover,.preset:hover{border-color:#CFC5B0;background:var(--card)}
-.fchip.on,.gtab.on,.preset.on{background:var(--ink);color:#FFFEFA;border-color:var(--ink);box-shadow:var(--sh-1);font-weight:600}
+.prio{font-size:9px;letter-spacing:.09em;padding:4px 9px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.p-top{background:#E08A2E}.p-symp{background:#3E9C71}.p-niche{background:#8B6DBF}
+.gg,.gl{box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.fchip,.preset,.gtab{border-radius:999px;font-weight:500;line-height:1.2;padding:9px 16px;font-size:13px;border:1px solid var(--line);background:transparent;color:#BFB3A0;transition:all .15s ease}
+.fchip:hover,.gtab:hover,.preset:hover{border-color:#55493C;background:var(--card)}
+.fchip.on,.gtab.on,.preset.on{background:var(--acc);color:#fff;border-color:var(--acc);box-shadow:var(--sh-1);font-weight:600}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px}
-
-/* ---- Cartes hotels ---- */
 .hcard{border-radius:var(--r-l);border:1px solid var(--line);box-shadow:var(--sh-1)}
 .hcard:hover{box-shadow:var(--sh-3)}
 .imgs{gap:2px}
-.htag{background:rgba(255,254,250,.88);color:var(--ink);backdrop-filter:blur(6px);font-size:11px;letter-spacing:.03em;box-shadow:0 2px 10px rgba(0,0,0,.12)}
-.hnum{background:var(--ink);color:#FFFEFA;box-shadow:0 2px 10px rgba(0,0,0,.2)}
-.room{border-radius:8px;font-size:12.5px}
+.imgs img,.simg,.dimg{filter:saturate(1.02) contrast(.98)}
+.htag{background:rgba(22,18,14,.78);color:var(--ink);backdrop-filter:blur(6px);font-size:11px;letter-spacing:.03em;box-shadow:0 2px 12px rgba(0,0,0,.35)}
+.hnum{background:var(--acc);color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.room{border-radius:8px;font-size:12.5px;background:var(--accsoft);color:#F0A183}
 .hprice b{font-size:22px}
-.badge-ok{font-weight:600}
-.hmaps{background:var(--ink);color:#FFFEFA;box-shadow:var(--sh-1)}
-.hmaps:hover{background:var(--acc);color:#fff;transform:translateY(-1px);box-shadow:var(--sh-2)}
+.hmaps{background:var(--acc);color:#fff;box-shadow:var(--sh-1)}
+.hmaps:hover{background:#F06B44;color:#fff;transform:translateY(-1px);box-shadow:var(--sh-2)}
 .troute summary:hover{color:var(--acc)}
 .tsub{font-weight:400}
-.tmap,.dmap{box-shadow:inset 0 0 0 1px var(--line)}
-
-/* ---- Stats ---- */
-.hl>div{box-shadow:var(--sh-1);border-radius:var(--r-m);transition:box-shadow .18s ease}
-.hl>div:hover{box-shadow:var(--sh-2)}
-
-/* ---- Budget : lignes en liste, steppers ronds ---- */
+.tmap,.dmap,#hotelsmap{filter:sepia(.14) brightness(.94) contrast(1.02);border-radius:12px}
+.leaflet-container{background:#241E18}
+.hl>div{background:var(--card);box-shadow:var(--sh-1);border-radius:var(--r-m)}
 .brow{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:20px 4px;margin-top:0;box-shadow:none!important}
 .brow:last-of-type{border-bottom:0}
 .brow.fixed{background:transparent}
 .bico{width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:var(--accsoft);border-radius:12px;font-size:19px}
 .step{width:32px;height:32px;border-radius:999px;transition:all .12s ease}
-.step:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
-input[type=number]{border-radius:10px!important;font-variant-numeric:tabular-nums}
-.btotal{border-radius:var(--r-l);box-shadow:var(--sh-2)}
+.step:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+input[type=number]{border-radius:10px!important;font-variant-numeric:tabular-nums;background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btotal{background:var(--card)!important;border:1px solid var(--line);color:var(--ink)!important;border-radius:var(--r-l);box-shadow:var(--sh-2)}
 .paycard{border-radius:var(--r-l);box-shadow:var(--sh-1)}
 .pcat{border-radius:var(--r-m);overflow:hidden}
 .pchead{background:transparent;border-bottom:1px solid var(--line)}
-.pchead:hover{background:rgba(185,58,27,.04)}
+.pchead:hover{background:rgba(224,90,53,.06)}
 .pbar{height:3px}
-.pgtot{border-radius:var(--r-l);box-shadow:var(--sh-2)}
-.pico{display:none}
-
-/* ---- Journees ---- */
-details.day{border-radius:var(--r-m);box-shadow:var(--sh-1)}
-details.day summary{padding:16px 20px}
-details.day summary:hover{background:rgba(185,58,27,.03)}
-details.day[open]{box-shadow:var(--sh-2)}
-.dtag{background:transparent;border:1px solid var(--line);color:#5A5348;font-weight:600;letter-spacing:.04em;font-size:10px;text-transform:uppercase}
-.dimg{border-radius:12px}
-.sh{font-variant-numeric:tabular-nums;font-family:Inter,sans-serif;font-weight:700;font-size:12.5px;color:var(--acc);letter-spacing:.02em;padding-top:4px}
-.sd::before{width:7px;height:7px;top:9px}
-.st::before{left:28px;background:linear-gradient(var(--line),var(--line))}
-.simg{border-radius:12px;box-shadow:var(--sh-1)}
-
-/* ---- Modales ---- */
-#gmx{background:rgba(25,21,17,.6);backdrop-filter:blur(6px)}
-#gmx .box{border-radius:24px;box-shadow:var(--sh-3)}
-#gmx .go{background:var(--ink);box-shadow:var(--sh-1)}
-#gmx .go:hover{background:var(--acc);transform:translateY(-1px)}
-#gmx .x{background:rgba(255,255,255,.2);backdrop-filter:blur(6px)}
-#lbx{background:rgba(20,16,12,.95);backdrop-filter:blur(4px)}
-
-/* ---- Divers ---- */
-#pgbar{height:2px}
-.tline .tdot{border-width:5px}
-.tstep b{font-family:Fraunces,serif;font-size:13.5px}
-.rvl{transition:opacity .45s ease,transform .45s ease,box-shadow .18s ease}
-@media(max-width:640px){.topnav{border-radius:20px}.topnav a.brand{border-right:none;padding-right:14px}}
-/* ================= DA v5 — Sumi & Momiji (édition sombre) ================= */
-:root{--paper:#16120E;--card:#211B15;--ink:#F2EBDF;--mut:#A29685;--line:#382F26;--acc:#E05A35;--accsoft:#3B241A;--gold:#D6A44A;--green:#63BD92}
-body{background:var(--paper);color:var(--ink)}
-body::before{background:linear-gradient(180deg,rgba(224,90,53,.09),transparent);height:320px}
-h1{font-size:clamp(40px,5.6vw,64px)}
-
-/* nav sombre verre */
-.topnav{background:rgba(22,18,14,.72);border:1px solid rgba(56,47,38,.9);box-shadow:0 14px 44px rgba(0,0,0,.45)}
-.topnav a{color:#CBC0AF}
-.topnav a:hover{background:rgba(224,90,53,.12);color:var(--ink)}
-.topnav a.on{background:var(--acc);color:#fff}
-.topnav a.brand{color:var(--ink)}
-.topnav a.brand.on{background:transparent;color:var(--ink)}
-
-/* composants sur fond encre */
-.fchip.on,.gtab.on,.preset.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.fchip,.gtab,.preset{color:#BFB3A0}
-.hmaps{background:var(--acc);color:#fff}
-.hmaps:hover{background:#F06B44;color:#fff}
-.hnum{background:var(--acc);color:#fff}
-.htag{background:rgba(22,18,14,.78);color:var(--ink);box-shadow:0 2px 12px rgba(0,0,0,.35)}
-#gmx .go{background:var(--acc)}
-#gmx .go:hover{background:#F06B44}
-#gmx{background:rgba(10,8,6,.72)}
-#gmx .box{background:var(--card)}
-.btotal{background:var(--card)!important;border:1px solid var(--line);color:var(--ink)!important;box-shadow:var(--sh-2)}
-.pgtot{background:var(--card)!important;border:1px solid var(--line);color:var(--ink)!important}
+.pgtot{background:var(--card)!important;border:1px solid var(--line);color:var(--ink)!important;border-radius:var(--r-l)}
 .pgtot .row span{opacity:.65}
 .pgtot .gbar{background:rgba(255,255,255,.1)}
 .paytot>div{background:rgba(255,255,255,.03)}
-.pchead:hover{background:rgba(224,90,53,.06)}
+.pico{display:none}
+details.day{border-radius:var(--r-m);box-shadow:var(--sh-1)}
+details.day summary{padding:16px 20px}
 details.day summary:hover{background:rgba(224,90,53,.05)}
-.hl>div{background:var(--card)}
-.bico{background:var(--accsoft)}
-.room{background:var(--accsoft);color:#F0A183}
-.dtag{color:#BFB3A0}
+details.day[open]{box-shadow:var(--sh-2)}
+.dtag{background:transparent;border:1px solid var(--line);color:#BFB3A0;font-weight:600;letter-spacing:.04em;font-size:10px;text-transform:uppercase}
+.dimg{border-radius:12px}
+.sh{font-variant-numeric:tabular-nums;font-family:Inter,sans-serif;font-weight:700;font-size:12.5px;color:var(--acc);letter-spacing:.02em;padding-top:4px}
+.sd::before{width:7px;height:7px;top:9px}
+.simg{border-radius:12px;box-shadow:var(--sh-1)}
+#gmx{background:rgba(10,8,6,.72);backdrop-filter:blur(6px)}
+#gmx .box{border-radius:24px;box-shadow:var(--sh-3);background:var(--card)}
+#gmx .go{background:var(--acc);box-shadow:var(--sh-1)}
+#gmx .go:hover{background:#F06B44;transform:translateY(-1px)}
+#gmx .x{background:rgba(255,255,255,.16);backdrop-filter:blur(6px)}
+#lbx{background:rgba(10,8,6,.95);backdrop-filter:blur(4px)}
+#pgbar{height:2px}
+.tline .tdot{border-width:5px}
+.tstep b{font-family:Fraunces,serif;font-size:13.5px}
 .jchip,#jchip{background:rgba(22,18,14,.8)!important}
-
-/* ombres profondes */
-:root{--sh-1:0 1px 2px rgba(0,0,0,.3),0 3px 12px rgba(0,0,0,.25);--sh-2:0 6px 16px rgba(0,0,0,.35),0 18px 40px rgba(0,0,0,.35);--sh-3:0 12px 28px rgba(0,0,0,.4),0 36px 72px rgba(0,0,0,.5)}
-.hcard,details.day,.paycard{box-shadow:var(--sh-1)}
-
-/* cartes leaflet claires, encadrées comme des cartes papier */
-.tmap,.dmap,#hotelsmap,.mapcard .leaflet-container{filter:sepia(.14) brightness(.94) contrast(1.02);border-radius:12px}
-.leaflet-container{background:#241E18}
-
-/* scrollbar & sélection */
 ::-webkit-scrollbar-thumb{background:#3A332B}
 ::-webkit-scrollbar-thumb:hover{background:#55493C}
-::selection{background:#3B241A;color:var(--ink)}
-
-/* images légèrement veloutées */
-.gcard img,.imgs img,.simg,.dimg{filter:saturate(1.02) contrast(.98)}
-.prio{box-shadow:0 2px 10px rgba(0,0,0,.35)}
-.p-top{background:#E08A2E}.p-symp{background:#3E9C71}.p-niche{background:#8B6DBF}
+.rvl{transition:opacity .45s ease,transform .45s ease,box-shadow .18s ease}
+@media(max-width:640px){.topnav{border-radius:20px}.topnav a.brand{border-right:none;padding-right:14px}}
