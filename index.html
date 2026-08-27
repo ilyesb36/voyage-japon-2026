@@ -10,7 +10,6 @@
 <meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="stylesheet" href="vendor/leaflet.css">
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -197,6 +196,12 @@ q('progress').innerHTML = `
     </ul>
     <p class="prog__more"><a class="btn btn--ghost" href="pratique.html">Voir le budget complet</a></p>
   </div>`;
+</script>
+
+<script>
+/* Enregistrement du service worker : c'est lui qui rend le site utilisable
+   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>

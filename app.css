@@ -1,11 +1,15 @@
-@import url("vendor/open-props.min.css");
+@import url("vendor/open-props.min.css") layer(vendor);
+@import url("vendor/leaflet.css") layer(vendor);
 @import url("vendor/fonts.css");
 
 /* ===========================================================================
    Japon 2026 — feuille de style unique.
-   Il n'y a pas d'autre CSS dans ce site : ni <style> dans les pages, ni
-   !important. Toute couleur passe par un token, pour que le mode sombre
-   n'ait qu'un seul endroit à redéfinir.
+   Il n'y a pas d'autre CSS dans ce site : aucun <style> dans les pages. Les
+   seuls !important restants sont les deux idiomes standards — [hidden] et
+   prefers-reduced-motion. Leaflet est importé dans la couche `vendor`, ce qui
+   le fait perdre devant nos composants sans avoir à forcer quoi que ce soit.
+   Toute couleur passe par un token, pour que le mode sombre n'ait qu'un seul
+   endroit à redéfinir.
 
    Direction : papier légèrement froid (le gravier d'un jardin sec plutôt que
    la crème), encre sumi tirant sur le brun, vermillon des torii en accent,
@@ -14,7 +18,7 @@
    c'est la langue des panneaux de gare.
    =========================================================================== */
 
-@layer reset, tokens, base, layout, components, utilities;
+@layer vendor, reset, tokens, base, layout, components, utilities;
 
 /* --- reset ---------------------------------------------------------------- */
 
@@ -350,14 +354,14 @@
   .leaflet-popup-tip { background: var(--paper-2); border: 1px solid var(--line); }
   .leaflet-popup-content { margin: var(--s-3) var(--s-4); font-size: var(--t-sm); line-height: 1.5; }
   .leaflet-popup-content b { font-family: var(--f-display); font-size: var(--t-md); }
-  .leaflet-popup-close-button { color: var(--mut) !important; }
-  .leaflet-bar a { background: var(--paper-2) !important; color: var(--ink) !important;
-                   border-color: var(--line) !important; }
+  .leaflet-popup-close-button { color: var(--mut); }
+  .leaflet-bar a { background: var(--paper-2); color: var(--ink);
+                   border-color: var(--line); }
   .leaflet-control-attribution {
-    background: color-mix(in srgb, var(--paper) 80%, transparent) !important;
-    color: var(--mut) !important; font-size: 10px !important;
+    background: color-mix(in srgb, var(--paper) 80%, transparent);
+    color: var(--mut); font-size: 10px;
   }
-  .leaflet-control-attribution a { color: var(--mut) !important; }
+  .leaflet-control-attribution a { color: var(--mut); }
   /* le fond gris d'Esri est clair : en mode sombre on le désature et l'assombrit */
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9); }
@@ -372,7 +376,7 @@
   }
   .map-pin--exc {
     border-radius: var(--r-full); width: 18px; height: 18px;
-    background: var(--paper-2) !important;
+    background: var(--paper-2);
   }
 
   /* itinéraire -------------------------------------------------------------- */
@@ -426,7 +430,7 @@
     width: 5px; height: 5px; border-radius: 1px; background: var(--c, var(--mut));
   }
   .day__evening { color: var(--ink-2); }
-  .day__evening::before { background: var(--gold) !important; }
+  .day__items li.day__evening::before { background: var(--gold); }
   .day__tip {
     margin-top: var(--s-3); padding: var(--s-3) var(--s-4);
     background: var(--paper-3); border-left: 2px solid var(--gold);
@@ -515,8 +519,8 @@
                 flex-direction: column; flex: 1; }
   .spot__body h3 { font-size: var(--t-md); }
   .spot__body p { font-size: var(--t-sm); color: var(--mut); line-height: 1.5; margin-top: 2px; }
-  .spot__meta { margin-top: auto; padding-top: var(--s-3); display: flex;
-                align-items: center; gap: var(--s-2); font-size: var(--t-xs) !important; }
+  .spot__body .spot__meta { margin-top: auto; padding-top: var(--s-3); display: flex;
+                align-items: center; gap: var(--s-2); font-size: var(--t-xs); }
   .spot__prio { position: absolute; top: var(--s-2); left: var(--s-2); }
   .spot__guide {
     position: absolute; top: var(--s-2); right: var(--s-2);

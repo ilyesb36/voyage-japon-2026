@@ -222,5 +222,11 @@ if (location.hash) {
   el?.scrollIntoView({ block: 'start' });
 }
 </script>
+
+<script>
+/* Enregistrement du service worker : c'est lui qui rend le site utilisable
+   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
 </body>
 </html>
