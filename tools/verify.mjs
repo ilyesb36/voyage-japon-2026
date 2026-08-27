@@ -29,7 +29,16 @@ function todo(label, reason) {
 // --- totaux de référence ------------------------------------------------------
 
 console.log('\nTotaux de référence');
-ok('236 spots', SPOTS.length, 236);
+// La sélection d'origine ne doit jamais bouger : c'est elle qu'on vérifie.
+// Les ajouts sont comptés à part, pour qu'une perte dans l'une ne puisse pas
+// être masquée par un gain dans l'autre.
+const originaux = SPOTS.filter((s) => s.source !== 'claude');
+const ajouts = SPOTS.filter((s) => s.source === 'claude');
+ok('236 spots d\'origine', originaux.length, 236);
+ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
+ok('29 idées ajoutées', ajouts.length, 29);
+assert('chaque ajout a une photo', ajouts.every((s) => s.img),
+  ajouts.filter((s) => !s.img).map((s) => s.name).join(', '));
 ok('25 jours', DAYS.length, 25);
 ok('30 journées type', TEMPLATES.length, 30);
 ok('6 hôtels', HOTELS.length, 6);

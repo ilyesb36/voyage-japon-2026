@@ -1,15 +1,18 @@
-// Extrait les données des anciennes pages HTML vers data/*.js.
-// Script d'auteur, lancé une fois : `node tools/extract.mjs`.
-// Les anciennes pages restent la source tant que la refonte n'est pas terminée.
+// Extrait les données des pages d'origine (legacy/) vers data/*.js.
+// `node tools/extract.mjs`.
+//
+// Les pages de legacy/ ne sont plus servies, mais elles restent la source de
+// vérité historique : sans elles, l'extraction ne serait plus rejouable.
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveCity, normalizeHeading } from './lib/gazetteer.mjs';
 import { BOOKINGS, AMENITY_LABELS } from './lib/bookings.mjs';
+import { enriched as ADDITIONS } from './lib/additions.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
+const read = (f) => fs.readFileSync(path.join(ROOT, 'legacy', f), 'utf8');
 
 // --- petits utilitaires de nettoyage ----------------------------------------
 
@@ -435,13 +438,34 @@ function parseSpots() {
       blurb,
       guideTip,
       // D'où vient la recommandation. « guide » = l'amie guide de Mathilde,
-      // « ilyes » = la sélection d'origine. Les ajouts ultérieurs porteront
-      // une autre source, pour ne jamais les confondre avec les deux premières.
+      // « ilyes » = la sélection d'origine, « claude » = les ajouts, jamais
+      // confondus avec les deux premières.
       source: guideTip ? 'guide' : 'ilyes',
       img,
       maps: href,
     });
   }
+
+  // Les ajouts viennent après, avec leur propre source et leur photo Commons.
+  const images = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/additions-images.json'), 'utf8'));
+  for (const a of ADDITIONS) {
+    let id = `spot-${slug(a.name)}`;
+    let k = 2;
+    while (seen.has(id)) id = `spot-${slug(a.name)}-${k++}`;
+    seen.add(id);
+    SPOTS.push({
+      id, name: a.name,
+      cityId: a.cityId, area: null,
+      category: a.category, priority: a.priority,
+      blurb: a.blurb,
+      guideTip: false,
+      source: 'claude',
+      ...(a.checked ? { checked: a.checked } : {}),
+      img: images[a.name]?.img || null,
+      maps: a.maps,
+    });
+  }
+
   return SPOTS;
 }
 

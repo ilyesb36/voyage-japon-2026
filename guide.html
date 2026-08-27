@@ -57,9 +57,12 @@ mountChrome('guide.html');
 
 const q = (id) => document.getElementById(id);
 
+// La provenance est une donnée, pas un détail : les conseils de l'amie guide
+// n'ont pas la même valeur qu'une suggestion, et il faut pouvoir les isoler.
 const SOURCES = [
   { id: 'guide', name: "L'amie guide de Mathilde" },
   { id: 'ilyes', name: 'Notre sélection' },
+  { id: 'claude', name: 'Suggestions à vérifier' },
 ];
 
 // Les facettes se croisent : on peut demander « Kyoto × Food × Obligatoire ».
@@ -76,10 +79,14 @@ const FACETS = {
 
 const state = { city: 'all', category: 'all', priority: 'all', source: 'all' };
 
+const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
+const nNew = SPOTS.filter((s) => s.source === 'claude').length;
 q('lede').innerHTML =
   `<b>${SPOTS.length} idées</b> classées par ville, par envie et par priorité. ` +
   `Chaque carte ouvre son adresse dans Google Maps. ` +
-  `Les <b>${SPOTS.filter((s) => s.source === 'guide').length} conseils de l'amie guide de Mathilde</b> sont signalés.`;
+  `Les <b>${nGuide} conseils de l'amie guide de Mathilde</b> sont signalés, ` +
+  `et les <b>${nNew} suggestions ajoutées</b> restent à vérifier — horaires et ouvertures ` +
+  `n'ont pas été confirmés.`;
 
 // --- filtres -----------------------------------------------------------------
 for (const [facet, options] of Object.entries(FACETS)) {
@@ -126,7 +133,8 @@ function card(s) {
     <div class="thumb thumb--wide">
       ${s.img ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" loading="lazy" decoding="async">` : ''}
       <span class="prio prio--${s.priority} spot__prio">${prioName[s.priority]}</span>
-      ${s.source === 'guide' ? '<span class="spot__guide" title="Conseillé par l\'amie guide de Mathilde">Conseil de la guide</span>' : ''}
+      ${s.source === 'guide' ? '<span class="spot__badge spot__badge--guide">Conseil de la guide</span>' : ''}
+      ${s.source === 'claude' ? '<span class="spot__badge spot__badge--new">À vérifier</span>' : ''}
     </div>
     <div class="spot__body">
       <h3>${esc(s.name)}</h3>
