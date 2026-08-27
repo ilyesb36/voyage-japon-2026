@@ -43,6 +43,35 @@ export const eur = (n) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
 
 /** Monte la barre de navigation et le pied de page. */
+/**
+ * Le thème. Le crème est le défaut assumé ; le sombre est un choix que l'on
+ * garde d'une visite à l'autre. On l'applique avant le rendu pour éviter
+ * l'éclair blanc au chargement.
+ */
+export function applyTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem('jp2026_theme'); } catch {}
+  if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+}
+applyTheme();
+
+function toggleTheme() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  if (dark) document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', 'dark');
+  try { localStorage.setItem('jp2026_theme', dark ? 'light' : 'dark'); } catch {}
+  syncThemeButton();
+}
+
+function syncThemeButton() {
+  const btn = document.querySelector('.nav__theme');
+  if (!btn) return;
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = dark ? '☾' : '☀';
+  btn.setAttribute('aria-label', dark ? 'Passer en clair' : 'Passer en sombre');
+  btn.setAttribute('aria-pressed', String(dark));
+}
+
 export function mountChrome(current) {
   const away = daysBetween(today(), TRIP.start);
   const counter = away > 0 ? `J−${away}`
@@ -59,6 +88,7 @@ export function mountChrome(current) {
           ${PAGES.map((p) => `<a href="${p.href}"${p.href === current ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
         </div>
         <span class="nav__count">${counter}</span>
+        <button class="nav__theme" type="button"></button>
       </div>
     </nav>`);
 
@@ -71,6 +101,9 @@ export function mountChrome(current) {
         <small>Fait maison, pour Ilyès &amp; Mathilde. Photos : Wikimedia Commons — voir img/CREDITS.md.</small>
       </div>
     </footer>`);
+
+  document.querySelector('.nav__theme').addEventListener('click', toggleTheme);
+  syncThemeButton();
 
   const burger = document.querySelector('.nav__burger');
   const links = document.querySelector('.nav__links');

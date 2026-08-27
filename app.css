@@ -46,14 +46,14 @@
        une étape de build — on en reprend les valeurs, pas la machinerie. */
     /* Crème chaud, mais retenu : le beige saturé est le cliché, la chaleur
        ne l'est pas. Les cartes restent blanches pour se détacher du fond. */
-    --paper:    #FAF8F3;
-    --paper-2:  #FFFFFF;
-    --paper-3:  #F1EEE7;
+    --paper:    #F5F0E6;   /* crème franc, pas un blanc cassé */
+    --paper-2:  #FFFCF7;   /* les cartes se détachent du fond */
+    --paper-3:  #EDE7DA;
     --ink:      #1F1B17;
     --ink-2:    #46403A;
     --mut:      #7A7168;
-    --line:     #E7E2D9;
-    --line-2:   #D5CFC3;
+    --line:     #E2DACB;
+    --line-2:   #CFC5B2;
 
     /* Un seul accent, l'érable. La couleur ne sert qu'à porter une info. */
     --acc:      #B91C1C;
@@ -98,39 +98,15 @@
     --wrap: 1180px;
     --nav-h: 58px;
 
-    color-scheme: light dark;
+    color-scheme: light;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      /* Pas un noir neutre : un brun chaud de fin d'automne, celui d'un
-         intérieur en bois le soir. Les surfaces montent d'un cran avec
-         l'élévation, le texte reste très contrasté pour rester lisible. */
-      --paper:    #1A1512;
-      --paper-2:  #221B17;
-      --paper-3:  #2C231E;
-      --ink:      #F4EDE5;
-      --ink-2:    #D8CABD;
-      --mut:      #A4948A;
-      --line:     #2E251F;
-      --line-2:   #443830;
-      --acc:      #E8836A;
-      --acc-soft: #2B1A15;
-      --pine:     #7FBFA0;
-      --gold:     #D9A94E;
-      --c-tokyo:    #7FB3D5;
-      --c-kanazawa: #D9A94E;
-      --c-kyoto:    #E8836A;
-      --c-osaka:    #E39B5C;
-      --c-hakone:   #6FBFAE;
-      --c-exc:      #A4948A;
-      --sh-1: none;
-      --sh-2: 0 1px 2px rgb(0 0 0 / 0.45), 0 2px 10px rgb(0 0 0 / 0.35);
-      --sh-3: 0 4px 28px rgb(0 0 0 / 0.6);
-    }
-  }
 
+  /* Le sombre est un choix, pas une conséquence du réglage système : sur un
+     site personnel dont le fond crème est le parti pris, laisser l'OS décider
+     revient à ne jamais montrer le parti pris. */
   :root[data-theme="dark"] {
+    color-scheme: dark;
     /* Pas un noir neutre : un brun chaud de fin d'automne, celui d'un
        intérieur en bois le soir. Les surfaces montent d'un cran avec
        l'élévation, le texte reste très contrasté pour rester lisible. */
@@ -326,12 +302,10 @@
   .prio--top   { color: #8A5A14; background: #FAF0DC; }
   .prio--symp  { color: #2C5B45; background: #E6F0EA; }
   .prio--niche { color: #5B4383; background: #EDE8F6; }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .prio--ob    { color: #F0A08E; background: #3B1B14; }
-    :root:not([data-theme="light"]) .prio--top   { color: #DCB86A; background: #33280F; }
-    :root:not([data-theme="light"]) .prio--symp  { color: #8FC5A8; background: #16301F; }
-    :root:not([data-theme="light"]) .prio--niche { color: #B49BDC; background: #241C36; }
-  }
+    :root[data-theme="dark"] .prio--ob    { color: #F0A08E; background: #3B1B14; }
+    :root[data-theme="dark"] .prio--top   { color: #DCB86A; background: #33280F; }
+    :root[data-theme="dark"] .prio--symp  { color: #8FC5A8; background: #16301F; }
+    :root[data-theme="dark"] .prio--niche { color: #B49BDC; background: #241C36; }
 
   /* boutons & filtres ------------------------------------------------------ */
   .btn {
@@ -380,9 +354,7 @@
   }
   .leaflet-control-attribution a { color: var(--mut); }
   /* le fond gris d'Esri est clair : en mode sombre on le désature et l'assombrit */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.86) contrast(.88) sepia(.28) saturate(.85); }
-  }
+  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.86) contrast(.88) sepia(.28) saturate(.85); }
   :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.86) contrast(.88) sepia(.28) saturate(.85); }
 
   .map-pin {
@@ -1153,4 +1125,37 @@
     border-top: 1px solid var(--line);
     font-size: var(--t-xs) !important; color: var(--acc) !important;
   }
+}
+
+@layer components {
+  .nav__theme {
+    flex: none; width: 30px; height: 30px; margin-left: var(--s-2);
+    border-radius: var(--r-s); color: var(--mut); font-size: 14px;
+    line-height: 1; display: grid; place-items: center;
+    transition: background .15s, color .15s;
+  }
+  .nav__theme:hover { background: var(--paper-3); color: var(--ink); }
+}
+
+@layer components {
+  /* itinéraire : le bandeau photo d'une étape ------------------------------- */
+  .phase__shot {
+    margin: 0 0 var(--s-5); overflow: hidden; border-radius: var(--r-m);
+  }
+  .phase__shot img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; }
+  @media (max-width: 640px) { .phase__shot img { aspect-ratio: 16 / 9; } }
+
+  /* la vignette d'une journée type, et les photos de ses étapes */
+  .alt__thumb {
+    flex: none; width: 44px; height: 44px; object-fit: cover;
+    border-radius: var(--r-s); margin-right: var(--s-1);
+  }
+  .alt__item > summary { align-items: center; }
+  .alt__steps li { align-items: flex-start; }
+  .alt__what { flex: 1; min-width: 0; }
+  .alt__stepshot {
+    flex: none; width: 72px; height: 52px; object-fit: cover;
+    border-radius: var(--r-s); margin-left: var(--s-3);
+  }
+  @media (max-width: 560px) { .alt__stepshot { display: none; } }
 }

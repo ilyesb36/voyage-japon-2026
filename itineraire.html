@@ -6,10 +6,15 @@
 <title>Jour par jour — Japon 2026</title>
 <meta name="description" content="Les 25 jours du voyage, avec pour chaque journée libre les journées type de la ville.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -34,6 +39,10 @@ import { mountChrome, esc, formatDate, today } from './app/ui.js';
 
 mountChrome('itineraire.html');
 const q = (id) => document.getElementById(id);
+
+// Les images d'ouverture, partagées avec l'accueil.
+const HERO = {"ouverture": "img/hero/ouverture.webp", "tokyo": "img/hero/tokyo.webp", "kanazawa": "img/hero/kanazawa.webp", "kyoto": "img/hero/kyoto.webp", "osaka": "img/hero/osaka.webp", "hakone": "img/hero/hakone.webp", "tokyo2": "img/hero/tokyo2.webp"};
+const heroFor = (step) => (step.n === 6 && HERO.tokyo2) ? HERO.tokyo2 : HERO[step.cityId];
 
 const KIND = {
   vol: 'Vol', transfert: 'Trajet', excursion: 'Excursion', etape: null, libre: 'Journée libre',
@@ -75,6 +84,9 @@ for (const step of STEPS) {
 
   html += `
   <section class="phase" id="${step.id}" style="--c:${c.color}">
+    <figure class="phase__shot">
+      <img src="${heroFor(step)}" alt="${esc(c.name)}" loading="lazy" decoding="async">
+    </figure>
     <header class="phase__head">
       <span class="step-num" style="--c:${c.color}">${step.n}</span>
       <div>
@@ -128,6 +140,7 @@ function templateItem(t) {
   return `
   <details class="alt__item" id="${t.id}">
     <summary>
+      ${t.img ? `<img class="alt__thumb" src="${esc(t.img)}" alt="" loading="lazy" decoding="async">` : ''}
       <b>${esc(t.title)}</b>
       <span class="mut">${esc(t.sub)}</span>
       ${t.category ? `<span class="day__kind">${esc(t.category)}</span>` : ''}
@@ -137,8 +150,9 @@ function templateItem(t) {
       ${t.steps.map((s) => `
         <li>
           <span class="data alt__h">${esc(s.h)}</span>
-          <span>${esc(s.text)}${s.note ? ` <span class="mut">— ${esc(s.note)}</span>` : ''}
+          <span class="alt__what">${esc(s.text)}${s.note ? ` <span class="mut">— ${esc(s.note)}</span>` : ''}
           ${s.maps ? ` <a href="${esc(s.maps)}" target="_blank" rel="noopener" class="alt__pin" aria-label="Ouvrir dans Google Maps">↗</a>` : ''}</span>
+          ${s.img ? `<img class="alt__stepshot" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : ''}
         </li>`).join('')}
     </ol>
   </details>`;
