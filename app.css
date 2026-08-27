@@ -375,6 +375,54 @@
     background: var(--paper-2) !important;
   }
 
+  /* guide : filtres --------------------------------------------------------- */
+  .filters {
+    display: grid; gap: var(--s-4);
+    padding: var(--s-4) 0 var(--s-5);
+    border-block: 1px solid var(--line);
+  }
+  .filters__group { display: flex; align-items: center; gap: var(--s-4); min-width: 0; }
+  .filters__group > .label { flex: none; width: 112px; }
+  .chip__dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block;
+               margin-right: var(--s-2); vertical-align: 0; }
+  .chip[aria-pressed="true"] .chip__dot { box-shadow: 0 0 0 1.5px var(--paper); }
+
+  @media (max-width: 640px) {
+    .filters__group { flex-direction: column; align-items: stretch; gap: var(--s-2); }
+    .filters__group > .label { width: auto; }
+  }
+
+  .results {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding-block: var(--s-4);
+    font-size: var(--t-sm); color: var(--mut);
+  }
+  .results b { color: var(--ink); font-family: var(--f-data); font-weight: 700; }
+  .empty { padding: var(--s-8) 0; text-align: center; color: var(--mut); }
+
+  /* guide : grille ---------------------------------------------------------- */
+  .spotgrid {
+    display: grid; gap: var(--s-4);
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    padding-bottom: var(--s-8);
+  }
+  /* Chaque carte occupe la même hauteur : c'est ce qui manquait à l'ancienne
+     grille, dont les colonnes se décalaient et laissaient des trous. */
+  .spot { display: flex; flex-direction: column; }
+  .spot__body { padding: var(--s-3) var(--s-4) var(--s-4); display: flex;
+                flex-direction: column; flex: 1; }
+  .spot__body h3 { font-size: var(--t-md); }
+  .spot__body p { font-size: var(--t-sm); color: var(--mut); line-height: 1.5; margin-top: 2px; }
+  .spot__meta { margin-top: auto; padding-top: var(--s-3); display: flex;
+                align-items: center; gap: var(--s-2); font-size: var(--t-xs) !important; }
+  .spot__prio { position: absolute; top: var(--s-2); left: var(--s-2); }
+  .spot__guide {
+    position: absolute; top: var(--s-2); right: var(--s-2);
+    font-size: var(--t-xs); font-weight: 600;
+    background: var(--pine); color: #fff;
+    padding: 2px var(--s-2); border-radius: var(--r-s);
+  }
+
   /* accueil : hero ---------------------------------------------------------- */
   .hero {
     display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
