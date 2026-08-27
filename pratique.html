@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pratique — Japon 2026</title>
+<meta name="description" content="Les six hébergements réservés et le budget du voyage, calculés depuis une source unique.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F6F6F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="wrap">
+  <header class="section">
+    <p class="eyebrow">Pratique</p>
+    <h1>Où on dort,<br>ce que ça coûte</h1>
+    <p class="hero__lede">
+      Les six hébergements sont confirmés. Le budget se calcule à partir de ces
+      réservations : il ne peut plus diverger d'elles.
+    </p>
+  </header>
+
+  <section class="section">
+    <div class="shead">
+      <h2>Les hébergements</h2>
+      <span class="shead__meta" id="hotels-meta"></span>
+    </div>
+    <div id="hotels"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead">
+      <h2>Le budget</h2>
+      <p>Ajuste les montants variables, les totaux suivent.</p>
+    </div>
+    <div id="budget"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead">
+      <h2>Les paiements</h2>
+      <p>Coche ce qui est réglé — mémorisé sur cet appareil.</p>
+    </div>
+    <div id="payments"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead"><h2>Hors-ligne</h2></div>
+    <div id="offline"></div>
+  </section>
+</main>
+
+<script type="module">
+import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, BUDGET, AMENITY_LABELS } from './data/trip.js';
+import { mountChrome, esc, eur, formatDate, daysBetween, today, bindLightbox } from './app/ui.js';
+
+mountChrome('pratique.html');
+const q = (id) => document.getElementById(id);
+
+// --- les hébergements ---------------------------------------------------------
+// Les six fiches affichent exactement les mêmes lignes. Quand une information
+// n'existe pas — la superficie, que deux établissements ne communiquent pas —
+// on l'écrit, plutôt que d'escamoter la ligne : c'est ce qui rendait les
+// anciennes fiches incomparables entre elles.
+const AMENITY_KEYS = Object.keys(AMENITY_LABELS);
+
+q('hotels-meta').textContent =
+  `${HOTELS.length} réservations · ${TRIP.nights} nuits · ${eur(HOTELS.reduce((s, h) => s + h.price, 0))}`;
+
+q('hotels').innerHTML = HOTELS.map((h) => {
+  const step = STEPS.find((s) => s.id === h.stepId);
+  const c = CITIES[h.cityId];
+  const seg = SEGMENTS.find((g) => g.toStepId === h.stepId);
+  const cancel = h.cancelBefore ? daysBetween(today(), h.cancelBefore) : null;
+
+  return `
+  <article class="hotel card" style="--c:${c.color}">
+    <div class="hotel__shots">
+      ${h.images.slice(0, 4).map((src, i) => `
+        <img src="${esc(src)}" alt="${esc(h.name)} — photo ${i + 1}"
+             loading="lazy" decoding="async" data-full="${esc(src)}">`).join('')}
+      <span class="hotel__step step-num" style="--c:${c.color}">${step.n}</span>
+    </div>
+
+    <div class="hotel__body">
+      <header class="hotel__head">
+        <div>
+          <h3>${esc(h.name)}</h3>
+          <p class="hotel__where">
+            <span class="city-dot" style="--c:${c.color}">${esc(c.name)}</span>
+            ${h.address ? `<span class="mut">· ${esc(h.address)}</span>` : ''}
+          </p>
+        </div>
+        <p class="hotel__price">
+          <b class="data">${eur(h.price)}</b>
+          <span class="mut data">${eur(h.perNight)} / nuit</span>
+        </p>
+      </header>
+
+      <dl class="hotel__facts">
+        <div><dt>Dates</dt><dd class="data">${formatDate(h.dates ? step.from : step.from)} → ${formatDate(step.to)}</dd></div>
+        <div><dt>Nuits</dt><dd class="data">${step.nights}</dd></div>
+        <div><dt>Chambre</dt><dd>${esc(h.room)}</dd></div>
+        <div><dt>Superficie</dt><dd>${h.size ? `<span class="data">${h.size} m²</span>` : '<span class="mut">non communiquée</span>'}</dd></div>
+        <div><dt>Capacité</dt><dd>${esc(h.capacity)}</dd></div>
+        <div><dt>Arrivée</dt><dd class="data">${esc(h.checkIn)}</dd></div>
+        <div><dt>Départ</dt><dd class="data">${esc(h.checkOut)}</dd></div>
+        <div><dt>Salle de bains</dt><dd>${esc(h.bath)}</dd></div>
+        <div><dt>Repas</dt><dd>${h.meals ? esc(h.meals) : '<span class="mut">non compris</span>'}</dd></div>
+        <div><dt>Paiement</dt><dd>${h.paid
+          ? '<span class="ok">réglé</span>'
+          : `<span class="todo">à régler — ${eur(h.price)}</span>`}</dd></div>
+      </dl>
+
+      <ul class="hotel__amenities">
+        ${AMENITY_KEYS.map((k) => `
+          <li class="${h.amenities[k] ? 'is-yes' : 'is-no'}">
+            <span aria-hidden="true">${h.amenities[k] ? '✓' : '·'}</span>
+            ${esc(AMENITY_LABELS[k])}
+            <span class="sr">${h.amenities[k] ? 'oui' : 'non'}</span>
+          </li>`).join('')}
+      </ul>
+
+      ${cancel !== null ? `<p class="hotel__flag">
+        Annulation gratuite jusqu'au <span class="data">${formatDate(h.cancelBefore)}</span>
+        ${cancel > 0 ? `<span class="mut">— dans ${cancel} jours</span>` : '<span class="mut">— échue</span>'}
+      </p>` : h.refundable
+        ? '<p class="hotel__flag hotel__flag--soft">Annulation gratuite</p>'
+        : '<p class="hotel__flag hotel__flag--soft">Non remboursable</p>'}
+
+      ${h.access ? `<p class="hotel__access">${esc(h.access)}</p>` : ''}
+
+      ${seg ? `<details class="hotel__route">
+        <summary>Y aller <span class="mut data">${esc(seg.duration)} · ${esc(seg.pricePerPerson)}</span></summary>
+        <p>${esc(h.route ? h.route.text : seg.label)}</p>
+      </details>` : ''}
+
+      <p><a class="btn btn--ghost" href="${esc(h.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>
+    </div>
+  </article>`;
+}).join('');
+
+bindLightbox(q('hotels'));
+
+// --- le budget ----------------------------------------------------------------
+// Le poste hébergement est la somme des réservations, jamais une saisie.
+const RATE_LABEL = { vol: '€ / personne', train: '€ / personne', food: '€ / jour / pers.', act: '€ / jour / pers.' };
+const MULT = { vol: 2, train: 2, food: 24 * 2, act: 24 * 2 };
+
+const rates = loadRates();
+
+function loadRates() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('jp2026_rates') || '{}');
+    return { ...BUDGET.defaults, ...saved };
+  } catch { return { ...BUDGET.defaults }; }
+}
+const saveRates = () => localStorage.setItem('jp2026_rates', JSON.stringify(rates));
+
+const hotelsTotal = HOTELS.reduce((s, h) => s + h.price, 0);
+
+function lineTotal(item) {
+  if (item.fromHotel) return HOTELS.find((h) => h.id === item.fromHotel).price;
+  if (item.fix != null) return item.fix;
+  return (rates[item.dyn] || 0) * MULT[item.dyn];
+}
+const grandTotal = () =>
+  BUDGET.categories.reduce((s, c) => s + c.items.reduce((t, i) => t + lineTotal(i), 0), 0);
+
+function renderBudget() {
+  q('budget').innerHTML = `
+    <div class="budget">
+      ${BUDGET.categories.map((cat) => `
+        <section class="budget__cat">
+          <header>
+            <h3>${esc(cat.name)}</h3>
+            <span class="mut">${esc(cat.sub)}</span>
+            <b class="data" data-cat-total="${cat.id}">${eur(cat.items.reduce((t, i) => t + lineTotal(i), 0))}</b>
+          </header>
+          ${cat.items.map((i) => `
+            <div class="budget__row">
+              <span class="budget__label">
+                <b>${esc(i.label)}</b>
+                ${i.sub ? `<span class="mut">${esc(i.sub)}</span>` : ''}
+              </span>
+              ${i.dyn ? `
+                <label class="budget__input">
+                  <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
+                         aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
+                  <span class="mut">${RATE_LABEL[i.dyn]}</span>
+                </label>` : ''}
+              <span class="budget__amount data" data-line="${i.key}">${eur(lineTotal(i))}</span>
+            </div>`).join('')}
+        </section>`).join('')}
+
+      <div class="budget__total">
+        <div>
+          <span class="label">Total du voyage</span>
+          <b class="data" id="grand">${eur(grandTotal())}</b>
+          <span class="mut">2 personnes · <span class="data" id="perhead">${eur(grandTotal() / 2)}</span> chacun</span>
+        </div>
+        <p class="mut">Hors shopping et souvenirs. Prix d'hébergement = les réservations Booking réelles.</p>
+      </div>
+    </div>`;
+
+  q('budget').querySelectorAll('input[data-rate]').forEach((input) => {
+    input.addEventListener('input', () => {
+      rates[input.dataset.rate] = Math.max(0, +input.value || 0);
+      saveRates();
+      refreshTotals();
+    });
+  });
+}
+
+function refreshTotals() {
+  for (const cat of BUDGET.categories) {
+    for (const i of cat.items) {
+      const cell = q('budget').querySelector(`[data-line="${i.key}"]`);
+      if (cell) cell.textContent = eur(lineTotal(i));
+    }
+    const catCell = q('budget').querySelector(`[data-cat-total="${cat.id}"]`);
+    if (catCell) catCell.textContent = eur(cat.items.reduce((t, i) => t + lineTotal(i), 0));
+  }
+  q('grand').textContent = eur(grandTotal());
+  q('perhead').textContent = eur(grandTotal() / 2);
+}
+
+renderBudget();
+
+// --- les paiements ------------------------------------------------------------
+// On relit les anciennes clés pour ne pas perdre ce qui était déjà coché.
+function loadPaid() {
+  try {
+    const now = JSON.parse(localStorage.getItem('jp2026_paid') || 'null');
+    if (now) return now;
+    return JSON.parse(localStorage.getItem('bdg_paid') || '{}');
+  } catch { return {}; }
+}
+const paid = loadPaid();
+const savePaid = () => localStorage.setItem('jp2026_paid', JSON.stringify(paid));
+
+// Les hôtels déjà réglés via Booking sont cochés d'office et non décochables :
+// c'est un fait, pas une préférence.
+const prepaid = new Set(HOTELS.filter((h) => h.paid).map((h) => h.id));
+
+function renderPayments() {
+  const lines = BUDGET.categories.flatMap((c) =>
+    c.items.map((i) => ({ ...i, cat: c.name, amount: lineTotal(i) })));
+  const settled = lines.filter((l) => prepaid.has(l.key) || paid[l.key]);
+  const sum = (ls) => ls.reduce((s, l) => s + l.amount, 0);
+  const pct = Math.round((sum(settled) / sum(lines)) * 100) || 0;
+
+  q('payments').innerHTML = `
+    <div class="pay">
+      <div class="prog__bar"><span style="width:${pct}%"></span></div>
+      <p class="pay__sum">
+        <b class="data">${eur(sum(settled))}</b> réglés sur <b class="data">${eur(sum(lines))}</b>
+        <span class="mut">· reste <span class="data">${eur(sum(lines) - sum(settled))}</span></span>
+      </p>
+      ${BUDGET.categories.map((c) => `
+        <section class="pay__cat">
+          <h3>${esc(c.name)}</h3>
+          ${c.items.map((i) => {
+            const locked = prepaid.has(i.key);
+            const on = locked || !!paid[i.key];
+            return `
+            <label class="pay__row${on ? ' is-paid' : ''}">
+              <input type="checkbox" data-key="${i.key}" ${on ? 'checked' : ''} ${locked ? 'disabled' : ''}>
+              <span class="pay__label">
+                <b>${esc(i.label)}</b>
+                <span class="mut">${locked ? 'réglé via Booking' : esc(i.sub || '')}</span>
+              </span>
+              <span class="data">${eur(lineTotal(i))}</span>
+            </label>`;
+          }).join('')}
+        </section>`).join('')}
+    </div>`;
+
+  q('payments').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      paid[cb.dataset.key] = cb.checked;
+      savePaid();
+      renderPayments();
+    });
+  });
+}
+renderPayments();
+
+// --- hors-ligne ---------------------------------------------------------------
+// Le pré-cache pèse une vingtaine de mégaoctets : ça ne peut pas se faire en
+// silence, donc on montre où ça en est.
+q('offline').innerHTML = `
+  <div class="offline card">
+    <p><b id="off-state">Vérification…</b></p>
+    <p class="mut" id="off-detail">
+      Le site entier — pages, photos, cartes déjà consultées — peut tenir sur le
+      téléphone pour fonctionner sans réseau dans le métro.
+    </p>
+    <p><button class="btn" id="off-go" hidden>Préparer le hors-ligne</button></p>
+  </div>`;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').then((reg) => {
+    const state = q('off-state');
+    const go = q('off-go');
+    navigator.serviceWorker.addEventListener('message', (e) => {
+      if (e.data?.type === 'cache-progress') {
+        state.textContent = `Mise en cache — ${e.data.done} / ${e.data.total}`;
+      }
+      if (e.data?.type === 'cache-done') {
+        state.textContent = 'Prêt pour le hors-ligne ✓';
+        go.hidden = true;
+      }
+    });
+    caches.has('jp-media-v11').then((has) => {
+      state.textContent = has ? 'Prêt pour le hors-ligne ✓' : 'Pas encore téléchargé';
+      go.hidden = has;
+    });
+    go.addEventListener('click', () => {
+      state.textContent = 'Téléchargement…';
+      reg.active?.postMessage({ type: 'cache-media' });
+      navigator.serviceWorker.controller?.postMessage({ type: 'cache-media' });
+    });
+  }).catch(() => { q('off-state').textContent = 'Indisponible sur ce navigateur'; });
+} else {
+  q('off-state').textContent = 'Indisponible sur ce navigateur';
+}
+</script>
+</body>
+</html>
