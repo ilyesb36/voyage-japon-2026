@@ -1229,3 +1229,12 @@
     font-size: var(--t-sm); color: var(--ink-2);
   }
 }
+
+@layer components {
+  /* la notice historique : ce qu'on aimerait savoir devant le monument */
+  .sheet__lore {
+    margin-top: var(--s-4); padding-left: var(--s-4);
+    border-left: 2px solid var(--line-2);
+    font-size: var(--t-sm); line-height: 1.65; color: var(--ink-2);
+  }
+}

@@ -172,5 +172,173 @@
     "source": "https://commons.wikimedia.org/wiki/File:Yoshiki-en.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Christophe95"
+  },
+  "Gyokusen'inmaru Garden": {
+    "img": "img/gyokusen-inmaru-garden-62818bab.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Gyokuseninmaru_Garden_(118911057).jpeg",
+    "licence": "CC BY-SA 3.0",
+    "author": "Okochuke"
+  },
+  "Kazuemachi Chaya": {
+    "img": "img/kazuemachi-chaya-d2875940.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kazuemachi_18-Sept-2022.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "皓月旗"
+  },
+  "Bibliothèque Umimirai": {
+    "img": "img/bibliotheque-umimirai-a896418b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kanazawa_Umimirai_Library_2F_ac_(1).jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Asturio Cantabrio"
+  },
+  "Ohi Museum": {
+    "img": "img/ohi-museum-9de29cfb.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Bowl,_Ohi_ware_-_Ishikawa_Prefectural_Museum_of_Traditional_Arts_and_Crafts_-_Kanazawa,_Japan_-_DSC09833.jpg",
+    "licence": "CC0",
+    "author": "Daderot"
+  },
+  "Fumuroya Cafe": {
+    "img": "img/fumuroya-cafe-d4768357.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Fu_Shin_Estate_cooked_food_stalls.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Exploringlife"
+  },
+  "Champion Curry": {
+    "img": "img/champion-curry-82cd7fc9.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kanazawa_Curry_(31151752452).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "pelican from Tokyo, Japan"
+  },
+  "Shirakawa-go": {
+    "img": "img/shirakawa-go-2843d4ca.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Ogi_Shirakawa-g%C5%8D,_Gifu,_Japan.jpg",
+    "licence": "CC BY 2.5",
+    "author": "663highland"
+  },
+  "Yamanaka Onsen": {
+    "img": "img/yamanaka-onsen-fee6ff98.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:260606_Doumyogafuchi_Kakusenkei_Kaga_Ishikawa_pref_Japan04s3.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "663highland"
+  },
+  "Kotoji-toro": {
+    "img": "img/kotoji-toro-e8c3c76c.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kotoji-toro_lantern,_Kenroku-en_(3810739126).jpg",
+    "licence": "CC BY 2.0",
+    "author": "Andrea Schaffer from Sydney, Australia"
+  },
+  "Amazake-chaya": {
+    "img": "img/amazake-chaya-ab12605d.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Interior_of_Amazake-chaya_(9409306027).jpg",
+    "licence": "CC BY 2.0",
+    "author": "Maarten Heerlien from Voorschoten, The Netherlands"
+  },
+  "Bakery & Table Hakone": {
+    "img": "img/bakery-table-hakone-d827e28e.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Lake_Ashi_From_north_to_south2023.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Charlie fong"
+  },
+  "Marqueterie de Hatajuku": {
+    "img": "img/marqueterie-de-hatajuku-3c94df69.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Yosegi_Zaiku_display_-_Hakone_Checkpoint_Exhibition_Hall_-_Hakone_no_Seki_(barrier_station)_-_Hakone,_Japan_-_DSC06051.jpg",
+    "licence": "CC0",
+    "author": "Daderot"
+  },
+  "Gotemba Premium Outlets": {
+    "img": "img/gotemba-premium-outlets-c98bb02d.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:GotembaOutletShuttleBus_651-EVA.jpeg",
+    "licence": "CC BY 4.0",
+    "author": "ja:User:江戸前鰻"
+  },
+  "Parc impérial d'Hakone": {
+    "img": "img/parc-imperial-d-hakone-efa0d8db.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:230909_Onshi_Hakone_Park_Hakone_Japan01s3.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "663highland"
+  },
+  "Choan-ji": {
+    "img": "img/choan-ji-8dd811f0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Ch%C5%8Dan-ji_(Higashi-Ik%C5%8D,_Adachi)_02.jpg",
+    "licence": "CC0",
+    "author": "Higa4"
+  },
+  "Gora Park": {
+    "img": "img/gora-park-74cc7e20.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Gora_Park_-_Hakone,_Kanagawa,_Japan_-_DSC08378.jpg",
+    "licence": "CC0",
+    "author": "Daderot"
+  },
+  "Barrière d'Hakone": {
+    "img": "img/barriere-d-hakone-4448d4ff.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Checkpoint_Museum,_construction_detail,_May_2017.jpg",
+    "licence": "CC BY-SA 3.0",
+    "author": "Celuici"
+  },
+  "Osaka Tenmangu": {
+    "img": "img/osaka-tenmangu-53e54430.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Osaka_Tenmangu_Hatsumoude_2025-2.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Mr.ちゅらさん"
+  },
+  "Hall public central": {
+    "img": "img/hall-public-central-abc0e950.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Osaka_City_Central_Public_Hall_main_facade_2026_dllu.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Daniel Lu (User:dllu)"
+  },
+  "Namba Parks": {
+    "img": "img/namba-parks-7fc8953c.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Namba_parks04s3872.jpg",
+    "licence": "CC BY 2.5",
+    "author": "663highland"
+  },
+  "Abeno Harukas 300": {
+    "img": "img/abeno-harukas-300-7654fe63.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:View_of_Abeno_Harukas_and_Shitenn%C5%8D-ji_five-storied_pagoda_at_dusk,_January_2024_(clone_version)_-_9978.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Laitche"
+  },
+  "Train panoramique de Sagano": {
+    "img": "img/train-panoramique-de-sagano-e7e05b1e.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Sagano_Scenic_Railway_Hozu_River_2016-08-26.jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "pang yu liu from Taoyuan, TW"
+  },
+  "Takao (Jingo-ji)": {
+    "img": "img/takao-jingo-ji-36574a11.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Jingo-ji_(6920612150).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "KimonBerlin"
+  },
+  "% Arabica Higashiyama": {
+    "img": "img/arabica-higashiyama-b8d4a44b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Mauritia_arabica_01.JPG",
+    "licence": "CC BY-SA 3.0",
+    "author": "H. Zell"
+  },
+  "SOU SOU": {
+    "img": "img/sou-sou-1057b6c5.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kimono_Forest_at_night,_Arashiyama_Station,_Arashiyama,_Kyoto,_Japan.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Yasumichi Morita (designer)\n\nBasile Morin (photographer)"
+  },
+  "Chion-in": {
+    "img": "img/chion-in-9a127091.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Stone_bridge_leading_to_a_cemetery_surrounded_by_trees_in_the_compounds_of_Chion-in_Kyoto_Japan.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Basile Morin"
+  },
+  "Mont Takao": {
+    "img": "img/mont-takao-a2d1b091.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Mount_Takao_hike_in_January_3.jpg",
+    "licence": "CC0",
+    "author": "Syced"
+  },
+  "Gare de Tokyo (Marunouchi)": {
+    "img": "img/gare-de-tokyo-marunouchi-5bc233d0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Marunouchi_Central_Plaza_with_blue_sky,_Tokyo_station_and_Shin-Marunouchi_Building,_panoramic_view_from_JP_Tower,_Tokyo,_Japan.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Basile Morin"
   }
 }

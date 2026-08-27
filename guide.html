@@ -195,6 +195,7 @@ function openSheet(id) {
         </p>
         <h2>${esc(s.name)}</h2>
         <p class="sheet__blurb">${esc(s.blurb)}</p>
+        ${s.lore ? `<p class="sheet__lore">${esc(s.lore)}</p>` : ''}
         <dl class="sheet__facts">
           <div><dt>Durée</dt><dd>${esc(s.duration)}</dd></div>
           <div><dt>Budget</dt><dd>${esc(s.budget)}</dd></div>

@@ -12,6 +12,7 @@ import { BOOKINGS, AMENITY_LABELS } from './lib/bookings.mjs';
 import { enriched as ADDITIONS } from './lib/additions.mjs';
 import { FLIGHTS as FLIGHT_DATA } from './lib/flights.mjs';
 import { SPOT_FIXES } from './lib/spot-fixes.mjs';
+import { REMOVED } from './lib/guide-removals.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, 'legacy', f), 'utf8');
@@ -436,6 +437,8 @@ const PRIORITY_NAMES = { ob: 'Obligatoire', top: 'À voir', symp: 'Sympa', niche
 function parseSpots() {
   const src = read('guide.html');
   const { meta, def } = parseSpotMeta();
+  // Notices historiques, vérifiées sur sources et tenues dans tools/lib/lore.json.
+  const LORE = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/lore.json'), 'utf8'));
   const SPOTS = [];
 
   // Le META de l'ancien site est indexé par un nom parfois raccourci
@@ -471,6 +474,10 @@ function parseSpots() {
     while (seen.has(id)) id = `spot-${slug(name)}-${k++}`;
     seen.add(id);
 
+    // Retiré volontairement — voir tools/lib/guide-removals.mjs. Le filtre
+    // porte sur l'identifiant : deux entrées partagent parfois un nom.
+    if (REMOVED.has(id)) continue;
+
     SPOTS.push({
       id, name,
       cityId: r.cityId,          // null = enseigne nationale, voir gazetteer
@@ -485,6 +492,7 @@ function parseSpots() {
       // augmenté depuis l'ancien site, et plusieurs temples de Kyoto ont un
       // tarif d'automne qui tombe pendant le séjour.
       ...(SPOT_FIXES[name] || {}),
+      ...(LORE[id] ? { lore: LORE[id] } : {}),
       img,
       maps: href,
     });
@@ -506,6 +514,7 @@ function parseSpots() {
       source: 'claude',
       ...(def[a.category] || def.t0),
       ...(SPOT_FIXES[a.name] || {}),
+      ...(LORE[id] ? { lore: LORE[id] } : {}),
       img: images[a.name]?.img || null,
       maps: a.maps,
     });

@@ -34,9 +34,11 @@ console.log('\nTotaux de référence');
 // être masquée par un gain dans l'autre.
 const originaux = SPOTS.filter((s) => s.source !== 'claude');
 const ajouts = SPOTS.filter((s) => s.source === 'claude');
-ok('236 spots d\'origine', originaux.length, 236);
+// 236 à l'origine, moins 16 retirés volontairement (voir guide-removals.mjs).
+ok('220 spots d\'origine (236 − 16 retirés)', originaux.length, 220);
+// Les conseils de l'amie guide sont intouchables : ce compte ne doit jamais bouger.
 ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
-ok('29 idées ajoutées', ajouts.length, 29);
+ok('57 idées ajoutées', ajouts.length, 57);
 assert('chaque ajout a une photo', ajouts.every((s) => s.img),
   ajouts.filter((s) => !s.img).map((s) => s.name).join(', '));
 ok('25 jours', DAYS.length, 25);
@@ -145,6 +147,17 @@ for (const f of ['duration', 'budget', 'when']) {
   assert(`chaque spot a « ${f} »`, missing.length === 0,
     `${missing.length} sans : ${missing.slice(0, 5).join(', ')}`);
 }
+
+// --- notices historiques ------------------------------------------------------
+
+console.log('\nNotices');
+const avecLore = SPOTS.filter((s) => s.lore);
+assert('au moins 60 lieux ont une notice', avecLore.length >= 60, `seulement ${avecLore.length}`);
+assert('chaque notice fait entre 120 et 500 signes',
+  avecLore.every((s) => s.lore.length >= 120 && s.lore.length <= 500),
+  avecLore.filter((s) => s.lore.length < 120 || s.lore.length > 500).map((s) => `${s.name} (${s.lore.length})`).join(', '));
+assert('les incontournables de Kyoto ont une notice',
+  ['Fushimi Inari', 'Kinkaku-ji', 'Kiyomizu-dera', 'Tofuku-ji'].every((n) => SPOTS.find((s) => s.name === n)?.lore));
 
 // --- tarifs vérifiés ----------------------------------------------------------
 

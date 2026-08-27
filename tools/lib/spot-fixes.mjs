@@ -93,4 +93,7 @@ export const SPOT_FIXES = {
     budget: '450 ¥ + expos',
     note: 'Les expositions temporaires ont un tarif distinct. Les espaces publics sont gratuits.',
   },
+
+  // --- reclassements ---------------------------------------------------------
+  "Chinatown": { priority: "symp", note: 'Reclassé : sous-étape d’un day trip, pas une destination en soi.' },
 };

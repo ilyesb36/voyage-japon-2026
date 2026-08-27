@@ -174,6 +174,150 @@ export const ADDITIONS = [
     blurb: 'trois jardins à côté de l\'Isuien, et gratuit pour les étrangers',
     q: 'Yoshikien Garden Nara', commons: 'Yoshikien',
   },
+
+  // --- second lot : les trous reperes par l'audit du guide -------------------
+  // Hakone n'avait aucune adresse de shopping et un seul day trip ; Kanazawa
+  // un seul day trip, deux boutiques, une vue.
+  {
+    name: "Gyokusen'inmaru Garden", cityId: "kanazawa", category: "t0", priority: "top",
+    blurb: "le jardin du château illuminé plusieurs soirs d'automne — entrée gratuite",
+    q: "Gyokusen-inmaru Garden Kanazawa", commons: "Gyokuseninmaru Garden",
+  },
+  {
+    name: "Kazuemachi Chaya", cityId: "kanazawa", category: "t0", priority: "symp",
+    blurb: "le troisième quartier de geishas, le long de l'Asano — plus intime qu'Higashi",
+    q: "Kazuemachi Chaya District Kanazawa", commons: "Kazuemachi",
+  },
+  {
+    name: "Bibliothèque Umimirai", cityId: "kanazawa", category: "t0", priority: "niche",
+    blurb: "la « boîte à gâteau » aux 6 000 hublots — pèlerinage d'architecture",
+    q: "Kanazawa Umimirai Library", commons: "Kanazawa Umimirai Library",
+  },
+  {
+    name: "Ohi Museum", cityId: "kanazawa", category: "t4", priority: "niche",
+    blurb: "la céramique raku de Kanazawa depuis 350 ans — musée + salon de thé",
+    q: "Ohi Museum Kanazawa", commons: "Ohi ware",
+  },
+  {
+    name: "Fumuroya Cafe", cityId: "kanazawa", category: "t1", priority: "top",
+    blurb: "le maître du fu (gluten de blé) en version café — set salé et desserts",
+    q: "Fumuroya Cafe Kanazawa", commons: "Fu (food)",
+  },
+  {
+    name: "Champion Curry", cityId: "kanazawa", category: "t1", priority: "symp",
+    blurb: "le curry noir de Kanazawa, épais sur le riz — l'original depuis 1961",
+    q: "Champion Curry Kanazawa", commons: "Kanazawa curry",
+  },
+  {
+    name: "Shirakawa-go", cityId: "kanazawa", category: "t2", priority: "ob",
+    blurb: "le village aux toits de chaume, bus direct de Kanazawa — premières neiges possibles",
+    q: "Shirakawa-go", commons: "Shirakawa-go",
+  },
+  {
+    name: "Yamanaka Onsen", cityId: "kanazawa", category: "t2", priority: "top",
+    blurb: "la gorge de Kakusenkei croulant d'érables + bain thermal, au sud",
+    q: "Yamanaka Onsen Kakusenkei", commons: "Kakusenkei",
+  },
+  {
+    name: "Kotoji-toro", cityId: "kanazawa", category: "t5", priority: "symp",
+    blurb: "la lanterne à deux pieds de Kenroku-en — la carte postale de la ville",
+    q: "Kotoji Lantern Kenrokuen Kanazawa", commons: "Kotoji Lantern", mustMatch: "kotoji",
+  },
+  {
+    name: "Amazake-chaya", cityId: "hakone", category: "t1", priority: "top",
+    blurb: "la maison de thé au chaume sur l'ancien Tokaido — amazake chaud depuis 400 ans",
+    q: "Amazake Chaya Hakone", commons: "Amazake-chaya",
+  },
+  {
+    name: "Bakery & Table Hakone", cityId: "hakone", category: "t1", priority: "symp",
+    blurb: "pain et café les pieds dans un bain chaud, face au lac Ashi",
+    q: "Bakery and Table Hakone", commons: "Lake Ashi",
+  },
+  {
+    name: "Marqueterie de Hatajuku", cityId: "hakone", category: "t4", priority: "symp",
+    blurb: "les ateliers-boutiques de yosegi — boîtes à secret, le souvenir d'Hakone",
+    q: "Hatajuku Yosegi Kaikan Hakone", commons: "Yosegi",
+  },
+  {
+    name: "Gotemba Premium Outlets", cityId: "hakone", category: "t4", priority: "symp",
+    blurb: "l'outlet géant avec le Fuji en toile de fond, sur la route de Tokyo",
+    q: "Gotemba Premium Outlets", commons: "Gotemba Premium Outlets",
+  },
+  {
+    name: "Parc impérial d'Hakone", cityId: "hakone", category: "t0", priority: "symp",
+    blurb: "l'ancien parc impérial sur une presqu'île du lac — érables, vue Fuji, gratuit",
+    q: "Onshi Hakone Park", commons: "Onshi Hakone Park",
+  },
+  {
+    name: "Choan-ji", cityId: "hakone", category: "t0", priority: "niche",
+    blurb: "500 statues de rakan sous les érables — le momiji tranquille de Sengokuhara",
+    q: "Choanji Temple Hakone", commons: "Chōan-ji",
+  },
+  {
+    name: "Gora Park", cityId: "hakone", category: "t0", priority: "symp",
+    blurb: "le jardin à la française de Gora, serre tropicale et érables en terrasses",
+    q: "Gora Park Hakone", commons: "Gora Park",
+  },
+  {
+    name: "Barrière d'Hakone", cityId: "hakone", category: "t0", priority: "niche",
+    blurb: "le poste de contrôle de l'ère Edo reconstitué au bord du lac Ashi",
+    q: "Hakone Checkpoint Sekisho", commons: "Hakone Checkpoint",
+  },
+  {
+    name: "Osaka Tenmangu", cityId: "osaka", category: "t0", priority: "symp",
+    blurb: "le sanctuaire de Tenjin + Tenjinbashisuji, la plus longue galerie du Japon",
+    q: "Osaka Tenmangu", commons: "Osaka Tenmangu",
+  },
+  {
+    name: "Hall public central", cityId: "osaka", category: "t0", priority: "symp",
+    blurb: "le hall de brique rouge sur l'île de Nakanoshima — Osaka rétro au fil de l'eau",
+    q: "Osaka City Central Public Hall", commons: "Osaka City Central Public Hall",
+  },
+  {
+    name: "Namba Parks", cityId: "osaka", category: "t0", priority: "symp",
+    blurb: "le gratte-ciel-jardin aux terrasses végétales, au-dessus de la gare Namba",
+    q: "Namba Parks Osaka", commons: "Namba Parks",
+  },
+  {
+    name: "Abeno Harukas 300", cityId: "osaka", category: "t5", priority: "top",
+    blurb: "Osaka à 360° depuis le plus haut gratte-ciel du Japon (300 m)",
+    q: "Abeno Harukas 300", commons: "Abeno Harukas",
+  },
+  {
+    name: "Train panoramique de Sagano", cityId: "kyoto", category: "t2", priority: "top",
+    blurb: "le petit train de la gorge de Hozu — érables plein cadre fin novembre",
+    q: "Sagano Romantic Train Torokko", commons: "Sagano Scenic Railway",
+  },
+  {
+    name: "Takao (Jingo-ji)", cityId: "kyoto", category: "t2", priority: "top",
+    blurb: "le berceau du momiji — Jingo-ji et le lancer de disques dans la vallée",
+    q: "Jingoji Temple Takao Kyoto", commons: "Jingo-ji",
+  },
+  {
+    name: "% Arabica Higashiyama", cityId: "kyoto", category: "t1", priority: "symp",
+    blurb: "le café iconique avec la pagode Yasaka en toile de fond",
+    q: "% Arabica Kyoto Higashiyama", commons: "% Arabica",
+  },
+  {
+    name: "SOU SOU", cityId: "kyoto", category: "t4", priority: "symp",
+    blurb: "tabi, textiles et graphismes made in Kyoto — la boutique culte de Nakagyo",
+    q: "SOU SOU Kyoto", commons: "Kyoto",
+  },
+  {
+    name: "Chion-in", cityId: "kyoto", category: "t0", priority: "symp",
+    blurb: "la plus grande porte en bois du Japon, voisine du parc Maruyama",
+    q: "Chion-in Kyoto", commons: "Chion-in",
+  },
+  {
+    name: "Mont Takao", cityId: "tokyo", category: "t2", priority: "top",
+    blurb: "la montagne aux érables à 1h de Shinjuku — téléphérique, pic fin novembre",
+    q: "Mount Takao Tokyo", commons: "Mount Takao",
+  },
+  {
+    name: "Gare de Tokyo (Marunouchi)", cityId: "tokyo", category: "t5", priority: "symp",
+    blurb: "la façade de brique éclairée + le rooftop KITTE, gratuit, de nuit",
+    q: "Tokyo Station Marunouchi", commons: "Tokyo Station Marunouchi",
+  },
 ];
 
 export const enriched = ADDITIONS.map((a) => ({
