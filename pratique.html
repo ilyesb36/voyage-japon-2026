@@ -59,7 +59,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <script type="module">
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, BUDGET, AMENITY_LABELS } from './data/trip.js';
-import { mountChrome, esc, eur, formatDate, daysBetween, today, bindLightbox } from './app/ui.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today, bindLightbox } from './app/ui.js';
 
 mountChrome('pratique.html');
 const q = (id) => document.getElementById(id);
@@ -319,7 +319,7 @@ if ('serviceWorker' in navigator) {
         go.hidden = true;
       }
     });
-    caches.has('jp-media-v11').then((has) => {
+    caches.has('jp-media-v12').then((has) => {
       state.textContent = has ? 'Prêt pour le hors-ligne ✓' : 'Pas encore téléchargé';
       go.hidden = has;
     });

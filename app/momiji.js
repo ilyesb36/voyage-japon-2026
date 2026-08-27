@@ -59,6 +59,18 @@ export function renderMomijiBand(el) {
           const city = CITIES[s.cityId];
           const v = momijiVerdict(s);
           const [p0, p1] = city.momiji;
+          // Le dégradé suit la feuille : verte avant, or à l'entrée du pic,
+          // rouge au cœur, brune après. Les bornes sont calées sur la fenêtre
+          // de cette ville, donc le dessin dit la même chose que le chiffre.
+          const a = pct(p0), b = pct(p1), w = b - a;
+          const feuille = `linear-gradient(90deg,
+            #6E8B4B 0%,
+            #9CA84A ${Math.max(0, a - 4)}%,
+            #C9962F ${a}%,
+            #B4451F ${a + w * 0.45}%,
+            #8C2F1A ${b}%,
+            #6B5648 ${Math.min(100, b + 6)}%,
+            #5C5A52 100%)`;
           return `
           <li class="momiji__row" style="--c:${city.color}">
             <span class="momiji__name">
@@ -66,15 +78,17 @@ export function renderMomijiBand(el) {
               ${city.name}
             </span>
             <span class="momiji__track">
-              <span class="momiji__peak" style="left:${pct(p0)}%;width:${pct(p1) - pct(p0)}%"></span>
-              <span class="momiji__stay" style="left:${pct(s.from)}%;width:${Math.max(1.2, pct(s.to) - pct(s.from))}%"></span>
+              <span class="momiji__season" style="background-image:${feuille}"></span>
+              <span class="momiji__peak" style="background-image:${feuille};
+                    clip-path:inset(0 ${(100 - b).toFixed(2)}% 0 ${a.toFixed(2)}%)"></span>
+              <span class="momiji__stay" style="left:${pct(s.from)}%;width:${Math.max(1.6, pct(s.to) - pct(s.from))}%"></span>
             </span>
             <span class="momiji__verdict" data-state="${v.state}">${v.text}</span>
           </li>`;
         }).join('')}
       </ol>
       <p class="momiji__legend">
-        <span class="momiji__key momiji__key--peak"></span> fenêtre habituelle du pic
+        <span class="momiji__key momiji__key--season"></span> la feuille, du vert au brun
         <span class="momiji__key momiji__key--stay"></span> vos dates sur place
       </p>
       <p class="momiji__note">

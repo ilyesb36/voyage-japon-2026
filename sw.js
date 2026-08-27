@@ -11,15 +11,18 @@
 // Tout est local : aucune dépendance réseau au chargement, hors les tuiles de
 // carte, qui se mettent en cache au fil de la consultation.
 
-const SHELL = 'jp-shell-v11';
-const MEDIA = 'jp-media-v11';
-const TILES = 'jp-tiles-v11';
+// Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
+// le cache sert l'ancienne version et personne ne voit la mise à jour.
+const V = 'v12';
+const SHELL = `jp-shell-${V}`;
+const MEDIA = `jp-media-${V}`;
+const TILES = `jp-tiles-${V}`;
 
 const PAGES = [
   './', 'index.html', 'aujourdhui.html', 'itineraire.html', 'guide.html', 'pratique.html',
   'manifest.webmanifest', 'app.css',
-  'app/ui.js', 'app/map.js', 'app/momiji.js',
-  'data/trip.js', 'data/days.js', 'data/spots.js',
+  'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js',
+  'data/trip.js', 'data/days.js', 'data/spots.js', 'data/pratique.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/alpine.min.js',
   'vendor/open-props.min.css', 'vendor/fonts.css',
   'icon-192.png', 'icon-512.png',

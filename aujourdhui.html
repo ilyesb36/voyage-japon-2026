@@ -24,7 +24,8 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { AVANT, SURPLACE, METEO } from './data/pratique.js';
-import { mountChrome, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
+import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 
 mountChrome('aujourdhui.html');
 
@@ -38,6 +39,9 @@ const away = daysBetween(now, TRIP.start);
 // route pendant. Le paramètre ?date=2026-11-18 permet de voir la seconde
 // sans attendre novembre.
 app.innerHTML = day ? during(day) : (away > 0 ? before() : after());
+
+// La météo arrive après le rendu : elle ne doit jamais retarder la page.
+if (document.getElementById('meteo')) paintMeteo();
 
 // --- avant le départ ----------------------------------------------------------
 function before() {
@@ -79,19 +83,12 @@ function before() {
   </section>
 
   <section class="section">
-    <div class="shead"><h2>Le temps qu'il fera</h2><p>Normales de saison, pour la valise.</p></div>
-    <div class="meteo">
-      ${STEPS.filter((st, i, a) => a.findIndex((x) => x.cityId === st.cityId) === i).map((step) => {
-        const c = CITIES[step.cityId];
-        const m = METEO[step.cityId];
-        return `
-        <div class="meteo__row" style="--c:${c.color}">
-          <span class="meteo__city">${esc(c.name)}</span>
-          <span class="meteo__temp data"><b>${m.max}°</b> / ${m.min}°</span>
-          <span class="meteo__note mut">${esc(m.note)}</span>
-        </div>`;
-      }).join('')}
+    <div class="shead">
+      <h2>Le temps</h2>
+      <p>Là-bas en ce moment, et les normales de novembre pour la valise.</p>
+      <span class="shead__meta" id="meteo-when"></span>
     </div>
+    <div class="meteo" id="meteo">${meteoSkeleton()}</div>
   </section>
 
   ${knowBlock()}
@@ -106,7 +103,7 @@ function before() {
 function knowBlock() {
   return `
   <section class="section">
-    <div class="shead"><h2>Bon à savoir</h2></div>
+    <div class="shead disc"><h2>Bon à savoir</h2></div>
     <div class="know">
       ${SURPLACE.map((k) => `
         <div class="know__item${k.check ? ' know__item--check' : ''}">
@@ -207,6 +204,42 @@ function after() {
   </header>`;
 }
 
+// --- la météo -----------------------------------------------------------------
+// Rendue en deux temps : la grille apparaît tout de suite avec les normales,
+// puis le relevé du moment se glisse dedans. Rien ne saute, rien n'attend.
+function meteoSkeleton() {
+  return meteoCities().map((c) => `
+    <div class="meteo__row" style="--c:${c.color}" data-city="${c.cityId}">
+      <span class="meteo__city">${esc(c.name)}</span>
+      <span class="meteo__now" data-now><span class="meteo__dots" aria-hidden="true"></span></span>
+      <span class="meteo__norm data">${METEO[c.cityId].max}° / ${METEO[c.cityId].min}°
+        <span class="mut">en novembre</span></span>
+      <span class="meteo__note mut">${esc(METEO[c.cityId].note)}</span>
+    </div>`).join('');
+}
+
+async function paintMeteo() {
+  const data = await fetchMeteo();
+  const when = document.getElementById('meteo-when');
+  if (!data) {
+    document.querySelectorAll('[data-now]').forEach((el) => { el.textContent = ''; });
+    if (when) when.textContent = 'relevé indisponible hors-ligne';
+    return;
+  }
+  for (const [cityId, m] of Object.entries(data.cities)) {
+    const el = document.querySelector(`[data-city="${cityId}"] [data-now]`);
+    if (!el) continue;
+    el.innerHTML = `<span class="meteo__icon">${m.icon}</span>
+      <b class="data">${m.temp}°</b> <span class="mut">${esc(m.label)}</span>`;
+    el.classList.add('is-live');
+  }
+  if (when) {
+    when.textContent = data.fresh
+      ? `relevé à ${heureJapon()} au Japon`
+      : `dernier relevé connu — pas de réseau`;
+  }
+}
+
 // --- une journée --------------------------------------------------------------
 function dayCard(d) {
   const c = d.cityId ? CITIES[d.cityId] : null;
@@ -218,6 +251,10 @@ function dayCard(d) {
     ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
   </div>`;
 }
+
+initReveal();
+initCoverParallax();
+initProgressBar();
 </script>
 
 <script>

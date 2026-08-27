@@ -115,6 +115,68 @@ export function mountChrome(current) {
   });
 }
 
+/**
+ * Apparitions au défilement. Discrètes : 12 px et 0,5 s, pas un carrousel.
+ * Rien ne dépend de l'animation — sans JS, tout est déjà visible.
+ */
+export function initReveal(selector = '.section, .city, .fl, .know__item, .todo__item') {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const els = [...document.querySelectorAll(selector)];
+  if (!els.length || !('IntersectionObserver' in window)) return;
+
+  els.forEach((el) => el.classList.add('rv'));
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('rv--in');
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  els.forEach((el) => io.observe(el));
+}
+
+/**
+ * La photo de couverture descend un peu moins vite que la page. Très léger :
+ * au-delà, ça donne le mal de mer et ça masque le titre.
+ */
+export function initCoverParallax() {
+  const img = document.querySelector('.cover__img');
+  if (!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = Math.min(window.scrollY, 900);
+      img.style.transform = `translate3d(0, ${y * 0.18}px, 0) scale(1.08)`;
+      ticking = false;
+    });
+  };
+  img.style.willChange = 'transform';
+  img.style.transform = 'scale(1.08)';
+  addEventListener('scroll', onScroll, { passive: true });
+}
+
+/** Une barre de lecture le long du liseré d'automne, en haut de page. */
+export function initProgressBar() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const bar = document.createElement('div');
+  bar.id = 'progress-bar';
+  document.body.appendChild(bar);
+  let ticking = false;
+  const paint = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const h = document.documentElement.scrollHeight - innerHeight;
+      bar.style.width = h > 0 ? `${Math.min(100, (scrollY / h) * 100)}%` : '0';
+      ticking = false;
+    });
+  };
+  addEventListener('scroll', paint, { passive: true });
+  paint();
+}
+
 /** Visionneuse plein écran. Les photos ne recouvrent jamais du texte : on les ouvre à la demande. */
 export function lightbox(images, start = 0, captions = []) {
   let i = start;

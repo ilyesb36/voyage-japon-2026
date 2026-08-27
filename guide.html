@@ -20,7 +20,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <main class="wrap">
   <header class="section">
-    <h1>Le guide</h1>
+    <h1 class="disc">Le guide</h1>
     <p class="hero__lede" id="lede"></p>
   </header>
 
@@ -50,7 +50,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <script type="module">
 import { SPOTS, CATEGORIES, PRIORITIES } from './data/spots.js';
 import { CITIES } from './data/trip.js';
-import { mountChrome, esc, bindLightbox } from './app/ui.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox } from './app/ui.js';
 
 mountChrome('guide.html');
 
@@ -234,6 +234,10 @@ function render() {
 }
 
 render();
+
+initReveal();
+initCoverParallax();
+initProgressBar();
 </script>
 
 <script>

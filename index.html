@@ -34,11 +34,18 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <div class="wrap">
     <p class="chapo" id="chapo"></p>
 
-    <section class="section">
-      <div class="shead"><h2>Les érables</h2><p>Chaque ville rougit à sa date.</p></div>
-      <div id="band"></div>
-    </section>
   </div>
+
+  <div class="band">
+    <div class="wrap">
+      <section class="section">
+        <div class="shead"><h2>Les érables</h2><p>Chaque ville rougit à sa date.</p></div>
+        <div id="band"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
 
   <!-- Les six villes, en pleine largeur : c'est le cœur du voyage. -->
   <section class="cities" id="cities"></section>
@@ -60,7 +67,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     </section>
 
     <section class="section">
-      <div class="shead"><h2>Réservations</h2></div>
+      <div class="shead disc"><h2>Réservations</h2></div>
       <div id="progress"></div>
     </section>
   </div>
@@ -70,7 +77,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <script type="module">
 import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
-import { mountChrome, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { renderMomijiBand } from './app/momiji.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
 
@@ -177,15 +184,38 @@ q('route').innerHTML = STEPS.map((step, i) => {
 q('route-meta').textContent =
   `${STEPS.length} étapes · ${SEGMENTS.length} trains · ${EXCURSIONS.length} excursions`;
 
+// Un vol, ce sont trois aéroports et une escale : autant le dessiner comme
+// un trajet plutôt que le tasser dans une ligne de tableau.
 q('flights').innerHTML = `
-  <h3 class="flights__title">Les vols</h3>
+  <h3 class="flights__title">Les vols <span class="mut">${esc(FLIGHTS[0].airline)}</span></h3>
   ${FLIGHTS.map((f) => `
-    <div class="flight">
-      <span class="flight__leg">${esc(f.leg)}</span>
-      <span class="flight__route">${esc(f.route || '')}</span>
-      <span class="flight__detail mut">${esc(f.detail)}</span>
-      <span class="flight__when data">${esc(f.when || '')}</span>
-    </div>`).join('')}`;
+    <article class="fl">
+      <header class="fl__head">
+        <span class="fl__label">${esc(f.label)}</span>
+        <span class="fl__date data">${formatDate(f.date, { weekday: true })}</span>
+      </header>
+      <div class="fl__strip">
+        ${f.legs.map((l, i) => `
+          <div class="fl__port">
+            <span class="fl__code data">${esc(l.from)}</span>
+            <span class="fl__city">${esc(l.fromCity)}</span>
+            <span class="fl__time data">${esc(l.depart)}</span>
+          </div>
+          <div class="fl__hop">
+            <span class="fl__no data">${esc(l.flight)}</span>
+            <span class="fl__line"></span>
+            <span class="fl__dur data">${esc(l.duration)}</span>
+          </div>
+          ${i === f.legs.length - 1 ? `
+          <div class="fl__port fl__port--end">
+            <span class="fl__code data">${esc(l.to)}</span>
+            <span class="fl__city">${esc(l.toCity)}</span>
+            <span class="fl__time data">${esc(l.arrive)}${l.dayShift ? ' <sup>+1</sup>' : ''}</span>
+          </div>` : ''}
+        `).join('')}
+      </div>
+      <p class="fl__layover mut">Escale de <span class="data">${esc(f.layover.duration)}</span> à ${esc(f.layover.at)}</p>
+    </article>`).join('')}`;
 
 // --- où on en est -----------------------------------------------------------
 // Les hôtels sont tous réservés mais tous ne sont pas payés : la distinction
@@ -215,6 +245,10 @@ q('progress').innerHTML = `
     </ul>
     <p class="prog__more"><a class="btn btn--ghost" href="pratique.html">Voir le budget complet</a></p>
   </div>`;
+
+initReveal();
+initCoverParallax();
+initProgressBar();
 </script>
 
 <script>

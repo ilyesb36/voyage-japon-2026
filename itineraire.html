@@ -35,7 +35,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <script type="module">
 import { CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
-import { mountChrome, esc, formatDate, today } from './app/ui.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, today } from './app/ui.js';
 
 mountChrome('itineraire.html');
 const q = (id) => document.getElementById(id);
@@ -233,6 +233,10 @@ if (location.hash) {
   if (el?.tagName === 'DETAILS') el.open = true;
   el?.scrollIntoView({ block: 'start' });
 }
+
+initReveal();
+initCoverParallax();
+initProgressBar();
 </script>
 
 <script>
