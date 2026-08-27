@@ -115,14 +115,14 @@ details.day[open]{box-shadow:var(--sh-2)}
 .rvl{transition:opacity .4s ease,transform .4s ease,box-shadow .15s ease}
 @media(max-width:640px){.topnav{border-radius:10px}.topnav a.brand{border-right:none;padding-right:12px}}
 /* burger */
-.burger{display:none;position:absolute;right:10px;top:8px;width:34px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;font-size:15px;line-height:1;color:var(--ink)}
+.burger{display:none;position:absolute;left:10px;top:8px;width:34px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;font-size:15px;line-height:1;color:var(--ink)}
 @media(max-width:680px){
  .wrap{padding:0 16px 60px}
  h1{font-size:29px}
  .topnav{position:sticky;flex-direction:column;align-items:stretch;width:calc(100vw - 20px);border-radius:12px;padding:8px 10px;gap:2px}
  .topnav .burger{display:flex;align-items:center;justify-content:center}
  .topnav a{display:none;padding:10px 12px}
- .topnav a.brand{display:block;border-right:none;margin-right:0;padding-right:48px}
+ .topnav a.brand{display:block;border-right:none;margin:0 0 0 44px;padding-right:12px}
  .topnav.openb a{display:block}
  .gtabs{top:8px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
  .fbar{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:4px}
