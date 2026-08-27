@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveCity, normalizeHeading } from './lib/gazetteer.mjs';
+import { BOOKINGS, AMENITY_LABELS } from './lib/bookings.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, f), 'utf8');
@@ -150,15 +151,41 @@ function parseHotels(STEPS) {
       );
     }
 
+    // La confirmation Booking fait foi : elle porte le prix réellement facturé,
+    // les horaires de check-in et les équipements réels. L'ancien HTML n'avait
+    // qu'un champ de texte libre, renseigné différemment d'une fiche à l'autre.
+    const bk = BOOKINGS[name];
+    if (!bk) throw new Error(`réservation Booking absente pour ${name} (voir tools/lib/bookings.mjs)`);
+
     return {
       id: `hotel-${slug(name)}`,
       name,
+      bookingName: bk.bookingName || name,
       cityId: step.cityId,
       stepId: step.id,
       dates: subs[0] || null,
       access: subs[1] || null,
-      room, price, perNight, status,
-      refundable: !/non remboursable/i.test(status),
+
+      // ces champs sont présents pour les six, sans exception
+      room: bk.room,
+      size: bk.size,                 // null = non communiquée par l'établissement
+      capacity: bk.capacity,
+      address: bk.address,
+      checkIn: bk.checkIn,
+      checkOut: bk.checkOut,
+      bath: bk.bath,
+      meals: bk.meals,
+      amenities: bk.amenities,
+
+      price: bk.price,
+      priceYen: bk.priceYen,
+      perNight: Math.round(bk.price / step.nights),
+      paid: bk.paid,
+      refundable: bk.refundable,
+      cancelBefore: bk.cancelBefore,
+      status,
+      legacyRoom: room,              // le texte d'origine, gardé pour référence
+
       route: routeSummary ? { summary: routeSummary, text: routeText } : null,
       images,
       ll: byName.get(name) || step.ll,
@@ -461,6 +488,7 @@ writeModule('data/trip.js', 'Voyage, étapes, hôtels, trajets, budget.', [
   arrayBlock('HOTELS', HOTELS),
   arrayBlock('FLIGHTS', FLIGHTS),
   `export const BUDGET = Object.freeze(${j(BUDGET)});`,
+  `export const AMENITY_LABELS = Object.freeze(${j(AMENITY_LABELS)});`,
 ]);
 
 writeModule('data/days.js', 'Les 25 jours du voyage et les 30 journées type.', [

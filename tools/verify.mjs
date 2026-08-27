@@ -43,8 +43,11 @@ ok('TRIP.nights cohérent', TRIP.nights, 23);
 // --- argent -------------------------------------------------------------------
 
 console.log('\nBudget');
+// 3 259 € et non 3 274 € : les montants saisis dans l'ancien site étaient
+// arrondis au-dessus sur les six lignes. Ceux-ci viennent des confirmations
+// Booking du 27/08/2026 — voir tools/lib/bookings.mjs.
 const hebergement = HOTELS.reduce((s, h) => s + h.price, 0);
-ok('total hébergement calculé = 3 274 €', hebergement, 3274);
+ok('total hébergement calculé = 3 259 €', hebergement, 3259);
 
 const d = BUDGET.defaults;
 const vols = d.vol * 2;
@@ -56,14 +59,35 @@ const passes = BUDGET.categories
   .flatMap((c) => c.items)
   .reduce((s, i) => s + (i.fix || 0), 0);
 const total = hebergement + vols + trains + food + act + passes;
-ok('total du voyage = 7 336 €', total, 7336);
-ok('par personne = 3 668 €', total / 2, 3668);
+ok('total du voyage = 7 321 €', total, 7321);
+ok('par personne = 3 660,50 €', total / 2, 3660.5);
 
 assert(
   'le poste hébergement est calculé, pas saisi',
   BUDGET.categories.find((c) => c.id === 'heb').items.every((i) => i.fromHotel && i.fix == null),
   'un item du poste hébergement porte encore un montant en dur'
 );
+
+// --- réservations -------------------------------------------------------------
+
+console.log('\nRéservations');
+const HOTEL_FIELDS = ['room', 'capacity', 'address', 'checkIn', 'checkOut', 'bath', 'amenities', 'price', 'perNight'];
+for (const f of HOTEL_FIELDS) {
+  const missing = HOTELS.filter((h) => h[f] == null).map((h) => h.name);
+  assert(`les 6 hôtels ont « ${f} »`, missing.length === 0, missing.join(', '));
+}
+
+const AMENITY_KEYS = ['kitchen', 'washer', 'dryer', 'fridge', 'microwave', 'balcony', 'ac'];
+assert('les 6 hôtels déclarent les mêmes équipements',
+  HOTELS.every((h) => AMENITY_KEYS.every((k) => typeof h.amenities[k] === 'boolean')),
+  'un équipement est indéfini quelque part — il doit valoir true ou false, jamais manquer');
+
+const paid = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
+ok('déjà réglé = 1 161 € (Hop Inn + Matatabi)', paid, 1161);
+ok('reste à régler sur l\'hébergement = 2 098 €', hebergement - paid, 2098);
+
+assert('la date limite d\'annulation du ryokan est connue',
+  HOTELS.find((h) => h.id.includes('fukuya')).cancelBefore === '2026-10-27');
 
 // --- intégrité référentielle --------------------------------------------------
 
