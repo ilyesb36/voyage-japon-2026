@@ -1,0 +1,37 @@
+{
+  "ouverture": {
+    "file": "img/hero/ouverture.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Torii_path_at_Fushimi_Inari-taisha_(48885107243).jpg",
+    "title": "File:Torii path at Fushimi Inari-taisha (48885107243).jpg"
+  },
+  "tokyo": {
+    "file": "img/hero/tokyo.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Meiji_Jingu_Gaien_Ginkgo_Festival_(53441834473).jpg",
+    "title": "File:Meiji Jingu Gaien Ginkgo Festival (53441834473).jpg"
+  },
+  "kanazawa": {
+    "file": "img/hero/kanazawa.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:20171030_Kenrokuen_1990_(38944916792).jpg",
+    "title": "File:20171030 Kenrokuen 1990 (38944916792).jpg"
+  },
+  "kyoto": {
+    "file": "img/hero/kyoto.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Tofukuji-bridge-autumn-2017-Luka-Peternel.jpg",
+    "title": "File:Tofukuji-bridge-autumn-2017-Luka-Peternel.jpg"
+  },
+  "osaka": {
+    "file": "img/hero/osaka.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:D%C5%8Dtonbori_at_night,_Osaka_(19551420339).jpg",
+    "title": "File:Dōtonbori at night, Osaka (19551420339).jpg"
+  },
+  "hakone": {
+    "file": "img/hero/hakone.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Lake_Ashi_%26_Mt_Fuji_%26_Hakone_Shrine.jpg",
+    "title": "File:Lake Ashi & Mt Fuji & Hakone Shrine.jpg"
+  },
+  "tokyo2": {
+    "file": "img/hero/tokyo2.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:View_of_the_Tokyo_skyline_from_the_top_of_Sunshine_City.jpg",
+    "title": "File:View of the Tokyo skyline from the top of Sunshine City.jpg"
+  }
+}

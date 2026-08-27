@@ -49,11 +49,11 @@ function evalArray(source, varName) {
 // Sert à répondre à la seule question que pose ce voyage : tombe-t-on au bon
 // moment dans chaque ville ?
 const CITIES = {
-  tokyo:    { name: 'Tokyo',    color: '#24435C', pref: 'Kantō',    momiji: ['2026-11-20', '2026-12-07'] },
-  kanazawa: { name: 'Kanazawa', color: '#9C7A24', pref: 'Ishikawa', momiji: ['2026-11-15', '2026-11-30'] },
-  kyoto:    { name: 'Kyoto',    color: '#B7301C', pref: 'Kansai',   momiji: ['2026-11-18', '2026-12-05'] },
-  osaka:    { name: 'Osaka',    color: '#C05621', pref: 'Kansai',   momiji: ['2026-11-20', '2026-12-05'] },
-  hakone:   { name: 'Hakone',   color: '#2E6E6E', pref: 'Kanagawa', momiji: ['2026-11-03', '2026-11-20'] },
+  tokyo:    { name: 'Tokyo',    color: '#0369A1', pref: 'Kantō',    momiji: ['2026-11-20', '2026-12-07'] },
+  kanazawa: { name: 'Kanazawa', color: '#A16207', pref: 'Ishikawa', momiji: ['2026-11-15', '2026-11-30'] },
+  kyoto:    { name: 'Kyoto',    color: '#B91C1C', pref: 'Kansai',   momiji: ['2026-11-18', '2026-12-05'] },
+  osaka:    { name: 'Osaka',    color: '#C2410C', pref: 'Kansai',   momiji: ['2026-11-20', '2026-12-05'] },
+  hakone:   { name: 'Hakone',   color: '#0F766E', pref: 'Kanagawa', momiji: ['2026-11-03', '2026-11-20'] },
 };
 
 // --- étapes, excursions, segments (villes.html) ------------------------------

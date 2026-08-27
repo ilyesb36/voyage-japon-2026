@@ -6,8 +6,8 @@
 <title>Le guide — Japon 2026</title>
 <meta name="description" content="Les idées repérées pour le voyage : monuments, tables, quartiers, boutiques — filtrables par ville, par envie et par priorité.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F6F6F2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="app.css">
 </head>
@@ -15,37 +15,31 @@
 
 <main class="wrap">
   <header class="section">
-    <p class="eyebrow">Le guide</p>
-    <h1>Tout ce qu'on a repéré</h1>
+    <h1>Le guide</h1>
     <p class="hero__lede" id="lede"></p>
   </header>
 
-  <div class="filters" id="filters">
-    <div class="filters__group">
-      <span class="label">Ville</span>
-      <div class="chipbar" data-facet="city"></div>
+  <!-- Une seule barre : la recherche d'abord (c'est ce qu'on veut sur 265
+       adresses), puis les villes en pastilles, puis les axes secondaires en
+       menus. Quatre rangées de pastilles faisaient un pavé illisible. -->
+  <div class="tools">
+    <label class="search">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+      <input type="search" id="search" placeholder="Chercher une adresse, un quartier…"
+             autocomplete="off" spellcheck="false">
+    </label>
+    <div class="chipbar" data-facet="city"></div>
+    <div class="tools__selects">
+      <select id="f-category" aria-label="Filtrer par envie"></select>
+      <select id="f-priority" aria-label="Filtrer par priorité"></select>
+      <select id="f-source" aria-label="Filtrer par provenance"></select>
     </div>
-    <div class="filters__group">
-      <span class="label">Envie</span>
-      <div class="chipbar" data-facet="category"></div>
-    </div>
-    <div class="filters__group">
-      <span class="label">Priorité</span>
-      <div class="chipbar" data-facet="priority"></div>
-    </div>
-    <div class="filters__group">
-      <span class="label">Recommandé par</span>
-      <div class="chipbar" data-facet="source"></div>
-    </div>
-  </div>
-
-  <div class="results" id="results-bar">
-    <output id="count" aria-live="polite"></output>
-    <button class="chip" id="reset" hidden>Tout réafficher</button>
+    <output id="count" class="tools__count" aria-live="polite"></output>
+    <button class="chip" id="reset" hidden>Réinitialiser</button>
   </div>
 
   <div class="spotgrid" id="grid"></div>
-  <p class="empty" id="empty" hidden>Aucune idée ne correspond. Élargis les filtres.</p>
+  <p class="empty" id="empty" hidden>Rien ne correspond. Essaie un autre mot ou élargis les filtres.</p>
 </main>
 
 <script type="module">
@@ -77,51 +71,76 @@ const FACETS = {
   source:   [{ id: 'all', name: 'Peu importe' }, ...SOURCES],
 };
 
-const state = { city: 'all', category: 'all', priority: 'all', source: 'all' };
+const state = { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' };
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
 const nNew = SPOTS.filter((s) => s.source === 'claude').length;
 q('lede').innerHTML =
-  `<b>${SPOTS.length} idées</b> classées par ville, par envie et par priorité. ` +
-  `Chaque carte ouvre son adresse dans Google Maps. ` +
-  `Les <b>${nGuide} conseils de l'amie guide de Mathilde</b> sont signalés, ` +
-  `et les <b>${nNew} suggestions ajoutées</b> restent à vérifier — horaires et ouvertures ` +
-  `n'ont pas été confirmés.`;
+  `${SPOTS.length} adresses. Chaque carte ouvre Google Maps. ` +
+  `${nGuide} viennent de l'amie guide de Mathilde, ` +
+  `${nNew} sont des suggestions dont les horaires n'ont pas été vérifiés.`;
 
 // --- filtres -----------------------------------------------------------------
-for (const [facet, options] of Object.entries(FACETS)) {
-  const bar = document.querySelector(`[data-facet="${facet}"]`);
-  bar.innerHTML = options.map((o) => `
-    <button class="chip" data-value="${o.id}" aria-pressed="${o.id === 'all'}"
-            ${o.color ? `style="--c:${o.color}"` : ''}>
-      ${o.color ? `<span class="chip__dot" style="background:${o.color}"></span>` : ''}${esc(o.name)}
-    </button>`).join('');
+// La ville reste en pastilles : c'est l'axe principal, et la couleur y sert.
+const cityBar = document.querySelector('[data-facet="city"]');
+cityBar.innerHTML = FACETS.city.map((o) => `
+  <button class="chip" data-value="${o.id}" aria-pressed="${o.id === 'all'}">
+    ${o.color ? `<span class="chip__dot" style="background:${o.color}"></span>` : ''}${esc(o.name)}
+  </button>`).join('');
 
-  bar.addEventListener('click', (e) => {
-    const btn = e.target.closest('.chip');
-    if (!btn) return;
-    state[facet] = btn.dataset.value;
-    bar.querySelectorAll('.chip').forEach((c) =>
-      c.setAttribute('aria-pressed', String(c === btn)));
-    render();
-  });
+cityBar.addEventListener('click', (e) => {
+  const btn = e.target.closest('.chip');
+  if (!btn) return;
+  state.city = btn.dataset.value;
+  cityBar.querySelectorAll('.chip').forEach((c) =>
+    c.setAttribute('aria-pressed', String(c === btn)));
+  render();
+});
+
+// Les trois autres axes tiennent dans des menus : douze pastilles de plus
+// n'apportaient rien qu'un pavé.
+const LABEL = { category: 'Toutes les envies', priority: 'Toutes priorités', source: 'Toutes provenances' };
+for (const facet of ['category', 'priority', 'source']) {
+  const sel = q(`f-${facet}`);
+  sel.innerHTML = FACETS[facet].map((o) =>
+    `<option value="${o.id}">${o.id === 'all' ? LABEL[facet] : esc(o.name)}</option>`).join('');
+  sel.addEventListener('change', () => { state[facet] = sel.value; render(); });
 }
 
+q('search').addEventListener('input', (e) => {
+  state.q = e.target.value.trim().toLowerCase();
+  render();
+});
+
 q('reset').addEventListener('click', () => {
-  Object.keys(state).forEach((k) => (state[k] = 'all'));
-  document.querySelectorAll('.chipbar').forEach((bar) =>
-    bar.querySelectorAll('.chip').forEach((c) =>
-      c.setAttribute('aria-pressed', String(c.dataset.value === 'all'))));
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' });
+  q('search').value = '';
+  ['category', 'priority', 'source'].forEach((f) => (q(`f-${f}`).value = 'all'));
+  cityBar.querySelectorAll('.chip').forEach((c) =>
+    c.setAttribute('aria-pressed', String(c.dataset.value === 'all')));
   render();
 });
 
 // --- rendu -------------------------------------------------------------------
+// La recherche porte sur le nom, la description et le quartier : c'est ce
+// qu'on tape de tête (« ramen », « Asakusa », « couteaux »).
+const haystack = new WeakMap();
+const hay = (s) => {
+  if (!haystack.has(s)) {
+    haystack.set(s, `${s.name} ${s.blurb} ${s.area || ''}`
+      .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+  }
+  return haystack.get(s);
+};
+const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
 const matches = (s) =>
   (state.city === 'all'
     || (state.city === 'partout' ? s.cityId === null : s.cityId === state.city))
   && (state.category === 'all' || s.category === state.category)
   && (state.priority === 'all' || s.priority === state.priority)
-  && (state.source === 'all' || s.source === state.source);
+  && (state.source === 'all' || s.source === state.source)
+  && (!state.q || hay(s).includes(norm(state.q)));
 
 const catName = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.name]));
 const prioName = Object.fromEntries(PRIORITIES.map((p) => [p.id, p.name]));
@@ -152,10 +171,10 @@ function render() {
   q('grid').innerHTML = list.map(card).join('');
   q('empty').hidden = list.length > 0;
 
-  const filtered = Object.values(state).some((v) => v !== 'all');
-  q('count').innerHTML = filtered
-    ? `<b>${list.length}</b> idée${list.length > 1 ? 's' : ''} sur ${SPOTS.length}`
-    : `<b>${SPOTS.length}</b> idées`;
+  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source'].some((k) => state[k] !== 'all');
+  q('count').textContent = filtered
+    ? `${list.length} sur ${SPOTS.length}`
+    : `${SPOTS.length} adresses`;
   q('reset').hidden = !filtered;
 }
 

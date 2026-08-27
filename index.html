@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Japon 2026 — l'automne des momiji</title>
+<title>Japon — novembre 2026</title>
 <meta name="description" content="Vingt-trois nuits au Japon en novembre 2026, de Tokyo à Kyoto au rythme des érables.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F6F6F2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="app.css">
@@ -15,63 +15,49 @@
 <body>
 
 <main>
-  <header class="hero wrap">
-    <div class="hero__text">
-      <p class="eyebrow">8 novembre — 3 décembre 2026</p>
-      <h1>L'automne<br>des momiji</h1>
-      <p class="hero__lede">
-        Vingt-trois nuits pour descendre le Japon au rythme des érables —
-        des néons de Tokyo au silence des temples de Kyoto.
-      </p>
-      <dl class="hero__stats">
-        <div><dt>Nuits</dt><dd class="data" id="s-nights"></dd></div>
-        <div><dt>Étapes</dt><dd class="data" id="s-steps"></dd></div>
-        <div><dt>Excursions</dt><dd class="data" id="s-exc"></dd></div>
-        <div><dt>Idées repérées</dt><dd class="data" id="s-spots"></dd></div>
-      </dl>
+  <!-- Ouverture : la photo d'abord, le texte posé dessus, rien d'autre. -->
+  <header class="cover">
+    <img class="cover__img" src="img/hero/ouverture.webp"
+         alt="Le chemin des torii de Fushimi Inari, Kyoto" fetchpriority="high">
+    <div class="cover__text wrap">
+      <h1>Japon</h1>
+      <p class="cover__dates">8 novembre — 3 décembre 2026</p>
     </div>
-    <div class="hero__map card">
-      <div id="map" class="map"></div>
-    </div>
+    <p class="cover__credit">Fushimi Inari, Kyoto</p>
   </header>
 
   <div class="wrap">
+    <p class="chapo" id="chapo"></p>
 
     <section class="section">
-      <div class="shead">
-        <h2>Tombe-t-on au bon moment&nbsp;?</h2>
-        <p>Chaque ville rougit dans sa propre fenêtre.</p>
-      </div>
+      <div class="shead"><h2>Les érables</h2><p>Chaque ville rougit à sa date.</p></div>
       <div id="band"></div>
     </section>
+  </div>
 
+  <!-- Les six villes, en pleine largeur : c'est le cœur du voyage. -->
+  <section class="cities" id="cities"></section>
+
+  <div class="wrap">
     <section class="section">
       <div class="shead">
-        <h2>L'itinéraire</h2>
-        <p>Six étapes, quatre excursions à la journée.</p>
-        <span class="shead__meta" id="itin-meta"></span>
+        <h2>La ligne</h2>
+        <p>Les trains d'une ville à l'autre. Prix par personne, à revérifier.</p>
+        <span class="shead__meta" id="route-meta"></span>
       </div>
-      <ol class="itin" id="itin"></ol>
-    </section>
-
-    <section class="section">
-      <div class="shead">
-        <h2>Les trajets</h2>
-        <p>Prix par personne, sièges non réservés — à revérifier avant le départ.</p>
-        <span class="shead__meta" id="legs-meta"></span>
-      </div>
-      <div class="legs" id="legs"></div>
+      <ol class="rt" id="route"></ol>
       <div class="flights" id="flights"></div>
     </section>
 
     <section class="section">
-      <div class="shead">
-        <h2>Où on en est</h2>
-        <p>Ce qui est réglé, ce qui reste.</p>
-      </div>
-      <div id="progress"></div>
+      <div class="shead"><h2>La carte</h2></div>
+      <div id="map" class="map map--wide"></div>
     </section>
 
+    <section class="section">
+      <div class="shead"><h2>Réservations</h2></div>
+      <div id="progress"></div>
+    </section>
   </div>
 </main>
 
@@ -85,12 +71,37 @@ import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAl
 
 mountChrome('index.html');
 
-// --- chiffres du hero, tous calculés ---------------------------------------
+// Une phrase, pas une rangée de gros chiffres : l'information est la même et
+// elle se lit d'un trait.
 const q = (id) => document.getElementById(id);
-q('s-nights').textContent = TRIP.nights;
-q('s-steps').textContent = STEPS.length;
-q('s-exc').textContent = EXCURSIONS.length;
-q('s-spots').textContent = SPOTS.length;
+q('chapo').innerHTML =
+  `${TRIP.nights} nuits, ${STEPS.length} villes, ${EXCURSIONS.length} excursions à la journée. ` +
+  `On monte à Kanazawa, on redescend sur Kyoto et Osaka, on finit par deux nuits ` +
+  `de bain chaud à Hakone avant de rentrer à Tokyo pour le pic des érables.`;
+
+// --- les six villes -----------------------------------------------------------
+const HERO = {"ouverture": "img/hero/ouverture.webp", "tokyo": "img/hero/tokyo.webp", "kanazawa": "img/hero/kanazawa.webp", "kyoto": "img/hero/kyoto.webp", "osaka": "img/hero/osaka.webp", "hakone": "img/hero/hakone.webp", "tokyo2": "img/hero/tokyo2.webp"};
+// Tokyo est deux étapes : la seconde a sa propre image, sinon la page bégaie.
+const heroFor = (step) => (step.n === 6 && HERO.tokyo2) ? HERO.tokyo2 : HERO[step.cityId];
+
+q('cities').innerHTML = STEPS.map((step) => {
+  const c = CITIES[step.cityId];
+  const h = HOTELS.find((x) => x.id === step.hotelId);
+  const excs = EXCURSIONS.filter((e) => e.fromStepId === step.id);
+  return `
+  <article class="city" style="--c:${c.color}">
+    <figure class="city__shot">
+      <img src="${heroFor(step)}" alt="${esc(c.name)}" loading="lazy" decoding="async">
+    </figure>
+    <div class="city__text">
+      <p class="city__n">${String(step.n).padStart(2, '0')}</p>
+      <h3>${esc(c.name)}</h3>
+      <p class="city__when">${formatDate(step.from)} → ${formatDate(step.to)} · ${step.nights} nuit${step.nights > 1 ? 's' : ''}</p>
+      <p class="city__hotel">${esc(h.name)}<span class="mut"> · ${esc(h.room)}</span></p>
+      ${excs.length ? `<p class="city__exc">Excursions : ${excs.map((e) => esc(e.name)).join(', ')}</p>` : ''}
+    </div>
+  </article>`;
+}).join('');
 
 renderMomijiBand(q('band'));
 
@@ -109,60 +120,66 @@ STEPS.forEach((s) => {
 });
 fitAll(map, [...STEPS.map((s) => s.ll), ...EXCURSIONS.map((e) => e.ll)]);
 
-// --- l'itinéraire -----------------------------------------------------------
-// Chaque étape porte déjà son hôtel : c'est l'information qu'on cherchait
-// jusqu'ici sur trois pages différentes.
+// --- la ligne ---------------------------------------------------------------
+// Un seul objet plutôt que deux listes : les étapes et les trains qui les
+// relient sont la même chose vue sous deux angles. Les afficher séparément
+// obligeait à lire deux fois la même séquence.
 const excBySt = EXCURSIONS.reduce((m, e) => ((m[e.fromStepId] ||= []).push(e), m), {});
+const MODES = { shk: 'Shinkansen', exp: 'Express', loc: 'Train local' };
 
-q('itin').innerHTML = STEPS.map((s) => {
-  const c = CITIES[s.cityId];
-  const h = HOTELS.find((h) => h.id === s.hotelId);
-  const excs = excBySt[s.id] || [];
+function stop(step) {
+  const c = CITIES[step.cityId];
+  const h = HOTELS.find((x) => x.id === step.hotelId);
+  const excs = excBySt[step.id] || [];
   return `
-  <li class="itin__step" style="--c:${c.color}">
-    <span class="step-num" style="--c:${c.color}">${s.n}</span>
-    <div class="itin__body">
-      <h3>${esc(c.name)}${s.area ? ` <span class="mut">· ${esc(s.area)}</span>` : ''}</h3>
-      <p class="itin__hotel">${esc(h.name)} — ${esc(h.room)}</p>
-      ${excs.length ? `<p class="itin__exc">Excursions : ${excs.map((e) => `${esc(e.name)} <span class="data">${esc(e.date)}</span>`).join(' · ')}</p>` : ''}
-    </div>
-    <div class="itin__meta">
-      <span class="data">${formatDate(s.from)} → ${formatDate(s.to)}</span>
-      <span class="label">${s.nights} nuit${s.nights > 1 ? 's' : ''}</span>
+  <li class="rt__stop" style="--c:${c.color}">
+    <span class="rt__rail"><span class="rt__node">${step.n}</span></span>
+    <div class="rt__body">
+      <div class="rt__head">
+        <h3>${esc(c.name)}${step.area ? ` <span class="mut">${esc(step.area)}</span>` : ''}</h3>
+        <span class="rt__when data">${formatDate(step.from)} → ${formatDate(step.to)}</span>
+        <span class="rt__nights">${step.nights} nuit${step.nights > 1 ? 's' : ''}</span>
+      </div>
+      <p class="rt__hotel">${esc(h.name)} <span class="mut">· ${esc(h.room)}</span></p>
+      ${excs.length ? `<ul class="rt__branches">
+        ${excs.map((e) => `<li><span class="rt__branch"></span>${esc(e.name)}
+          <span class="mut data">${esc(e.date)}</span></li>`).join('')}
+      </ul>` : ''}
     </div>
   </li>`;
-}).join('');
+}
 
-q('itin-meta').textContent = `${TRIP.nights} nuits · ${TRIP.days} jours`;
-
-// --- les trajets ------------------------------------------------------------
-const MODES = { shk: 'Shinkansen', exp: 'Express', loc: 'Local' };
-
-q('legs').innerHTML = SEGMENTS.map((g) => {
-  const from = STEPS.find((s) => s.id === g.fromStepId);
-  const to = STEPS.find((s) => s.id === g.toStepId);
+function leg(seg) {
+  const to = STEPS.find((x) => x.id === seg.toStepId);
+  const c = CITIES[to.cityId];
   return `
-  <div class="leg">
-    <span class="leg__date data">${formatDate(to.from)}</span>
-    <span class="leg__route">
-      <b>${esc(CITIES[from.cityId].name)} → ${esc(CITIES[to.cityId].name)}</b>
-      <span class="mut">${esc(g.label)}</span>
-    </span>
-    <span class="leg__mode label">${MODES[g.mode]}</span>
-    <span class="leg__dur data">${esc(g.duration)}</span>
-    <span class="leg__price data">${esc(g.pricePerPerson)}</span>
-  </div>`;
+  <li class="rt__leg rt__leg--${seg.mode}" style="--c:${c.color}">
+    <span class="rt__rail"></span>
+    <div class="rt__body">
+      <span class="rt__mode">${MODES[seg.mode]}</span>
+      <span class="rt__label">${esc(seg.label)}</span>
+      <span class="rt__dur data">${esc(seg.duration)}</span>
+      <span class="rt__price data">${esc(seg.pricePerPerson)}</span>
+    </div>
+  </li>`;
+}
+
+q('route').innerHTML = STEPS.map((step, i) => {
+  const seg = SEGMENTS.find((g) => g.fromStepId === step.id);
+  return stop(step) + (seg ? leg(seg) : '');
 }).join('');
 
-q('legs-meta').textContent = `${SEGMENTS.length} trajets entre étapes`;
+q('route-meta').textContent =
+  `${STEPS.length} étapes · ${SEGMENTS.length} trains · ${EXCURSIONS.length} excursions`;
 
 q('flights').innerHTML = `
   <h3 class="flights__title">Les vols</h3>
   ${FLIGHTS.map((f) => `
-    <div class="leg">
-      <span class="leg__date label">${esc(f.leg)}</span>
-      <span class="leg__route"><b>${esc(f.route || '')}</b><span class="mut">${esc(f.detail)}</span></span>
-      <span class="leg__dur data">${esc(f.when || '')}</span>
+    <div class="flight">
+      <span class="flight__leg">${esc(f.leg)}</span>
+      <span class="flight__route">${esc(f.route || '')}</span>
+      <span class="flight__detail mut">${esc(f.detail)}</span>
+      <span class="flight__when data">${esc(f.when || '')}</span>
     </div>`).join('')}`;
 
 // --- où on en est -----------------------------------------------------------
@@ -188,10 +205,7 @@ q('progress').innerHTML = `
     <ul class="prog__list">
       <li><span class="prog__ok">✓</span> Les 6 hôtels sont confirmés</li>
       <li><span class="prog__ok">✓</span> Les vols sont pris — China Eastern via Shanghai</li>
-      ${daysToCancel > 0 ? `<li><span class="prog__warn">!</span>
-        Le ryokan de Hakone reste annulable gratuitement jusqu'au
-        <span class="data">${formatDate(ryokan.cancelBefore)}</span>
-        <span class="mut">— dans ${daysToCancel} jours</span></li>` : ''}
+      <li><span class="prog__ok">✓</span> Le ryokan de Hakone est validé</li>
       <li><span class="prog__warn">!</span> Pass Hakone et Nikko à acheter à l'avance</li>
     </ul>
     <p class="prog__more"><a class="btn btn--ghost" href="pratique.html">Voir le budget complet</a></p>

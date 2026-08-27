@@ -6,8 +6,8 @@
 <title>Aujourd'hui — Japon 2026</title>
 <meta name="description" content="Le programme du jour, l'hôtel du soir et le prochain train.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F6F6F2" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FAF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="app.css">
 </head>
@@ -18,6 +18,7 @@
 <script type="module">
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
+import { AVANT, SURPLACE, METEO } from './data/pratique.js';
 import { mountChrome, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 
 mountChrome('aujourdhui.html');
@@ -36,46 +37,79 @@ app.innerHTML = day ? during(day) : (away > 0 ? before() : after());
 // --- avant le départ ----------------------------------------------------------
 function before() {
   const toGo = HOTELS.filter((h) => !h.paid);
-  const ryokan = HOTELS.find((h) => h.cancelBefore);
-  const cancelIn = ryokan ? daysBetween(now, ryokan.cancelBefore) : null;
-
-  // Une checklist qui ne se contente pas de généralités : elle sort des données.
-  const tasks = [
-    { done: true, text: `Les ${HOTELS.length} hébergements sont confirmés` },
-    { done: true, text: 'Les vols sont pris — China Eastern via Shanghai' },
-    { done: false, text: `Régler ${toGo.length} hébergements sur place ou avant — ${eur(toGo.reduce((s, h) => s + h.price, 0))}` },
-    { done: false, text: 'Acheter le Hakone Freepass et le Nikko Pass à l\'avance' },
-    { done: false, text: 'Suica dans le Wallet, eSIM commandée' },
-    { done: false, text: 'Adaptateur type A, et de la place dans la valise' },
-    ...(cancelIn > 0 ? [{ done: false, urgent: true,
-        text: `Trancher pour le ryokan de Hakone — annulable gratuitement encore ${cancelIn} jours` }] : []),
-  ];
-
-  const first = DAYS[0];
 
   return `
   <header class="section countdown">
     <p class="eyebrow">Départ le ${formatDate(TRIP.start, { weekday: true })}</p>
     <h1><span class="countdown__n data">J−${away}</span></h1>
     <p class="hero__lede">
-      ${away} jours avant Tokyo. ${TRIP.nights} nuits, ${STEPS.length} étapes,
-      ${EXCURSIONS.length} excursions et ${TEMPLATES.length} journées type déjà repérées.
+      ${TRIP.nights} nuits, ${STEPS.length} villes, ${EXCURSIONS.length} excursions.
     </p>
   </header>
 
   <section class="section">
-    <div class="shead"><h2>Avant de partir</h2></div>
-    <ul class="check">
-      ${tasks.map((t) => `
-        <li class="${t.done ? 'is-done' : ''}${t.urgent ? ' is-urgent' : ''}">
-          <span aria-hidden="true">${t.done ? '✓' : '○'}</span>${esc(t.text)}
+    <div class="shead"><h2>À faire</h2><p>Du plus lointain au plus proche du départ.</p></div>
+    <ol class="todo">
+      ${AVANT.map((t) => `
+        <li class="todo__item">
+          <div class="todo__head">
+            <h3>${esc(t.title)}</h3>
+            ${t.tag ? `<span class="todo__tag">${esc(t.tag)}</span>` : ''}
+            <span class="todo__when">${esc(t.when)}</span>
+          </div>
+          <p>${esc(t.what)}</p>
+          ${t.url ? `<p><a class="todo__link" href="${esc(t.url)}" target="_blank" rel="noopener">Ouvrir le site officiel</a></p>` : ''}
         </li>`).join('')}
+    </ol>
+  </section>
+
+  <section class="section">
+    <div class="shead"><h2>Réservations</h2></div>
+    <ul class="check">
+      <li class="is-done"><span aria-hidden="true">✓</span>Les ${HOTELS.length} hébergements sont confirmés</li>
+      <li class="is-done"><span aria-hidden="true">✓</span>Le ryokan de Hakone est validé</li>
+      <li class="is-done"><span aria-hidden="true">✓</span>Les vols sont pris — China Eastern via Shanghai</li>
+      <li><span aria-hidden="true">○</span>${toGo.length} hébergements à régler sur place ou avant — ${eur(toGo.reduce((s, h) => s + h.price, 0))}</li>
     </ul>
   </section>
 
   <section class="section">
-    <div class="shead"><h2>Le premier jour</h2><span class="shead__meta data">${formatDate(first.date)}</span></div>
-    ${dayCard(first)}
+    <div class="shead"><h2>Le temps qu'il fera</h2><p>Normales de saison, pour la valise.</p></div>
+    <div class="meteo">
+      ${STEPS.filter((st, i, a) => a.findIndex((x) => x.cityId === st.cityId) === i).map((step) => {
+        const c = CITIES[step.cityId];
+        const m = METEO[step.cityId];
+        return `
+        <div class="meteo__row" style="--c:${c.color}">
+          <span class="meteo__city">${esc(c.name)}</span>
+          <span class="meteo__temp data"><b>${m.max}°</b> / ${m.min}°</span>
+          <span class="meteo__note mut">${esc(m.note)}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </section>
+
+  ${knowBlock()}
+
+  <section class="section">
+    <div class="shead"><h2>Premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
+    ${dayCard(DAYS[0])}
+  </section>`;
+}
+
+// Le même bloc sert avant et pendant : c'est sur place qu'il compte le plus.
+function knowBlock() {
+  return `
+  <section class="section">
+    <div class="shead"><h2>Bon à savoir</h2></div>
+    <div class="know">
+      ${SURPLACE.map((k) => `
+        <div class="know__item${k.check ? ' know__item--check' : ''}">
+          <h3>${esc(k.title)}</h3>
+          <p>${esc(k.what)}</p>
+          ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
+        </div>`).join('')}
+    </div>
   </section>`;
 }
 
@@ -119,7 +153,7 @@ function during(d) {
   </section>` : ''}
 
   <section class="section">
-    <div class="shead"><h2>Le programme</h2></div>
+    <div class="shead"><h2>Programme</h2></div>
     ${dayCard(d)}
   </section>
 
@@ -146,6 +180,8 @@ function during(d) {
     ${dayCard(tomorrow)}
   </section>` : ''}
 
+  ${knowBlock()}
+
   <section class="section">
     <p><a class="btn btn--ghost" href="itineraire.html#jour-${d.n}">Voir tout l'itinéraire</a></p>
   </section>`;
@@ -158,9 +194,10 @@ function after() {
     <p class="eyebrow">${formatDate(TRIP.start)} — ${formatDate(TRIP.end, { year: true })}</p>
     <h1>C'est fini</h1>
     <p class="hero__lede">
-      ${TRIP.nights} nuits, ${STEPS.length} étapes, ${TRIP.days} jours.
-      Tout est encore là : <a href="itineraire.html">les journées</a>,
-      <a href="guide.html">les adresses</a>, <a href="pratique.html">les chambres</a>.
+      ${TRIP.nights} nuits, ${STEPS.length} villes. Tout est encore là :
+      <a href="itineraire.html">les journées</a>,
+      <a href="guide.html">les adresses</a>,
+      <a href="pratique.html">les chambres</a>.
     </p>
   </header>`;
 }
