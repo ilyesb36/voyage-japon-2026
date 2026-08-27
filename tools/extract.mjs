@@ -365,13 +365,22 @@ function parseTemplates() {
     const sub = clean((body.match(/<div class="dtit">[\s\S]*?<span>([\s\S]*?)<\/span>/) || [, ''])[1]);
     const img = (body.match(/<img class="dimg" src="([^"]+)"/) || [, null])[1];
 
-    const steps = [...body.matchAll(/<div class="st"><div class="sh">([\s\S]*?)<\/div><div class="sd">([\s\S]*?)<\/div><\/div>/g)]
-      .map((m) => ({
-        h: clean(m[1]),
-        text: clean(m[2].replace(/<a class="pin"[\s\S]*?<\/a>/g, '').replace(/<small>[\s\S]*?<\/small>/g, '')),
-        note: clean((m[2].match(/<small>([\s\S]*?)<\/small>/) || [, ''])[1]) || null,
-        maps: (m[2].match(/<a class="pin"[^>]*href="([^"]+)"/) || [, null])[1],
-      }));
+    // Un bloc .st se ferme soit juste après .sd, soit après une <img class="simg">.
+    // Une seule expression qui exigeait le premier cas perdait les 144 blocs
+    // illustrés et recollait les étapes suivantes bout à bout. On découpe donc
+    // d'abord par bloc, puis on extrait à l'intérieur.
+    const blocks = body.match(/<div class="st">[\s\S]*?(?=<div class="st">|$)/g) || [];
+    const steps = blocks.map((b) => {
+      const sh = (b.match(/<div class="sh">([\s\S]*?)<\/div>/) || [, ''])[1];
+      const sd = (b.match(/<div class="sd">([\s\S]*?)<\/div>/) || [, ''])[1];
+      return {
+        h: clean(sh),
+        text: clean(sd.replace(/<a class="pin"[\s\S]*?<\/a>/g, '').replace(/<small>[\s\S]*?<\/small>/g, '')),
+        note: clean((sd.match(/<small>([\s\S]*?)<\/small>/) || [, ''])[1]) || null,
+        maps: (sd.match(/<a class="pin"[^>]*href="([^"]+)"/) || [, null])[1],
+        img: (b.match(/<img class="simg"[^>]+src="([^"]+)"/) || [, null])[1],
+      };
+    }).filter((s) => s.h || s.text);
 
     const before = cityMarks.filter((c) => c.at < b.index).pop();
     const cityId = before ? cityFromLabel(before.name) : null;

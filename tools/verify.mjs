@@ -175,6 +175,8 @@ const remote = [
   ...SPOTS.filter((s) => s.img && /^https?:/.test(s.img)).map((s) => s.name),
   ...HOTELS.filter((h) => h.images.some((i) => /^https?:/.test(i))).map((h) => h.name),
   ...TEMPLATES.filter((t) => t.img && /^https?:/.test(t.img)).map((t) => t.title),
+  ...TEMPLATES.flatMap((t) => t.steps)
+    .filter((s) => s.img && /^https?:/.test(s.img)).map((s) => s.text.slice(0, 30)),
 ];
 if (remote.length) todo(`${remote.length} images encore distantes`, 'Task 2 — rapatriement');
 else assert('toutes les images sont locales', true);

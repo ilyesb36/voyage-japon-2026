@@ -45,7 +45,12 @@ function add(url, featured, label) {
 // une signature `?k=…` qui expire.
 for (const h of HOTELS) for (const i of h.images) add(i, true, h.name);
 for (const s of SPOTS) add(s.img, false, s.name);
-for (const t of TEMPLATES) add(t.img, false, t.title);
+for (const t of TEMPLATES) {
+  add(t.img, false, t.title);
+  // Les étapes des journées type ont leur propre photo : les oublier laissait
+  // 144 images distantes tout en affichant « tout est local ».
+  for (const st of t.steps) add(st.img, false, `${t.title} ${st.h}`);
+}
 
 const targets = [...inventory.values()]
   .filter((e) => (ONLY_BOOKING ? isBooking(e.url) : true))
