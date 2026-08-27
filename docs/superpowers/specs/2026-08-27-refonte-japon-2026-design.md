@@ -168,20 +168,24 @@ marqueurs colorés. Vérifié en rendu réel.
 
 Les 275 photos Wikimedia et 24 photos Booking sont rapatriées dans `img/`.
 
-**Pas de conversion locale.** Le registre npm de la machine est derrière une
-authentification d'entreprise, `sharp` n'est donc pas installable, et `sips`
-(macOS) ne sait pas écrire de WebP. Wikimedia, de son côté, ne sert plus que
-des largeurs de vignettes autorisées — 250, 500, 960, 1280 ; toute autre
-largeur renvoie 400.
+**Conversion en WebP via `sharp`.** Le registre npm par défaut de la machine
+est derrière une authentification d'entreprise ; un `.npmrc` local au dépôt le
+pointe vers le registre public, ce qui rend `sharp` installable. Il ne sert
+qu'au script de rapatriement — `node_modules/` est ignoré par git et n'est
+jamais nécessaire pour servir le site.
 
-On s'appuie donc sur le redimensionnement de Wikimedia lui-même :
+Wikimedia ne sert plus que des largeurs de vignettes autorisées — 250, 500,
+960, 1280 ; toute autre largeur renvoie 400. On télécharge donc en 960 px puis
+on redimensionne localement.
 
-- **500 px** (~72 Ko) pour toutes les photos de grille — soit ~21 Mo ;
-- **960 px** (~230 Ko) pour la trentaine d'images en vedette (hero, chambres
-  d'hôtel, têtes de ville) — soit ~8 Mo.
+Deux tailles, mesurées sur échantillon :
 
-Total attendu ~30 Mo, en JPEG. À ces tailles, l'écart avec du WebP ne justifie
-pas d'ajouter une dépendance de build.
+- **640 px, q76** (~65 Ko) pour les 300 photos — soit ~19 Mo ;
+- **960 px, q74** (~137 Ko) pour la quarantaine d'images en vedette : hero,
+  les 24 photos de chambres, les têtes de ville — soit ~5 Mo.
+
+Total attendu ~25 Mo, en WebP : plus léger **et** de meilleure qualité que
+l'équivalent JPEG. WebP est supporté partout depuis 2020, pas de repli requis.
 
 **Les photos Booking sont urgentes.** Leurs URL `cf.bstatic.com` portent une
 signature `?k=…` qui expire : les photos des six chambres réservées peuvent
