@@ -294,41 +294,61 @@ function renderPayments() {
 renderPayments();
 
 // --- hors-ligne ---------------------------------------------------------------
-// Le pré-cache pèse une vingtaine de mégaoctets : ça ne peut pas se faire en
-// silence, donc on montre où ça en est.
+// Une action explicite, avec une progression réelle. Le pré-chargement
+// silencieux à l'installation échouait sans que personne ne le sache.
 q('offline').innerHTML = `
   <div class="offline card">
     <p><b id="off-state">Vérification…</b></p>
     <p class="mut" id="off-detail">
-      Le site entier — pages, photos, cartes déjà consultées — peut tenir sur le
-      téléphone pour fonctionner sans réseau dans le métro.
+      Tout le site — les cinq pages, les 351 photos, les cartes déjà
+      consultées — peut tenir sur le téléphone et fonctionner sans réseau.
+      Environ 25 Mo. À faire avant de partir, en wifi.
     </p>
+    <div class="offline__bar" id="off-bar" hidden><span></span></div>
     <p><button class="btn" id="off-go" hidden>Préparer le hors-ligne</button></p>
   </div>`;
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then((reg) => {
-    const state = q('off-state');
-    const go = q('off-go');
-    navigator.serviceWorker.addEventListener('message', (e) => {
-      if (e.data?.type === 'cache-progress') {
-        state.textContent = `Mise en cache — ${e.data.done} / ${e.data.total}`;
-      }
-      if (e.data?.type === 'cache-done') {
-        state.textContent = 'Prêt pour le hors-ligne ✓';
-        go.hidden = true;
-      }
-    });
-    caches.has('jp-media-v12').then((has) => {
-      state.textContent = has ? 'Prêt pour le hors-ligne ✓' : 'Pas encore téléchargé';
-      go.hidden = has;
-    });
+  const state = q('off-state');
+  const bar = q('off-bar');
+  const go = q('off-go');
+
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === 'status') {
+      const pret = d.shell >= d.shellTotal && d.media > 300;
+      state.textContent = pret
+        ? `Prêt pour le hors-ligne — ${d.media} photos en mémoire`
+        : d.media > 0 ? `Téléchargement incomplet — ${d.media} photos sur ~351`
+        : 'Pas encore téléchargé';
+      go.hidden = pret;
+      go.textContent = d.media > 0 && !pret ? 'Reprendre le téléchargement' : 'Préparer le hors-ligne';
+    }
+    if (d.type === 'progress') {
+      bar.hidden = false;
+      bar.firstElementChild.style.width = `${Math.round((d.done / d.total) * 100)}%`;
+      state.textContent = d.phase === 'pages'
+        ? `Pages — ${d.done} / ${d.total}`
+        : `Photos — ${d.done} / ${d.total}`;
+      go.disabled = true;
+    }
+    if (d.type === 'done') {
+      bar.hidden = true;
+      go.disabled = false;
+      go.hidden = true;
+      state.textContent = `Prêt pour le hors-ligne — ${d.media} photos en mémoire`;
+    }
+  });
+
+  navigator.serviceWorker.register('sw.js').then(async (reg) => {
+    await navigator.serviceWorker.ready;
+    const sw = () => navigator.serviceWorker.controller || reg.active;
+    sw()?.postMessage({ type: 'cache-status' });
     go.addEventListener('click', () => {
-      state.textContent = 'Téléchargement…';
-      reg.active?.postMessage({ type: 'cache-media' });
-      navigator.serviceWorker.controller?.postMessage({ type: 'cache-media' });
+      state.textContent = 'Démarrage…';
+      sw()?.postMessage({ type: 'cache-all' });
     });
-  }).catch(() => { q('off-state').textContent = 'Indisponible sur ce navigateur'; });
+  }).catch(() => { state.textContent = 'Indisponible sur ce navigateur'; });
 } else {
   q('off-state').textContent = 'Indisponible sur ce navigateur';
 }

@@ -1433,3 +1433,15 @@
   /* la journée qu'on vient d'ouvrir depuis la grille */
   .alt__item:target { box-shadow: 0 0 0 2px var(--acc); }
 }
+
+@layer components {
+  .offline__bar {
+    height: 4px; background: var(--paper-3); border-radius: var(--r-full);
+    overflow: hidden; margin-top: var(--s-4);
+  }
+  .offline__bar span {
+    display: block; height: 100%; width: 0; border-radius: var(--r-full);
+    background: var(--acc); transition: width .2s linear;
+  }
+  .offline button[disabled] { opacity: .5; cursor: default; }
+}

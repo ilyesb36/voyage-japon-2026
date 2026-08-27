@@ -1,12 +1,14 @@
 // Service worker — Japon 2026.
 //
 // Deux caches, deux stratégies :
-//   shell : les pages, le CSS, les modules, les polices. Pré-caché à
-//           l'installation, servi réseau d'abord pour récupérer les mises à
-//           jour, avec repli sur le cache.
-//   media : les ~280 photos. Environ 16 Mo — trop lourd pour l'installation,
-//           donc téléchargé à la demande depuis la page Pratique, qui affiche
-//           la progression. Servi cache d'abord.
+//   shell : les pages, le CSS, les modules, les polices. Servi réseau
+//           d'abord, avec repli sur le cache.
+//   media : les photos. Servi cache d'abord, elles ne changent jamais.
+//
+// Le hors-ligne est une ACTION, pas un effet de bord de l'installation : le
+// bouton « Préparer le hors-ligne » de la page Pratique met tout en cache et
+// montre où ça en est. Précacher en silence à l'installation échouait sans
+// que personne ne le sache — et « prêt hors-ligne » devenait un mensonge.
 //
 // Tout est local : aucune dépendance réseau au chargement, hors les tuiles de
 // carte, qui se mettent en cache au fil de la consultation.
@@ -40,21 +42,22 @@ const SHELL_FILES = [...PAGES, ...FONTS];
 /** addAll échoue en bloc sur une seule erreur : on met en cache un par un. */
 async function cacheEach(cache, urls, onProgress) {
   let done = 0;
+  let failed = 0;
   for (const url of urls) {
     try {
       const res = await fetch(url, { cache: 'reload' });
       if (res.ok) await cache.put(url, res);
-    } catch { /* une ressource manquante ne doit pas faire échouer l'install */ }
+      else failed++;
+    } catch { failed++; }
     onProgress?.(++done, urls.length);
   }
+  return failed;
 }
 
 self.addEventListener('install', (e) => {
-  e.waitUntil((async () => {
-    const cache = await caches.open(SHELL);
-    await cacheEach(cache, SHELL_FILES);
-    await self.skipWaiting();
-  })());
+  // Rien à précharger ici : on prend la main tout de suite, le reste se
+  // remplit à la navigation ou sur demande explicite.
+  e.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', (e) => {
@@ -69,30 +72,53 @@ self.addEventListener('activate', (e) => {
 // --- téléchargement des photos, déclenché depuis la page Pratique --------------
 
 self.addEventListener('message', (e) => {
-  if (e.data?.type !== 'cache-media') return;
-  e.waitUntil(cacheMedia());
+  if (e.data?.type === 'cache-all') e.waitUntil(cacheAll());
+  if (e.data?.type === 'cache-status') e.waitUntil(reportStatus());
 });
 
-async function cacheMedia() {
-  const post = async (msg) => {
-    const clients = await self.clients.matchAll({ includeUncontrolled: true });
-    clients.forEach((c) => c.postMessage(msg));
-  };
+async function post(msg) {
+  const clients = await self.clients.matchAll({ includeUncontrolled: true });
+  clients.forEach((c) => c.postMessage(msg));
+}
 
-  // La liste des photos se déduit des modules de données : pas de liste à tenir
-  // à jour en double.
+/** Combien de fichiers sont déjà là, sur combien attendus. */
+async function reportStatus() {
+  const shell = (await (await caches.open(SHELL)).keys()).length;
+  const media = (await (await caches.open(MEDIA)).keys()).length;
+  await post({ type: 'status', shell, media, shellTotal: SHELL_FILES.length });
+}
+
+/** Tout : les pages puis les photos, en rendant compte au fur et à mesure. */
+async function cacheAll() {
+  const shellCache = await caches.open(SHELL);
+  let done = 0;
+  await cacheEach(shellCache, SHELL_FILES, (n) => {
+    done = n;
+    post({ type: 'progress', phase: 'pages', done: n, total: SHELL_FILES.length });
+  });
+
+  const list = await mediaList();
+  const mediaCache = await caches.open(MEDIA);
+  await cacheEach(mediaCache, list, (n) =>
+    post({ type: 'progress', phase: 'photos', done: n, total: list.length }));
+
+  const shell = (await shellCache.keys()).length;
+  const media = (await mediaCache.keys()).length;
+  await post({ type: 'done', shell, media, shellTotal: SHELL_FILES.length });
+}
+
+/** La liste des photos, déduite des données ET des pages. */
+async function mediaList() {
   const urls = new Set();
-  for (const file of ['data/spots.js', 'data/trip.js', 'data/days.js']) {
+  const sources = ['data/spots.js', 'data/trip.js', 'data/days.js',
+                   'index.html', 'itineraire.html'];
+  for (const file of sources) {
     try {
-      const src = await (await fetch(file)).text();
-      for (const m of src.matchAll(/"(img\/[^"]+)"/g)) urls.add(m[1]);
+      const src = await (await fetch(file, { cache: 'reload' })).text();
+      for (const m of src.matchAll(/"(img\/[^"]+\.(?:webp|jpg|png))"/g)) urls.add(m[1]);
     } catch { /* hors-ligne : on fera avec ce qu'on a */ }
   }
-
-  const list = [...urls];
-  const cache = await caches.open(MEDIA);
-  await cacheEach(cache, list, (done, total) => post({ type: 'cache-progress', done, total }));
-  await post({ type: 'cache-done', total: list.length });
+  return [...urls];
 }
 
 // --- interception --------------------------------------------------------------
