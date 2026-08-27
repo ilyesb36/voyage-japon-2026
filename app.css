@@ -375,6 +375,108 @@
     background: var(--paper-2) !important;
   }
 
+  /* itinéraire -------------------------------------------------------------- */
+  .daynav {
+    position: sticky; top: var(--nav-h); z-index: 800;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(12px);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: var(--s-6);
+  }
+  .daynav .chip:hover { border-color: var(--c); color: var(--ink); }
+
+  .phase { margin-bottom: var(--s-8); scroll-margin-top: calc(var(--nav-h) + 60px); }
+  .phase__head {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding-bottom: var(--s-3); margin-bottom: var(--s-4);
+    border-bottom: 2px solid var(--c, var(--line));
+  }
+  .phase__head h2 { font-size: var(--t-xl); }
+  .phase__sub { font-size: var(--t-sm); color: var(--mut); margin-top: 2px; }
+  .phase__arrive { margin-left: auto; flex: none; font-size: var(--t-xs); color: var(--mut); }
+
+  .day { border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--nav-h) + 70px); }
+  .day--past { opacity: .55; }
+  .day--today { background: var(--acc-soft); border-radius: var(--r-m); border-bottom-color: transparent; }
+  .day__head {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding: var(--s-3) var(--s-2); transition: background .14s;
+  }
+  .day__head:hover { background: var(--paper-2); }
+  .day__date { flex: none; width: 46px; text-align: center; line-height: 1.1; }
+  .day__date b { font-size: var(--t-lg); font-weight: 700; }
+  .day__date .label { display: block; font-size: 10px; }
+  .day__title { flex: 1; min-width: 0; display: flex; align-items: baseline;
+                gap: var(--s-3); flex-wrap: wrap; }
+  .day__title b { font-family: var(--f-display); font-size: var(--t-md); font-weight: 600; }
+  .day__kind {
+    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+    border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 1px var(--s-2);
+  }
+  .day__count { flex: none; font-size: var(--t-xs); }
+  .day__car { flex: none; color: var(--mut); font-size: var(--t-lg); transition: transform .18s; }
+  .day[open] .day__car { transform: rotate(90deg); }
+
+  .day__body { padding: 0 var(--s-2) var(--s-5) calc(46px + var(--s-4)); }
+  .day__items { display: flex; flex-direction: column; gap: var(--s-2); }
+  .day__items li { position: relative; padding-left: var(--s-4); font-size: var(--t-base); }
+  .day__items li::before {
+    content: ""; position: absolute; left: 0; top: 0.62em;
+    width: 5px; height: 5px; border-radius: 1px; background: var(--c, var(--mut));
+  }
+  .day__evening { color: var(--ink-2); }
+  .day__evening::before { background: var(--gold) !important; }
+  .day__tip {
+    margin-top: var(--s-3); padding: var(--s-3) var(--s-4);
+    background: var(--paper-3); border-left: 2px solid var(--gold);
+    border-radius: 0 var(--r-s) var(--r-s) 0;
+    font-size: var(--t-sm); color: var(--ink-2);
+  }
+
+  .day__free {
+    margin-top: var(--s-3); font-size: var(--t-sm); color: var(--mut);
+  }
+  .day__free a { color: var(--acc); font-weight: 600; }
+
+  /* Les journées type, qui remplacent l'ancienne page dédiée. Une seule fois
+     par étape, en fin de section : les répéter sous chaque jour était le
+     défaut qu'on corrige. */
+  .alt--phase { margin-top: var(--s-4); }
+  .alt--phase > .alt__head {
+    display: flex; align-items: baseline; gap: var(--s-3);
+    padding: var(--s-3) var(--s-2); border-radius: var(--r-s);
+    background: var(--paper-3);
+  }
+  .alt--phase > .alt__head:hover { background: var(--line); }
+  .alt--phase[open] > .alt__head { margin-bottom: var(--s-3); }
+  .alt--phase[open] > .alt__head .day__car { transform: rotate(90deg); }
+  .alt--phase .day__car { margin-left: auto; }
+  .alt__head { font-size: var(--t-sm); font-weight: 600; }
+  .alt__head .mut { font-weight: 400; }
+  .alt__list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .alt__item { border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper-2); }
+  .alt__item > summary {
+    padding: var(--s-2) var(--s-3); display: flex; align-items: baseline;
+    gap: var(--s-3); flex-wrap: wrap; font-size: var(--t-sm);
+  }
+  .alt__item > summary:hover { background: var(--paper-3); }
+  .alt__item > summary b { font-weight: 600; }
+  .alt__item > summary .mut { flex: 1; min-width: 0; }
+  .alt__steps { padding: 0 var(--s-3) var(--s-3) var(--s-3);
+                display: flex; flex-direction: column; gap: var(--s-2); }
+  .alt__steps li { display: flex; gap: var(--s-3); font-size: var(--t-sm); align-items: baseline; }
+  .alt__h { flex: none; width: 52px; color: var(--acc); font-weight: 700; font-size: var(--t-xs); }
+  .alt__pin { color: var(--mut); text-decoration: none; }
+  .alt__pin:hover { color: var(--acc); }
+  .alt--standalone { border-top: 0; margin-top: 0; padding-top: 0; }
+
+  @media (max-width: 640px) {
+    .day__body { padding-left: var(--s-2); }
+    .phase__arrive { display: none; }
+    .alt__h { width: 44px; }
+  }
+
   /* guide : filtres --------------------------------------------------------- */
   .filters {
     display: grid; gap: var(--s-4);
@@ -656,4 +758,12 @@
   }
   .scroll-x { overflow-x: auto; scrollbar-width: thin; }
   .scroll-x::-webkit-scrollbar { height: 6px; }
+}
+
+@layer components {
+  .alt-ref {
+    margin-top: var(--s-4); padding: var(--s-3) var(--s-2);
+    font-size: var(--t-sm); color: var(--mut);
+  }
+  .alt-ref a { color: var(--acc); font-weight: 600; }
 }

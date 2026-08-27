@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour par jour — Japon 2026</title>
+<meta name="description" content="Les 25 jours du voyage, avec pour chaque journée libre les journées type de la ville.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F6F6F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14140F" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="wrap">
+  <header class="section">
+    <p class="eyebrow">Jour par jour</p>
+    <h1>Les 25 jours</h1>
+    <p class="hero__lede">
+      Un fil conducteur, pas un contrat. Les journées libres absorbent la pluie,
+      la fatigue et les coups de cœur — elles proposent d'autres façons d'occuper
+      la journée dans la ville où vous êtes.
+    </p>
+  </header>
+
+  <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
+
+  <div id="itin"></div>
+</main>
+
+<script type="module">
+import { CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
+import { DAYS, TEMPLATES } from './data/days.js';
+import { mountChrome, esc, formatDate, today } from './app/ui.js';
+
+mountChrome('itineraire.html');
+const q = (id) => document.getElementById(id);
+
+const KIND = {
+  vol: 'Vol', transfert: 'Trajet', excursion: 'Excursion', etape: null, libre: 'Journée libre',
+};
+
+// Les journées type ne méritent pas leur propre page : elles ne servent qu'au
+// moment où l'on regarde un jour sans programme. On les rattache donc à la
+// ville, et on les propose au bon endroit.
+const tplByCity = TEMPLATES.reduce((m, t) => ((m[t.cityId] ||= []).push(t), m), {});
+
+// Une journée est libre si elle le dit, ou si son programme tient en trois
+// lignes. Ces jours-là renvoient vers les journées type de leur ville.
+const isFree = (d) => d.kind === 'etape' && (/\blibre\b/i.test(d.title) || d.items.length <= 3);
+
+// Tokyo est deux étapes distinctes mais une seule ville : ses journées type ne
+// se rendent qu'à la première, la seconde y renvoie.
+const firstStepOfCity = {};
+STEPS.forEach((s) => (firstStepOfCity[s.cityId] ??= s.id));
+
+// --- navigation par étape -----------------------------------------------------
+q('daynav').innerHTML = STEPS.map((s) => {
+  const c = CITIES[s.cityId];
+  return `<a class="chip" href="#${s.id}" style="--c:${c.color}">
+    <span class="chip__dot" style="background:${c.color}"></span>${esc(c.name)}
+    <span class="mut data"> ${formatDate(s.from).replace(/ (novembre|décembre)/, (m, p) => ' ' + p.slice(0, 3))}</span>
+  </a>`;
+}).join('');
+
+// --- les jours, groupés par étape ---------------------------------------------
+const byStep = DAYS.reduce((m, d) => ((m[d.stepId || 'depart'] ||= []).push(d), m), {});
+const now = today();
+
+let html = '';
+for (const step of STEPS) {
+  const c = CITIES[step.cityId];
+  const hotel = HOTELS.find((h) => h.id === step.hotelId);
+  const days = byStep[step.id] || [];
+  const seg = SEGMENTS.find((g) => g.toStepId === step.id);
+
+  html += `
+  <section class="phase" id="${step.id}" style="--c:${c.color}">
+    <header class="phase__head">
+      <span class="step-num" style="--c:${c.color}">${step.n}</span>
+      <div>
+        <h2>${esc(c.name)}${step.area ? ` <span class="mut">· ${esc(step.area)}</span>` : ''}</h2>
+        <p class="phase__sub">
+          <span class="data">${formatDate(step.from)} → ${formatDate(step.to)}</span>
+          · ${step.nights} nuit${step.nights > 1 ? 's' : ''}
+          · ${esc(hotel.name)}
+        </p>
+      </div>
+      ${seg ? `<span class="phase__arrive data">${esc(seg.duration)} depuis ${esc(CITIES[STEPS.find((s) => s.id === seg.fromStepId).cityId].name)}</span>` : ''}
+    </header>
+
+    ${days.map((d) => renderDay(d, c)).join('')}
+    ${renderTemplates(step, c)}
+  </section>`;
+}
+
+/**
+ * Les journées type de la ville, une seule fois par étape et non sous chaque
+ * jour : les répéter était précisément le défaut qu'on corrige.
+ */
+function renderTemplates(step, c) {
+  const tpls = tplByCity[step.cityId] || [];
+  if (!tpls.length) return '';
+
+  const home = firstStepOfCity[step.cityId];
+  if (home !== step.id) {
+    return `<p class="alt-ref">
+      Les <a href="#tpl-${home}">${tpls.length} journées type à ${esc(c.name)}</a>
+      sont listées à la première étape.</p>`;
+  }
+
+  const free = STEPS.filter((s) => s.cityId === step.cityId)
+    .flatMap((s) => byStep[s.id] || []).filter(isFree).length;
+
+  return `
+  <details class="alt alt--phase" id="tpl-${step.id}">
+    <summary class="alt__head">
+      <b>Les journées type à ${esc(c.name)}</b>
+      <span class="mut">${tpls.length} façons d'occuper une journée${free ? ` — ${free} jour${free > 1 ? 's' : ''} libre${free > 1 ? 's' : ''} dans cette ville` : ''}</span>
+      <span class="day__car" aria-hidden="true">›</span>
+    </summary>
+    <div class="alt__list">
+      ${tpls.map(templateItem).join('')}
+    </div>
+  </details>`;
+}
+
+function templateItem(t) {
+  return `
+  <details class="alt__item" id="${t.id}">
+    <summary>
+      <b>${esc(t.title)}</b>
+      <span class="mut">${esc(t.sub)}</span>
+      ${t.category ? `<span class="day__kind">${esc(t.category)}</span>` : ''}
+      ${t.priority ? `<span class="prio prio--${t.priority}"></span>` : ''}
+    </summary>
+    <ol class="alt__steps">
+      ${t.steps.map((s) => `
+        <li>
+          <span class="data alt__h">${esc(s.h)}</span>
+          <span>${esc(s.text)}${s.note ? ` <span class="mut">— ${esc(s.note)}</span>` : ''}
+          ${s.maps ? ` <a href="${esc(s.maps)}" target="_blank" rel="noopener" class="alt__pin" aria-label="Ouvrir dans Google Maps">↗</a>` : ''}</span>
+        </li>`).join('')}
+    </ol>
+  </details>`;
+}
+
+// Le vol aller n'appartient à aucune étape : il ouvre le voyage.
+const depart = byStep.depart || [];
+if (depart.length) {
+  html = `<section class="phase phase--depart" id="depart" style="--c:var(--mut)">
+    <header class="phase__head">
+      <span class="step-num" style="--c:var(--mut)">✈</span>
+      <div><h2>Le départ</h2><p class="phase__sub">Paris → Shanghai → Tokyo</p></div>
+    </header>
+    ${depart.map((d) => renderDay(d, { color: 'var(--mut)', name: '' })).join('')}
+  </section>` + html;
+}
+
+q('itin').innerHTML = html;
+
+function renderDay(d, c) {
+  const kind = isFree(d) ? KIND.libre : KIND[d.kind];
+  const past = d.date < now;
+  const isToday = d.date === now;
+  const free = isFree(d) && (tplByCity[d.cityId] || []).length;
+
+  return `
+  <details class="day${past ? ' day--past' : ''}${isToday ? ' day--today' : ''}" id="jour-${d.n}"${isToday ? ' open' : ''}>
+    <summary class="day__head">
+      <span class="day__date">
+        <b class="data">${d.label.split(' ')[0]}</b>
+        <span class="label">${d.label.split(' ')[1]}</span>
+      </span>
+      <span class="day__title">
+        <b>${esc(d.title)}</b>
+        ${kind ? `<span class="day__kind">${kind}</span>` : ''}
+      </span>
+      <span class="day__count mut data">${d.items.length}</span>
+      <span class="day__car" aria-hidden="true">›</span>
+    </summary>
+
+    <div class="day__body">
+      <ul class="day__items">
+        ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
+      </ul>
+      ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
+      ${free ? `<p class="day__free">Rien de calé : ${free} journées type sont proposées
+        <a href="#tpl-${firstStepOfCity[d.cityId]}">plus bas</a>.</p>` : ''}
+    </div>
+  </details>`;
+}
+
+// Aucune journée type ne doit rester orpheline : celles rattachées à un lieu
+// qui n'est pas une étape (les day trips) sont regroupées en fin de page.
+const stepCities = new Set(STEPS.map((s) => s.cityId));
+const orphans = TEMPLATES.filter((t) => !stepCities.has(t.cityId));
+
+if (orphans.length) {
+  q('itin').insertAdjacentHTML('beforeend', `
+  <section class="phase" id="autres">
+    <header class="phase__head">
+      <span class="step-num" style="--c:var(--mut)">+</span>
+      <div>
+        <h2>Les autres journées type</h2>
+        <p class="phase__sub">${orphans.length} idées de journées qui ne tombent pas sur un jour libre.</p>
+      </div>
+    </header>
+    <div class="alt alt--standalone">
+      <div class="alt__list">
+        ${orphans.map(templateItem).join('')}
+      </div>
+    </div>
+  </section>`);
+}
+
+// Ouvrir le jour ciblé par l'ancre, et le placer sous la nav collante.
+if (location.hash) {
+  const el = document.querySelector(location.hash);
+  if (el?.tagName === 'DETAILS') el.open = true;
+  el?.scrollIntoView({ block: 'start' });
+}
+</script>
+</body>
+</html>
