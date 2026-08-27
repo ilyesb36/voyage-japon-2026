@@ -904,3 +904,54 @@
   .offline .mut { font-size: var(--t-sm); margin-top: var(--s-2); }
   .offline button { margin-top: var(--s-4); }
 }
+
+@layer components {
+  /* aujourd'hui -------------------------------------------------------------- */
+  .countdown h1 { margin-top: var(--s-3); }
+  .countdown__n { font-family: var(--f-display); font-size: var(--t-3xl); font-weight: 700;
+                  letter-spacing: -0.03em; color: var(--acc); }
+
+  .today { padding-bottom: var(--s-5); }
+  .today h1 { margin-top: var(--s-3); font-size: var(--t-2xl); font-weight: 600; }
+  .today__where { margin-top: var(--s-3); display: flex; align-items: center;
+                  gap: var(--s-2); font-size: var(--t-sm); }
+
+  .check { display: flex; flex-direction: column; gap: var(--s-2); max-width: 62ch; }
+  .check li { display: flex; gap: var(--s-3); align-items: baseline; font-size: var(--t-base); }
+  .check li > span { flex: none; font-weight: 700; color: var(--mut); }
+  .check .is-done { color: var(--mut); }
+  .check .is-done > span { color: var(--pine); }
+  .check .is-urgent { color: var(--acc); font-weight: 500; }
+  .check .is-urgent > span { color: var(--acc); }
+
+  .alert {
+    padding: var(--s-4) var(--s-5); border-radius: var(--r-m);
+    background: var(--acc-soft); border-left: 3px solid var(--acc);
+  }
+  .alert__main { font-family: var(--f-display); font-size: var(--t-xl);
+                 font-weight: 600; margin: var(--s-2) 0; }
+  .alert .mut { font-size: var(--t-sm); }
+  .alert__note { margin-top: var(--s-3); font-size: var(--t-sm); font-weight: 500; }
+
+  .daycard { padding: var(--s-5); }
+  .daycard .day__items li::before { background: var(--c, var(--mut)); }
+
+  .tonight__body { padding: var(--s-5); }
+  .tonight__body h3 { font-size: var(--t-lg); }
+  .tonight__body > .mut { font-size: var(--t-sm); margin-top: 2px; }
+  .tonight__facts {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--s-3) var(--s-5); margin: var(--s-4) 0;
+    padding-top: var(--s-4); border-top: 1px solid var(--line);
+  }
+  .tonight__facts dt { font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+                       letter-spacing: .06em; text-transform: uppercase; }
+  .tonight__facts dd { font-size: var(--t-sm); margin-top: 1px; }
+
+  /* Sur place, on tient le téléphone d'une main : les cibles restent larges. */
+  @media (max-width: 640px) {
+    .today h1 { font-size: var(--t-xl); }
+    .btn { padding: var(--s-3) var(--s-5); min-height: 44px; }
+    .check li { min-height: 34px; }
+  }
+}
