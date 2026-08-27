@@ -166,16 +166,34 @@ marqueurs colorés. Vérifié en rendu réel.
 
 ## Images
 
-Les 275 photos Wikimedia et 24 photos Booking sont rapatriées dans `img/`,
-converties en WebP largeur 1200 (plus une variante 600 pour les grilles).
-Attendu : 25–35 Mo, sans conséquence pour GitHub Pages.
+Les 275 photos Wikimedia et 24 photos Booking sont rapatriées dans `img/`.
 
-C'est la condition du hors-ligne réel, et ça répare au passage les images
-cassées de la page guide. Les crédits Wikimedia sont conservés dans
-`img/CREDITS.md`, avec l'URL source et la licence de chaque fichier.
+**Pas de conversion locale.** Le registre npm de la machine est derrière une
+authentification d'entreprise, `sharp` n'est donc pas installable, et `sips`
+(macOS) ne sait pas écrire de WebP. Wikimedia, de son côté, ne sert plus que
+des largeurs de vignettes autorisées — 250, 500, 960, 1280 ; toute autre
+largeur renvoie 400.
 
-Un script `tools/fetch-images.mjs` fait le téléchargement et la conversion, et
-reste au dépôt pour pouvoir en ajouter plus tard.
+On s'appuie donc sur le redimensionnement de Wikimedia lui-même :
+
+- **500 px** (~72 Ko) pour toutes les photos de grille — soit ~21 Mo ;
+- **960 px** (~230 Ko) pour la trentaine d'images en vedette (hero, chambres
+  d'hôtel, têtes de ville) — soit ~8 Mo.
+
+Total attendu ~30 Mo, en JPEG. À ces tailles, l'écart avec du WebP ne justifie
+pas d'ajouter une dépendance de build.
+
+**Les photos Booking sont urgentes.** Leurs URL `cf.bstatic.com` portent une
+signature `?k=…` qui expire : les photos des six chambres réservées peuvent
+disparaître avant le départ. Elles sont rapatriées en priorité.
+
+Le rapatriement répare au passage les images cassées de la page guide. Les
+crédits Wikimedia sont conservés dans `img/CREDITS.md`, avec l'URL source et
+la licence de chaque fichier.
+
+Un script `tools/fetch-images.mjs` fait le téléchargement, avec reprise
+(il saute ce qui est déjà là) et limitation de débit, et reste au dépôt pour
+pouvoir en ajouter plus tard.
 
 ## Service worker
 
