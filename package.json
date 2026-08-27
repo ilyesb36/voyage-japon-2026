@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "sharp": "^0.35.4"
+  },
+  "name": "voyage-japon-2026",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Site du voyage au Japon, novembre 2026. Statique, sans build — npm ne sert qu au rapatriement des images."
+}
