@@ -152,7 +152,12 @@ for (const f of ['duration', 'budget', 'when']) {
 
 console.log('\nNotices');
 const avecLore = SPOTS.filter((s) => s.lore);
-assert('au moins 90 lieux ont une notice', avecLore.length >= 90, `seulement ${avecLore.length}`);
+assert('au moins 145 lieux ont une notice', avecLore.length >= 145, `seulement ${avecLore.length}`);
+assert('chaque ville a des notices',
+  ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone']
+    .every((c) => SPOTS.some((s) => s.cityId === c && s.lore)),
+  ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone']
+    .filter((c) => !SPOTS.some((s) => s.cityId === c && s.lore)).join(', '));
 assert('chaque notice fait entre 120 et 500 signes',
   avecLore.every((s) => s.lore.length >= 120 && s.lore.length <= 500),
   avecLore.filter((s) => s.lore.length < 120 || s.lore.length > 500).map((s) => `${s.name} (${s.lore.length})`).join(', '));
