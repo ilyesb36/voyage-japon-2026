@@ -6,7 +6,7 @@
 <title>Journées type — Japon 2026</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#F6F2EA">
+<meta name="theme-color" content="#FAFAF7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -105,7 +105,7 @@ document.querySelectorAll('details.day').forEach(function(d,i){
   var pts=[];
   DC[i].forEach(function(p,j){pts.push([p[0],p[1]]);
    L.marker([p[0],p[1]],{icon:L.divIcon({className:'nmk',html:'<b>'+(j+1)+'</b>',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(m).bindPopup('<b>'+(j+1)+'. '+p[2]+'</b>');});
-  if(pts.length>1)L.polyline(pts,{color:'#B93A1B',weight:3,opacity:.55,dashArray:'6 7'}).addTo(m);
+  if(pts.length>1)L.polyline(pts,{color:'#5F7F52',weight:3,opacity:.55,dashArray:'6 7'}).addTo(m);
   m.fitBounds(pts,{padding:[26,26],maxZoom:15});
  });
 });

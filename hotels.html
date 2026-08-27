@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Japon — l'automne des momiji · 2026</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#F6F2EA">
+<meta name="theme-color" content="#FAFAF7">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -377,8 +377,8 @@ document.querySelectorAll('details.troute').forEach(function(d){
   L.tileLayer('https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',{attribution:'© OSM · CARTO'}).addTo(m);
   var a=PTS[i][0],b=PTS[i][1];
   L.circleMarker([a[0],a[1]],{radius:6,color:'#82796C',fillColor:'#82796C',fillOpacity:.9}).addTo(m).bindPopup('Départ : '+a[2]);
-  L.circleMarker([b[0],b[1]],{radius:8,color:'#fff',weight:2,fillColor:'#B93A1B',fillOpacity:1}).addTo(m).bindPopup('<b>'+b[2]+'</b>').openPopup();
-  L.polyline([[a[0],a[1]],[b[0],b[1]]],{color:'#B93A1B',weight:3,opacity:.5,dashArray:'7 8'}).addTo(m);
+  L.circleMarker([b[0],b[1]],{radius:8,color:'#fff',weight:2,fillColor:'#5F7F52',fillOpacity:1}).addTo(m).bindPopup('<b>'+b[2]+'</b>').openPopup();
+  L.polyline([[a[0],a[1]],[b[0],b[1]]],{color:'#5F7F52',weight:3,opacity:.5,dashArray:'7 8'}).addTo(m);
   m.fitBounds([[a[0],a[1]],[b[0],b[1]]],{padding:[30,30]});
  });
 });
