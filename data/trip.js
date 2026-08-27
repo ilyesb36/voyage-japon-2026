@@ -3,7 +3,7 @@
 
 export const TRIP = Object.freeze({"start":"2026-11-08","end":"2026-12-03","travellers":2,"nights":23,"days":25,"title":"L'automne des momiji","subtitle":"23 nuits pour descendre le Japon au rythme des érables — des néons de Tokyo au silence des temples."});
 
-export const CITIES = Object.freeze({"tokyo":{"name":"Tokyo","color":"#2F4858","pref":"Kantō"},"kanazawa":{"name":"Kanazawa","color":"#9A7B2E","pref":"Ishikawa"},"kyoto":{"name":"Kyoto","color":"#B7301C","pref":"Kansai"},"osaka":{"name":"Osaka","color":"#C2661F","pref":"Kansai"},"hakone":{"name":"Hakone","color":"#3E6A85","pref":"Kanagawa"}});
+export const CITIES = Object.freeze({"tokyo":{"name":"Tokyo","color":"#24435C","pref":"Kantō","momiji":["2026-11-20","2026-12-07"]},"kanazawa":{"name":"Kanazawa","color":"#9C7A24","pref":"Ishikawa","momiji":["2026-11-15","2026-11-30"]},"kyoto":{"name":"Kyoto","color":"#B7301C","pref":"Kansai","momiji":["2026-11-18","2026-12-05"]},"osaka":{"name":"Osaka","color":"#C05621","pref":"Kansai","momiji":["2026-11-20","2026-12-05"]},"hakone":{"name":"Hakone","color":"#2E6E6E","pref":"Kanagawa","momiji":["2026-11-03","2026-11-20"]}});
 
 export const STEPS = Object.freeze([
   {"id":"step-1","n":1,"cityId":"tokyo","area":"Asakusa","pref":"Kantō","from":"2026-11-09","to":"2026-11-14","label":"9 → 14 nov","nights":5,"ryokan":false,"mapsQuery":"Hop Inn Tokyo Asakusa","ll":[35.7133,139.7983],"hotelId":"hotel-hop-inn-tokyo-asakusa"},

@@ -37,12 +37,20 @@ function evalArray(source, varName) {
 
 // --- villes ------------------------------------------------------------------
 
+// Une couleur par ville, tirée de son propre monde : l'indigo des noren de
+// Tokyo, la feuille d'or de Kanazawa, le vermillon des torii de Fushimi,
+// l'orange des néons de Dotonbori, le vert-bleu du lac Ashi.
+//
+// `momiji` : la fenêtre habituelle du pic des érables, en moyenne des dernières
+// années. Ce n'est PAS une prévision 2026 — elles ne sortent qu'en septembre.
+// Sert à répondre à la seule question que pose ce voyage : tombe-t-on au bon
+// moment dans chaque ville ?
 const CITIES = {
-  tokyo:    { name: 'Tokyo',    color: '#2F4858', pref: 'Kantō' },
-  kanazawa: { name: 'Kanazawa', color: '#9A7B2E', pref: 'Ishikawa' },
-  kyoto:    { name: 'Kyoto',    color: '#B7301C', pref: 'Kansai' },
-  osaka:    { name: 'Osaka',    color: '#C2661F', pref: 'Kansai' },
-  hakone:   { name: 'Hakone',   color: '#3E6A85', pref: 'Kanagawa' },
+  tokyo:    { name: 'Tokyo',    color: '#24435C', pref: 'Kantō',    momiji: ['2026-11-20', '2026-12-07'] },
+  kanazawa: { name: 'Kanazawa', color: '#9C7A24', pref: 'Ishikawa', momiji: ['2026-11-15', '2026-11-30'] },
+  kyoto:    { name: 'Kyoto',    color: '#B7301C', pref: 'Kansai',   momiji: ['2026-11-18', '2026-12-05'] },
+  osaka:    { name: 'Osaka',    color: '#C05621', pref: 'Kansai',   momiji: ['2026-11-20', '2026-12-05'] },
+  hakone:   { name: 'Hakone',   color: '#2E6E6E', pref: 'Kanagawa', momiji: ['2026-11-03', '2026-11-20'] },
 };
 
 // --- étapes, excursions, segments (villes.html) ------------------------------
