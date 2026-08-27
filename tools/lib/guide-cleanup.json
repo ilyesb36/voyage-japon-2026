@@ -1,0 +1,24 @@
+{
+  "supprimer": [
+    {"id": "spot-ramen", "name": "Ramen", "pourquoi": "Type de plat, pas une adresse — l'exemple du proprio. On a déjà de vraies échoppes nommées (Fuunji, Afuri)."},
+    {"id": "spot-izakaya", "name": "Izakaya", "pourquoi": "Type de lieu trop vague — l'exemple du proprio. L'expérience est déjà couverte par l'Izakaya food tour (t3)."},
+    {"id": "spot-matcha", "name": "Matcha", "pourquoi": "Type de boisson, pas une adresse — l'exemple du proprio. Doublon d'Ippodo, Nakamura Tokichi et de la Cérémonie du thé."},
+    {"id": "spot-konbini-run", "name": "Konbini run", "pourquoi": "Évidence citée par le proprio : on y ira sans y penser, le blurb n'apporte pas d'info actionnable."},
+    {"id": "spot-kaisendon", "name": "Kaisendon", "pourquoi": "Type de plat générique, doublon sémantique de Tsujihan (le kaisendon nommé de Nihonbashi)."},
+    {"id": "spot-tsukemen", "name": "Tsukemen", "pourquoi": "Type de plat générique, doublon de Fuunji (« le tsukemen culte de Shinjuku »)."},
+    {"id": "spot-tempura", "name": "Tempura", "pourquoi": "Type de plat générique, doublon de Tempura Daikokuya (l'institution d'Asakusa)."},
+    {"id": "spot-takoyaki", "name": "Takoyaki", "pourquoi": "Type de plat générique, doublon de Wanaka (takoyaki nommé depuis 1938)."},
+    {"id": "spot-okonomiyaki", "name": "Okonomiyaki", "pourquoi": "Type de plat générique, doublon d'Ajinoya (l'okonomiyaki Bib Gourmand)."},
+    {"id": "spot-ufs-noirs-d-owakudani", "name": "Œufs noirs d'Owakudani", "pourquoi": "Doublon sémantique : le spot Owakudani (t0) mentionne déjà « fumerolles + œufs noirs », et il y a aussi Le Fuji depuis Owakudani (t5)."},
+    {"id": "spot-sashimi-a-omicho", "name": "Sashimi à Omicho", "pourquoi": "Doublon de l'expérience marché : Kaisendon d'Omicho (ob) et Morimori Sushi couvrent déjà Omicho. « Sashimi » reste un type de plat."},
+    {"id": "spot-marche-kuromon-2", "name": "Marché Kuromon", "pourquoi": "Doublon exact du Marché Kuromon source=guide (t1). On garde l'entrée du guide (intouchable), on retire ce doublon ilyes."},
+    {"id": "spot-don-quijote", "name": "Don Quijote", "pourquoi": "Évidence citée par le proprio : chaîne partout, on y passera sans liste. Pas une adresse précise."},
+    {"id": "spot-depachika", "name": "Depachika", "pourquoi": "Évidence citée par le proprio : les sous-sols des grands magasins, on y tombera forcément. Générique."},
+    {"id": "spot-kitkat-japonais", "name": "KitKat japonais", "pourquoi": "Évidence : s'achète au konbini / Don Quijote sans y penser. Pas une adresse."},
+    {"id": "spot-2nd-street", "name": "2nd Street", "pourquoi": "Chaîne de friperies générique (« partout au Japon »), déjà nommée dans le blurb de Fripes Y2K. Pas actionnable comme adresse."}
+  ],
+  "reclasser": [
+    {"id": "spot-teamlab-botanical-garden", "name": "teamLab Botanical Garden", "champ": "cityId", "de": "tokyo", "vers": "osaka", "pourquoi": "Mal classée : le lieu est au parc Nagai à OSAKA (le blurb dit « au parc Nagai… moins connu que Tokyo »), pas à Tokyo."},
+    {"id": "spot-chinatown", "name": "Chinatown", "champ": "priority", "de": "ob", "vers": "symp", "pourquoi": "Incohérent : c'est le Chinatown de Yokohama, sous-étape du day trip Yokohama (lui-même seulement « top »). « Obligatoire » sur un sous-élément est surcoté."}
+  ]
+}

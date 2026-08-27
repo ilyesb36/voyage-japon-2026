@@ -61,7 +61,7 @@ const q = (id) => document.getElementById(id);
 const SOURCES = [
   { id: 'guide', name: "L'amie guide de Mathilde" },
   { id: 'ilyes', name: 'Notre sélection' },
-  { id: 'claude', name: 'Suggestions à vérifier' },
+  { id: 'claude', name: 'Ajouts' },
 ];
 
 // Les facettes se croisent : on peut demander « Kyoto × Food × Obligatoire ».
@@ -79,11 +79,9 @@ const FACETS = {
 const state = { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' };
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
-const nNew = SPOTS.filter((s) => s.source === 'claude').length;
 q('lede').innerHTML =
   `${SPOTS.length} adresses. Chaque carte ouvre Google Maps. ` +
-  `${nGuide} viennent de l'amie guide de Mathilde, ` +
-  `${nNew} sont des suggestions dont les horaires n'ont pas été vérifiés.`;
+  `${nGuide} viennent de l'amie guide de Mathilde.`;
 
 // --- filtres -----------------------------------------------------------------
 // La ville reste en pastilles : c'est l'axe principal, et la couleur y sert.
@@ -153,23 +151,74 @@ const prioName = Object.fromEntries(PRIORITIES.map((p) => [p.id, p.name]));
 function card(s) {
   const city = s.cityId ? CITIES[s.cityId] : null;
   return `
-  <a class="card card--link spot" href="${esc(s.maps)}" target="_blank" rel="noopener">
+  <button class="card card--link spot" type="button" data-id="${esc(s.id)}">
     <div class="thumb thumb--wide">
       ${s.img ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" loading="lazy" decoding="async">` : ''}
       <span class="prio prio--${s.priority} spot__prio">${prioName[s.priority]}</span>
       ${s.source === 'guide' ? '<span class="spot__badge spot__badge--guide">Conseil de la guide</span>' : ''}
-      ${s.source === 'claude' ? '<span class="spot__badge spot__badge--new">À vérifier</span>' : ''}
     </div>
     <div class="spot__body">
       <h3>${esc(s.name)}</h3>
       <p>${esc(s.blurb)}</p>
       <p class="spot__meta">
         <span class="city-dot" style="--c:${city ? city.color : 'var(--mut)'}">${city ? esc(city.name) : 'Partout'}</span>
-        <span class="mut">· ${catName[s.category]}</span>
+        <span class="spot__facts">
+          <span>${esc(s.duration)}</span>
+          <span>${esc(s.budget)}</span>
+        </span>
       </p>
     </div>
-  </a>`;
+  </button>`;
 }
+
+// --- la fiche -----------------------------------------------------------------
+// Les mêmes lignes pour les 265 : durée, budget, moment. C'est ce qui permet
+// de comparer deux adresses d'un coup d'œil.
+const byId = new Map(SPOTS.map((s) => [s.id, s]));
+
+function openSheet(id) {
+  const s = byId.get(id);
+  if (!s) return;
+  const city = s.cityId ? CITIES[s.cityId] : null;
+
+  const el = document.createElement('div');
+  el.className = 'sheet';
+  el.innerHTML = `
+    <div class="sheet__panel" role="dialog" aria-modal="true" aria-label="${esc(s.name)}">
+      <button class="sheet__close" aria-label="Fermer">✕</button>
+      ${s.img ? `<img class="sheet__img" src="${esc(s.img)}" alt="">` : ''}
+      <div class="sheet__body">
+        <p class="sheet__where">
+          <span class="city-dot" style="--c:${city ? city.color : 'var(--mut)'}">${city ? esc(city.name) : 'Partout au Japon'}</span>
+          <span class="mut">· ${catName[s.category]}</span>
+          <span class="prio prio--${s.priority}">${prioName[s.priority]}</span>
+        </p>
+        <h2>${esc(s.name)}</h2>
+        <p class="sheet__blurb">${esc(s.blurb)}</p>
+        <dl class="sheet__facts">
+          <div><dt>Durée</dt><dd>${esc(s.duration)}</dd></div>
+          <div><dt>Budget</dt><dd>${esc(s.budget)}</dd></div>
+          <div><dt>Le bon moment</dt><dd>${esc(s.when)}</dd></div>
+        </dl>
+        ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
+        ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : ''}
+        <a class="btn" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+      </div>
+    </div>`;
+
+  const close = () => { el.remove(); document.removeEventListener('keydown', onKey); };
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  el.addEventListener('click', (e) => { if (e.target === el) close(); });
+  el.querySelector('.sheet__close').addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(el);
+  el.querySelector('.sheet__close').focus();
+}
+
+q('grid').addEventListener('click', (e) => {
+  const card = e.target.closest('.spot');
+  if (card) openSheet(card.dataset.id);
+});
 
 function render() {
   const list = SPOTS.filter(matches);
@@ -184,7 +233,6 @@ function render() {
 }
 
 render();
-bindLightbox(q('grid'), 'never'); // les cartes ouvrent Maps ; pas de visionneuse ici
 </script>
 
 <script>

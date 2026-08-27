@@ -10,6 +10,8 @@ import { fileURLToPath } from 'node:url';
 import { resolveCity, normalizeHeading } from './lib/gazetteer.mjs';
 import { BOOKINGS, AMENITY_LABELS } from './lib/bookings.mjs';
 import { enriched as ADDITIONS } from './lib/additions.mjs';
+import { FLIGHTS as FLIGHT_DATA } from './lib/flights.mjs';
+import { SPOT_FIXES } from './lib/spot-fixes.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, 'legacy', f), 'utf8');
@@ -248,17 +250,10 @@ function parseBudget(HOTELS) {
   };
 }
 
-// --- vols (index.html) --------------------------------------------------------
-
-function parseFlights() {
-  const src = read('index.html');
-  return [...src.matchAll(/<div class="flight"><div>([\s\S]*?)<\/div><span>([\s\S]*?)<\/span><\/div>/g)]
-    .map((m) => {
-      const main = clean(m[1]);
-      const [leg, ...rest] = main.split('·').map((s) => s.trim());
-      return { leg, when: rest[0] || null, route: rest.slice(1).join(' · ') || null, detail: clean(m[2]) };
-    });
-}
+// --- vols ---------------------------------------------------------------------
+// Tenus à la main dans tools/lib/flights.mjs : l'ancienne page n'avait qu'une
+// phrase, dont on ne pouvait rien dessiner.
+function parseFlights() { return FLIGHT_DATA; }
 
 // --- jours (jour-par-jour.html) ----------------------------------------------
 
@@ -266,6 +261,7 @@ const MONTHS = { nov: 11, 'déc': 12, dec: 12 };
 
 function parseDays(STEPS) {
   const src = read('jour-par-jour.html');
+  const DAY_EXTRA = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/day-additions.json'), 'utf8'));
   const phases = [...src.matchAll(/<div class="phase">([\s\S]*?)(?=<div class="phase">|<p class="note")/g)].map((m) => m[1]);
   const DAYS = [];
 
@@ -293,8 +289,13 @@ function parseDays(STEPS) {
                   || STEPS.find((s) => date === s.to);
       const owner = byDate || step;
 
+      const n = DAYS.length + 1;
+      // Lignes ajoutées à la main dans tools/lib/day-additions.json : les
+      // journées d'origine tenaient en 3 ou 4 lignes, trop peu pour 8 heures.
+      const extra = (DAY_EXTRA[String(n)] || []).map((x) => ({ text: x.text, evening: !!x.evening }));
+
       DAYS.push({
-        n: DAYS.length + 1,
+        n,
         date,
         label: `${dayNum} ${month}`,
         title: dayTitle,
@@ -303,7 +304,9 @@ function parseDays(STEPS) {
         phaseHotel: hotelLine || null,
         stepId: owner ? owner.id : null,
         cityId: owner ? owner.cityId : null,
-        items,
+        // les lignes du soir restent en fin de journée, quelle que soit
+        // l'ordre dans lequel elles ont été ajoutées
+        items: [...items, ...extra].sort((a, b) => Number(a.evening) - Number(b.evening)),
         tip,
       });
     }
@@ -405,6 +408,25 @@ function cityFromLabel(label) {
 
 // --- spots (guide.html) -------------------------------------------------------
 
+// Durée, budget et meilleur moment : l'ancien site les avait, la migration
+// les avait perdus. On les relit, et on complète par un défaut de catégorie
+// pour qu'aucune fiche n'ait de ligne vide.
+function parseSpotMeta() {
+  const src = read('guide.html');
+  const block = (src.match(/var META=\{([\s\S]*?)\};/) || [, ''])[1];
+  const meta = new Map();
+  for (const m of block.matchAll(/'((?:[^'\\]|\\.)*)':\[\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'\s*\]/g)) {
+    const clean = (x) => x.replace(/\\'/g, "'");
+    meta.set(clean(m[1]), { duration: clean(m[2]), budget: clean(m[3]), when: clean(m[4]) });
+  }
+  const def = {};
+  const defBlock = (src.match(/var DEF=\{([\s\S]*?)\};/) || [, ''])[1];
+  for (const m of defBlock.matchAll(/'(t\d)':\['([^']*)','([^']*)','([^']*)'\]/g)) {
+    def[m[1]] = { duration: m[2], budget: m[3], when: m[4] };
+  }
+  return { meta, def };
+}
+
 const CATEGORY_NAMES = {
   t0: 'Monuments', t1: 'Food', t2: 'Day trips',
   t3: 'Expériences', t4: 'Shopping', t5: 'Insta',
@@ -413,7 +435,18 @@ const PRIORITY_NAMES = { ob: 'Obligatoire', top: 'À voir', symp: 'Sympa', niche
 
 function parseSpots() {
   const src = read('guide.html');
+  const { meta, def } = parseSpotMeta();
   const SPOTS = [];
+
+  // Le META de l'ancien site est indexé par un nom parfois raccourci
+  // (« Otagi » pour « Otagi Nenbutsu-ji ») : on rapproche dans les deux sens.
+  const findMeta = (name, category) => {
+    if (meta.has(name)) return meta.get(name);
+    for (const [k, v] of meta) {
+      if (name.includes(k) || k.includes(name)) return v;
+    }
+    return def[category] || def.t0;
+  };
   let heading = null, panel = 't0';
   const seen = new Set();
 
@@ -446,10 +479,12 @@ function parseSpots() {
       priority,
       blurb,
       guideTip,
-      // D'où vient la recommandation. « guide » = l'amie guide de Mathilde,
-      // « ilyes » = la sélection d'origine, « claude » = les ajouts, jamais
-      // confondus avec les deux premières.
       source: guideTip ? 'guide' : 'ilyes',
+      ...findMeta(name, panel),
+      // Corrections vérifiées sur sources officielles : plusieurs tarifs ont
+      // augmenté depuis l'ancien site, et plusieurs temples de Kyoto ont un
+      // tarif d'automne qui tombe pendant le séjour.
+      ...(SPOT_FIXES[name] || {}),
       img,
       maps: href,
     });
@@ -469,7 +504,8 @@ function parseSpots() {
       blurb: a.blurb,
       guideTip: false,
       source: 'claude',
-      ...(a.checked ? { checked: a.checked } : {}),
+      ...(def[a.category] || def.t0),
+      ...(SPOT_FIXES[a.name] || {}),
       img: images[a.name]?.img || null,
       maps: a.maps,
     });

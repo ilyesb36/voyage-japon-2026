@@ -1159,3 +1159,73 @@
   }
   @media (max-width: 560px) { .alt__stepshot { display: none; } }
 }
+
+@layer components {
+  /* guide : la fiche d'une adresse ------------------------------------------
+     Les mêmes trois lignes pour les 265 : c'est ce qui permet de comparer
+     deux adresses sans les ouvrir toutes les deux. */
+  .sheet {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgb(20 15 12 / .55); backdrop-filter: blur(3px);
+    display: grid; place-items: center; padding: var(--s-5);
+    animation: sheet-in .18s ease;
+  }
+  .sheet__panel {
+    position: relative; width: min(520px, 100%); max-height: 88vh; overflow: auto;
+    background: var(--paper-2); border: 1px solid var(--line);
+    border-radius: var(--r-l); box-shadow: var(--sh-3);
+    animation: sheet-up .22s cubic-bezier(.2, .7, .3, 1);
+  }
+  .sheet__close {
+    position: absolute; top: var(--s-3); right: var(--s-3); z-index: 1;
+    width: 30px; height: 30px; border-radius: var(--r-full);
+    background: rgb(20 15 12 / .5); color: #fff; font-size: 13px;
+    display: grid; place-items: center; backdrop-filter: blur(4px);
+  }
+  .sheet__img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+  .sheet__body { padding: var(--s-5); }
+  .sheet__where { display: flex; align-items: center; gap: var(--s-2);
+                  flex-wrap: wrap; font-size: var(--t-xs); }
+  .sheet__body h2 { font-size: var(--t-xl); font-weight: 600;
+                    letter-spacing: -0.02em; margin-top: var(--s-2); }
+  .sheet__blurb { margin-top: var(--s-2); color: var(--ink-2); font-size: var(--t-sm); }
+  .sheet__facts {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-3);
+    margin: var(--s-5) 0; padding: var(--s-4) 0;
+    border-block: 1px solid var(--line);
+  }
+  .sheet__facts dt { font-size: var(--t-xs); color: var(--mut); }
+  .sheet__facts dd { font-size: var(--t-sm); font-weight: 500; margin-top: 2px; }
+  .sheet__guide {
+    margin-bottom: var(--s-4); font-size: var(--t-sm); color: var(--pine);
+  }
+  .sheet .btn { width: 100%; justify-content: center; }
+  @media (max-width: 460px) {
+    .sheet { padding: 0; place-items: end stretch; }
+    .sheet__panel { max-height: 92vh; border-radius: var(--r-l) var(--r-l) 0 0; }
+    .sheet__facts { grid-template-columns: 1fr; gap: var(--s-2); }
+  }
+
+  @keyframes sheet-in { from { opacity: 0 } }
+  @keyframes sheet-up { from { transform: translateY(12px); opacity: 0 } }
+
+  /* la carte du guide devient un bouton : lui rendre son apparence */
+  button.spot { text-align: left; width: 100%; font: inherit; color: inherit; cursor: pointer; }
+}
+
+@layer components {
+  /* durée et budget sur la carte : de quoi comparer sans ouvrir la fiche */
+  .spot__facts { margin-left: auto; display: flex; gap: var(--s-2);
+                 color: var(--mut); white-space: nowrap; }
+  .spot__facts span + span::before { content: "· "; }
+  @media (max-width: 420px) { .spot__facts span + span { display: none; } }
+}
+
+@layer components {
+  /* la précision vérifiée d'un lieu : tarif d'automne, réservation, horaire */
+  .sheet__note {
+    margin-bottom: var(--s-4); padding: var(--s-3);
+    background: var(--paper-3); border-radius: var(--r-s);
+    font-size: var(--t-sm); color: var(--ink-2);
+  }
+}

@@ -46,6 +46,9 @@ ok('6 étapes', STEPS.length, 6);
 ok('4 excursions', EXCURSIONS.length, 4);
 ok('5 segments de trajet', SEGMENTS.length, 5);
 ok('2 vols', FLIGHTS.length, 2);
+assert('chaque vol a ses 2 segments et son escale',
+  FLIGHTS.every((f) => f.legs.length === 2 && f.layover && f.legs.every((l) => l.from && l.to && l.depart && l.flight)),
+  'un vol est incomplet');
 ok('23 nuits', STEPS.reduce((n, s) => n + s.nights, 0), 23);
 ok('TRIP.nights cohérent', TRIP.nights, 23);
 
@@ -135,6 +138,30 @@ const prioIds = new Set(PRIORITIES.map((p) => p.id));
 assert('chaque spot a une catégorie connue', SPOTS.every((s) => catIds.has(s.category)));
 assert('chaque spot a une priorité connue', SPOTS.every((s) => prioIds.has(s.priority)));
 
+// Les 265 fiches doivent porter les mêmes lignes : sans ça, la fiche de
+// détail affiche des trous d'une adresse à l'autre.
+for (const f of ['duration', 'budget', 'when']) {
+  const missing = SPOTS.filter((s) => !s[f]).map((s) => s.name);
+  assert(`chaque spot a « ${f} »`, missing.length === 0,
+    `${missing.length} sans : ${missing.slice(0, 5).join(', ')}`);
+}
+
+// --- tarifs vérifiés ----------------------------------------------------------
+
+console.log('\nTarifs vérifiés');
+const byName = new Map(SPOTS.map((s) => [s.name, s]));
+for (const [name, expected] of [
+  ['Château d’Osaka', '1 200 ¥'],
+  ['Eikan-do', '1 500 ¥ (automne) · 1 000 ¥ la nuit'],
+  ['Enko-ji', '1 500 ¥ en automne · résa obligatoire'],
+  ['Shibuya Sky', '2 700–3 400 ¥ en ligne'],
+]) {
+  ok(`${name} — tarif corrigé`, byName.get(name)?.budget, expected);
+}
+assert('teamLab Botanical Garden est bien rangé à Osaka',
+  byName.get('teamLab Botanical Garden')?.cityId === 'osaka',
+  "l'ancien site le plaçait à Tokyo : il est à Nagai, Osaka");
+
 // --- unicité ------------------------------------------------------------------
 
 console.log('\nUnicité');
@@ -154,6 +181,13 @@ assert('les dates sont strictement croissantes',
 ok('premier jour = 8 novembre', DAYS[0].date, '2026-11-08');
 ok('dernier jour = 2 décembre', DAYS[DAYS.length - 1].date, '2026-12-02');
 assert('chaque jour a au moins une ligne de programme', DAYS.every((d) => d.items.length > 0));
+
+// Les journées enrichies : hors vols, un jour doit tenir la journée.
+const courts = DAYS.filter((d) => d.kind !== 'vol' && d.items.length < 5).map((d) => `${d.label} (${d.items.length})`);
+assert('chaque jour hors vol a au moins 5 lignes', courts.length === 0, courts.join(', '));
+ok('155 lignes de programme au total', DAYS.reduce((n, d) => n + d.items.length, 0), 155);
+assert('les lignes du soir sont en fin de journée',
+  DAYS.every((d) => d.items.every((it, i, a) => !it.evening || a.slice(i).every((x) => x.evening))));
 
 // --- contenu ------------------------------------------------------------------
 

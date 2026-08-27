@@ -1,0 +1,108 @@
+{
+  "2": [
+    {"text": "Retirer du cash au 7-Eleven en bas (ATM 24h/24, accepte les cartes étrangères)", "evening": true},
+    {"text": "Coup d’œil au Senso-ji illuminé de nuit, à deux pas de l’hôtel", "evening": true}
+  ],
+  "3": [
+    {"text": "Melonpan chaud chez Kagetsudo avant que la file n’arrive (vers 10h)", "evening": false},
+    {"text": "Déjeuner tempura chez Daikokuya ou onigiri chez Yadoroku, le plus vieux de Tokyo", "evening": false},
+    {"text": "Nakamise-dori pour les souvenirs classiques face au Senso-ji", "evening": false}
+  ],
+  "4": [
+    {"text": "Kiddy Land et Onitsuka Tiger (Mexico 66) sur Takeshita-dori", "evening": false},
+    {"text": "Déjeuner ramen au yuzu chez Afuri, léger et parfait", "evening": false},
+    {"text": "Soir : sushi sur tapis roulant chez Uobei, puis les ruelles de Nonbei Yokocho", "evening": true}
+  ],
+  "5": [
+    {"text": "Bus jusqu’au lac Chuzenji et la cascade de Kegon (97 m) si le timing le permet", "evening": false},
+    {"text": "Soir : retour Asakusa vers 19h, dîner simple près de l’hôtel", "evening": true}
+  ],
+  "6": [
+    {"text": "Marché Ameyoko sous les voies, grignotage à l’ancienne", "evening": false},
+    {"text": "Yanaka Ginza et l’escalier Yuyake Dandan au coucher (16h40 !)", "evening": false},
+    {"text": "Bain de pieds et massage chez Mominoki House après la marche (Ueno)", "evening": false}
+  ],
+  "7": [
+    {"text": "Tsuzumi-mon, la porte-tambour de la gare sous sa coupole de verre, illuminée le soir", "evening": true},
+    {"text": "Soir : oden de Kanazawa au comptoir, le réconfort d’hiver, à Katamachi", "evening": true}
+  ],
+  "8": [
+    {"text": "Déjeuner kaisendon au comptoir d’Omicho ou sushi premium chez Morimori", "evening": false},
+    {"text": "Soir : Oyama-jinja et son portail aux vitraux, puis izakaya de poisson à Katamachi", "evening": true}
+  ],
+  "9": [
+    {"text": "Marché Nishiki en chemin : tsukemono, yuba, tamagoyaki", "evening": false},
+    {"text": "Heian-jingu et son torii géant vermillon avant Gion", "evening": false},
+    {"text": "Soir : canal Shirakawa à Gion, saules et lanternes", "evening": true}
+  ],
+  "10": [
+    {"text": "Tofuku-ji sur le retour de Fushimi : la mer d’érables depuis le pont Tsutenkyo", "evening": false},
+    {"text": "Déjeuner yudofu, le tofu mijoté des temples, près de Maruyama", "evening": false},
+    {"text": "Soir : Yasaka-jinja illuminé avant Kodai-ji", "evening": true}
+  ],
+  "11": [
+    {"text": "Otagi Nenbutsu-ji et ses 1 200 statues moussues, Arashiyama sans la foule", "evening": false},
+    {"text": "Jojakko-ji à flanc de colline, vue sur Kyoto entre les érables", "evening": false},
+    {"text": "Soir : Kimono Forest à la gare Randen, colonnes lumineuses au retour", "evening": true}
+  ],
+  "12": [
+    {"text": "Konkai Komyo-ji (Kurodani) en chemin : immense, gratuit, presque personne", "evening": false},
+    {"text": "Déjeuner dans un café au fil de l’eau, le long du chemin", "evening": false},
+    {"text": "Soir : yudofu ou obanzai chaud après les illuminations", "evening": true}
+  ],
+  "13": [
+    {"text": "Kitano Tenmangu et son Momiji-en, jardin d’érables ouvert seulement en automne (thé et wagashi inclus)", "evening": false},
+    {"text": "Déjeuner nishin soba chez Honke Owariya (1465 !)", "evening": false},
+    {"text": "Balade le long de la Kamogawa avant Pontocho", "evening": false}
+  ],
+  "14": [
+    {"text": "C’est le 21 : marché Kobo-san au To-ji, l’immense brocante mensuelle", "evening": false},
+    {"text": "Rurikō-in : le reflet des érables sur la table laquée (résa obligatoire)", "evening": false},
+    {"text": "Soir : glace kinako chez Gion Kinana, planquée dans Gion", "evening": true}
+  ],
+  "15": [
+    {"text": "Denden Town, l’Akihabara d’Osaka, juste à côté de l’appart", "evening": false},
+    {"text": "Cheesecake Rikuro tout chaud à Namba, le jiggle viral", "evening": false},
+    {"text": "Soir : Hozen-ji Yokocho, deux ruelles pavées derrière Dotonbori — le Osaka d’avant les néons", "evening": true}
+  ],
+  "16": [
+    {"text": "Butaman 551 Horai, le bao culte, pour le goûter (file incluse)", "evening": false},
+    {"text": "Namba Yasaka et sa scène en tête de lion géante", "evening": false},
+    {"text": "Sumiyoshi-taisha et son pont rouge bombé, en tram rétro", "evening": false}
+  ],
+  "17": [
+    {"text": "Kakinoha-zushi, le sushi en feuille de kaki, pour le déjeuner", "evening": false},
+    {"text": "Yoshikien, trois jardins à côté de l’Isuien, gratuit pour les étrangers", "evening": false}
+  ],
+  "18": [
+    {"text": "Kamaboko d’Odawara, la spécialité, à grignoter en gare avant le bus", "evening": false},
+    {"text": "Torii de Hakone-jinja les pieds dans le lac, à deux pas du ryokan", "evening": false}
+  ],
+  "19": [
+    {"text": "Soba de montagne à Gora après le téléphérique", "evening": false},
+    {"text": "Pola Museum : impressionnistes en forêt et allée des bouleaux, si envie de musée", "evening": false}
+  ],
+  "20": [
+    {"text": "Soir : Onigiri Bongo, le viral de Tokyo (50+ garnitures), à deux pas de La Vita", "evening": true},
+    {"text": "Soir : Bandai Namco Cross Store (Gundam, One Piece) à Sunshine City", "evening": true}
+  ],
+  "21": [
+    {"text": "Marché de Noël aux entrepôts de brique rouge, dès fin novembre", "evening": true},
+    {"text": "Front de mer de Minato Mirai illuminé au crépuscule", "evening": true}
+  ],
+  "22": [
+    {"text": "Hokoku-ji, la bambouseraie secrète, matcha face au jardin (arrêt Kita-Kamakura)", "evening": false},
+    {"text": "Passage à niveau Kamakurakokomae, le décor de Slam Dunk face à la mer", "evening": false},
+    {"text": "Coucher de soleil sur la plage de Yuigahama, le Fuji en silhouette", "evening": true}
+  ],
+  "23": [
+    {"text": "Icho Namiki à Jingu Gaien : l’allée de ginkgos dorés, pic fin novembre", "evening": false},
+    {"text": "Koishikawa Korakuen, le plus vieux jardin de Tokyo, érables sur fond de gratte-ciels", "evening": false},
+    {"text": "Soir : Zojo-ji juste devant la tour de Tokyo, le combo photo", "evening": true}
+  ],
+  "24": [
+    {"text": "Don Quijote pour la détaxe : skincare Matsukiyo, KitKat, snacks (passeport sur soi)", "evening": false},
+    {"text": "Derniers goodies à Ikebukuro : Animate ou Bandai Namco Cross Store", "evening": false},
+    {"text": "Soir : Onigiri Bongo une dernière fois, à deux pas de La Vita", "evening": true}
+  ]
+}
