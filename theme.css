@@ -2,9 +2,9 @@
 /* ================= Japon 2026 — DA v7 · Notion × matcha ================= */
 :root{--paper:#FAFAF7;--card:#FFFFFF;--ink:#37352F;--mut:#787774;--line:#E9E7E3;--acc:#5F7F52;--accsoft:#EDF2EA;--gold:#8F8A5A;--green:#548164;
  --r-s:6px;--r-m:8px;--r-l:12px;
- --sh-1:var(--shadow-1);
- --sh-2:var(--shadow-2);
- --sh-3:var(--shadow-4);--ease:var(--ease-3)}
+ --sh-1:var(--shadow-1,0 1px 2px rgba(15,15,15,.04));
+ --sh-2:var(--shadow-2,0 2px 8px rgba(15,15,15,.07));
+ --sh-3:var(--shadow-4,0 12px 32px rgba(15,15,15,.12))}
 body *{font-family:Inter,-apple-system,"Segoe UI",sans-serif!important}
 body{background:var(--paper);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 body::before{background:linear-gradient(180deg,rgba(95,127,82,.045),transparent);height:220px}
@@ -50,7 +50,7 @@ h3{font-weight:600}
 .htag{background:rgba(255,255,255,.92);color:var(--ink);font-size:11px;font-weight:600;border-radius:6px;box-shadow:var(--sh-2);backdrop-filter:blur(4px)}
 .hnum{background:var(--ink);color:#fff;border-radius:8px;box-shadow:var(--sh-2)}
 .dtag{background:#F1F0EC;border:none;color:#5F5E5B;font-weight:600;font-size:10.5px;text-transform:none;letter-spacing:.02em;border-radius:4px}
-.fchip,.preset,.gtab{border-radius:6px;font-weight:500;line-height:1.2;padding:7px 13px;font-size:13px;border:1px solid var(--line);background:var(--card);color:#5F5E5B;transition:all .12s var(--ease,ease);box-shadow:none}
+.fchip,.preset,.gtab{border-radius:6px;font-weight:500;line-height:1.2;padding:7px 13px;font-size:13px;border:1px solid var(--line);background:var(--card);color:#5F5E5B;transition:all .12s ease;box-shadow:none}
 .fchip:hover,.gtab:hover,.preset:hover{background:#F1F0EC;border-color:var(--line)}
 .fchip.on,.gtab.on,.preset.on{background:var(--accsoft);color:#3E5A35;border-color:#CFDEC8;font-weight:600;box-shadow:none}
 .dot{display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:7px}
@@ -114,21 +114,22 @@ details.day[open]{box-shadow:var(--sh-2)}
 #jchip,.jchip{background:rgba(255,255,255,.92)!important;color:var(--ink)!important;font-weight:600}
 .rvl{transition:opacity .4s ease,transform .4s ease,box-shadow .15s ease}
 @media(max-width:640px){.topnav{border-radius:10px}.topnav a.brand{border-right:none;padding-right:12px}}
-/* ---- responsive v7.1 ---- */
+/* burger */
+.burger{display:none;position:absolute;right:10px;top:8px;width:34px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--card);cursor:pointer;font-size:15px;line-height:1;color:var(--ink)}
 @media(max-width:680px){
  .wrap{padding:0 16px 60px}
  h1{font-size:29px}
- .topnav{max-width:calc(100vw - 20px);overflow-x:auto;flex-wrap:nowrap;justify-content:flex-start;scrollbar-width:none;-webkit-overflow-scrolling:touch}
- .topnav::-webkit-scrollbar{display:none}
- .topnav a{white-space:nowrap}
+ .topnav{position:sticky;flex-direction:column;align-items:stretch;width:calc(100vw - 20px);border-radius:12px;padding:8px 10px;gap:2px}
+ .topnav .burger{display:flex;align-items:center;justify-content:center}
+ .topnav a{display:none;padding:10px 12px}
+ .topnav a.brand{display:block;border-right:none;margin-right:0;padding-right:48px}
+ .topnav.openb a{display:block}
  .gtabs{top:8px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
  .fbar{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;padding-bottom:4px}
  .fbar::-webkit-scrollbar{display:none}
- .tline{min-width:560px}
- .hprice b{font-size:18px}
- .fin nav{margin-left:0}
+ .tline{overflow-x:auto}
  .aj{grid-template-columns:1fr}
  #bigmap{height:50vh;min-height:340px}
  .simg{width:56px;height:44px}
+ .fin nav{margin-left:0}
 }
-@media(max-width:400px){.gtxt b{font-size:13px}.itmid b{font-size:15px}}

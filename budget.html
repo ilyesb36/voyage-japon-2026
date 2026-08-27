@@ -365,6 +365,7 @@ r.addEventListener('input',function(){try{localStorage.setItem('bdg_rate',r.valu
 y2e();
 })();
 </script>
+<script>/*burger*/(function(){var n=document.querySelector('.topnav');if(!n)return;var b=document.createElement('button');b.className='burger';b.setAttribute('aria-label','Menu');b.innerHTML='☰';n.appendChild(b);b.addEventListener('click',function(){n.classList.toggle('openb');b.innerHTML=n.classList.contains('openb')?'✕':'☰';});n.addEventListener('click',function(e){if(e.target.tagName==='A'&&!e.target.classList.contains('brand')){n.classList.remove('openb');b.innerHTML='☰';}});})();</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js");</script>
 
 <script>
