@@ -375,6 +375,111 @@
     background: var(--paper-2) !important;
   }
 
+  /* accueil : hero ---------------------------------------------------------- */
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: var(--s-7); align-items: center;
+    padding-block: var(--s-8) var(--s-7);
+  }
+  .hero h1 { margin-top: var(--s-3); }
+  .hero__lede {
+    margin-top: var(--s-4); max-width: 38ch;
+    font-size: var(--t-md); color: var(--ink-2); line-height: 1.6;
+  }
+  .hero__stats {
+    display: grid; grid-template-columns: repeat(4, auto); gap: var(--s-5);
+    margin-top: var(--s-6); justify-content: start;
+  }
+  .hero__stats dt {
+    font-size: var(--t-xs); color: var(--mut); font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase; order: 2; margin-top: 2px;
+  }
+  .hero__stats dd {
+    font-family: var(--f-display); font-size: var(--t-xl); font-weight: 600;
+    line-height: 1; letter-spacing: -0.02em; order: 1;
+  }
+  .hero__stats > div { display: flex; flex-direction: column; }
+  .hero__map { padding: var(--s-2); }
+  .hero__map .map { height: 420px; border-radius: var(--r-s); }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: var(--s-5); padding-block: var(--s-6) var(--s-5); }
+    .hero__map .map { height: 320px; }
+    .hero__stats { gap: var(--s-4) var(--s-5); flex-wrap: wrap; }
+  }
+  @media (max-width: 480px) {
+    .hero__stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* accueil : itinéraire ---------------------------------------------------- */
+  .itin { border-top: 1px solid var(--line); }
+  .itin__step {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding: var(--s-4) var(--s-2);
+    border-bottom: 1px solid var(--line);
+    position: relative; transition: background .16s;
+  }
+  .itin__step::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--c); opacity: 0; transition: opacity .16s;
+  }
+  .itin__step:hover { background: var(--paper-2); }
+  .itin__step:hover::before { opacity: 1; }
+  .itin__body { flex: 1; min-width: 0; }
+  .itin__body h3 { font-size: var(--t-lg); }
+  .itin__hotel { font-size: var(--t-sm); color: var(--ink-2); margin-top: 2px; }
+  .itin__exc { font-size: var(--t-xs); color: var(--mut); margin-top: var(--s-1); }
+  .itin__meta { flex: none; text-align: right; display: flex; flex-direction: column; gap: 2px; }
+  .itin__meta .data { font-size: var(--t-sm); }
+
+  @media (max-width: 640px) {
+    .itin__step { flex-wrap: wrap; gap: var(--s-3); }
+    .itin__meta { text-align: left; flex-direction: row; gap: var(--s-3);
+                  align-items: baseline; width: 100%; padding-left: calc(26px + var(--s-4)); }
+  }
+
+  /* accueil : trajets ------------------------------------------------------- */
+  .leg {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding: var(--s-3) var(--s-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .leg:first-child { border-top: 1px solid var(--line); }
+  .leg__date { flex: none; width: 92px; font-size: var(--t-xs); color: var(--mut); }
+  .leg__route { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .leg__route b { font-weight: 600; font-size: var(--t-base); }
+  .leg__route .mut { font-size: var(--t-sm); }
+  .leg__mode { flex: none; width: 88px; }
+  .leg__dur { flex: none; width: 62px; text-align: right; font-size: var(--t-sm); }
+  .leg__price { flex: none; width: 150px; text-align: right; font-size: var(--t-sm);
+                font-weight: 600; color: var(--acc); }
+
+  .flights { margin-top: var(--s-6); }
+  .flights__title { font-size: var(--t-md); margin-bottom: var(--s-3); }
+
+  @media (max-width: 720px) {
+    .leg { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
+    .leg__date { width: auto; }
+    .leg__route { flex-basis: 100%; order: -1; }
+    .leg__mode, .leg__dur, .leg__price { width: auto; }
+    .leg__price { margin-left: auto; }
+  }
+
+  /* accueil : avancement ---------------------------------------------------- */
+  .prog { max-width: 62ch; }
+  .prog__bar {
+    height: 6px; background: var(--paper-3); border-radius: var(--r-full);
+    overflow: hidden; margin-bottom: var(--s-3);
+  }
+  .prog__bar span { display: block; height: 100%; background: var(--acc); border-radius: var(--r-full); }
+  .prog__line { font-size: var(--t-base); }
+  .prog__line b { font-weight: 600; }
+  .prog__list { margin-top: var(--s-4); display: flex; flex-direction: column; gap: var(--s-2); }
+  .prog__list li { display: flex; gap: var(--s-3); font-size: var(--t-sm); align-items: baseline; }
+  .prog__ok { color: var(--pine); font-weight: 700; flex: none; }
+  .prog__warn { color: var(--acc); font-weight: 700; flex: none; }
+  .prog__more { margin-top: var(--s-5); }
+
   /* la bande momiji — l'élément signature ---------------------------------- */
   .momiji { --track-h: 12px; }
   /* L'échelle emprunte exactement la même grille que les lignes, sinon les
@@ -413,7 +518,7 @@
     background: var(--c); box-shadow: 0 1px 3px rgb(26 26 23 / .25);
   }
   .momiji__verdict {
-    flex: none; width: 118px; text-align: right; white-space: nowrap;
+    flex: none; width: 132px; text-align: right; white-space: nowrap;
     font-family: var(--f-data); font-size: var(--t-xs); font-weight: 600;
     letter-spacing: -0.01em;
   }
@@ -437,11 +542,27 @@
     max-width: 68ch; line-height: 1.55;
   }
 
+  /* En dessous de 720 px, la piste n'a plus la place de porter six graduations
+     ni de tenir sur la même ligne que son libellé. On empile : nom et verdict
+     en tête, la piste en pleine largeur dessous, et une graduation sur deux. */
   @media (max-width: 720px) {
-    .momiji { --momiji-label: 96px; }
-    .momiji__row { flex-wrap: wrap; }
-    .momiji__verdict { width: auto; margin-left: auto; }
-    .momiji__track { min-width: 55%; }
+    .momiji__rows { gap: var(--s-4); }
+    .momiji__row { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
+    .momiji__name { width: auto; flex: 1; }
+    .momiji__verdict { width: auto; flex: none; }
+    .momiji__track { flex-basis: 100%; order: 3; }
+
+    .momiji__row--scale { display: none; }
+    .momiji__rows::before {
+      content: "1 nov · 15 nov · 29 nov";
+      font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut);
+      display: block; margin-bottom: var(--s-1);
+    }
+    /* repères visuels sur chaque piste, à la place de l'échelle */
+    .momiji__track { background-image: linear-gradient(90deg,
+      var(--line-2) 0 1px, transparent 1px calc(50% - 0.5px),
+      var(--line-2) calc(50% - 0.5px) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px) calc(100% - 1px), var(--line-2) calc(100% - 1px) 100%); }
   }
 
   /* pied de page ----------------------------------------------------------- */
