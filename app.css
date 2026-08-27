@@ -1407,3 +1407,29 @@
     background: var(--ink); width: 0; transition: width .1s linear;
   }
 }
+
+@layer components {
+  /* itinéraire : la grille des journées type -------------------------------
+     Elles étaient repliées en fin d'étape et invisibles. Ici, en haut, avec
+     leur photo — cliquer déplie le détail là où il vit déjà. */
+  .tplgrid {
+    display: grid; gap: var(--s-4); margin-top: var(--s-4);
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  }
+  .tpl { display: flex; flex-direction: column; }
+  .tpl__body { padding: var(--s-3) var(--s-4) var(--s-4); display: flex;
+               flex-direction: column; flex: 1; }
+  .tpl__body h3 { font-size: var(--t-base); font-weight: 600; }
+  .tpl__body > p { font-size: var(--t-sm); color: var(--mut); margin-top: 2px; }
+  .tpl__meta { margin-top: auto; padding-top: var(--s-3); display: flex;
+               align-items: center; gap: var(--s-3); font-size: var(--t-xs) !important; }
+  .tpl__tag {
+    position: absolute; top: var(--s-2); left: var(--s-2);
+    font-size: var(--t-xs); font-weight: 600;
+    background: color-mix(in srgb, var(--paper-2) 90%, transparent);
+    color: var(--ink); padding: 2px var(--s-2); border-radius: var(--r-s);
+    backdrop-filter: blur(4px);
+  }
+  /* la journée qu'on vient d'ouvrir depuis la grille */
+  .alt__item:target { box-shadow: 0 0 0 2px var(--acc); }
+}

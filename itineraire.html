@@ -27,9 +27,21 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     </p>
   </header>
 
-  <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
+  <section class="section">
+    <div class="shead disc">
+      <h2>Les journées type</h2>
+      <p>Trente façons d'occuper une journée, si le programme tombe à l'eau.</p>
+      <span class="shead__meta" id="tpl-meta"></span>
+    </div>
+    <div class="chipbar" id="tpl-filter"></div>
+    <div class="tplgrid" id="tplgrid"></div>
+  </section>
 
-  <div id="itin"></div>
+  <section class="section">
+    <div class="shead disc"><h2>Les 25 jours</h2></div>
+    <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
+    <div id="itin"></div>
+  </section>
 </main>
 
 <script type="module">
@@ -61,6 +73,70 @@ const isFree = (d) => d.kind === 'etape' && (/\blibre\b/i.test(d.title) || d.ite
 // se rendent qu'à la première, la seconde y renvoie.
 const firstStepOfCity = {};
 STEPS.forEach((s) => (firstStepOfCity[s.cityId] ??= s.id));
+
+// --- les journées type, en vue ------------------------------------------------
+// Elles étaient repliées en fin d'étape : personne ne les trouvait. Elles ont
+// leur section, en haut, avec leur photo — et le renvoi depuis les jours
+// libres reste en place.
+const TPL_CITY = [{ id: 'all', name: 'Toutes' },
+  ...[...new Set(TEMPLATES.map((t) => t.cityId))].filter(Boolean)
+    .map((id) => ({ id, name: CITIES[id]?.name || id, color: CITIES[id]?.color })),
+  ...(TEMPLATES.some((t) => !t.cityId) ? [{ id: 'trip', name: 'Day trips' }] : [])];
+
+let tplState = 'all';
+
+q('tpl-filter').innerHTML = TPL_CITY.map((o) => `
+  <button class="chip" data-city="${o.id}" aria-pressed="${o.id === 'all'}">
+    ${o.color ? `<span class="chip__dot" style="background:${o.color}"></span>` : ''}${esc(o.name)}
+  </button>`).join('');
+
+q('tpl-filter').addEventListener('click', (e) => {
+  const b = e.target.closest('.chip');
+  if (!b) return;
+  tplState = b.dataset.city;
+  q('tpl-filter').querySelectorAll('.chip').forEach((c) =>
+    c.setAttribute('aria-pressed', String(c === b)));
+  paintTemplates();
+});
+
+function paintTemplates() {
+  const list = TEMPLATES.filter((t) =>
+    tplState === 'all' || (tplState === 'trip' ? !t.cityId : t.cityId === tplState));
+
+  q('tplgrid').innerHTML = list.map((t) => {
+    const c = t.cityId ? CITIES[t.cityId] : null;
+    return `
+    <a class="card card--link tpl" href="#${t.id}" style="--c:${c ? c.color : 'var(--mut)'}">
+      <div class="thumb thumb--wide">
+        ${t.img ? `<img src="${esc(t.img)}" alt="" loading="lazy" decoding="async">` : ''}
+        ${t.category ? `<span class="tpl__tag">${esc(t.category)}</span>` : ''}
+      </div>
+      <div class="tpl__body">
+        <h3>${esc(t.title)}</h3>
+        <p>${esc(t.sub)}</p>
+        <p class="tpl__meta">
+          <span class="city-dot" style="--c:${c ? c.color : 'var(--mut)'}">${c ? esc(c.name) : 'Day trip'}</span>
+          <span class="mut">${t.steps.length} étapes</span>
+        </p>
+      </div>
+    </a>`;
+  }).join('');
+
+  q('tpl-meta').textContent = `${list.length} sur ${TEMPLATES.length}`;
+}
+paintTemplates();
+
+// Cliquer une vignette ouvre le détail là où il vit déjà, en bas de l'étape.
+q('tplgrid').addEventListener('click', (e) => {
+  const a = e.target.closest('.tpl');
+  if (!a) return;
+  const target = document.querySelector(a.getAttribute('href'));
+  if (!target) return;
+  e.preventDefault();
+  target.closest('details.alt')?.setAttribute('open', '');
+  target.setAttribute('open', '');
+  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
 
 // --- navigation par étape -----------------------------------------------------
 q('daynav').innerHTML = STEPS.map((s) => {
