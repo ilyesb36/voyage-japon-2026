@@ -96,4 +96,10 @@ export const SPOT_FIXES = {
 
   // --- reclassements ---------------------------------------------------------
   "Chinatown": { priority: "symp", note: 'Reclassé : sous-étape d’un day trip, pas une destination en soi.' },
+
+  // --- date retirée faute de source ------------------------------------------
+  'Wanaka': {
+    blurb: 'takoyaki à Sennichimae, une institution du quartier',
+    note: "Le site d'origine annonçait « depuis 1938 » : les sources japonaises ne le confirment pas (l'échoppe dédiée au takoyaki daterait de 1986). Date retirée plutôt que reprise.",
+  },
 };
