@@ -1,4 +1,3 @@
-@import url("vendor/open-props.min.css") layer(vendor);
 @import url("vendor/leaflet.css") layer(vendor);
 @import url("vendor/fonts.css");
 
@@ -1511,5 +1510,19 @@
     .resa { grid-template-columns: 1fr; gap: .55rem; }
     .resa__slot { text-align: left; display: flex; align-items: baseline; gap: .6rem; }
     .resa__slot b { font-size: 1.25rem; }
+  }
+}
+
+/* --- échéances de réservation ----------------------------------------------
+   Une échéance ne sert que si on voit qu'elle approche. Le compte à rebours
+   passe à l'accent dans les deux dernières semaines, et une échéance dépassée
+   reste visible, barrée : la masquer ferait croire que tout va bien. */
+@layer components {
+  .todo__when.is-urgent { color: var(--acc); font-weight: 600; }
+  .todo__item--past { opacity: .5; }
+  .todo__item--past h3 { text-decoration: line-through; text-decoration-color: var(--line-2); }
+  .todo__tag--soft {
+    color: var(--mut); background: var(--paper-3);
+    border-color: var(--line-2);
   }
 }

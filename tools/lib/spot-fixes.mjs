@@ -86,8 +86,9 @@ export const SPOT_FIXES = {
     note: 'Comprend le palais Ninomaru. Le palais Honmaru demande un billet et une réservation à part.',
   },
   'Temple ninja (Myoryu-ji)': {
-    budget: '1 200 ¥ · résa téléphonique',
-    note: 'Réservation obligatoire par téléphone, paiement en espèces uniquement.',
+    budget: '1 200 ¥',
+    when: 'réservation obligatoire, par téléphone',
+    note: 'Réservation obligatoire par téléphone, paiement en espèces uniquement. Créneaux courts et peu nombreux : à caler bien avant le départ.',
   },
   'Musée du 21e siècle': {
     budget: '450 ¥ + expos',
@@ -133,6 +134,24 @@ export const SPOT_FIXES = {
     budget: '2 000 ¥ · résa créneau',
     when: 'ouverture d’automne jusqu’au 13 décembre, sur réservation',
     note: 'Ouvert du 1er octobre au 13 décembre 2026, 10h–17h. Depuis Demachiyanagi : ligne Eizan jusqu’à Yase-Hieizanguchi, 14 min, puis 5 à 12 min à pied.',
+  },
+
+  // --- photo d'homonyme -------------------------------------------------------
+  // La recherche d'images avait ramené le Kimono Forest (les colonnes de tissu
+  // de la gare Randen) pour « Kimono à Higashiyama », qui est une balade en
+  // tenue. Les deux entrées se partageaient donc la même photo, juste pour
+  // l'une des deux. Le garde-fou `mustMatch` ne pouvait pas voir la différence :
+  // les deux noms contiennent « kimono ».
+  'Kimono à Higashiyama': {
+    img: 'img/kimono-higashiyama-alt-088810eb.webp',
+  },
+
+  // --- rangé sous la mauvaise ville ------------------------------------------
+  'Yuba de Nikko': {
+    cityId: 'tokyo',
+    area: 'nikko',
+    maps: 'https://www.google.com/maps/search/?api=1&query=yuba%20Nikko%20Japon',
+    note: 'La yuba est la spécialité des moines de Nikko, pas de Hakone : l’ancien site la rangeait sous Hakone et le lien Maps cherchait « Yuba de Nikko Hakone ». Nikko se fait à la journée depuis Tokyo, comme les autres lieux de l’excursion.',
   },
 
   // --- reclassements ---------------------------------------------------------

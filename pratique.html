@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pratique — Japon 2026</title>
-<meta name="description" content="Les six hébergements réservés et le budget du voyage, calculés depuis une source unique.">
+<meta name="description" content="Les hébergements, le budget calculé depuis les réservations, les paiements et le mode hors-ligne.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -25,17 +25,16 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
        alt="Le bain extérieur du ryokan Hananoyado Fukuya, Hakone" fetchpriority="high">
   <div class="cover__text wrap">
     <h1>Pratique</h1>
-    <p class="cover__dates">Six adresses, 23 nuits, un budget</p>
+    <p class="cover__dates" id="cover-sub"></p>
   </div>
-  <p class="cover__credit">Le rotenburo du Fukuya, Hakone — nuit du 15 novembre</p>
+  <!-- La date vient des données : écrite à la main, elle disait « 15 novembre »,
+       soit une nuit passée à Kanazawa. -->
+  <p class="cover__credit" id="cover-credit"></p>
 </header>
 
 <main class="wrap">
   <header class="section">
-    <p class="hero__lede">
-      Les six hébergements sont confirmés. Le budget est calculé depuis ces
-      réservations, pas estimé.
-    </p>
+    <p class="hero__lede" id="lede"></p>
   </header>
 
   <section class="section">
@@ -116,7 +115,7 @@ q('hotels').innerHTML = HOTELS.map((h) => {
       </header>
 
       <dl class="hotel__facts">
-        <div><dt>Dates</dt><dd class="data">${formatDate(h.dates ? step.from : step.from)} → ${formatDate(step.to)}</dd></div>
+        <div><dt>Dates</dt><dd class="data">${formatDate(step.from)} → ${formatDate(step.to)}</dd></div>
         <div><dt>Nuits</dt><dd class="data">${step.nights}</dd></div>
         <div><dt>Chambre</dt><dd>${esc(h.room)}</dd></div>
         <div><dt>Superficie</dt><dd>${h.size ? `<span class="data">${h.size} m²</span>` : '<span class="mut">non communiquée</span>'}</dd></div>
@@ -176,6 +175,18 @@ function loadRates() {
 const saveRates = () => localStorage.setItem('jp2026_rates', JSON.stringify(rates));
 
 const hotelsTotal = HOTELS.reduce((s, h) => s + h.price, 0);
+
+// Les compteurs se comptent. Écrits en dur, ils survivent aux données qu'ils
+// décrivent — c'est comme ça qu'un « 15 novembre » a tenu des semaines.
+const fukuya = HOTELS.find((h) => h.cityId === 'hakone');
+const arrivee = STEPS.find((s) => s.hotelId === fukuya?.id)?.from;
+q('cover-sub').textContent =
+  `${HOTELS.length} adresses, ${TRIP.nights} nuits, un budget`;
+q('cover-credit').textContent = fukuya && arrivee
+  ? `Le rotenburo du ${fukuya.name.replace(/^Hananoyado /, '')}, Hakone — nuit du ${formatDate(arrivee)}`
+  : '';
+q('lede').textContent =
+  `Les ${HOTELS.length} hébergements sont confirmés. Le budget est calculé depuis ces réservations, pas estimé.`;
 
 function lineTotal(item) {
   if (item.fromHotel) return HOTELS.find((h) => h.id === item.fromHotel).price;
@@ -259,7 +270,12 @@ const savePaid = () => localStorage.setItem('jp2026_paid', JSON.stringify(paid))
 
 // Les hôtels déjà réglés via Booking sont cochés d'office et non décochables :
 // c'est un fait, pas une préférence.
-const prepaid = new Set(HOTELS.filter((h) => h.paid).map((h) => h.id));
+// Idem pour les billets datés déjà payés : `settled` vient des données, pas
+// d'une case cochée par l'utilisateur.
+const prepaid = new Set([
+  ...HOTELS.filter((h) => h.paid).map((h) => h.id),
+  ...BUDGET.categories.flatMap((c) => c.items).filter((i) => i.settled).map((i) => i.key),
+]);
 
 function renderPayments() {
   const lines = BUDGET.categories.flatMap((c) =>
@@ -286,7 +302,7 @@ function renderPayments() {
               <input type="checkbox" data-key="${i.key}" ${on ? 'checked' : ''} ${locked ? 'disabled' : ''}>
               <span class="pay__label">
                 <b>${esc(i.label)}</b>
-                <span class="mut">${locked ? 'réglé via Booking' : esc(i.sub || '')}</span>
+                <span class="mut">${locked ? (i.settled ? `payé · ${esc(i.sub || '')}` : 'réglé via Booking') : esc(i.sub || '')}</span>
               </span>
               <span class="data">${eur(lineTotal(i))}</span>
             </label>`;
@@ -311,7 +327,7 @@ q('offline').innerHTML = `
   <div class="offline card">
     <p><b id="off-state">Vérification…</b></p>
     <p class="mut" id="off-detail">
-      Tout le site — les cinq pages, les 351 photos, les cartes déjà
+      Tout le site — les cinq pages, toutes les photos, les cartes déjà
       consultées — peut tenir sur le téléphone et fonctionner sans réseau.
       Environ 25 Mo. À faire avant de partir, en wifi.
     </p>
@@ -323,17 +339,32 @@ if ('serviceWorker' in navigator) {
   const state = q('off-state');
   const bar = q('off-bar');
   const go = q('off-go');
+  const detail = q('off-detail');
+  const detailParDefaut = detail.textContent;
 
   navigator.serviceWorker.addEventListener('message', (e) => {
     const d = e.data || {};
     if (d.type === 'status') {
-      const pret = d.shell >= d.shellTotal && d.media > 300;
+      const total = d.mediaTotal || 0;
+      const pret = d.shell >= d.shellTotal && total > 0 && d.media >= total;
+      // Une mise à jour du site vide le cache : sans ce repère, on lirait
+      // « Pas encore téléchargé » après l'avoir fait, et on croirait à un raté.
+      const dejaFait = localStorage.getItem('jp2026_offline') === 'ok';
+
       state.textContent = pret
         ? `Prêt pour le hors-ligne — ${d.media} photos en mémoire`
-        : d.media > 0 ? `Téléchargement incomplet — ${d.media} photos sur ~351`
+        : d.media > 0 ? `Téléchargement incomplet — ${d.media} photos sur ${total}`
+        : dejaFait ? 'Le site a été mis à jour — à retélécharger'
         : 'Pas encore téléchargé';
+
+      detail.textContent = dejaFait && !pret && d.media === 0
+        ? 'C’était fait, mais une nouvelle version du site a remplacé l’ancienne : '
+          + 'le cache repart de zéro. Quelques minutes en wifi.'
+        : detailParDefaut;
+
       go.hidden = pret;
       go.textContent = d.media > 0 && !pret ? 'Reprendre le téléchargement' : 'Préparer le hors-ligne';
+      if (pret) localStorage.setItem('jp2026_offline', 'ok');
     }
     if (d.type === 'progress') {
       bar.hidden = false;
@@ -348,6 +379,8 @@ if ('serviceWorker' in navigator) {
       go.disabled = false;
       go.hidden = true;
       state.textContent = `Prêt pour le hors-ligne — ${d.media} photos en mémoire`;
+      detail.textContent = detailParDefaut;
+      localStorage.setItem('jp2026_offline', 'ok');
     }
   });
 

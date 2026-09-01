@@ -23,7 +23,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <script type="module">
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
-import { AVANT, SURPLACE, METEO } from './data/pratique.js';
+import { AVANT, SURPLACE, METEO, RESERVER } from './data/pratique.js';
 import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { RESERVATIONS } from './data/trip.js';
@@ -54,9 +54,11 @@ function before() {
     <p class="eyebrow">Départ le ${formatDate(TRIP.start, { weekday: true })}</p>
     <h1><span class="countdown__n data">J−${away}</span></h1>
     <p class="hero__lede">
-      ${TRIP.nights} nuits, ${STEPS.length} villes, ${EXCURSIONS.length} excursions.
+      ${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes, ${EXCURSIONS.length} excursions.
     </p>
   </header>
+
+  ${reserverBlock()}
 
   <section class="section">
     <div class="shead"><h2>À faire</h2><p>Du plus lointain au plus proche du départ.</p></div>
@@ -107,6 +109,46 @@ function before() {
   <section class="section">
     <div class="shead"><h2>Premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
     ${dayCard(DAYS[0])}
+  </section>`;
+}
+
+// « Résa conseillée » sans date ne veut rien dire. Ce bloc trie par échéance et
+// compte les jours qui restent : c'est la seule façon qu'une échéance soit lue
+// avant d'être dépassée. Ce qui est passé reste affiché, barré — l'effacer
+// donnerait l'illusion que tout va bien.
+function reserverBlock() {
+  const now = today();
+  const items = RESERVER.slice().sort((a, b) => a.deadline.localeCompare(b.deadline));
+  const restants = items.filter((r) => r.deadline >= now).length;
+
+  return `
+  <section class="section">
+    <div class="shead">
+      <h2>À réserver, et avant quand</h2>
+      <p>Novembre est le pic des momiji : c'est la période la plus tendue de l'année au Japon.</p>
+      <span class="shead__meta data">${restants} sur ${items.length}</span>
+    </div>
+    <ol class="todo">
+      ${items.map((r) => {
+        const j = daysBetween(now, r.deadline);
+        const passe = j < 0;
+        const urgent = !passe && j <= 14;
+        return `
+        <li class="todo__item${passe ? ' todo__item--past' : ''}">
+          <div class="todo__head">
+            <h3>${esc(r.title)}</h3>
+            ${r.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
+            ${r.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
+            <span class="todo__when${urgent ? ' is-urgent' : ''}">
+              ${passe ? `échéance passée (${formatDate(r.deadline)})`
+                      : `avant le ${formatDate(r.deadline)} · J−${j}`}
+            </span>
+          </div>
+          <p>${esc(r.what)}</p>
+          ${r.forDate ? `<p class="mut">Pour la journée du ${formatDate(r.forDate, { weekday: true })}.</p>` : ''}
+        </li>`;
+      }).join('')}
+    </ol>
   </section>`;
 }
 
@@ -214,7 +256,7 @@ function after() {
     <p class="eyebrow">${formatDate(TRIP.start)} — ${formatDate(TRIP.end, { year: true })}</p>
     <h1>C'est fini</h1>
     <p class="hero__lede">
-      ${TRIP.nights} nuits, ${STEPS.length} villes. Tout est encore là :
+      ${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes. Tout est encore là :
       <a href="itineraire.html">les journées</a>,
       <a href="guide.html">les adresses</a>,
       <a href="pratique.html">les chambres</a>.

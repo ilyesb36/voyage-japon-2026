@@ -1,2 +1,5 @@
 node_modules/
 _mock
+
+# rapports d'audit : utiles le temps d'une session, pas du dépôt
+audit-*.md

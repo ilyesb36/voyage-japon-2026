@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jour par jour — Japon 2026</title>
-<meta name="description" content="Les 25 jours du voyage, avec pour chaque journée libre les journées type de la ville.">
+<meta name="description" content="Le programme jour par jour, et trente journées type par ville si le programme tombe à l'eau.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -21,10 +21,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <main class="wrap">
   <header class="section">
     <h1>Jour par jour</h1>
-    <p class="hero__lede">
-      25 jours. Rien n'est figé : les journées libres renvoient vers d'autres
-      façons d'occuper la journée dans la même ville.
-    </p>
+    <p class="hero__lede" id="lede"></p>
   </header>
 
   <section class="section">
@@ -38,7 +35,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
 
   <section class="section">
-    <div class="shead disc"><h2>Les 25 jours</h2></div>
+    <div class="shead disc"><h2 id="jours-titre">Les jours</h2></div>
     <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
     <div id="itin"></div>
   </section>
@@ -151,6 +148,13 @@ q('daynav').innerHTML = STEPS.map((s) => {
 // --- les jours, groupés par étape ---------------------------------------------
 const byStep = DAYS.reduce((m, d) => ((m[d.stepId || 'depart'] ||= []).push(d), m), {});
 const now = today();
+
+// Comptés, pas écrits : le nombre de jours et de journées type a déjà changé
+// une fois, et les phrases d'intro, elles, ne bougeaient pas.
+q('lede').textContent =
+  `${DAYS.length} jours. Rien n'est figé : chaque ville propose aussi des journées type, `
+  + `si le programme tombe à l'eau.`;
+q('jours-titre').textContent = `Les ${DAYS.length} jours`;
 
 let html = '';
 for (const step of STEPS) {

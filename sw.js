@@ -15,7 +15,7 @@
 
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
 // le cache sert l'ancienne version et personne ne voit la mise à jour.
-const V = 'v13';
+const V = 'v15';
 const SHELL = `jp-shell-${V}`;
 const MEDIA = `jp-media-${V}`;
 const TILES = `jp-tiles-${V}`;
@@ -23,10 +23,9 @@ const TILES = `jp-tiles-${V}`;
 const PAGES = [
   './', 'index.html', 'aujourdhui.html', 'itineraire.html', 'guide.html', 'pratique.html',
   'manifest.webmanifest', 'app.css',
-  'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js',
+  'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js', 'app/resa.js',
   'data/trip.js', 'data/days.js', 'data/spots.js', 'data/pratique.js',
-  'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/alpine.min.js',
-  'vendor/open-props.min.css', 'vendor/fonts.css',
+  'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/fonts.css',
   'icon-192.png', 'icon-512.png',
 ];
 
@@ -85,7 +84,10 @@ async function post(msg) {
 async function reportStatus() {
   const shell = (await (await caches.open(SHELL)).keys()).length;
   const media = (await (await caches.open(MEDIA)).keys()).length;
-  await post({ type: 'status', shell, media, shellTotal: SHELL_FILES.length });
+  // mediaTotal est compté, jamais écrit en dur : le nombre de photos bouge à
+  // chaque ajout d'adresse.
+  const mediaTotal = (await mediaList()).length;
+  await post({ type: 'status', shell, media, shellTotal: SHELL_FILES.length, mediaTotal });
 }
 
 /** Tout : les pages puis les photos, en rendant compte au fur et à mesure. */
@@ -104,14 +106,18 @@ async function cacheAll() {
 
   const shell = (await shellCache.keys()).length;
   const media = (await mediaCache.keys()).length;
-  await post({ type: 'done', shell, media, shellTotal: SHELL_FILES.length });
+  await post({ type: 'done', shell, media, shellTotal: SHELL_FILES.length, mediaTotal: list.length });
 }
 
 /** La liste des photos, déduite des données ET des pages. */
 async function mediaList() {
   const urls = new Set();
+  // Toutes les pages, pas seulement celles qui « ont des images » : une photo
+  // d'ouverture écrite en dur dans le HTML avait déjà échappé au cache une
+  // fois, et ça ne se voit qu'une fois hors-ligne, trop tard.
   const sources = ['data/spots.js', 'data/trip.js', 'data/days.js',
-                   'index.html', 'itineraire.html'];
+                   'index.html', 'itineraire.html', 'guide.html',
+                   'pratique.html', 'aujourdhui.html'];
   for (const file of sources) {
     try {
       const src = await (await fetch(file, { cache: 'reload' })).text();

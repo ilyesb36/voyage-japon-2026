@@ -242,6 +242,25 @@ function parseBudget(HOTELS) {
   const heb = categories.find((c) => c.id === 'heb');
   heb.items = HOTELS.map((h) => ({ key: h.id, label: h.name, sub: `${CITIES[h.cityId].name} · ${h.status}`, fromHotel: h.id }));
 
+  // Les billets datés sont un poste à part : ils sont payés d'avance, à un
+  // montant connu au yen près, et ils ne se rattrapent pas. Le forfait
+  // « Activités & entrées » est une moyenne journalière — il ne peut pas les
+  // absorber sans mentir sur ce qui est déjà réglé.
+  if (RESERVATIONS.length) {
+    categories.push({
+      id: 'billets',
+      name: 'Billets datés',
+      sub: `${RESERVATIONS.length} réservation${RESERVATIONS.length > 1 ? 's' : ''} à créneau`,
+      items: RESERVATIONS.map((r) => ({
+        key: r.id,
+        label: r.title,
+        sub: `${r.where} · ${r.date.split('-').reverse().join('/')} ${r.slot} · ${r.people} pers.`,
+        fix: r.price,
+        settled: r.status === 'payé',
+      })),
+    });
+  }
+
   const defaults = {};
   for (const m of src.matchAll(/id="(vol|train|food|act)"[^>]*value="(\d+)"/g)) defaults[m[1]] = +m[2];
 
@@ -327,9 +346,15 @@ function parseDays(STEPS) {
         .map((x) => ({ text: x.text, evening: !!x.evening }))
         .sort((a, b) => Number(a.evening) - Number(b.evening));
     }
-    // rendez-vous daté : il remonte sur la journée
-    const resas = RESERVATIONS.filter((r) => r.date === d.date);
-    if (resas.length) d.reservationIds = resas.map((r) => r.id);
+  }
+
+  // Un billet daté doit tomber sur un jour du voyage. Le rapprochement à
+  // l'affichage se fait par DATE : inutile de recopier des identifiants dans
+  // les jours, un champ recopié finit toujours par mentir.
+  for (const r of RESERVATIONS) {
+    if (!DAYS.some((d) => d.date === r.date)) {
+      throw new Error(`réservation « ${r.title} » le ${r.date} : aucun jour de voyage à cette date`);
+    }
   }
 
   const planned = Object.keys(DAY_PLAN);
@@ -449,6 +474,15 @@ function parseSpotMeta() {
   for (const m of defBlock.matchAll(/'(t\d)':\['([^']*)','([^']*)','([^']*)'\]/g)) {
     def[m[1]] = { duration: m[2], budget: m[3], when: m[4] };
   }
+  // Le défaut de la catégorie « Expériences » était « résa conseillée ». Il
+  // s'appliquait à 29 lieux qui ne se réservent pas — le croisement de Shibuya,
+  // Akihabara, Shimokitazawa — et noyait les vraies réservations obligatoires
+  // (teamLab, Nintendo, Rurikō-in, le temple ninja) dans du bruit. Un label
+  // porté par tout le monde ne veut plus rien dire.
+  // Les lieux qui exigent réellement une réservation ont, eux, un `when`
+  // explicite dans META : ils ne sont pas touchés.
+  if (def.t3) def.t3.when = 'selon l\'envie';
+
   return { meta, def };
 }
 
@@ -524,13 +558,13 @@ function parseSpots() {
       guideTip,
       source: guideTip ? 'guide' : 'ilyes',
       ...findMeta(name, panel),
-      // Corrections vérifiées sur sources officielles : plusieurs tarifs ont
-      // augmenté depuis l'ancien site, et plusieurs temples de Kyoto ont un
-      // tarif d'automne qui tombe pendant le séjour.
-      ...(SPOT_FIXES[name] || {}),
-      ...(LORE[id] ? { lore: LORE[id] } : {}),
       img,
       maps: href,
+      // Les corrections passent EN DERNIER, sinon elles ne peuvent pas
+      // rattraper `img` ni `maps` — un lieu rangé sous la mauvaise ville
+      // gardait un lien Maps qui cherchait au mauvais endroit.
+      ...(SPOT_FIXES[name] || {}),
+      ...(LORE[id] ? { lore: LORE[id] } : {}),
     });
   }
 

@@ -89,4 +89,62 @@ export const DAY_PLAN = {
     ],
     tip: '💡 L’ordre exact de la guide. Son déjeuner au bord de la rivière — y être avant midi. Samedi de pic momiji : soit le marché Kobo-san le matin et Arashiyama vers 10h, soit la bambouseraie à 7h30 et pas de marché. Les deux à fond, non.',
   },
+
+  // --- corrections issues de l'audit du 1er septembre 2026 -------------------
+
+  '2026-11-09': {
+    // Le Tokyo Monorail va à Hamamatsucho, pas vers Asakusa : c'est le Keikyu
+    // qui rejoint la ligne Asakusa sans changement. Premier trajet du voyage,
+    // à 21h, fatigués — ce n'est pas le moment de se tromper de quai.
+    items: [
+      { text: 'Atterrissage Haneda 20:50 — immigration, puis activation de l’eSIM avant de sortir' },
+      { text: 'Keikyu Airport Line, direct sur la ligne Asakusa jusqu’à Hop Inn (~40 min). Pas le monorail : il va à Hamamatsucho' },
+      { text: 'Retirer du cash au 7-Eleven en bas (ATM 24h/24, accepte les cartes étrangères)', evening: true },
+      { text: 'Konbini pour le petit-déjeuner du lendemain', evening: true },
+      { text: 'Coup d’œil au Senso-ji illuminé de nuit, à deux pas de l’hôtel', evening: true },
+    ],
+    tip: '💡 Arrivée à l’hôtel vers 22h–22h30. Rien d’autre n’est prévu, et c’est voulu.',
+  },
+
+  '2026-11-30': {
+    // Le 30 novembre est un LUNDI. Les jardins de l'enceinte impériale (le site
+    // du château d'Edo) ferment le lundi ET le vendredi ; le parc de
+    // Kitanomaru, lui, est un parc public ouvert tous les jours. La ligne
+    // d'origine mélangeait les deux.
+    items: [
+      { text: '⚠ Lundi : les jardins de l’enceinte impériale (site du château d’Edo) sont fermés le lundi et le vendredi. Le parc de Kitanomaru, lui, est ouvert' },
+      { text: 'Parc de Kitanomaru : le Budokan, le musée d’art moderne, les douves' },
+      { text: 'Gotoku-ji et ses milliers de chats porte-bonheur, à l’ouest' },
+      { text: 'Déjeuner dans le quartier de Setagaya, sans se presser' },
+      { text: 'Todoroki, la seule gorge de Tokyo — le sentier a rouvert en mars 2026' },
+      { text: 'Kameido Tenjin et son pont rouge, si l’envie de traverser la ville est là', evening: true },
+      { text: 'Soir : dernier izakaya, on est à deux jours du départ', evening: true },
+    ],
+    tip: '💡 Gotoku-ji à l’ouest et Kameido à l’est, ce sont deux bouts opposés de Tokyo : une heure de train entre les deux. Choisir l’un OU l’autre, sauf à vouloir passer la journée assis.',
+  },
+
+  '2026-12-01': {
+    items: [
+      { text: 'Tokyo Character Street sous la gare de Tokyo : Ghibli, Nintendo, Sanrio' },
+      { text: 'Musée Ghibli si vous avez eu les billets — il rouvre le 19 novembre, après une fermeture du 4 au 18' },
+      { text: 'Itoya Ginza, papeterie sur huit étages depuis 1904' },
+      { text: '⚠ Détaxe : depuis le 1er novembre 2026, on paie le prix TTC en magasin et on se fait rembourser à Haneda. Garder les tickets ET les articles' },
+      { text: 'Don Quijote : skincare Matsukiyo, KitKat, snacks. Passeport sur soi, seuil 5 000 ¥ par magasin' },
+      { text: 'Illumination de Rikugi-en : le jardin ferme à 17h puis rouvre, billet séparé', evening: true },
+      { text: 'Pesée des valises, envoi takkyubin éventuel', evening: true },
+    ],
+    tip: '💡 Tout ce qui est acheté aujourd’hui devra être présentable demain matin au comptoir de remboursement : ne pas le mettre au fond de la valise en soute.',
+  },
+
+  '2026-12-02': {
+    items: [
+      { text: 'Check-out à 10h — laisser les valises à l’hôtel ou en casier de gare : le vol n’est qu’à 20:15' },
+      { text: 'Matinée légère dans Ikebukuro, sans rien de lourd' },
+      { text: 'Déjeuner tôt, puis récupération des bagages' },
+      { text: 'Départ pour Haneda vers 15h — Keikyu depuis la ligne Asakusa' },
+      { text: 'Comptoir de remboursement de la détaxe AVANT l’enregistrement : tickets et articles à portée de main' },
+      { text: 'Vol 20:15', evening: true },
+    ],
+    tip: '💡 Gardez ~2 000 ¥ pour le dernier ramen à l’aéroport. Le remboursement de la détaxe se fait à Haneda, avant l’enregistrement : c’est la première chose à faire en arrivant, pas la dernière.',
+  },
 };

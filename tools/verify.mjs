@@ -5,6 +5,8 @@
 import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, BUDGET, RESERVATIONS } from '../data/trip.js';
 import { DAYS, TEMPLATES } from '../data/days.js';
 import { SPOTS, CATEGORIES, PRIORITIES } from '../data/spots.js';
+import { AVANT, SURPLACE, RESERVER, METEO } from '../data/pratique.js';
+import fs from 'node:fs';
 
 let failures = 0, checks = 0, pending = 0;
 
@@ -63,18 +65,27 @@ console.log('\nBudget');
 const hebergement = HOTELS.reduce((s, h) => s + h.price, 0);
 ok('total hébergement calculé = 3 259 €', hebergement, 3259);
 
-const d = BUDGET.defaults;
-const vols = d.vol * 2;
-const trains = d.train * 2;
-const food = d.food * 24 * 2;
-const act = d.act * 24 * 2;
-const passes = BUDGET.categories
-  .filter((c) => c.id === 'dep')
+// Le total se calcule comme la page le calcule : en balayant TOUTES les
+// catégories. La version précédente additionnait une liste écrite à la main,
+// si bien qu'une nouvelle catégorie passait sous le radar — l'assertion
+// restait verte pendant que la page affichait autre chose.
+const MULT = { vol: 2, train: 2, food: 24 * 2, act: 24 * 2 };
+const ligne = (i) => {
+  if (i.fromHotel) return HOTELS.find((h) => h.id === i.fromHotel).price;
+  if (i.fix != null) return i.fix;
+  return (BUDGET.defaults[i.dyn] || 0) * MULT[i.dyn];
+};
+const total = BUDGET.categories.reduce((s, c) => s + c.items.reduce((t, i) => t + ligne(i), 0), 0);
+
+const sansMultiplicateur = BUDGET.categories
   .flatMap((c) => c.items)
-  .reduce((s, i) => s + (i.fix || 0), 0);
-const total = hebergement + vols + trains + food + act + passes;
-ok('total du voyage = 7 321 €', total, 7321);
-ok('par personne = 3 660,50 €', total / 2, 3660.5);
+  .filter((i) => i.dyn && !MULT[i.dyn]).map((i) => i.key);
+assert('chaque ligne dynamique a un multiplicateur connu',
+  sansMultiplicateur.length === 0, sansMultiplicateur.join(', '));
+
+// 7 321 € avant l'achat du billet Nintendo, 7 359 € après.
+ok('total du voyage = 7 359 €', total, 7359);
+ok('par personne = 3 679,50 €', total / 2, 3679.5);
 
 assert(
   'le poste hébergement est calculé, pas saisi',
@@ -99,6 +110,13 @@ assert('les 6 hôtels déclarent les mêmes équipements',
 const paid = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
 ok('déjà réglé = 1 161 € (Hop Inn + Matatabi)', paid, 1161);
 ok('reste à régler sur l\'hébergement = 2 098 €', hebergement - paid, 2098);
+
+// Ce que la page Paiements coche d'office : hôtels prépayés + billets datés
+// déjà payés. C'est un fait, pas une case à cocher par l'utilisateur.
+const regle = BUDGET.categories.flatMap((c) => c.items)
+  .filter((i) => i.settled || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
+  .reduce((s, i) => s + ligne(i), 0);
+ok('déjà réglé au total = 1 199 € (2 hôtels + Nintendo)', regle, 1199);
 
 assert('la date limite d\'annulation du ryokan est connue',
   HOTELS.find((h) => h.id.includes('fukuya')).cancelBefore === '2026-10-27');
@@ -242,8 +260,9 @@ assert('le billet Nintendo Museum est présent', !!nintendo);
 ok('  daté du 18 novembre 2026', nintendo?.date, '2026-11-18');
 ok('  créneau 14:00 – 14:30', nintendo?.slot, '14:00 – 14:30');
 ok('  2 personnes, payé', [nintendo?.people, nintendo?.status], [2, 'payé']);
-assert('le 18 novembre porte la réservation',
-  DAYS.find((d) => d.date === '2026-11-18')?.reservationIds?.includes('resa-nintendo'));
+assert('chaque billet daté tombe sur un jour du voyage',
+  RESERVATIONS.every((r) => DAYS.some((d) => d.date === r.date)),
+  RESERVATIONS.filter((r) => !DAYS.some((d) => d.date === r.date)).map((r) => r.date).join(', '));
 
 // Le musée est à Ogura (Uji), au sud-est ; Arashiyama est à l'ouest. Les deux
 // le même jour, c'est 1h15 de train en plein après-midi : la journée du 18 ne
@@ -257,6 +276,68 @@ assert('chaque spot cité par une réservation existe',
   RESERVATIONS.every((r) => !r.spotId || SPOTS.some((s) => s.id === r.spotId)),
   RESERVATIONS.filter((r) => r.spotId && !SPOTS.some((s) => s.id === r.spotId)).map((r) => r.spotId).join(', '));
 
+// --- à réserver ---------------------------------------------------------------
+// Une échéance dans le passé, ou après le départ, ne sert à rien. Et une
+// échéance qui tombe après la journée concernée est une erreur de saisie.
+
+console.log('\nÀ réserver');
+// Ce qui n'est rattaché à aucune journée (papiers, pass) doit être bouclé
+// avant de partir. Ce qui vise une journée peut se réserver depuis le Japon —
+// l'illumination de Rikugi-en, par exemple, est pour le 1er décembre.
+assert('les démarches sans date de visite sont bouclées avant le départ',
+  RESERVER.every((r) => r.forDate || r.deadline < TRIP.start),
+  RESERVER.filter((r) => !r.forDate && r.deadline >= TRIP.start).map((r) => r.id).join(', '));
+assert('aucune échéance après la fin du voyage',
+  RESERVER.every((r) => r.deadline <= TRIP.end));
+assert('chaque échéance précède la journée concernée',
+  RESERVER.every((r) => !r.forDate || r.deadline < r.forDate),
+  RESERVER.filter((r) => r.forDate && r.deadline >= r.forDate).map((r) => r.id).join(', '));
+assert('chaque journée concernée est un jour du voyage',
+  RESERVER.every((r) => !r.forDate || DAYS.some((d) => d.date === r.forDate)),
+  RESERVER.filter((r) => r.forDate && !DAYS.some((d) => d.date === r.forDate)).map((r) => r.id).join(', '));
+assert('la limite du kaiseki colle à l\'annulation gratuite du ryokan',
+  RESERVER.find((r) => r.id === 'kaiseki-fukuya')?.deadline
+    === HOTELS.find((h) => h.cityId === 'hakone')?.cancelBefore);
+assert('identifiants uniques — à réserver',
+  new Set(RESERVER.map((r) => r.id)).size === RESERVER.length);
+
+// « résa conseillée » était le défaut de toute la catégorie Expériences : porté
+// par 29 lieux qui ne se réservent pas, il ne voulait plus rien dire.
+const resaBruit = SPOTS.filter((s) => s.when === 'résa conseillée').map((s) => s.name);
+assert('« résa conseillée » n\'est plus un défaut de catégorie',
+  resaBruit.length === 0, resaBruit.join(', '));
+
+// --- coque hors-ligne ---------------------------------------------------------
+// app/resa.js avait été ajouté aux pages sans être ajouté à la liste du
+// service worker : hors-ligne, deux pages restaient blanches. Ça ne se voit
+// qu'avec le réseau coupé, donc jamais. Cette assertion le voit tout de suite.
+
+console.log('\nHors-ligne');
+const swSrc = fs.readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
+const shellDeclare = new Set([...swSrc.matchAll(/'([^']+\.(?:html|css|js|webmanifest|png))'/g)].map((m) => m[1]));
+
+const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html'];
+const requis = new Set();
+for (const page of pages) {
+  const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8');
+  for (const m of src.matchAll(/from '\.\/([^']+\.js)'/g)) requis.add(m[1]);
+  for (const m of src.matchAll(/<script src="([^"]+\.js)"/g)) requis.add(m[1]);
+  for (const m of src.matchAll(/<link[^>]+href="([^"]+\.css)"/g)) requis.add(m[1]);
+}
+// et les modules que les modules importent entre eux
+for (const f of fs.readdirSync(new URL('../app', import.meta.url))) {
+  const src = fs.readFileSync(new URL(`../app/${f}`, import.meta.url), 'utf8');
+  for (const m of src.matchAll(/from '\.\/([^']+\.js)'/g)) requis.add(`app/${m[1]}`);
+  for (const m of src.matchAll(/from '\.\.\/([^']+\.js)'/g)) requis.add(m[1]);
+}
+const oublies = [...requis].filter((f) => !shellDeclare.has(f));
+assert('chaque fichier chargé par une page est dans la coque du service worker',
+  oublies.length === 0, `absents de sw.js : ${oublies.join(', ')}`);
+
+// L'inverse : un fichier listé mais disparu ferait échouer la mise en cache.
+const fantomes = [...shellDeclare].filter((f) => f !== './' && !fs.existsSync(new URL(`../${f}`, import.meta.url)));
+assert('aucun fichier fantôme dans la coque', fantomes.length === 0, fantomes.join(', '));
+
 // --- images -------------------------------------------------------------------
 
 console.log('\nImages');
@@ -269,6 +350,27 @@ const remote = [
 ];
 if (remote.length) todo(`${remote.length} images encore distantes`, 'Task 2 — rapatriement');
 else assert('toutes les images sont locales', true);
+
+// Référencée mais absente du disque : image cassée en ligne ET hors-ligne.
+// Présente mais référencée par personne : du poids mort qui s'accumule à
+// chaque lieu retiré du guide.
+const referencees = new Set();
+const ajoute = (u) => { if (u && u.startsWith('img/')) referencees.add(u); };
+SPOTS.forEach((s) => ajoute(s.img));
+HOTELS.forEach((h) => h.images.forEach(ajoute));
+TEMPLATES.forEach((t) => { ajoute(t.img); t.steps.forEach((e) => ajoute(e.img)); });
+for (const page of pages) {
+  const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8');
+  for (const m of src.matchAll(/img\/[^"')]+\.(?:webp|png|jpg)/g)) referencees.add(m[0]);
+}
+const absentes = [...referencees].filter((u) => !fs.existsSync(new URL(`../${u}`, import.meta.url)));
+assert('chaque image référencée existe sur le disque', absentes.length === 0, absentes.join(', '));
+
+const surDisque = fs.readdirSync(new URL('../img', import.meta.url))
+  .filter((f) => /\.(webp|png|jpg)$/.test(f));
+const orphelines = surDisque.filter((f) => !referencees.has(`img/${f}`));
+assert(`aucune image orpheline dans img/ (${surDisque.length} fichiers)`,
+  orphelines.length === 0, orphelines.join(', '));
 
 // --- verdict ------------------------------------------------------------------
 

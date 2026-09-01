@@ -24,7 +24,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <p class="hero__lede" id="lede"></p>
   </header>
 
-  <!-- Une seule barre : la recherche d'abord (c'est ce qu'on veut sur 265
+  <!-- Une seule barre : la recherche d'abord (c'est ce qu'on veut sur toutes les
        adresses), puis les villes en pastilles, puis les axes secondaires en
        menus. Quatre rangées de pastilles faisaient un pavé illisible. -->
   <div class="tools">
@@ -172,7 +172,7 @@ function card(s) {
 }
 
 // --- la fiche -----------------------------------------------------------------
-// Les mêmes lignes pour les 265 : durée, budget, moment. C'est ce qui permet
+// Les mêmes lignes pour toutes : durée, budget, moment. C'est ce qui permet
 // de comparer deux adresses d'un coup d'œil.
 const byId = new Map(SPOTS.map((s) => [s.id, s]));
 

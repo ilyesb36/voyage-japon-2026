@@ -75,7 +75,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <script src="vendor/leaflet.js"></script>
 <script type="module">
-import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS } from './data/trip.js';
+import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { renderMomijiBand } from './app/momiji.js';
@@ -87,7 +87,7 @@ mountChrome('index.html');
 // elle se lit d'un trait.
 const q = (id) => document.getElementById(id);
 q('chapo').innerHTML =
-  `${TRIP.nights} nuits, ${STEPS.length} villes, ${EXCURSIONS.length} excursions à la journée. ` +
+  `${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes, ${EXCURSIONS.length} excursions à la journée. ` +
   `On monte à Kanazawa, on redescend sur Kyoto et Osaka, on finit par deux nuits ` +
   `de bain chaud à Hakone avant de rentrer à Tokyo pour le pic des érables.`;
 
@@ -238,9 +238,10 @@ q('progress').innerHTML = `
       d'hébergement — <span class="mut">${HOTELS.filter((h) => !h.paid).length} réservations à payer sur place ou avant.</span>
     </p>
     <ul class="prog__list">
-      <li><span class="prog__ok">✓</span> Les 6 hôtels sont confirmés</li>
-      <li><span class="prog__ok">✓</span> Les vols sont pris — China Eastern via Shanghai</li>
-      <li><span class="prog__ok">✓</span> Le ryokan de Hakone est validé</li>
+      <li><span class="prog__ok">✓</span> Les ${HOTELS.length} hôtels sont confirmés</li>
+      <li><span class="prog__ok">✓</span> Les ${FLIGHTS.length} vols sont pris — China Eastern via Shanghai</li>
+      ${RESERVATIONS.map((r) => `
+      <li><span class="prog__ok">✓</span> ${esc(r.title)} — ${esc(formatDate(r.date))}, ${esc(r.slot)}, ${esc(r.status)}</li>`).join('')}
       <li><span class="prog__warn">!</span> Pass Hakone et Nikko à acheter à l'avance</li>
     </ul>
     <p class="prog__more"><a class="btn btn--ghost" href="pratique.html">Voir le budget complet</a></p>
