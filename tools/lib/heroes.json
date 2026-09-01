@@ -1,8 +1,8 @@
 {
   "ouverture": {
     "file": "img/hero/ouverture.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Torii_path_at_Fushimi_Inari-taisha_(48885107243).jpg",
-    "title": "File:Torii path at Fushimi Inari-taisha (48885107243).jpg"
+    "source": "https://commons.wikimedia.org/wiki/File:Torii_path_at_Fushimi_Inari-taisha_(48885141203).jpg",
+    "title": "File:Torii path at Fushimi Inari-taisha (48885141203).jpg"
   },
   "tokyo": {
     "file": "img/hero/tokyo.webp",
@@ -33,5 +33,10 @@
     "file": "img/hero/tokyo2.webp",
     "source": "https://commons.wikimedia.org/wiki/File:View_of_the_Tokyo_skyline_from_the_top_of_Sunshine_City.jpg",
     "title": "File:View of the Tokyo skyline from the top of Sunshine City.jpg"
+  },
+  "pratique": {
+    "file": "img/hero/pratique.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Ryokan_Koaka_-_2_(756344012).jpg",
+    "title": "File:Ryokan Koaka - 2 (756344012).jpg"
   }
 }

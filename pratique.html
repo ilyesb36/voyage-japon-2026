@@ -18,12 +18,23 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 </head>
 <body>
 
+<!-- L'ouverture est une photo de la vraie réservation — le bain extérieur du
+     ryokan de Hakone — plutôt qu'une image d'illustration trouvée ailleurs. -->
+<header class="cover cover--short">
+  <img class="cover__img" src="img/hananoyado-fukuya-47b10294@960.webp"
+       alt="Le bain extérieur du ryokan Hananoyado Fukuya, Hakone" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>Pratique</h1>
+    <p class="cover__dates">Six adresses, 23 nuits, un budget</p>
+  </div>
+  <p class="cover__credit">Le rotenburo du Fukuya, Hakone — nuit du 15 novembre</p>
+</header>
+
 <main class="wrap">
   <header class="section">
-    <h1>Pratique</h1>
     <p class="hero__lede">
       Les six hébergements sont confirmés. Le budget est calculé depuis ces
-      réservations.
+      réservations, pas estimé.
     </p>
   </header>
 

@@ -94,6 +94,47 @@ export const SPOT_FIXES = {
     note: 'Les expositions temporaires ont un tarif distinct. Les espaces publics sont gratuits.',
   },
 
+  // --- réservé et payé -------------------------------------------------------
+  'Nintendo Museum, Uji': {
+    budget: '3 300 ¥ / personne · payé',
+    duration: '2–3h',
+    when: 'mercredi 18 novembre, 14:00 – 14:30',
+    blurb: 'ouvert fin 2024 dans une ancienne usine de cartes à jouer Nintendo, à Ogura',
+    note: 'Billets achetés et payés : mercredi 18 novembre 2026, créneau 14:00 – 14:30, 2 adultes. Le tirage au sort est derrière nous. Créneau ferme, pièce d\'identité contrôlée.',
+  },
+
+  // --- vérifications du 1er septembre 2026 -----------------------------------
+  // Rapport complet : tools/lib/verifs-2026-09.md
+  'Honke Owariya': {
+    priority: 'niche',
+    when: 'FERMÉ — ne pas s’y rendre',
+    budget: '—',
+    blurb: 'soba depuis 1465, fermé en janvier 2026 après 561 ans',
+    note: '⚠ FERMÉ. Le restaurant de Kurumaya-cho a cessé son activité le 11 janvier 2026, noren déposé le 17. Les confiseries sont arrêtées aussi, la boutique en ligne ne rouvre pas. Retiré du programme du 20 novembre.',
+  },
+  'Todoroki, la vallée': {
+    when: 'rouvert — le matin, avant la chaleur',
+    note: 'Le sentier, fermé depuis septembre 2023 après une chute d’arbre, a rouvert le 24 mars 2026.',
+  },
+  'Musée Ghibli': {
+    when: '⚠ fermé du 4 au 18 novembre — à garder pour le retour à Tokyo',
+    note: 'Fermeture annoncée du 4 au 18 novembre 2026 (changement d’exposition), réouverture le 19. Le premier séjour à Tokyo (9–14 nov) tombe en plein dedans : c’est donc pour le second, du 27 novembre au 2 décembre. Billets en vente le 10 du mois précédent, ils partent en quelques minutes.',
+  },
+  'Nakamura Tokichi': {
+    when: 'ticket QR dès 10h, on est rappelé plus tard',
+    note: 'Maison de thé fondée en 1854. Pas de file debout : on prend un ticket numéroté à QR dès l’ouverture (10h) et on revient quand on est appelé — jusqu’à 2 h d’attente en pleine saison d’automne.',
+  },
+  'Byodo-in': {
+    budget: '700 ¥ · +300 ¥ l’intérieur du Hoodo',
+    when: 'ouvre à 8h30 ; Hoodo par créneaux de 20 min',
+    note: 'Jardin et musée Hoshokan 700 ¥ (8h30–17h30). L’intérieur du pavillon du Phénix se paie à part (300 ¥), par créneaux de 20 minutes de 9h30 à 16h10, 50 personnes à la fois, commentaire en japonais.',
+  },
+  'Rurikō-in': {
+    budget: '2 000 ¥ · résa créneau',
+    when: 'ouverture d’automne jusqu’au 13 décembre, sur réservation',
+    note: 'Ouvert du 1er octobre au 13 décembre 2026, 10h–17h. Depuis Demachiyanagi : ligne Eizan jusqu’à Yase-Hieizanguchi, 14 min, puis 5 à 12 min à pied.',
+  },
+
   // --- reclassements ---------------------------------------------------------
   "Chinatown": { priority: "symp", note: 'Reclassé : sous-étape d’un day trip, pas une destination en soi.' },
 

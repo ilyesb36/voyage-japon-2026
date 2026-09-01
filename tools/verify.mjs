@@ -2,7 +2,7 @@
 // Les nombres attendus viennent du site d'avant la refonte : toute divergence
 // est une perte de données, pas un ajustement. `node tools/verify.mjs`.
 
-import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, BUDGET } from '../data/trip.js';
+import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, BUDGET, RESERVATIONS } from '../data/trip.js';
 import { DAYS, TEMPLATES } from '../data/days.js';
 import { SPOTS, CATEGORIES, PRIORITIES } from '../data/spots.js';
 
@@ -152,7 +152,14 @@ for (const f of ['duration', 'budget', 'when']) {
 
 console.log('\nNotices');
 const avecLore = SPOTS.filter((s) => s.lore);
-assert('au moins 145 lieux ont une notice', avecLore.length >= 145, `seulement ${avecLore.length}`);
+assert(`au moins 145 lieux ont une notice (${SPOTS.filter((s) => s.lore).length})`,
+  SPOTS.filter((s) => s.lore).length >= 145);
+
+// Le vrai critère n'est pas un total mais une couverture : un monument sans
+// notice est un trou, une boutique sans notice n'en est pas un — il n'y a
+// souvent rien d'historique à dire d'un Uniqlo.
+const monumentsNus = SPOTS.filter((s) => s.category === 't0' && !s.lore).map((s) => s.name);
+assert('aucun monument sans notice', monumentsNus.length === 0, monumentsNus.join(' | '));
 assert('chaque ville a des notices',
   ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone']
     .every((c) => SPOTS.some((s) => s.cityId === c && s.lore)),
@@ -203,7 +210,12 @@ assert('chaque jour a au moins une ligne de programme', DAYS.every((d) => d.item
 // Les journées enrichies : hors vols, un jour doit tenir la journée.
 const courts = DAYS.filter((d) => d.kind !== 'vol' && d.items.length < 5).map((d) => `${d.label} (${d.items.length})`);
 assert('chaque jour hors vol a au moins 5 lignes', courts.length === 0, courts.join(', '));
-ok('155 lignes de programme au total', DAYS.reduce((n, d) => n + d.items.length, 0), 155);
+// Un plancher, pas un compte exact : ce qu'on surveille est la PERTE. Le
+// chiffre exact cassait à chaque ligne ajoutée à raison, ce qui apprenait à
+// relever le nombre sans réfléchir — exactement ce qu'une assertion ne doit
+// pas devenir. 155 est le total du site d'avant la refonte.
+const lignes = DAYS.reduce((n, d) => n + d.items.length, 0);
+assert(`au moins 155 lignes de programme (${lignes})`, lignes >= 155);
 assert('les lignes du soir sont en fin de journée',
   DAYS.every((d) => d.items.every((it, i, a) => !it.evening || a.slice(i).every((x) => x.evening))));
 
@@ -219,6 +231,31 @@ assert('les apostrophes typographiques ont survécu',
   'aucune apostrophe ’ trouvée — probable double décodage');
 assert('aucune entité HTML résiduelle',
   ![...SPOTS, ...HOTELS].some((x) => /&(amp|lt|gt|quot|#39|nbsp);/.test(JSON.stringify(x))));
+
+// --- réservations datées ------------------------------------------------------
+// Un billet daté est la seule chose du voyage qu'on ne peut pas rattraper :
+// ces valeurs sont recopiées du billet, elles ne doivent jamais dériver.
+
+console.log('\nBillets datés');
+const nintendo = RESERVATIONS.find((r) => r.id === 'resa-nintendo');
+assert('le billet Nintendo Museum est présent', !!nintendo);
+ok('  daté du 18 novembre 2026', nintendo?.date, '2026-11-18');
+ok('  créneau 14:00 – 14:30', nintendo?.slot, '14:00 – 14:30');
+ok('  2 personnes, payé', [nintendo?.people, nintendo?.status], [2, 'payé']);
+assert('le 18 novembre porte la réservation',
+  DAYS.find((d) => d.date === '2026-11-18')?.reservationIds?.includes('resa-nintendo'));
+
+// Le musée est à Ogura (Uji), au sud-est ; Arashiyama est à l'ouest. Les deux
+// le même jour, c'est 1h15 de train en plein après-midi : la journée du 18 ne
+// doit plus jamais repasser par Arashiyama.
+const j18 = DAYS.find((d) => d.date === '2026-11-18');
+assert('le 18 novembre ne repart pas à Arashiyama',
+  !/arashiyama|bambouseraie|togetsukyo|tenryu/i.test(JSON.stringify(j18?.items)));
+assert('Arashiyama a bien une journée à lui',
+  DAYS.some((d) => /Arashiyama/i.test(d.title || '')));
+assert('chaque spot cité par une réservation existe',
+  RESERVATIONS.every((r) => !r.spotId || SPOTS.some((s) => s.id === r.spotId)),
+  RESERVATIONS.filter((r) => r.spotId && !SPOTS.some((s) => s.id === r.spotId)).map((r) => r.spotId).join(', '));
 
 // --- images -------------------------------------------------------------------
 

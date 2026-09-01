@@ -13,6 +13,8 @@ import { enriched as ADDITIONS } from './lib/additions.mjs';
 import { FLIGHTS as FLIGHT_DATA } from './lib/flights.mjs';
 import { SPOT_FIXES } from './lib/spot-fixes.mjs';
 import { REMOVED } from './lib/guide-removals.mjs';
+import { DAY_PLAN } from './lib/day-plan.mjs';
+import { RESERVATIONS } from './lib/reservations.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (f) => fs.readFileSync(path.join(ROOT, 'legacy', f), 'utf8');
@@ -312,6 +314,28 @@ function parseDays(STEPS) {
       });
     }
   }
+
+  // Journées recalées à la main (voir tools/lib/day-plan.mjs) : elles
+  // remplacent titre, lignes et conseil, day-additions.json compris.
+  for (const d of DAYS) {
+    const plan = DAY_PLAN[d.date];
+    if (!plan) continue;
+    if (plan.title) d.title = plan.title;
+    if (plan.tip !== undefined) d.tip = plan.tip;
+    if (plan.items) {
+      d.items = plan.items
+        .map((x) => ({ text: x.text, evening: !!x.evening }))
+        .sort((a, b) => Number(a.evening) - Number(b.evening));
+    }
+    // rendez-vous daté : il remonte sur la journée
+    const resas = RESERVATIONS.filter((r) => r.date === d.date);
+    if (resas.length) d.reservationIds = resas.map((r) => r.id);
+  }
+
+  const planned = Object.keys(DAY_PLAN);
+  const missing = planned.filter((date) => !DAYS.some((d) => d.date === date));
+  if (missing.length) throw new Error(`day-plan.mjs vise des dates inexistantes : ${missing.join(', ')}`);
+
   return DAYS;
 }
 
@@ -437,8 +461,20 @@ const PRIORITY_NAMES = { ob: 'Obligatoire', top: 'À voir', symp: 'Sympa', niche
 function parseSpots() {
   const src = read('guide.html');
   const { meta, def } = parseSpotMeta();
-  // Notices historiques, vérifiées sur sources et tenues dans tools/lib/lore.json.
-  const LORE = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/lore.json'), 'utf8'));
+  // Notices historiques, vérifiées sur sources. Elles sont écrites par lots
+  // (une ville, une passe de recherche) : tout fichier tools/lib/lore*.json est
+  // fusionné, dans l'ordre alphabétique. Un nouveau lot se pose là, sans
+  // toucher au générateur. Une clé déjà connue est un conflit, pas un écrasement.
+  const loreDir = path.join(ROOT, 'tools/lib');
+  const LORE = {};
+  for (const f of fs.readdirSync(loreDir).filter((f) => /^lore.*\.json$/.test(f)).sort()) {
+    const lot = JSON.parse(fs.readFileSync(path.join(loreDir, f), 'utf8'));
+    for (const [id, texte] of Object.entries(lot)) {
+      if (LORE[id] && LORE[id] !== texte) throw new Error(`notice en double pour ${id} (${f})`);
+      LORE[id] = texte;
+    }
+  }
+  console.log(`  ${Object.keys(LORE).length} notices historiques`);
   const SPOTS = [];
 
   // Le META de l'ancien site est indexé par un nom parfois raccourci
@@ -575,6 +611,7 @@ writeModule('data/trip.js', 'Voyage, étapes, hôtels, trajets, budget.', [
   arrayBlock('FLIGHTS', FLIGHTS),
   `export const BUDGET = Object.freeze(${j(BUDGET)});`,
   `export const AMENITY_LABELS = Object.freeze(${j(AMENITY_LABELS)});`,
+  arrayBlock('RESERVATIONS', RESERVATIONS),
 ]);
 
 writeModule('data/days.js', 'Les 25 jours du voyage et les 30 journées type.', [
@@ -590,4 +627,9 @@ writeModule('data/spots.js', 'Les idées du guide.', [
 
 console.log(`\n  ${STEPS.length} étapes · ${EXCURSIONS.length} excursions · ${SEGMENTS.length} segments`);
 console.log(`  ${HOTELS.length} hôtels · ${DAYS.length} jours · ${TEMPLATES.length} journées type · ${SPOTS.length} spots`);
-console.log('\nExtraction terminée. Lancer `node tools/verify.mjs`.');
+// L'extraction repart des pages d'origine, où les photos sont encore des URL
+// Wikimedia : elle ANNULE la relocalisation dans img/. Sans le rappel, le mode
+// hors-ligne redevient un mensonge sans que personne s'en aperçoive.
+console.log('\nExtraction terminée. Enchaîner, dans cet ordre :');
+console.log('  node tools/fetch-images.mjs   (réécrit les photos vers img/)');
+console.log('  node tools/verify.mjs');

@@ -26,6 +26,8 @@ import { DAYS, TEMPLATES } from './data/days.js';
 import { AVANT, SURPLACE, METEO } from './data/pratique.js';
 import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
+import { RESERVATIONS } from './data/trip.js';
+import { resaStrip, resasForDate, resaCard } from './app/resa.js';
 
 mountChrome('aujourdhui.html');
 
@@ -91,6 +93,15 @@ function before() {
     <div class="meteo" id="meteo">${meteoSkeleton()}</div>
   </section>
 
+  ${RESERVATIONS.length ? `
+  <section class="section">
+    <div class="shead">
+      <h2>Billets datés</h2>
+      <p>Payés, à une heure précise. Ce sont les seuls rendez-vous du voyage qu'on ne peut pas déplacer.</p>
+    </div>
+    ${RESERVATIONS.map((r) => resaCard(r, { withDate: true })).join('')}
+  </section>` : ''}
+
   ${knowBlock()}
 
   <section class="section">
@@ -154,6 +165,12 @@ function during(d) {
     </div>
   </section>` : ''}
 
+  ${resasForDate(d.date).length ? `
+  <section class="section">
+    <div class="shead"><h2>Le rendez-vous du jour</h2></div>
+    ${resaStrip(d.date)}
+  </section>` : ''}
+
   <section class="section">
     <div class="shead"><h2>Programme</h2></div>
     ${dayCard(d)}
@@ -179,6 +196,7 @@ function during(d) {
   ${tomorrow ? `
   <section class="section">
     <div class="shead"><h2>Demain</h2><span class="shead__meta data">${formatDate(tomorrow.date)}</span></div>
+    ${resaStrip(tomorrow.date)}
     ${dayCard(tomorrow)}
   </section>` : ''}
 

@@ -48,6 +48,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 import { CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, today } from './app/ui.js';
+import { resaStrip, resasForDate } from './app/resa.js';
 
 mountChrome('itineraire.html');
 const q = (id) => document.getElementById(id);
@@ -264,12 +265,14 @@ function renderDay(d, c) {
       <span class="day__title">
         <b>${esc(d.title)}</b>
         ${kind ? `<span class="day__kind">${kind}</span>` : ''}
+        ${resasForDate(d.date).length ? '<span class="day__kind day__kind--resa">billet daté</span>' : ''}
       </span>
       <span class="day__count mut data">${d.items.length}</span>
       <span class="day__car" aria-hidden="true">›</span>
     </summary>
 
     <div class="day__body">
+      ${resaStrip(d.date)}
       <ul class="day__items">
         ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
       </ul>

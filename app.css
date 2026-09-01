@@ -407,6 +407,10 @@
     font-size: var(--t-xs); font-weight: 600; color: var(--mut);
     border: 1px solid var(--line-2); border-radius: var(--r-s); padding: 1px var(--s-2);
   }
+  .day__kind--resa {
+    color: var(--acc); border-color: color-mix(in srgb, var(--acc) 40%, transparent);
+    background: var(--acc-soft);
+  }
   .day__count { flex: none; font-size: var(--t-xs); }
   .day__car { flex: none; color: var(--mut); font-size: var(--t-lg); transition: transform .18s; }
   .day[open] .day__car { transform: rotate(90deg); }
@@ -571,6 +575,9 @@
      chiffres : une couverture. */
   .cover { position: relative; height: min(86vh, 760px); overflow: hidden; }
   .cover__img { width: 100%; height: 100%; object-fit: cover; object-position: center 58%; }
+  /* Pratique et Guide n'ouvrent pas sur une double page : une bande suffit. */
+  .cover--short { height: min(46vh, 380px); }
+  .cover--short .cover__text h1 { font-size: clamp(2.25rem, 6vw, 3.75rem); }
   .cover::after {
     content: ""; position: absolute; inset: 0;
     background: linear-gradient(180deg, rgb(26 21 18 / .42) 0%, rgb(26 21 18 / .08) 42%, rgb(26 21 18 / .74) 100%);
@@ -883,9 +890,15 @@
   /* pratique : les hébergements ---------------------------------------------
      Les six fiches sortent du même gabarit. Une information absente s'écrit
      « non communiquée » : escamoter la ligne rendait les fiches incomparables. */
-  .hotel { display: grid; grid-template-columns: 320px minmax(0, 1fr); margin-bottom: var(--s-5); }
-  /* Une grande photo puis trois vignettes : quatre cases en 2×2 laissaient un
-     trou, la quatrième image n'ayant pas de voisine. */
+  /* La colonne photo pèse plus que le texte, et change de côté d'une fiche à
+     l'autre — même respiration que les blocs de villes de l'accueil. On dort
+     23 nuits dans ces six adresses : elles méritent mieux qu'une vignette. */
+  .hotel {
+    display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    margin-bottom: var(--s-6); align-items: stretch; overflow: hidden;
+  }
+  .hotel:nth-of-type(even) .hotel__shots { order: 2; }
+
   .hotel__shots {
     position: relative; display: grid; gap: 2px;
     grid-template-columns: repeat(3, 1fr);
@@ -893,11 +906,13 @@
     background: var(--paper-3);
   }
   .hotel__shots img:not(:first-child) { aspect-ratio: 1; }
-  .hotel__shots img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in; }
-  .hotel__shots img:first-child { grid-column: 1 / -1; aspect-ratio: 3 / 2; }
-  .hotel__step { position: absolute; top: var(--s-3); left: var(--s-3); }
+  .hotel__shots img { width: 100%; height: 100%; object-fit: cover; cursor: zoom-in;
+                      transition: transform .5s cubic-bezier(.2,.7,.3,1); }
+  .hotel__shots img:first-child { grid-column: 1 / -1; aspect-ratio: 4 / 3; }
+  .hotel__shots img:hover { transform: scale(1.03); }
+  .hotel__step { position: absolute; top: var(--s-3); left: var(--s-3); z-index: 1; }
 
-  .hotel__body { padding: var(--s-5); }
+  .hotel__body { padding: var(--s-6) var(--s-5); align-self: center; }
   .hotel__head { display: flex; gap: var(--s-4); align-items: baseline;
                  justify-content: space-between; flex-wrap: wrap; }
   .hotel__head h3 { font-size: var(--t-lg); }
@@ -942,6 +957,7 @@
 
   @media (max-width: 820px) {
     .hotel { grid-template-columns: 1fr; }
+    .hotel:nth-of-type(even) .hotel__shots { order: 0; }
     .hotel__shots { grid-template-rows: auto auto; }
     .hotel__body { padding: var(--s-4); }
   }
@@ -1444,4 +1460,56 @@
     background: var(--acc); transition: width .2s linear;
   }
   .offline button[disabled] { opacity: .5; cursor: default; }
+}
+
+/* --- billets datés ---------------------------------------------------------
+   Un billet à créneau est la seule chose du voyage qu'on ne peut pas rattraper.
+   Il ne se replie pas et il porte l'accent, contrairement au reste du
+   programme : il faut le voir sans le chercher. */
+@layer components {
+  .resa {
+    display: grid; grid-template-columns: 5.5rem 1fr; gap: 1.25rem;
+    padding: 1.15rem 1.25rem; margin: 0 0 .9rem;
+    background: var(--acc-soft);
+    border: 1px solid color-mix(in srgb, var(--acc) 28%, transparent);
+    border-left: 3px solid var(--acc);
+    border-radius: var(--r-m);
+  }
+  .resa--past { opacity: .55; filter: saturate(.4); }
+
+  .resa__slot { text-align: center; padding-top: .1rem; }
+  .resa__slot b {
+    display: block; font-size: 1.5rem; line-height: 1.1;
+    color: var(--acc); letter-spacing: -.02em;
+  }
+  .resa__slot .label {
+    display: block; margin-top: .2rem;
+    font-family: var(--f-data); font-size: var(--t-xs);
+    color: var(--mut); white-space: nowrap;
+  }
+
+  .resa__title { margin: 0; font-size: 1.05rem; line-height: 1.25; }
+  .resa__meta { margin: .25rem 0 .6rem; font-size: var(--t-xs); font-family: var(--f-data); }
+
+  .resa__notes { margin: 0; padding: 0; list-style: none; display: grid; gap: .3rem; }
+  .resa__notes li {
+    position: relative; padding-left: .95rem;
+    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
+  }
+  .resa__notes li::before {
+    content: ''; position: absolute; left: 0; top: .55em;
+    width: 4px; height: 4px; border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--acc) 55%, transparent);
+  }
+  .resa__access {
+    margin: .7rem 0 0; padding-top: .6rem;
+    border-top: 1px dashed color-mix(in srgb, var(--acc) 25%, transparent);
+    font-size: var(--t-xs); color: var(--mut);
+  }
+
+  @media (max-width: 40rem) {
+    .resa { grid-template-columns: 1fr; gap: .55rem; }
+    .resa__slot { text-align: left; display: flex; align-items: baseline; gap: .6rem; }
+    .resa__slot b { font-size: 1.25rem; }
+  }
 }
