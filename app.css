@@ -1595,3 +1595,76 @@
   .budget__total .mut,
   .budget__total .label { color: var(--paper); }
 }
+
+/* --- une réservation, avec son visage --------------------------------------
+   « Réserver Rurikō-in avant le 5 novembre » ne dit rien si on ne sait pas ce
+   que c'est ni où ça se trouve. La photo, la description et l'adresse viennent
+   de la fiche du guide ; il ne reste à écrire ici que l'échéance et le canal. */
+@layer components {
+  .resa-item {
+    display: grid; grid-template-columns: 132px minmax(0, 1fr);
+    gap: var(--s-5); align-items: start;
+  }
+  /* Sans photo (une démarche administrative, un pass), la grille à deux
+     colonnes tassait tout le texte dans les 132 px réservés à l'image. */
+  .resa-item--nue { grid-template-columns: 1fr; }
+
+  .resa-item__shot {
+    width: 132px; aspect-ratio: 4 / 3; object-fit: cover;
+    border-radius: var(--r-m); background: var(--paper-3);
+  }
+  .resa-item__ou {
+    font-family: var(--f-data); font-size: var(--t-xs);
+    margin-top: var(--s-1);
+  }
+  .resa-item__quoi { font-size: var(--t-sm); color: var(--ink-2); margin-top: var(--s-2); }
+  .resa-item__prat { font-size: var(--t-xs); font-family: var(--f-data); margin-top: var(--s-2); }
+  .resa-item__actions {
+    display: flex; flex-wrap: wrap; gap: var(--s-2);
+    margin-top: var(--s-3);
+  }
+  .resa-item__actions .btn { font-size: var(--t-xs); padding: var(--s-2) var(--s-3); }
+  .resa-item__comment { font-size: var(--t-xs); margin-top: var(--s-2); }
+
+  @media (max-width: 560px) {
+    .resa-item { grid-template-columns: 1fr; gap: var(--s-3); }
+    .resa-item__shot { width: 100%; aspect-ratio: 16 / 9; }
+  }
+}
+
+/* --- protocole d'arrivée ----------------------------------------------------
+   Un seul hébergement du voyage ne se rejoint pas seul : au ryokan de Hakone,
+   on appelle depuis le 7-Eleven du port et on vient vous chercher. Cette
+   information ne sert qu'une fois, mais ce jour-là elle est la seule qui
+   compte — elle sort donc du gris des autres lignes. */
+@layer components {
+  .hotel__arrivee {
+    margin-top: var(--s-3); padding: var(--s-3) var(--s-4);
+    background: var(--acc-soft);
+    border-left: 3px solid var(--acc);
+    border-radius: var(--r-s);
+    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
+  }
+  .hotel__arrivee b { color: var(--acc); margin-right: var(--s-2); }
+}
+
+/* --- une fiche sans photo ---------------------------------------------------
+   Les cafés de spécialité, les bars et les disquaires ne sont pas sur Wikimedia
+   Commons, et un garde-fou refuse d'illustrer « SG Club » avec le Singapore
+   Recreation Club. Plutôt qu'un rectangle gris, la vignette prend la couleur de
+   la ville et l'initiale du lieu : la grille reste régulière et la carte garde
+   une identité. */
+@layer components {
+  .thumb--nue {
+    display: grid; place-items: center;
+    background:
+      linear-gradient(135deg,
+        color-mix(in srgb, var(--c, var(--mut)) 12%, var(--paper-2)),
+        color-mix(in srgb, var(--c, var(--mut)) 4%, var(--paper-3)));
+  }
+  .thumb__initiale {
+    font-size: 2.5rem; font-weight: 300; line-height: 1;
+    color: color-mix(in srgb, var(--c, var(--mut)) 45%, transparent);
+    letter-spacing: -0.04em; user-select: none;
+  }
+}

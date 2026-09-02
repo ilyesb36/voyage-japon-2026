@@ -39,7 +39,10 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'pass',
-    title: 'Les pass à acheter à l\'avance',
+    canal: 'en ligne',
+    url: 'https://www.hakonenavi.jp/international/en/discount_passes/free_pass',
+    commentReserver: 'HAKONE FREEPASS : achat en ligne avant de partir sous forme de pass numérique (smartphone) via EMot Online Tickets (emot-tickets.jp) ou Klook. Tarifs 2026 depuis Shinjuku : 2 jours 7 100 ¥ / 3 jours 7 500 ¥ (depuis Odawara : 6 000 / 6 400 ¥). Le pass numérique s\'active dans l\'appli EMot, AUCUN bon papier à échanger ; à défaut, version papier à retirer via bon aux Odakyu Sightseeing Service Centers (Shinjuku/Odawara). NIKKO PASS WORLD HERITAGE AREA : 2 jours, 3 000 ¥ adulte / 1 500 ¥ enfant. Achat en ligne officiel via Tobu (https://www.tobu.co.jp/en/ticket/nikko/city.html) de J-90 à J-2, ou via Klook. La version papier s\'échange sur bon au Tobu Tourist Information Center d\'Asakusa ; une version numérique existe (même prix, sans échange).',
+    title: 'Hakone Freepass et Nikko Pass',
     what: "Hakone Freepass (2 jours depuis Odawara) et Nikko Pass World Heritage. Pas de JR Pass : sur cet itinéraire, les billets à l'unité reviennent moins cher.",
     when: 'Avant de partir',
     tag: null,
@@ -144,18 +147,20 @@ export const METEO = Object.freeze({
 // pic des momiji, la période la plus tendue de l'année au Japon.
 //
 // `hard: true` = la date est une vraie limite, pas un conseil.
+// `spotId` / `hotelId` rattachent l'entrée à sa fiche : la photo, la
+// description et le lieu en viennent, plutôt que d'être recopiés ici.
+//
+// Le dîner kaiseki du ryokan de Hakone a été retiré de cette liste : il est
+// confirmé auprès du ryokan (18:30 les deux soirs). Ce qui est fait ne doit
+// pas rester dans une liste de choses à faire, sinon la liste ne se lit plus.
 
 export const RESERVER = Object.freeze([
   {
-    id: 'kaiseki-fukuya',
-    title: 'Confirmer le dîner kaiseki du ryokan',
-    what: "La réservation dit « dîner kaiseki à confirmer », alors que la soirée du 25 novembre est construite autour. C'est aussi la date où l'annulation gratuite du Fukuya expire : après, la chambre est due.",
-    deadline: '2026-10-27',
-    hard: true,
-    forDate: '2026-11-25',
-  },
-  {
     id: 'yakkan',
+    canal: 'en ligne',
+    url: 'https://impconf.mhlw.go.jp/',
+    tel: '+81-48-740-0800',
+    commentReserver: 'Certificat d\'importation de médicaments (輸入確認証, ex-« Yakkan Shoumei »). Pour une arrivée à Haneda (comme à Narita), le bureau régional compétent est le Kanto-Shinetsu Regional Bureau of Health and Welfare (関東信越厚生局). Demande en ligne via le système officiel impconf.mhlw.go.jp (compte à créer), ou par courriel/poste/fax avec le formulaire. Courriel du bureau : yakkan@mhlw.go.jp (y joindre diagnostic, principes actifs, posologie et quantités ; le formulaire en anglais est aussi téléchargeable sur les sites des ambassades du Japon, ex. fr.emb-japan.go.jp). Délai annoncé : déposer la demande au moins 1 semaine avant le départ, davantage en période de forte affluence / fêtes japonaises. Tél. du bureau : 048-740-0800.',
     title: 'Certificat médicaments (Yakkan Shoumei), si besoin',
     what: "Nécessaire au-delà d'un mois de traitement ou pour tout produit à codéine ou pseudoéphédrine. Deux semaines de délai minimum.",
     deadline: '2026-10-15',
@@ -163,6 +168,11 @@ export const RESERVER = Object.freeze([
   },
   {
     id: 'shibuya-sky',
+    canal: 'en ligne',
+    url: 'https://www.shibuya-scramble-square.com/sky/en/ticket/',
+    commentReserver: 'Billetterie officielle en ligne avec date et créneau horodaté (moins cher qu\'au guichet). La vente ouvre environ 4 semaines à l\'avance, à minuit heure du Japon : pour le 11 nov 2026, viser l\'ouverture vers le 14 oct. Les créneaux au coucher du soleil (le plus prisé commence ~40 min avant le coucher, soit vers 16h20-16h30 mi-novembre) partent en quelques minutes, il faut réserver dès l\'ouverture. Tarif adulte en ligne ~2 600-3 400 ¥ selon le créneau, le coucher de soleil étant au tarif haut ; prix exact par tranche non confirmé sur la page officielle.',
+    check: true,
+    spotId: 'spot-shibuya-sky',
     title: 'Shibuya Sky, créneau coucher de soleil',
     what: "Les créneaux du couchant partent des semaines à l'avance, et c'est la tranche la plus chère. Coucher de soleil vers 16h35 à la mi-novembre.",
     deadline: '2026-10-11',
@@ -170,6 +180,11 @@ export const RESERVER = Object.freeze([
   },
   {
     id: 'teamlab',
+    canal: 'en ligne',
+    url: 'https://teamlabplanets.dmm.com/en/ticket',
+    commentReserver: 'Billetterie officielle (boutique DMM), billet horodaté obligatoire, adulte 3 600 ¥. Les ventes ouvrent environ un mois à l\'avance (les dates de décembre sont mises en vente fin septembre), donc le créneau du 13 nov au matin devrait ouvrir mi-octobre. Site très demandé à Toyosu, il se vend plusieurs semaines à l\'avance : réserver le créneau du matin dès l\'ouverture. Fenêtre exacte d\'ouverture non confirmée officiellement.',
+    check: true,
+    spotId: 'spot-teamlab-planets',
     title: 'teamLab Planets, Toyosu',
     what: "Entrée par créneau horaire, aucun guichet sur place : sans billet, on ne rentre pas.",
     deadline: '2026-10-13',
@@ -177,44 +192,39 @@ export const RESERVER = Object.freeze([
   },
   {
     id: 'ninja',
+    canal: 'téléphone',
+    url: 'https://visitkanazawa.jp/en/spot/detail_50022.html',
+    tel: '+81-76-241-0888',
+    commentReserver: 'Réservation obligatoire et UNIQUEMENT par téléphone : aucun système de réservation en ligne n\'existe (toujours vrai en 2025/2026). On peut réserver en anglais au téléphone (personnel anglophone), donc pas besoin de parler japonais pour réserver. En revanche la visite est guidée en groupe et commentée en japonais (~40 min) ; un livret de traduction est fourni aux visiteurs étrangers. Réserver plusieurs jours à l\'avance ; ligne ouverte ~8h30-17h. L\'URL est la fiche touristique officielle de Kanazawa (référence, pas de résa en ligne).',
+    spotId: 'spot-temple-ninja-myoryu-ji',
     title: 'Temple ninja (Myoryu-ji), Kanazawa',
     what: "Visite guidée uniquement sur réservation téléphonique, créneaux courts et peu nombreux. Paiement en espèces sur place.",
     deadline: '2026-10-15',
     forDate: '2026-11-15',
   },
   {
-    id: 'kodaiji',
-    title: 'Illumination de Kodai-ji',
-    what: "Illumination du 15 novembre au 7 décembre. Sans billet daté, compter une heure de queue les soirs de week-end — le 17 est un mardi, c'est plus clément.",
-    deadline: '2026-11-03',
-    forDate: '2026-11-17',
-  },
-  {
     id: 'rurikoin',
+    canal: 'en ligne',
+    url: 'https://rurikoin.komyoji.com/',
+    commentReserver: 'Ouverture d\'automne ~1er oct-13 déc 2026, 10h-17h (dernière entrée 16h30), 2 000 ¥ adulte payés en espèces sur place. En pleine saison des érables (env. 8 nov-7 déc en 2025) l\'accès se fait sur réservation à créneau horaire via le site officiel, le plus souvent par tirage au sort (抽選) ouvert vers octobre — pas de vente libre. Le 19 nov tombe dans la fenêtre à réservation : surveiller l\'ouverture des inscriptions sur le site officiel dès début octobre. Modalités/URL exactes du système 2026 pas encore publiées au 2 sept.',
+    check: true,
+    spotId: 'spot-ruriko-in',
     title: 'Rurikō-in, créneau d\'automne',
     what: "Ouvert du 1er octobre au 13 décembre seulement, sur réservation de créneau. C'est le reflet des érables sur la table laquée — les créneaux de novembre partent en premier.",
     deadline: '2026-11-05',
     forDate: '2026-11-19',
   },
   {
-    id: 'eikando',
-    title: 'Illumination d\'Eikan-do',
-    what: "Billet de nuit distinct de celui de la journée. Le site en fait « LE moment momiji du voyage » : autant ne pas le jouer à l'arrivée.",
-    deadline: '2026-11-05',
-    forDate: '2026-11-19',
-  },
-  {
     id: 'rikugien',
+    canal: 'en ligne',
+    url: 'https://www.tokyo-park.or.jp/event_search/special_nighttime_viewing_in_autumn.html',
+    commentReserver: 'Illumination nocturne d\'automne du jardin (2025 : 28 nov-9 déc, 18h-20h30, dernière entrée 19h30). Billet à créneau : en ligne à l\'avance via la plateforme Asoview (asoview.com) au tarif réduit 1 000 ¥ (file prioritaire, quotas limités par soir), ou au guichet le jour même 1 200 ¥ ; l\'achat en ligne se fait au plus tard la veille. Le portail de vente ouvre fin octobre. Dates 2026 pas encore publiées ; le 1er déc tombe dans la fenêtre habituelle. La page officielle du Tokyo Metropolitan Park Association renvoie vers Asoview à l\'ouverture des ventes.',
+    check: true,
+    spotId: 'spot-rikugi-en',
     title: 'Illumination de Rikugi-en',
     what: "Le jardin ferme à 17h puis rouvre pour l'illumination, avec un billet séparé et, ces dernières années, un créneau horaire à réserver en ligne. Modalités 2026 à vérifier.",
     deadline: '2026-11-15',
     forDate: '2026-12-01',
     check: true,
-  },
-  {
-    id: 'pass',
-    title: 'Hakone Freepass et Nikko Pass',
-    what: "Achetables en ligne à l'avance, sans urgence de quota — mais autant les avoir avant de partir plutôt qu'au guichet, un matin de départ.",
-    deadline: '2026-11-01',
   },
 ]);

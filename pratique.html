@@ -145,6 +145,7 @@ q('hotels').innerHTML = HOTELS.map((h) => {
         ? '<p class="hotel__flag hotel__flag--soft">Annulation gratuite</p>'
         : '<p class="hotel__flag hotel__flag--soft">Non remboursable</p>'}
 
+      ${h.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(h.arrivee)}</p>` : ''}
       ${h.access ? `<p class="hotel__access">${esc(h.access)}</p>` : ''}
 
       ${seg ? `<details class="hotel__route">

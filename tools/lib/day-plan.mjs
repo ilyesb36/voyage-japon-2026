@@ -46,20 +46,6 @@ export const DAY_PLAN = {
   },
 
   '2026-11-19': {
-    title: 'Le chemin de la philosophie',
-    items: [
-      { text: 'Nanzen-ji et son aqueduc, puis le chemin au fil de l’eau' },
-      { text: 'Honen-in, Ginkaku-ji — le pavillon d’argent' },
-      { text: 'Konkai Komyo-ji (Kurodani) en chemin : immense, gratuit, presque personne' },
-      { text: 'Déjeuner dans un café au fil de l’eau, le long du chemin' },
-      { text: 'Rurikō-in : le reflet des érables sur la table laquée. Ligne Eizan depuis Demachiyanagi, à deux pas du chemin (résa obligatoire)' },
-      { text: 'Soir : illuminations d’Eikan-do, LE moment momiji du voyage', evening: true },
-      { text: 'Soir : yudofu ou obanzai chaud après les illuminations', evening: true },
-    ],
-    tip: '💡 Rurikō-in et le chemin de la philosophie sont sur le même axe nord-est : la ligne Eizan part de Demachiyanagi, au bout du chemin. À réserver, le créneau se remplit en novembre.',
-  },
-
-  '2026-11-20': {
     title: 'Kyoto nord-ouest',
     items: [
       { text: 'Kinkaku-ji, le pavillon d’or, à l’ouverture — puis Ryoan-ji à 15 min à pied' },
@@ -72,6 +58,24 @@ export const DAY_PLAN = {
       { text: 'Soir : glace kinako chez Gion Kinana, planquée dans Gion', evening: true },
     ],
     tip: '💡 Kinkaku-ji, Ryoan-ji, Ninna-ji et Kitano Tenmangu tiennent dans une seule boucle : ils sont alignés sur la même ligne de bus. Kinkaku-ji d’abord, c’est le plus pris d’assaut.',
+  },
+
+  '2026-11-20': {
+    // L'illumination d'Eikan-do commence le 20 novembre : elle était programmée
+    // le 19, soit la veille de l'ouverture. Le 19 et le 20 sont donc échangés —
+    // la journée reste la bonne (Eikan-do est sur le chemin de la philosophie),
+    // c'est la date qui était fausse d'un jour.
+    title: 'Le chemin de la philosophie',
+    items: [
+      { text: 'Nanzen-ji et son aqueduc, puis le chemin au fil de l’eau' },
+      { text: 'Honen-in, Ginkaku-ji — le pavillon d’argent' },
+      { text: 'Konkai Komyo-ji (Kurodani) en chemin : immense, gratuit, presque personne' },
+      { text: 'Déjeuner dans un café au fil de l’eau, le long du chemin' },
+      { text: 'Rurikō-in : le reflet des érables sur la table laquée. Ligne Eizan depuis Demachiyanagi, à deux pas du chemin (résa obligatoire)' },
+      { text: 'Soir : illuminations d’Eikan-do, LE moment momiji du voyage — c’est le premier soir de la saison, elle ouvre ce 20 novembre', evening: true },
+      { text: 'Soir : yudofu ou obanzai chaud après les illuminations', evening: true },
+    ],
+    tip: '💡 Rurikō-in et le chemin de la philosophie sont sur le même axe nord-est : la ligne Eizan part de Demachiyanagi, au bout du chemin. Billet d’Eikan-do de nuit distinct de celui du jour, à prendre sur place — arriver avant l’ouverture à 17h30, le premier soir attire du monde.',
   },
 
   '2026-11-21': {
@@ -146,5 +150,22 @@ export const DAY_PLAN = {
       { text: 'Vol 20:15', evening: true },
     ],
     tip: '💡 Gardez ~2 000 ¥ pour le dernier ramen à l’aéroport. Le remboursement de la détaxe se fait à Haneda, avant l’enregistrement : c’est la première chose à faire en arrivant, pas la dernière.',
+  },
+
+  '2026-11-25': {
+    // Confirmé par échange avec le ryokan : arrivée 14:30-15:00 au port,
+    // appel depuis le 7-Eleven, dîner à 18:30 les deux soirs. C'est le seul
+    // hébergement du voyage qu'on ne rejoint pas tout seul.
+    items: [
+      { text: 'Shinkansen Hikari → Odawara (~2h15). Kamaboko d’Odawara à grignoter en gare avant le bus' },
+      { text: 'Faire suivre les valises depuis la gare de Yumoto : la suite se fait en bus et en bateau' },
+      { text: 'Bus Tozan → port de Moto-Hakone, arrivée annoncée entre 14:30 et 15:00' },
+      { text: '☎ Appeler le ryokan depuis le 7-Eleven du port, comme convenu — ils viennent chercher. Retard de train : prévenir avant 17:00' },
+      { text: 'Check-in : yukata, thé, premier bain avant la nuit' },
+      { text: 'Torii de Hakone-jinja les pieds dans le lac, à deux pas du ryokan' },
+      { text: 'Dîner kaiseki en chambre à 18:30 — le grand soir du voyage', evening: true },
+      { text: 'Bain extérieur privatif une seconde fois, la nuit tombée', evening: true },
+    ],
+    tip: '💡 Le check-in du Fukuya est la contrainte la plus serrée du voyage : 15:00 – 18:00, pas après. L’appel depuis le 7-Eleven n’est pas une option, c’est comme ça qu’on est récupéré.',
   },
 };

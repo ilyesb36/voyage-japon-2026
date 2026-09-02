@@ -1,0 +1,490 @@
+{
+  "2026-11-09": {
+    "0": [
+      "haneda-airport"
+    ],
+    "4": [
+      "senso-ji"
+    ]
+  },
+  "2026-11-10": {
+    "0": [
+      "senso-ji",
+      "nakamise-dori"
+    ],
+    "1": [
+      "sumida-park",
+      "tokyo-skytree"
+    ],
+    "2": [
+      "kappabashi"
+    ],
+    "3": [
+      "kagetsudo"
+    ],
+    "4": [
+      "daikokuya",
+      "yadoroku"
+    ],
+    "5": [
+      "nakamise-dori",
+      "senso-ji"
+    ],
+    "6": [
+      "monjayaki-tsukishima"
+    ]
+  },
+  "2026-11-11": {
+    "0": [
+      "meiji-jingu"
+    ],
+    "1": [
+      "takeshita-dori",
+      "cat-street"
+    ],
+    "2": [
+      "shibuya-crossing",
+      "shibuya-center-gai"
+    ],
+    "3": [
+      "kiddy-land"
+    ],
+    "4": [
+      "afuri-harajuku"
+    ],
+    "5": [
+      "shibuya-sky"
+    ],
+    "6": [
+      "uobei-shibuya",
+      "nonbei-yokocho"
+    ]
+  },
+  "2026-11-12": {
+    "0": [
+      "tobu-asakusa"
+    ],
+    "1": [
+      "kanmangafuchi",
+      "tamozawa",
+      "toshogu",
+      "futarasan-jinja",
+      "rinno-ji",
+      "shoyoen",
+      "shinkyo"
+    ],
+    "2": [
+      "lac-chuzenji",
+      "cascade-kegon"
+    ]
+  },
+  "2026-11-13": {
+    "0": [
+      "ueno-park",
+      "shinobazu-pond",
+      "tokyo-national-museum",
+      "ueno-zoo"
+    ],
+    "1": [
+      "yanaka-ginza",
+      "yanaka-cemetery"
+    ],
+    "2": [
+      "kanda-myojin",
+      "nezu-jinja"
+    ],
+    "3": [
+      "ueno-ameyoko"
+    ],
+    "4": [
+      "yanaka-ginza"
+    ],
+    "6": [
+      "teamlab-planets",
+      "akihabara"
+    ]
+  },
+  "2026-11-14": {
+    "0": [
+      "tsukiji"
+    ],
+    "2": [
+      "katamachi"
+    ],
+    "3": [
+      "higashi-chaya",
+      "katamachi"
+    ],
+    "4": [
+      "tsuzumi-mon"
+    ],
+    "5": [
+      "katamachi"
+    ]
+  },
+  "2026-11-15": {
+    "0": [
+      "kenroku-en"
+    ],
+    "1": [
+      "kanazawa-castle",
+      "nagamachi",
+      "nomura-ke"
+    ],
+    "2": [
+      "omicho"
+    ],
+    "3": [
+      "omicho",
+      "morimori"
+    ],
+    "4": [
+      "temple-ninja",
+      "musee-21e"
+    ],
+    "5": [
+      "higashi-chaya"
+    ],
+    "6": [
+      "oyama-jinja"
+    ]
+  },
+  "2026-11-16": {
+    "1": [
+      "nijo-castle"
+    ],
+    "2": [
+      "nishiki-market"
+    ],
+    "3": [
+      "heian-jingu"
+    ],
+    "4": [
+      "gion-shirakawa"
+    ],
+    "5": [
+      "gion-shirakawa"
+    ]
+  },
+  "2026-11-17": {
+    "0": [
+      "fushimi-inari"
+    ],
+    "1": [
+      "kiyomizu-dera",
+      "hokan-ji",
+      "sannenzaka"
+    ],
+    "2": [
+      "tofuku-ji"
+    ],
+    "3": [
+      "maruyama-park"
+    ],
+    "5": [
+      "kodai-ji"
+    ],
+    "6": [
+      "yasaka-jinja",
+      "kodai-ji"
+    ]
+  },
+  "2026-11-18": {
+    "0": [
+      "byodo-in"
+    ],
+    "1": [
+      "nakamura-tokichi"
+    ],
+    "2": [
+      "ujigami-jinja"
+    ],
+    "3": [
+      "byodo-in"
+    ],
+    "4": [
+      "nakamura-tokichi"
+    ],
+    "5": [
+      "nintendo-museum"
+    ]
+  },
+  "2026-11-19": {
+    "0": [
+      "nanzen-ji"
+    ],
+    "1": [
+      "honen-in",
+      "ginkaku-ji"
+    ],
+    "2": [
+      "konkai-komyoji"
+    ],
+    "4": [
+      "ruriko-in",
+      "demachiyanagi"
+    ],
+    "5": [
+      "eikan-do"
+    ]
+  },
+  "2026-11-20": {
+    "0": [
+      "kinkaku-ji",
+      "ryoan-ji"
+    ],
+    "1": [
+      "ninna-ji",
+      "daitoku-ji"
+    ],
+    "2": [
+      "kitano-tenmangu"
+    ],
+    "3": [
+      "honke-owariya",
+      "matsuba"
+    ],
+    "4": [
+      "nishiki-market"
+    ],
+    "5": [
+      "pontocho"
+    ],
+    "6": [
+      "pontocho"
+    ],
+    "7": [
+      "gion-kinana"
+    ]
+  },
+  "2026-11-21": {
+    "0": [
+      "to-ji"
+    ],
+    "1": [
+      "bambouseraie"
+    ],
+    "2": [
+      "tenryu-ji"
+    ],
+    "3": [
+      "togetsukyo",
+      "iwatayama-monkey-park",
+      "kimono-forest"
+    ],
+    "4": [
+      "otagi-nenbutsu-ji"
+    ],
+    "5": [
+      "jojakko-ji"
+    ],
+    "6": [
+      "okochi-sanso"
+    ],
+    "7": [
+      "kimono-forest"
+    ]
+  },
+  "2026-11-22": {
+    "1": [
+      "kuromon-market"
+    ],
+    "2": [
+      "denden-town"
+    ],
+    "3": [
+      "rikuro-namba"
+    ],
+    "4": [
+      "dotonbori",
+      "glico-ebisubashi"
+    ],
+    "5": [
+      "hozenji-yokocho",
+      "dotonbori"
+    ]
+  },
+  "2026-11-23": {
+    "0": [
+      "osaka-castle"
+    ],
+    "1": [
+      "shitenno-ji"
+    ],
+    "2": [
+      "tsutenkaku",
+      "daruma-shinsekai"
+    ],
+    "3": [
+      "horai-namba"
+    ],
+    "4": [
+      "namba-yasaka"
+    ],
+    "5": [
+      "sumiyoshi-taisha"
+    ],
+    "6": [
+      "umeda-sky",
+      "shochikuza"
+    ]
+  },
+  "2026-11-24": {
+    "1": [
+      "todai-ji",
+      "parc-de-nara"
+    ],
+    "2": [
+      "kofuku-ji",
+      "kasuga-taisha"
+    ],
+    "4": [
+      "yoshikien",
+      "isuien"
+    ],
+    "5": [
+      "nakatanidou"
+    ],
+    "6": [
+      "nigatsu-do"
+    ]
+  },
+  "2026-11-25": {
+    "0": [
+      "odawara-station",
+      "motohakone-port",
+      "ryokan-fukuya"
+    ],
+    "1": [
+      "hakone-yumoto"
+    ],
+    "2": [
+      "ryokan-fukuya"
+    ],
+    "4": [
+      "torii-hakone-jinja"
+    ]
+  },
+  "2026-11-26": {
+    "0": [
+      "owakudani"
+    ],
+    "1": [
+      "owakudani"
+    ],
+    "2": [
+      "togendai",
+      "torii-hakone-jinja"
+    ],
+    "3": [
+      "gora"
+    ],
+    "4": [
+      "pola-museum"
+    ]
+  },
+  "2026-11-27": {
+    "0": [
+      "musee-plein-air"
+    ],
+    "1": [
+      "odawara-station",
+      "kanamecho"
+    ],
+    "2": [
+      "kanamecho"
+    ],
+    "3": [
+      "sunshine-city"
+    ],
+    "4": [
+      "onigiri-bongo"
+    ],
+    "5": [
+      "sunshine-city"
+    ]
+  },
+  "2026-11-28": {
+    "1": [
+      "cup-noodles-museum"
+    ],
+    "2": [
+      "minato-mirai",
+      "yamashita-park",
+      "brique-rouge"
+    ],
+    "3": [
+      "cosmo-world",
+      "chinatown"
+    ],
+    "4": [
+      "brique-rouge"
+    ],
+    "5": [
+      "minato-mirai"
+    ]
+  },
+  "2026-11-29": {
+    "0": [
+      "grand-bouddha",
+      "hase-dera"
+    ],
+    "1": [
+      "komachi-dori"
+    ],
+    "2": [
+      "enoshima"
+    ],
+    "3": [
+      "hokoku-ji"
+    ],
+    "4": [
+      "kamakurakokomae"
+    ],
+    "6": [
+      "plage-yuigahama"
+    ]
+  },
+  "2026-11-30": {
+    "0": [
+      "imperial-palace-east-gardens",
+      "kitanomaru-park"
+    ],
+    "1": [
+      "kitanomaru-park",
+      "nippon-budokan",
+      "momat"
+    ],
+    "2": [
+      "gotoku-ji"
+    ],
+    "4": [
+      "todoroki-valley"
+    ],
+    "5": [
+      "kameido-tenjin"
+    ]
+  },
+  "2026-12-01": {
+    "0": [
+      "tokyo-character-street"
+    ],
+    "1": [
+      "ghibli-museum"
+    ],
+    "2": [
+      "itoya-ginza"
+    ],
+    "5": [
+      "rikugi-en"
+    ]
+  },
+  "2026-12-02": {
+    "3": [
+      "haneda-airport"
+    ],
+    "4": [
+      "haneda-airport"
+    ]
+  }
+}

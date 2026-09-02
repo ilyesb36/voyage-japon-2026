@@ -22,6 +22,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <script type="module">
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
+import { SPOTS } from './data/spots.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { AVANT, SURPLACE, METEO, RESERVER } from './data/pratique.js';
 import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
@@ -133,19 +134,51 @@ function reserverBlock() {
         const j = daysBetween(now, r.deadline);
         const passe = j < 0;
         const urgent = !passe && j <= 14;
+        // La fiche du guide fournit la photo, la description et l'adresse :
+        // « réserver Rurikō-in » ne dit rien si on ne sait pas ce que c'est.
+        const spot = r.spotId ? SPOTS.find((x) => x.id === r.spotId) : null;
+        const hotel = r.hotelId ? HOTELS.find((x) => x.id === r.hotelId) : null;
+        const ville = spot ? CITIES[spot.cityId] : hotel ? CITIES[hotel.cityId] : null;
+        const img = spot?.img || hotel?.images?.[0] || null;
+        const maps = spot?.maps || hotel?.maps || null;
+        // `area` répète tantôt la ville (« Tokyo · tokyo »), tantôt le lieu
+        // lui-même (« Rurikō-in · rurikō-in »). On ne le garde que s'il nomme
+        // vraiment un quartier, et on lui remet sa majuscule.
+        const brut = spot?.area || hotel?.address || null;
+        const plat = (x) => (x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const utile = brut
+          && plat(brut) !== plat(ville?.name)
+          && !plat(spot?.name || hotel?.name).includes(plat(brut));
+        const quartier = utile ? brut.charAt(0).toUpperCase() + brut.slice(1) : null;
+        const lieu = [ville?.name, quartier].filter(Boolean).join(' · ');
+
         return `
-        <li class="todo__item${passe ? ' todo__item--past' : ''}">
-          <div class="todo__head">
-            <h3>${esc(r.title)}</h3>
-            ${r.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
-            ${r.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
-            <span class="todo__when${urgent ? ' is-urgent' : ''}">
-              ${passe ? `échéance passée (${formatDate(r.deadline)})`
-                      : `avant le ${formatDate(r.deadline)} · J−${j}`}
-            </span>
+        <li class="todo__item resa-item${img ? '' : ' resa-item--nue'}${passe ? ' todo__item--past' : ''}">
+          ${img ? `<img class="resa-item__shot" src="${esc(img)}" alt="" loading="lazy" decoding="async">` : ''}
+          <div class="resa-item__body">
+            <div class="todo__head">
+              <h3>${esc(r.title)}</h3>
+              ${r.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
+              ${r.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
+              <span class="todo__when${urgent ? ' is-urgent' : ''}">
+                ${passe ? `échéance passée (${formatDate(r.deadline)})`
+                        : `avant le ${formatDate(r.deadline)} · J−${j}`}
+              </span>
+            </div>
+            ${lieu ? `<p class="resa-item__ou mut">${esc(lieu)}</p>` : ''}
+            ${spot?.blurb ? `<p class="resa-item__quoi">${esc(spot.blurb)}</p>` : ''}
+            <p>${esc(r.what)}</p>
+            ${spot ? `<p class="mut resa-item__prat">
+              ${[spot.duration, spot.budget, spot.when].filter((x) => x && x !== '—').map(esc).join(' · ')}
+            </p>` : ''}
+            ${r.forDate ? `<p class="mut">Pour la journée du ${formatDate(r.forDate, { weekday: true })}.</p>` : ''}
+            <p class="resa-item__actions">
+              ${r.url ? `<a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.canal === 'téléphone' ? 'Voir le numéro' : 'Réserver')}</a>` : ''}
+              ${r.tel ? `<a class="btn btn--ghost" href="tel:${esc(r.tel.replace(/[^+\d]/g, ''))}">${esc(r.tel)}</a>` : ''}
+              ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
+            </p>
+            ${r.commentReserver ? `<p class="resa-item__comment mut">${esc(r.commentReserver)}</p>` : ''}
           </div>
-          <p>${esc(r.what)}</p>
-          ${r.forDate ? `<p class="mut">Pour la journée du ${formatDate(r.forDate, { weekday: true })}.</p>` : ''}
         </li>`;
       }).join('')}
     </ol>

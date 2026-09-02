@@ -42,7 +42,7 @@ export const SPOT_FIXES = {
   'Eikan-do': {
     budget: '1 500 ¥ (automne) · 1 000 ¥ la nuit',
     when: 'illuminations, billet de nuit séparé',
-    note: 'Exposition d\'automne du 11 nov au 6 déc ; illumination du 20 nov au 10 déc, billet distinct.',
+    note: "Exposition d'automne du 11 novembre au 6 décembre ; illumination de nuit du 20 novembre au 6 décembre, billet distinct, vendu sur place uniquement (17h30 – 21h). Le programme la plaçait le 19 : c'est la veille de l'ouverture, la journée a été décalée au 20.",
   },
   'Enko-ji': {
     budget: '1 500 ¥ en automne · résa obligatoire',
@@ -70,16 +70,16 @@ export const SPOT_FIXES = {
   },
   'Kodai-ji': {
     budget: '600 ¥ · 600 ¥ la nuit',
-    when: 'illumination jusqu\'à 22h',
-    note: 'Billet de nuit séparé de celui de la journée.',
+    when: 'illumination du coucher du soleil à 21h30, billet sur place',
+    note: "Billet de nuit séparé de celui de la journée, vendu sur place uniquement — il n'y a pas de créneau à réserver en ligne. Fermeture à 22h.",
   },
   'Koishikawa Korakuen': {
     budget: '300 ¥',
   },
   'Kenroku-en illuminé': {
     budget: 'gratuit',
-    when: 'vendredis et samedis soir jusqu\'à fin novembre',
-    note: 'L\'illumination d\'automne de Kenroku-en est gratuite.',
+    when: 'les 14 et 15 novembre — les deux seuls soirs de votre séjour',
+    note: "Illumination d'automne gratuite, seulement quelques soirs : les 7, 14, 15, 21, 22, 28 et 29 novembre 2026. Vous êtes à Kanazawa du 14 au 16 : deux soirs sur les sept, et pas un de plus. La vedette est le pin de Karasaki, dont les branches sont suspendues à des cordages en cône (yukitsuri).",
   },
   'Château de Nijō': {
     budget: '1 300 ¥',
@@ -134,6 +134,19 @@ export const SPOT_FIXES = {
     budget: '2 000 ¥ · résa créneau',
     when: 'ouverture d’automne jusqu’au 13 décembre, sur réservation',
     note: 'Ouvert du 1er octobre au 13 décembre 2026, 10h–17h. Depuis Demachiyanagi : ligne Eizan jusqu’à Yase-Hieizanguchi, 14 min, puis 5 à 12 min à pied.',
+  },
+
+  // --- faits récoltés sur des doublons écartés --------------------------------
+  // Ces deux entrées existaient déjà mais sans notice ; la recherche menée pour
+  // des propositions en double n'était pas perdue pour autant.
+  'Senkyaku Banrai, Toyosu': {
+    when: 'tôt le matin pour le marché ; l\'onsen est ouvert 24h',
+    budget: '1 000–2 000 ¥ · onsen ~2 400 ¥',
+    lore: "Ouvert le 1er février 2024 face au marché aux poissons de Toyosu : une rue d'Edo reconstituée, une soixantaine d'échoppes de sushi, tempura et robata, coiffées d'un onsen avec vue sur la baie. Il remplace l'Oedo Onsen Monogatari, fermé en 2021.",
+  },
+  'Tokyu Plaza Harakado': {
+    when: 'au coucher du soleil pour le toit-terrasse',
+    lore: "Inauguré le 17 avril 2024 à l'angle d'Omotesando et de Meiji-dori. Sept étages, une soixantaine d'enseignes, un toit-jardin ouvert sur Harajuku — et, au sous-sol, un bain public de quartier, geste rare dans un centre commercial neuf.",
   },
 
   // --- photo d'homonyme -------------------------------------------------------

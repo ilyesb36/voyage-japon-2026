@@ -45,9 +45,8 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     </div>
   </div>
 
-  <div class="wrap">
-
-  <!-- Les six villes, en pleine largeur : c'est le cœur du voyage. -->
+  <!-- Les villes se cadrent elles-mêmes (.city porte max-width et padding) :
+       les envelopper dans .wrap les rétrécissait d'un cran. -->
   <section class="cities" id="cities"></section>
 
   <div class="wrap">

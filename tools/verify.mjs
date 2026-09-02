@@ -8,6 +8,10 @@ import { SPOTS, CATEGORIES, PRIORITIES } from '../data/spots.js';
 import { AVANT, SURPLACE, RESERVER, METEO } from '../data/pratique.js';
 import fs from 'node:fs';
 
+const NOUVEAUX_NOMS = new Set(
+  JSON.parse(fs.readFileSync(new URL('./lib/spots-nouveaux.json', import.meta.url), 'utf8')).map((x) => x.name),
+);
+
 let failures = 0, checks = 0, pending = 0;
 
 function ok(label, actual, expected) {
@@ -40,9 +44,21 @@ const ajouts = SPOTS.filter((s) => s.source === 'claude');
 ok('220 spots d\'origine (236 − 16 retirés)', originaux.length, 220);
 // Les conseils de l'amie guide sont intouchables : ce compte ne doit jamais bouger.
 ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
-ok('57 idées ajoutées', ajouts.length, 57);
-assert('chaque ajout a une photo', ajouts.every((s) => s.img),
-  ajouts.filter((s) => !s.img).map((s) => s.name).join(', '));
+// 57 au premier lot, 16 au second (cafés de spécialité, bars, disquaires,
+// ouvertures 2025-2026) — voir tools/lib/spots-nouveaux.json.
+ok('73 idées ajoutées', ajouts.length, 73);
+// Le premier lot venait de Commons, qui couvre bien les temples et les jardins.
+// Le second lot est fait de cafés de spécialité, de bars et de disquaires : ils
+// ne sont pas sur Commons, et un garde-fou anti-homonyme refuse d'illustrer
+// « SG Club » avec le Singapore Recreation Club. Une fiche sans photo est
+// acceptable ; une fiche avec la photo d'un autre lieu ne l'est pas.
+const sansPhoto = ajouts.filter((s) => !s.img);
+assert(`au moins 55 ajouts illustrés (${ajouts.length - sansPhoto.length} sur ${ajouts.length})`,
+  ajouts.length - sansPhoto.length >= 55, sansPhoto.map((s) => s.name).join(', '));
+assert('les ajouts sans photo sont tous du second lot',
+  sansPhoto.every((s) => NOUVEAUX_NOMS.has(s.name)),
+  sansPhoto.filter((s) => !NOUVEAUX_NOMS.has(s.name)).map((s) => s.name).join(', '));
+
 ok('25 jours', DAYS.length, 25);
 ok('30 journées type', TEMPLATES.length, 30);
 ok('6 hôtels', HOTELS.length, 6);
@@ -295,9 +311,34 @@ assert('chaque échéance précède la journée concernée',
 assert('chaque journée concernée est un jour du voyage',
   RESERVER.every((r) => !r.forDate || DAYS.some((d) => d.date === r.forDate)),
   RESERVER.filter((r) => r.forDate && !DAYS.some((d) => d.date === r.forDate)).map((r) => r.id).join(', '));
-assert('la limite du kaiseki colle à l\'annulation gratuite du ryokan',
-  RESERVER.find((r) => r.id === 'kaiseki-fukuya')?.deadline
-    === HOTELS.find((h) => h.cityId === 'hakone')?.cancelBefore);
+// Le dîner kaiseki est confirmé auprès du ryokan (18:30 les deux soirs) : il a
+// quitté la liste « à réserver ». Ce qui reste vérifié, c'est que la fiche du
+// ryokan ne dise plus « à confirmer » — les deux ne peuvent pas coexister.
+const fukuya = HOTELS.find((h) => h.cityId === 'hakone');
+assert('le ryokan n\'annonce plus un dîner « à confirmer »',
+  !/à confirmer/i.test(fukuya?.meals || ''), fukuya?.meals);
+assert('le protocole d\'arrivée du ryokan est renseigné', !!fukuya?.arrivee);
+assert('le kaiseki ne figure plus dans les choses à réserver',
+  !RESERVER.some((r) => r.id === 'kaiseki-fukuya'));
+// AVANT et RESERVER partagent l'espace des identifiants : « pass » existait
+// dans les deux, et une injection de lien a atterri dans le mauvais des deux.
+// Les listes disaient d'ailleurs la même chose deux fois.
+const collisions = AVANT.filter((a) => RESERVER.some((r) => r.id === a.id)).map((a) => a.id);
+assert('aucun identifiant partagé entre « à faire » et « à réserver »',
+  collisions.length === 0, collisions.join(', '));
+
+// Un lien mort est pire que pas de lien : on cliquerait en croyant réserver.
+const liensDouteux = [...AVANT, ...RESERVER]
+  .filter((x) => x.url && !/^https:\/\//.test(x.url)).map((x) => x.id);
+assert('chaque lien est en https', liensDouteux.length === 0, liensDouteux.join(', '));
+
+// Ce qui ne se réserve pas n'a rien à faire dans une liste « à réserver » :
+// Eikan-do et Kodai-ji vendent leur billet de nuit sur place, ils en sont
+// sortis. Toute entrée qui reste doit dire par quel canal on s'y prend.
+const sansCanal = RESERVER.filter((r) => !r.canal).map((r) => r.id);
+assert('chaque réservation dit par quel canal on la fait',
+  sansCanal.length === 0, sansCanal.join(', '));
+
 assert('identifiants uniques — à réserver',
   new Set(RESERVER.map((r) => r.id)).size === RESERVER.length);
 
@@ -306,6 +347,41 @@ assert('identifiants uniques — à réserver',
 const resaBruit = SPOTS.filter((s) => s.when === 'résa conseillée').map((s) => s.name);
 assert('« résa conseillée » n\'est plus un défaut de catégorie',
   resaBruit.length === 0, resaBruit.join(', '));
+
+// --- structure des pages ------------------------------------------------------
+// Un <div class="wrap"> laissé ouvert sur l'accueil en enfermait un second :
+// le navigateur refermait tout seul à </main>, si bien que rien ne cassait —
+// mais toute la moitié basse de la page prenait un rembourrage double et se
+// retrouvait plus étroite que le haut. Personne ne voit ça sans mesurer.
+
+const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html'];
+
+console.log('\nStructure');
+for (const page of pages) {
+  const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8')
+    .split('<script type="module">')[0];
+  const ouverts = (src.match(/<div\b/g) || []).length;
+  const fermes = (src.match(/<\/div>/g) || []).length;
+  assert(`${page} — balises div équilibrées`, ouverts === fermes, `${ouverts} ouvertes, ${fermes} fermées`);
+}
+
+// .wrap pose max-width ET padding : en emboîter deux rétrécit deux fois.
+for (const page of pages) {
+  const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8')
+    .split('<script type="module">')[0];
+  let prof = 0; const pile = []; let imbrique = 0;
+  for (const m of src.matchAll(/<(\/?)(\w+)([^>]*)>/g)) {
+    const [, fermeture, tag, attrs] = m;
+    if (['meta', 'link', 'img', 'br', 'input', 'hr', 'path', 'circle'].includes(tag)) continue;
+    if (fermeture) { if (pile.length && pile[pile.length - 1] === prof - 1) pile.pop(); prof--; }
+    else {
+      const cls = attrs.match(/class="([^"]*)"/);
+      if (cls && cls[1].split(/\s+/).includes('wrap')) { if (pile.length) imbrique++; pile.push(prof); }
+      prof++;
+    }
+  }
+  assert(`${page} — aucun .wrap dans un .wrap`, imbrique === 0, `${imbrique} imbrication(s)`);
+}
 
 // --- coque hors-ligne ---------------------------------------------------------
 // app/resa.js avait été ajouté aux pages sans être ajouté à la liste du
@@ -316,7 +392,6 @@ console.log('\nHors-ligne');
 const swSrc = fs.readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
 const shellDeclare = new Set([...swSrc.matchAll(/'([^']+\.(?:html|css|js|webmanifest|png))'/g)].map((m) => m[1]));
 
-const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html'];
 const requis = new Set();
 for (const page of pages) {
   const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8');

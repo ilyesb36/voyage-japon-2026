@@ -152,8 +152,10 @@ function card(s) {
   const city = s.cityId ? CITIES[s.cityId] : null;
   return `
   <button class="card card--link spot" type="button" data-id="${esc(s.id)}">
-    <div class="thumb thumb--wide">
-      ${s.img ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" loading="lazy" decoding="async">` : ''}
+    <div class="thumb thumb--wide${s.img ? '' : ' thumb--nue'}"${city ? ` style="--c:${city.color}"` : ''}>
+      ${s.img
+        ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" loading="lazy" decoding="async">`
+        : `<span class="thumb__initiale" aria-hidden="true">${esc(s.name.trim()[0] || '·')}</span>`}
       <span class="prio prio--${s.priority} spot__prio">${prioName[s.priority]}</span>
       ${s.source === 'guide' ? '<span class="spot__badge spot__badge--guide">Conseil de la guide</span>' : ''}
     </div>

@@ -191,6 +191,7 @@ function parseHotels(STEPS) {
       checkOut: bk.checkOut,
       bath: bk.bath,
       meals: bk.meals,
+      arrivee: bk.arrivee || null,
       amenities: bk.amenities,
 
       price: bk.price,
@@ -585,6 +586,33 @@ function parseSpots() {
       ...(def[a.category] || def.t0),
       ...(SPOT_FIXES[a.name] || {}),
       ...(LORE[id] ? { lore: LORE[id] } : {}),
+      img: images[a.name]?.img || null,
+      maps: a.maps,
+    });
+  }
+
+  // Second lot d'ajouts, recherché à part (septembre 2026) : les cafés de
+  // spécialité, les bars, les disquaires et les ouvertures 2025-2026 que la
+  // sélection d'origine ne pouvait pas connaître. Il porte ses propres
+  // `duration`/`budget`/`when`/`lore`, déjà vérifiés, donc pas de défaut de
+  // catégorie ici.
+  const NOUVEAUX = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/spots-nouveaux.json'), 'utf8'));
+  for (const a of NOUVEAUX) {
+    const id = `spot-${slug(a.name)}`;
+    if (seen.has(id)) throw new Error(`spots-nouveaux : « ${a.name} » fait doublon avec un spot existant`);
+    seen.add(id);
+    SPOTS.push({
+      id, name: a.name,
+      cityId: a.cityId, area: a.area || null,
+      category: a.category, priority: a.priority,
+      blurb: a.blurb,
+      guideTip: false,
+      source: 'claude',
+      duration: a.duration || (def[a.category] || def.t0).duration,
+      budget: a.budget || 'à vérifier',
+      when: a.when || (def[a.category] || def.t0).when,
+      ...(a.lore ? { lore: a.lore } : {}),
+      ...(SPOT_FIXES[a.name] || {}),
       img: images[a.name]?.img || null,
       maps: a.maps,
     });

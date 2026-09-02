@@ -13,6 +13,12 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { ADDITIONS } from './lib/additions.mjs';
 
+// Le second lot d'ajouts (spots-nouveaux.json) passe par le même tuyau : il a
+// besoin des mêmes photos et du même garde-fou anti-homonyme.
+const ROOT_ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const NOUVEAUX = JSON.parse(fs.readFileSync(path.join(ROOT_, 'tools/lib/spots-nouveaux.json'), 'utf8'));
+const TOUS = [...ADDITIONS, ...NOUVEAUX];
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const IMG = path.join(ROOT, 'img');
 const OUT = path.join(ROOT, 'tools', 'lib', 'additions-images.json');
@@ -59,7 +65,7 @@ const results = {};
 let ok = 0;
 const failures = [];
 
-for (const a of ADDITIONS) {
+for (const a of TOUS) {
   const term = a.commons || a.name;
   try {
     let candidates = await search(term);
@@ -83,7 +89,14 @@ for (const a of ADDITIONS) {
     if (!matching.length) throw new Error(`aucun candidat ne contient « ${key} »`);
 
     const pick = matching[0];
-    const name = `${slug(a.name)}-${crypto.createHash('sha1').update(pick.thumb).digest('hex').slice(0, 8)}.webp`;
+
+    // L'empreinte porte sur la PAGE Commons, pas sur l'URL de la vignette :
+    // celle-ci embarque des paramètres qui changent d'une requête à l'autre, ce
+    // qui renommait 58 fichiers identiques à chaque passage. Le nom ne bouge
+    // donc que si la photo choisie change vraiment.
+    const empreinte = crypto.createHash('sha1')
+      .update(pick.page || pick.title || pick.thumb).digest('hex').slice(0, 8);
+    const name = `${slug(a.name)}-${empreinte}.webp`;
     const dest = path.join(IMG, name);
 
     if (!DRY && !fs.existsSync(dest)) {
@@ -110,5 +123,5 @@ for (const a of ADDITIONS) {
 }
 
 if (!DRY) fs.writeFileSync(OUT, JSON.stringify(results, null, 2));
-console.log(`\n${ok}/${ADDITIONS.length} illustrées${failures.length ? `, ${failures.length} sans photo` : ''}`);
+console.log(`\n${ok}/${TOUS.length} illustrées${failures.length ? `, ${failures.length} sans photo` : ''}`);
 if (failures.length) console.log('Sans photo :', failures.map((f) => f.name).join(', '));

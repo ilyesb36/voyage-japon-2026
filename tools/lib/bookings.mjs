@@ -91,9 +91,12 @@ export const BOOKINGS = {
     priceYen: 228000,
     refundable: true,
     cancelBefore: '2026-10-27',     // gratuit jusqu'au 27/10 23:59, ferme ensuite
-    // Booking indique « le petit-déjeuner est compris ». L'ancien site annonçait
-    // « dîner kaiseki + petit-déj ». À confirmer auprès du ryokan.
-    meals: 'Petit-déjeuner compris (dîner kaiseki à confirmer)',
+    // Confirmé par échange avec le ryokan : demi-pension, dîner kaiseki servi
+    // à 18:30 les deux soirs, aucune allergie signalée.
+    meals: 'Demi-pension · dîner kaiseki à 18:30 les deux soirs, petit-déjeuner compris',
+    // L'arrivée a son protocole, donné par le ryokan. C'est le seul hébergement
+    // du voyage qu'on ne rejoint pas seul : à noter avant de perdre le réseau.
+    arrivee: 'Arrivée annoncée entre 14:30 et 15:00 au port de Moto-Hakone. Appeler le ryokan depuis le 7-Eleven, comme indiqué — ils viennent chercher. En cas de retard de train, prévenir avant 17:00.',
     amenities: { kitchen: false, washer: false, dryer: false, fridge: true, microwave: false, balcony: false, ac: true },
     bath: 'Baignoire en plein air privative · tatami · vue lac',
   },

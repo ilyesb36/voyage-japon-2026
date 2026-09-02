@@ -1,0 +1,1552 @@
+{
+  "senso-ji": {
+    "nom": "Sensō-ji",
+    "lat": 35.71478,
+    "lng": 139.79665,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.71478,139.79665",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kagetsudo": {
+    "nom": "Kagetsudo",
+    "lat": 35.71589,
+    "lng": 139.79447,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.71589,139.79447",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "sumida-park": {
+    "nom": "Sumida Park",
+    "lat": 35.7126,
+    "lng": 139.8005,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7126,139.8005",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kappabashi": {
+    "nom": "Kappabashi",
+    "lat": 35.71399,
+    "lng": 139.78855,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.71399,139.78855",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "daikokuya": {
+    "nom": "Daikokuya",
+    "lat": 35.7119,
+    "lng": 139.7938,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7119,139.7938",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "ueno-ameyoko": {
+    "nom": "Ueno · Ameyoko",
+    "lat": 35.71007,
+    "lng": 139.77469,
+    "cityId": "tokyo",
+    "quartier": "Ueno",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.71007,139.77469",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "yanaka-ginza": {
+    "nom": "Yanaka Ginza",
+    "lat": 35.7279,
+    "lng": 139.76694,
+    "cityId": "tokyo",
+    "quartier": "Yanaka",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7279,139.76694",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "meiji-jingu": {
+    "nom": "Meiji-jingū",
+    "lat": 35.6764,
+    "lng": 139.6993,
+    "cityId": "tokyo",
+    "quartier": "Harajuku",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6764,139.6993",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "takeshita-dori": {
+    "nom": "Takeshita-dōri",
+    "lat": 35.67145,
+    "lng": 139.70318,
+    "cityId": "tokyo",
+    "quartier": "Harajuku",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.67145,139.70318",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "cat-street": {
+    "nom": "Cat Street",
+    "lat": 35.6687,
+    "lng": 139.7059,
+    "cityId": "tokyo",
+    "quartier": "Harajuku",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6687,139.7059",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "shibuya-crossing": {
+    "nom": "Croisement de Shibuya",
+    "lat": 35.65949,
+    "lng": 139.70057,
+    "cityId": "tokyo",
+    "quartier": "Shibuya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.65949,139.70057",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "shibuya-sky": {
+    "nom": "Shibuya Sky",
+    "lat": 35.65859,
+    "lng": 139.70232,
+    "cityId": "tokyo",
+    "quartier": "Shibuya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.65859,139.70232",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nonbei-yokocho": {
+    "nom": "Nonbei Yokocho",
+    "lat": 35.66021,
+    "lng": 139.70228,
+    "cityId": "tokyo",
+    "quartier": "Shibuya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.66021,139.70228",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "akihabara": {
+    "nom": "Akihabara",
+    "lat": 35.69837,
+    "lng": 139.77313,
+    "cityId": "tokyo",
+    "quartier": "Akihabara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.69837,139.77313",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kanda-myojin": {
+    "nom": "Kanda Myōjin",
+    "lat": 35.70199,
+    "lng": 139.76788,
+    "cityId": "tokyo",
+    "quartier": "Akihabara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.70199,139.76788",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "sunshine-city": {
+    "nom": "Sunshine City",
+    "lat": 35.72902,
+    "lng": 139.7193,
+    "cityId": "tokyo",
+    "quartier": "Ikebukuro",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.72902,139.7193",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "onigiri-bongo": {
+    "nom": "Onigiri Bongo",
+    "lat": 35.73273,
+    "lng": 139.7286,
+    "cityId": "tokyo",
+    "quartier": "Otsuka",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.73273,139.7286",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "tsukiji": {
+    "nom": "Marché de Tsukiji",
+    "lat": 35.66549,
+    "lng": 139.77045,
+    "cityId": "tokyo",
+    "quartier": "Tsukiji",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.66549,139.77045",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "monjayaki-tsukishima": {
+    "nom": "Monjayaki Tsukishima",
+    "lat": 35.66432,
+    "lng": 139.78345,
+    "cityId": "tokyo",
+    "quartier": "Tsukishima",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.66432,139.78345",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kanamecho": {
+    "nom": "La Vita · Kanamecho",
+    "lat": 35.73236,
+    "lng": 139.69732,
+    "cityId": "tokyo",
+    "quartier": "Ikebukuro",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.73236,139.69732",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "rikugi-en": {
+    "nom": "Rikugi-en",
+    "lat": 35.73343,
+    "lng": 139.74616,
+    "cityId": "tokyo",
+    "quartier": "Komagome",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.73343,139.74616",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "tokyo-character-street": {
+    "nom": "Tokyo Character Street",
+    "lat": 35.68069,
+    "lng": 139.76752,
+    "cityId": "tokyo",
+    "quartier": "Gare de Tokyo",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.68069,139.76752",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "itoya-ginza": {
+    "nom": "Itoya Ginza",
+    "lat": 35.67195,
+    "lng": 139.76713,
+    "cityId": "tokyo",
+    "quartier": "Ginza",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.67195,139.76713",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nakamise-dori": {
+    "nom": "Nakamise-dōri",
+    "lat": 35.7112,
+    "lng": 139.79646,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7112,139.79646",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "tokyo-skytree": {
+    "nom": "Tokyo Skytree",
+    "lat": 35.7100543,
+    "lng": 139.8107141,
+    "cityId": "tokyo",
+    "quartier": "Sumida",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7100543,139.8107141",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "yadoroku": {
+    "nom": "Onigiri Yadoroku",
+    "lat": 35.7168964,
+    "lng": 139.7947511,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7168964,139.7947511",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "shibuya-center-gai": {
+    "nom": "Shibuya Center-gai",
+    "lat": 35.6601141,
+    "lng": 139.6995315,
+    "cityId": "tokyo",
+    "quartier": "Shibuya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6601141,139.6995315",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "kiddy-land": {
+    "nom": "Kiddy Land Harajuku",
+    "lat": 35.6676998,
+    "lng": 139.7065419,
+    "cityId": "tokyo",
+    "quartier": "Harajuku",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6676998,139.7065419",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "afuri-harajuku": {
+    "nom": "AFURI Harajuku",
+    "lat": 35.672992,
+    "lng": 139.7038124,
+    "cityId": "tokyo",
+    "quartier": "Harajuku",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.672992,139.7038124",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "uobei-shibuya": {
+    "nom": "Uobei Shibuya",
+    "lat": 35.6594652,
+    "lng": 139.697799,
+    "cityId": "tokyo",
+    "quartier": "Shibuya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6594652,139.697799",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "ueno-park": {
+    "nom": "Parc d’Ueno",
+    "lat": 35.7140191,
+    "lng": 139.7739291,
+    "cityId": "tokyo",
+    "quartier": "Ueno",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7140191,139.7739291",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "shinobazu-pond": {
+    "nom": "Étang Shinobazu",
+    "lat": 35.711875,
+    "lng": 139.7708647,
+    "cityId": "tokyo",
+    "quartier": "Ueno",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.711875,139.7708647",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "tokyo-national-museum": {
+    "nom": "Musée national de Tokyo",
+    "lat": 35.7190448,
+    "lng": 139.7759676,
+    "cityId": "tokyo",
+    "quartier": "Ueno",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7190448,139.7759676",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "ueno-zoo": {
+    "nom": "Zoo d’Ueno",
+    "lat": 35.7153426,
+    "lng": 139.768896,
+    "cityId": "tokyo",
+    "quartier": "Ueno",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7153426,139.768896",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "yanaka-cemetery": {
+    "nom": "Cimetière de Yanaka",
+    "lat": 35.7243685,
+    "lng": 139.7711364,
+    "cityId": "tokyo",
+    "quartier": "Yanaka",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7243685,139.7711364",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "nezu-jinja": {
+    "nom": "Nezu-jinja",
+    "lat": 35.7199731,
+    "lng": 139.7606625,
+    "cityId": "tokyo",
+    "quartier": "Nezu",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7199731,139.7606625",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "teamlab-planets": {
+    "nom": "teamLab Planets",
+    "lat": 35.64938,
+    "lng": 139.789728,
+    "cityId": "tokyo",
+    "quartier": "Toyosu",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.64938,139.789728",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "imperial-palace-east-gardens": {
+    "nom": "Jardins de l’Est du Palais impérial",
+    "lat": 35.6867006,
+    "lng": 139.7573959,
+    "cityId": "tokyo",
+    "quartier": "Chiyoda",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6867006,139.7573959",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "kitanomaru-park": {
+    "nom": "Parc de Kitanomaru",
+    "lat": 35.6918164,
+    "lng": 139.7510382,
+    "cityId": "tokyo",
+    "quartier": "Chiyoda",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6918164,139.7510382",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "nippon-budokan": {
+    "nom": "Nippon Budokan",
+    "lat": 35.6933554,
+    "lng": 139.7498704,
+    "cityId": "tokyo",
+    "quartier": "Chiyoda",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6933554,139.7498704",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "momat": {
+    "nom": "Musée national d’art moderne",
+    "lat": 35.6904674,
+    "lng": 139.7545111,
+    "cityId": "tokyo",
+    "quartier": "Chiyoda",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6904674,139.7545111",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "gotoku-ji": {
+    "nom": "Gōtoku-ji",
+    "lat": 35.6484699,
+    "lng": 139.6470151,
+    "cityId": "tokyo",
+    "quartier": "Setagaya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6484699,139.6470151",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "todoroki-valley": {
+    "nom": "Gorge de Todoroki",
+    "lat": 35.6050567,
+    "lng": 139.645742,
+    "cityId": "tokyo",
+    "quartier": "Setagaya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6050567,139.645742",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "kameido-tenjin": {
+    "nom": "Kameido Tenjin",
+    "lat": 35.7019937,
+    "lng": 139.8208068,
+    "cityId": "tokyo",
+    "quartier": "Kameido",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.7019937,139.8208068",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "ghibli-museum": {
+    "nom": "Musée Ghibli",
+    "lat": 35.6961731,
+    "lng": 139.5706324,
+    "cityId": "tokyo",
+    "quartier": "Mitaka",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.6961731,139.5706324",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "haneda-airport": {
+    "nom": "Aéroport de Haneda (T3)",
+    "lat": 35.5450118,
+    "lng": 139.7670385,
+    "cityId": "tokyo",
+    "quartier": "Ōta",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.5450118,139.7670385",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "tobu-asakusa": {
+    "nom": "Gare Tobu Asakusa",
+    "lat": 35.71083,
+    "lng": 139.79747,
+    "cityId": "tokyo",
+    "quartier": "Asakusa",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.71083,139.79747",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "toshogu": {
+    "nom": "Nikkō Tōshōgū",
+    "lat": 36.75803,
+    "lng": 139.59891,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.75803,139.59891",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "lac-chuzenji": {
+    "nom": "Lac Chūzenji",
+    "lat": 36.72977,
+    "lng": 139.46557,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.72977,139.46557",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "cascade-kegon": {
+    "nom": "Cascade de Kegon",
+    "lat": 36.73832,
+    "lng": 139.50291,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.73832,139.50291",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kanmangafuchi": {
+    "nom": "Kanmangafuchi",
+    "lat": 36.7490293,
+    "lng": 139.5883465,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7490293,139.5883465",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "tamozawa": {
+    "nom": "Villa impériale Tamozawa",
+    "lat": 36.7523909,
+    "lng": 139.5910507,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7523909,139.5910507",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "futarasan-jinja": {
+    "nom": "Nikkō Futarasan-jinja",
+    "lat": 36.7584003,
+    "lng": 139.5966644,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7584003,139.5966644",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "rinno-ji": {
+    "nom": "Rinnō-ji",
+    "lat": 36.7552708,
+    "lng": 139.5997846,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7552708,139.5997846",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "shoyoen": {
+    "nom": "Jardin Shōyō-en",
+    "lat": 36.7542224,
+    "lng": 139.6008391,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7542224,139.6008391",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "shinkyo": {
+    "nom": "Pont Shinkyō",
+    "lat": 36.7533178,
+    "lng": 139.6040375,
+    "cityId": "tokyo",
+    "quartier": "Nikkō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.7533178,139.6040375",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "hokoku-ji": {
+    "nom": "Hōkoku-ji",
+    "lat": 35.32086,
+    "lng": 139.57191,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.32086,139.57191",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "grand-bouddha": {
+    "nom": "Grand Bouddha de Kamakura",
+    "lat": 35.3167,
+    "lng": 139.53588,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.3167,139.53588",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "komachi-dori": {
+    "nom": "Komachi-dōri",
+    "lat": 35.32137,
+    "lng": 139.55344,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.32137,139.55344",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kamakurakokomae": {
+    "nom": "Passage Kamakurakōkōmae",
+    "lat": 35.30672,
+    "lng": 139.50117,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.30672,139.50117",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "enoshima": {
+    "nom": "Enoshima",
+    "lat": 35.29939,
+    "lng": 139.48047,
+    "cityId": "tokyo",
+    "quartier": "Enoshima",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.29939,139.48047",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "plage-yuigahama": {
+    "nom": "Plage de Yuigahama",
+    "lat": 35.305,
+    "lng": 139.5421,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.305,139.5421",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "hase-dera": {
+    "nom": "Hase-dera",
+    "lat": 35.3122687,
+    "lng": 139.5333092,
+    "cityId": "tokyo",
+    "quartier": "Kamakura",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.3122687,139.5333092",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "cup-noodles-museum": {
+    "nom": "Cup Noodles Museum",
+    "lat": 35.45529,
+    "lng": 139.63913,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.45529,139.63913",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "chinatown": {
+    "nom": "Chinatown de Yokohama",
+    "lat": 35.44275,
+    "lng": 139.64545,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.44275,139.64545",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "brique-rouge": {
+    "nom": "Entrepôts de brique rouge",
+    "lat": 35.45291,
+    "lng": 139.6427,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.45291,139.6427",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "cosmo-world": {
+    "nom": "Cosmo World",
+    "lat": 35.45549,
+    "lng": 139.63593,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.45549,139.63593",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "yamashita-park": {
+    "nom": "Parc Yamashita",
+    "lat": 35.4457103,
+    "lng": 139.6499494,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.4457103,139.6499494",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "minato-mirai": {
+    "nom": "Minato Mirai (Landmark Tower)",
+    "lat": 35.454598,
+    "lng": 139.6314519,
+    "cityId": "tokyo",
+    "quartier": "Yokohama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.454598,139.6314519",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "omicho": {
+    "nom": "Marché Ōmichō",
+    "lat": 36.57191,
+    "lng": 136.65565,
+    "cityId": "kanazawa",
+    "quartier": "Ōmichō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.57191,136.65565",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kenroku-en": {
+    "nom": "Kenroku-en",
+    "lat": 36.56174,
+    "lng": 136.66253,
+    "cityId": "kanazawa",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.56174,136.66253",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kanazawa-castle": {
+    "nom": "Château de Kanazawa",
+    "lat": 36.56513,
+    "lng": 136.6585,
+    "cityId": "kanazawa",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.56513,136.6585",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nagamachi": {
+    "nom": "Nagamachi",
+    "lat": 36.56194,
+    "lng": 136.65203,
+    "cityId": "kanazawa",
+    "quartier": "Nagamachi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.56194,136.65203",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "musee-21e": {
+    "nom": "Musée d’art du 21e siècle",
+    "lat": 36.56083,
+    "lng": 136.6578,
+    "cityId": "kanazawa",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.56083,136.6578",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "higashi-chaya": {
+    "nom": "Higashi Chaya",
+    "lat": 36.57244,
+    "lng": 136.66692,
+    "cityId": "kanazawa",
+    "quartier": "Higashi Chaya",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.57244,136.66692",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "morimori": {
+    "nom": "Sushi Morimori (Ōmichō)",
+    "lat": 36.57191,
+    "lng": 136.65565,
+    "cityId": "kanazawa",
+    "quartier": "Ōmichō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.57191,136.65565",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "temple-ninja": {
+    "nom": "Temple ninja (Myōryū-ji)",
+    "lat": 36.55471,
+    "lng": 136.64955,
+    "cityId": "kanazawa",
+    "quartier": "Teramachi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.55471,136.64955",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "oyama-jinja": {
+    "nom": "Oyama-jinja",
+    "lat": 36.56567,
+    "lng": 136.65362,
+    "cityId": "kanazawa",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.56567,136.65362",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nomura-ke": {
+    "nom": "Maison Nomura (Nagamachi)",
+    "lat": 36.5640834,
+    "lng": 136.6499971,
+    "cityId": "kanazawa",
+    "quartier": "Nagamachi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.5640834,136.6499971",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "tsuzumi-mon": {
+    "nom": "Tsuzumi-mon (gare de Kanazawa)",
+    "lat": 36.5774207,
+    "lng": 136.6493319,
+    "cityId": "kanazawa",
+    "quartier": "Gare",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.5774207,136.6493319",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "katamachi": {
+    "nom": "Katamachi",
+    "lat": 36.5604201,
+    "lng": 136.6515397,
+    "cityId": "kanazawa",
+    "quartier": "Katamachi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=36.5604201,136.6515397",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "kiyomizu-dera": {
+    "nom": "Kiyomizu-dera",
+    "lat": 34.99486,
+    "lng": 135.78505,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.99486,135.78505",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "sannenzaka": {
+    "nom": "Sannenzaka",
+    "lat": 34.9961,
+    "lng": 135.78095,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.9961,135.78095",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kodai-ji": {
+    "nom": "Kōdai-ji",
+    "lat": 35.00069,
+    "lng": 135.78108,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.00069,135.78108",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "eikan-do": {
+    "nom": "Eikan-dō",
+    "lat": 35.0145,
+    "lng": 135.79364,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0145,135.79364",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "ginkaku-ji": {
+    "nom": "Ginkaku-ji",
+    "lat": 35.02682,
+    "lng": 135.7982,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.02682,135.7982",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "gion-shirakawa": {
+    "nom": "Gion · Shirakawa",
+    "lat": 35.00543,
+    "lng": 135.77504,
+    "cityId": "kyoto",
+    "quartier": "Gion",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.00543,135.77504",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "fushimi-inari": {
+    "nom": "Fushimi Inari-taisha",
+    "lat": 34.96714,
+    "lng": 135.77268,
+    "cityId": "kyoto",
+    "quartier": "Fushimi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.96714,135.77268",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "tofuku-ji": {
+    "nom": "Tōfuku-ji",
+    "lat": 34.97636,
+    "lng": 135.7738,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.97636,135.7738",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "honke-owariya": {
+    "nom": "Honke Owariya",
+    "lat": 35.01108,
+    "lng": 135.76224,
+    "cityId": "kyoto",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.01108,135.76224",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "pontocho": {
+    "nom": "Pontochō",
+    "lat": 35.00453,
+    "lng": 135.771,
+    "cityId": "kyoto",
+    "quartier": "Pontochō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.00453,135.771",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "bambouseraie": {
+    "nom": "Bambouseraie d’Arashiyama",
+    "lat": 35.017,
+    "lng": 135.672,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.017,135.672",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "okochi-sanso": {
+    "nom": "Villa Ōkōchi Sansō",
+    "lat": 35.01864,
+    "lng": 135.66692,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.01864,135.66692",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "otagi-nenbutsu-ji": {
+    "nom": "Otagi Nenbutsu-ji",
+    "lat": 35.02979,
+    "lng": 135.66246,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.02979,135.66246",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "togetsukyo": {
+    "nom": "Pont Togetsukyō",
+    "lat": 35.01262,
+    "lng": 135.67765,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.01262,135.67765",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kimono-forest": {
+    "nom": "Kimono Forest (Randen)",
+    "lat": 35.01532,
+    "lng": 135.67818,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.01532,135.67818",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kinkaku-ji": {
+    "nom": "Kinkaku-ji",
+    "lat": 35.03937,
+    "lng": 135.72924,
+    "cityId": "kyoto",
+    "quartier": "Nord-ouest",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.03937,135.72924",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "ryoan-ji": {
+    "nom": "Ryōan-ji",
+    "lat": 35.03454,
+    "lng": 135.71823,
+    "cityId": "kyoto",
+    "quartier": "Nord-ouest",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.03454,135.71823",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nijo-castle": {
+    "nom": "Château de Nijō",
+    "lat": 35.0142,
+    "lng": 135.7482,
+    "cityId": "kyoto",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0142,135.7482",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nishiki-market": {
+    "nom": "Marché Nishiki",
+    "lat": 35.00505,
+    "lng": 135.7649,
+    "cityId": "kyoto",
+    "quartier": "Centre",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.00505,135.7649",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "ruriko-in": {
+    "nom": "Rurikō-in",
+    "lat": 35.0706,
+    "lng": 135.8156,
+    "cityId": "kyoto",
+    "quartier": "Yase",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0706,135.8156",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "demachiyanagi": {
+    "nom": "Gare Demachiyanagi",
+    "lat": 35.03015,
+    "lng": 135.77282,
+    "cityId": "kyoto",
+    "quartier": "Sakyō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.03015,135.77282",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "to-ji": {
+    "nom": "Tō-ji (marché Kōbō-san)",
+    "lat": 34.98051,
+    "lng": 135.74773,
+    "cityId": "kyoto",
+    "quartier": "Minami",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.98051,135.74773",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "byodo-in": {
+    "nom": "Byōdō-in",
+    "lat": 34.88931,
+    "lng": 135.80774,
+    "cityId": "kyoto",
+    "quartier": "Uji",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.88931,135.80774",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nakamura-tokichi": {
+    "nom": "Nakamura Tōkichi",
+    "lat": 34.89094,
+    "lng": 135.8023,
+    "cityId": "kyoto",
+    "quartier": "Uji",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.89094,135.8023",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "heian-jingu": {
+    "nom": "Heian-jingū",
+    "lat": 35.0160683,
+    "lng": 135.7828961,
+    "cityId": "kyoto",
+    "quartier": "Okazaki",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0160683,135.7828961",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "nanzen-ji": {
+    "nom": "Nanzen-ji",
+    "lat": 35.0115254,
+    "lng": 135.7927213,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0115254,135.7927213",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "honen-in": {
+    "nom": "Hōnen-in",
+    "lat": 35.0236465,
+    "lng": 135.7973612,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0236465,135.7973612",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "konkai-komyoji": {
+    "nom": "Konkai Kōmyō-ji (Kurodani)",
+    "lat": 35.0194851,
+    "lng": 135.7886067,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0194851,135.7886067",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "ninna-ji": {
+    "nom": "Ninna-ji",
+    "lat": 35.0298117,
+    "lng": 135.7141499,
+    "cityId": "kyoto",
+    "quartier": "Nord-ouest",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0298117,135.7141499",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "daitoku-ji": {
+    "nom": "Daitoku-ji",
+    "lat": 35.0427917,
+    "lng": 135.7465517,
+    "cityId": "kyoto",
+    "quartier": "Kita",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0427917,135.7465517",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "kitano-tenmangu": {
+    "nom": "Kitano Tenmangū",
+    "lat": 35.0304752,
+    "lng": 135.7349176,
+    "cityId": "kyoto",
+    "quartier": "Kamigyō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0304752,135.7349176",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "ujigami-jinja": {
+    "nom": "Ujigami-jinja",
+    "lat": 34.8920528,
+    "lng": 135.8114573,
+    "cityId": "kyoto",
+    "quartier": "Uji",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.8920528,135.8114573",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "hokan-ji": {
+    "nom": "Hōkan-ji (Pagode Yasaka)",
+    "lat": 34.9984916,
+    "lng": 135.7793183,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.9984916,135.7793183",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "yasaka-jinja": {
+    "nom": "Yasaka-jinja",
+    "lat": 35.0036027,
+    "lng": 135.7782611,
+    "cityId": "kyoto",
+    "quartier": "Gion",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0036027,135.7782611",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "nintendo-museum": {
+    "nom": "Nintendo Museum",
+    "lat": 34.8925698,
+    "lng": 135.7842049,
+    "cityId": "kyoto",
+    "quartier": "Uji (Ogura)",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.8925698,135.7842049",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "maruyama-park": {
+    "nom": "Parc Maruyama",
+    "lat": 35.0037618,
+    "lng": 135.7814763,
+    "cityId": "kyoto",
+    "quartier": "Higashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0037618,135.7814763",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "tenryu-ji": {
+    "nom": "Tenryū-ji",
+    "lat": 35.0162243,
+    "lng": 135.6729408,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0162243,135.6729408",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "jojakko-ji": {
+    "nom": "Jōjakkō-ji",
+    "lat": 35.0196917,
+    "lng": 135.6686463,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0196917,135.6686463",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "iwatayama-monkey-park": {
+    "nom": "Parc aux singes d’Iwatayama",
+    "lat": 35.0114201,
+    "lng": 135.6767295,
+    "cityId": "kyoto",
+    "quartier": "Arashiyama",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0114201,135.6767295",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "matsuba": {
+    "nom": "Sōhonke Nishin Soba Matsuba",
+    "lat": 35.0036911,
+    "lng": 135.772236,
+    "cityId": "kyoto",
+    "quartier": "Gion",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0036911,135.772236",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "gion-kinana": {
+    "nom": "Gion Kinana",
+    "lat": 35.0022939,
+    "lng": 135.7743189,
+    "cityId": "kyoto",
+    "quartier": "Gion",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.0022939,135.7743189",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "osaka-castle": {
+    "nom": "Château d’Osaka",
+    "lat": 34.68723,
+    "lng": 135.52603,
+    "cityId": "osaka",
+    "quartier": "Chūō",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68723,135.52603",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kuromon-market": {
+    "nom": "Marché Kuromon",
+    "lat": 34.66525,
+    "lng": 135.50629,
+    "cityId": "osaka",
+    "quartier": "Nipponbashi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.66525,135.50629",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "tsutenkaku": {
+    "nom": "Tsūtenkaku",
+    "lat": 34.65247,
+    "lng": 135.50636,
+    "cityId": "osaka",
+    "quartier": "Shinsekai",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.65247,135.50636",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "daruma-shinsekai": {
+    "nom": "Kushikatsu Daruma (Shinsekai)",
+    "lat": 34.6521,
+    "lng": 135.5063,
+    "cityId": "osaka",
+    "quartier": "Shinsekai",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6521,135.5063",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "sumiyoshi-taisha": {
+    "nom": "Sumiyoshi-taisha",
+    "lat": 34.61245,
+    "lng": 135.49317,
+    "cityId": "osaka",
+    "quartier": "Sumiyoshi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.61245,135.49317",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "dotonbori": {
+    "nom": "Dōtonbori",
+    "lat": 34.66875,
+    "lng": 135.5013,
+    "cityId": "osaka",
+    "quartier": "Namba",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.66875,135.5013",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "umeda-sky": {
+    "nom": "Umeda Sky Building",
+    "lat": 34.70525,
+    "lng": 135.49005,
+    "cityId": "osaka",
+    "quartier": "Umeda",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.70525,135.49005",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "horai-namba": {
+    "nom": "551 Hōrai (Namba)",
+    "lat": 34.66569,
+    "lng": 135.50123,
+    "cityId": "osaka",
+    "quartier": "Namba",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.66569,135.50123",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "denden-town": {
+    "nom": "Denden Town",
+    "lat": 34.65867,
+    "lng": 135.50634,
+    "cityId": "osaka",
+    "quartier": "Nipponbashi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.65867,135.50634",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "shitenno-ji": {
+    "nom": "Shitennō-ji",
+    "lat": 34.6547194,
+    "lng": 135.5167979,
+    "cityId": "osaka",
+    "quartier": "Tennōji",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6547194,135.5167979",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "namba-yasaka": {
+    "nom": "Namba Yasaka-jinja",
+    "lat": 34.6614819,
+    "lng": 135.4967325,
+    "cityId": "osaka",
+    "quartier": "Namba",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6614819,135.4967325",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "shochikuza": {
+    "nom": "Osaka Shōchikuza",
+    "lat": 34.6684451,
+    "lng": 135.5009101,
+    "cityId": "osaka",
+    "quartier": "Dōtonbori",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6684451,135.5009101",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "hozenji-yokocho": {
+    "nom": "Hōzen-ji Yokochō",
+    "lat": 34.6681845,
+    "lng": 135.5026705,
+    "cityId": "osaka",
+    "quartier": "Namba",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6681845,135.5026705",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "rikuro-namba": {
+    "nom": "Rikuro’s (Namba)",
+    "lat": 34.6661422,
+    "lng": 135.5015054,
+    "cityId": "osaka",
+    "quartier": "Namba",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6661422,135.5015054",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "glico-ebisubashi": {
+    "nom": "Glico Man · Ebisubashi",
+    "lat": 34.6690672,
+    "lng": 135.5013046,
+    "cityId": "osaka",
+    "quartier": "Dōtonbori",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6690672,135.5013046",
+    "source": "web",
+    "confiance": "approx"
+  },
+  "parc-de-nara": {
+    "nom": "Parc de Nara",
+    "lat": 34.68512,
+    "lng": 135.843,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68512,135.843",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "todai-ji": {
+    "nom": "Tōdai-ji",
+    "lat": 34.68905,
+    "lng": 135.83979,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68905,135.83979",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nakatanidou": {
+    "nom": "Nakatanidō",
+    "lat": 34.68258,
+    "lng": 135.82834,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68258,135.82834",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kasuga-taisha": {
+    "nom": "Kasuga-taisha",
+    "lat": 34.68113,
+    "lng": 135.84843,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68113,135.84843",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "nigatsu-do": {
+    "nom": "Nigatsu-dō",
+    "lat": 34.68943,
+    "lng": 135.84172,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.68943,135.84172",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "kofuku-ji": {
+    "nom": "Kōfuku-ji",
+    "lat": 34.6829744,
+    "lng": 135.8318653,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6829744,135.8318653",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "yoshikien": {
+    "nom": "Jardin Yoshikien",
+    "lat": 34.6851015,
+    "lng": 135.8372119,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6851015,135.8372119",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "isuien": {
+    "nom": "Jardin Isuien",
+    "lat": 34.6854662,
+    "lng": 135.8379189,
+    "cityId": "osaka",
+    "quartier": "Nara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=34.6854662,135.8379189",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "hakone-yumoto": {
+    "nom": "Hakone-Yumoto",
+    "lat": 35.2323,
+    "lng": 139.10621,
+    "cityId": "hakone",
+    "quartier": "Yumoto",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.2323,139.10621",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "gora": {
+    "nom": "Gōra",
+    "lat": 35.25037,
+    "lng": 139.04663,
+    "cityId": "hakone",
+    "quartier": "Gōra",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.25037,139.04663",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "owakudani": {
+    "nom": "Ōwakudani",
+    "lat": 35.24422,
+    "lng": 139.01925,
+    "cityId": "hakone",
+    "quartier": "Ōwakudani",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.24422,139.01925",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "togendai": {
+    "nom": "Tōgendai (port du lac Ashi)",
+    "lat": 35.24191,
+    "lng": 139.00423,
+    "cityId": "hakone",
+    "quartier": "Lac Ashi",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.24191,139.00423",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "torii-hakone-jinja": {
+    "nom": "Torii de Hakone-jinja",
+    "lat": 35.20222,
+    "lng": 139.02524,
+    "cityId": "hakone",
+    "quartier": "Motohakone",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.20222,139.02524",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "ryokan-fukuya": {
+    "nom": "Ryokan Hananoyado Fukuya",
+    "lat": 35.199,
+    "lng": 139.0312,
+    "cityId": "hakone",
+    "quartier": "Motohakone",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.199,139.0312",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "musee-plein-air": {
+    "nom": "Musée en plein air de Hakone",
+    "lat": 35.2445,
+    "lng": 139.0507,
+    "cityId": "hakone",
+    "quartier": "Ninotaira",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.2445,139.0507",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "pola-museum": {
+    "nom": "Pola Museum",
+    "lat": 35.2547,
+    "lng": 139.0535,
+    "cityId": "hakone",
+    "quartier": "Sengokuhara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.2547,139.0535",
+    "source": "points",
+    "confiance": "sure"
+  },
+  "odawara-station": {
+    "nom": "Gare d’Odawara",
+    "lat": 35.2557528,
+    "lng": 139.1566627,
+    "cityId": "hakone",
+    "quartier": "Odawara",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.2557528,139.1566627",
+    "source": "web",
+    "confiance": "sure"
+  },
+  "motohakone-port": {
+    "nom": "Motohakone-ko (port)",
+    "lat": 35.2028338,
+    "lng": 139.0306012,
+    "cityId": "hakone",
+    "quartier": "Motohakone",
+    "maps": "https://www.google.com/maps/search/?api=1&query=35.2028338,139.0306012",
+    "source": "web",
+    "confiance": "sure"
+  }
+}
