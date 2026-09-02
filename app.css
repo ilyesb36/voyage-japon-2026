@@ -2014,6 +2014,15 @@
     border-bottom-color: var(--line-2);
   }
   .dep__poste .dep__n { font-weight: 500; }
+  /* Le solde du poste sur sa propre ligne, pleine largeur : dans la colonne de
+     droite il débordait, et élargir cette colonne aurait désaligné les montants. */
+  .dep__solde {
+    grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between;
+    gap: var(--s-1) var(--s-3); font-size: var(--t-xs); font-weight: 500;
+  }
+  .dep__solde:empty { display: none; }
+  .dep__solde b { color: var(--acc); font-weight: 700; }
+  .dep__solde .mut { font-weight: 400; }
   .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
   .dep__pied .dep__n { font-size: var(--t-md); }
 

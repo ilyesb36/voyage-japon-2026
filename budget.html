@@ -82,15 +82,29 @@ const savePayeur = () => localStorage.setItem('jp2026_payeur', JSON.stringify(pa
 const estPaye = (i) => prepaye.has(i.key) || !!ancien[i.key] || !!payeur[i.key];
 const sansPayeur = (i) => estPaye(i) && !payeur[i.key];
 
-function bilan() {
-  const total = somme(ITEMS);
-  const paye = somme(ITEMS.filter(estPaye));
-  const avI = somme(ITEMS.filter((i) => payeur[i.key] === 'I'));
-  const avM = somme(ITEMS.filter((i) => payeur[i.key] === 'M'));
-  const flou = ITEMS.filter(sansPayeur);
+function bilan(items = ITEMS) {
+  const total = somme(items);
+  const paye = somme(items.filter(estPaye));
+  const avI = somme(items.filter((i) => payeur[i.key] === 'I'));
+  const avM = somme(items.filter((i) => payeur[i.key] === 'M'));
+  const flou = items.filter(sansPayeur);
   // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
   return { total, paye, reste: total - paye, avI, avM, solde: (avI - avM) / 2, flou };
 }
+
+// « Mathilde doit 223 € à Ilyès » — la même phrase pour le voyage et pour
+// chaque poste : c'est poste par poste qu'on se rembourse, les hôtels surtout.
+function phraseSolde(b) {
+  const s = Math.round(Math.abs(b.solde));
+  if (!b.avI && !b.avM) return b.flou.length ? 'payé, sans savoir par qui' : '';
+  if (s === 0) return 'à l\'équilibre';
+  return b.solde > 0
+    ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
+    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
+}
+const phraseAvances = (b) =>
+  `Ilyès a avancé <span class="data">${eur(b.avI)}</span>, Mathilde <span class="data">${eur(b.avM)}</span>${
+    b.flou.length ? ` · ${b.flou.length} ${b.flou.length > 1 ? 'lignes payées' : 'ligne payée'} sans savoir par qui` : ''}`;
 
 q('lede').textContent =
   'Qui a payé quoi, ce qu\'il reste, et qui doit combien à l\'autre. Mémorisé sur cet appareil.';
@@ -98,21 +112,14 @@ q('lede').textContent =
 // --- le bilan : trois lignes ----------------------------------------------------
 function renderBilan() {
   const b = bilan();
-  const s = Math.round(Math.abs(b.solde));
-  const phrase = !b.avI && !b.avM
-    ? 'Personne n\'a encore rien avancé'
-    : s === 0 ? 'Vous êtes à l\'équilibre'
-    : b.solde > 0 ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
-    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
+  const phrase = !b.avI && !b.avM ? 'Personne n\'a encore rien avancé'
+    : b.solde === 0 ? 'Vous êtes à l\'équilibre' : phraseSolde(b);
 
   q('bilan').innerHTML = `
     <p class="bilan__solde">
       <span class="chiffre__quoi">Entre vous</span>
       <span class="bilan__phrase">${phrase}</span>
-      <span class="bilan__sous mut">
-        Ilyès a avancé <span class="data">${eur(b.avI)}</span>, Mathilde <span class="data">${eur(b.avM)}</span>${
-        b.flou.length ? ` · ${b.flou.length} ${b.flou.length > 1 ? 'lignes payées' : 'ligne payée'} sans savoir par qui` : ''}
-      </span>
+      <span class="bilan__sous mut">${phraseAvances(b)}</span>
     </p>
     <dl class="bilan__faits">
       <div>
@@ -148,7 +155,7 @@ function renderDep() {
       <h2 class="dep__ligne dep__poste" id="cat-${cat.id}">
         <span>${esc(cat.name)}</span>
         <span class="dep__n data mut" data-cat="${cat.id}">${eur(somme(cat.items))}</span>
-        <span></span>
+        <span class="dep__solde" data-solde="${cat.id}">${posteSolde(cat)}</span>
       </h2>
       ${cat.items.map(ligne).join('')}`).join('')}
     <div class="dep__ligne dep__pied">
@@ -176,6 +183,17 @@ function renderDep() {
       refresh();
     });
   });
+}
+
+// Le solde du poste, à droite de son en-tête : ce que l'un a avancé pour
+// l'autre sur les hôtels, sur les billets… Vide tant que personne n'a rien payé.
+function posteSolde(cat) {
+  const b = bilan(cat.items);
+  const phrase = phraseSolde(b);
+  if (!phrase) return '';
+  const detail = (b.avI || b.avM)
+    ? `<span class="mut">I <span class="data">${eur(b.avI)}</span> · M <span class="data">${eur(b.avM)}</span></span>` : '';
+  return `${detail}<span>${phrase}</span>`;
 }
 
 function ligne(i) {
@@ -220,6 +238,7 @@ function refresh() {
       if (sub) sub.textContent = sousLigne(i);
     }
     root.querySelector(`[data-cat="${cat.id}"]`).textContent = eur(somme(cat.items));
+    root.querySelector(`[data-solde="${cat.id}"]`).innerHTML = posteSolde(cat);
   }
   root.querySelector('[data-cat="tout"]').textContent = eur(somme(ITEMS));
   renderBilan();
