@@ -347,7 +347,12 @@ q('soir').innerHTML = `
       ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
       <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
     </div>
-  </div>` : ''}`;
+  </div>` : ''}
+
+  <p class="jour__ailleurs">
+    <a class="btn btn--ghost" href="itineraire.html#jour-${jour.n}">Cette journée dans le programme</a>
+    <a class="btn btn--ghost" href="guide.html?ville=${esc(step ? step.cityId : '')}">Les adresses de ${esc(ville ? ville.name : 'la ville')}</a>
+  </p>`;
 
 // --- la météo de cette journée ------------------------------------------------
 // Sur place, ce qui décide d'une journée n'est pas la température de l'instant

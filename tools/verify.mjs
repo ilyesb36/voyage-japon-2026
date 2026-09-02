@@ -435,7 +435,7 @@ assert('chaque journée de visite a au moins un lieu situé', joursVides.length 
 // mais toute la moitié basse de la page prenait un rembourrage double et se
 // retrouvait plus étroite que le haut. Personne ne voit ça sans mesurer.
 
-const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html'];
+const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html'];
 
 console.log('\nStructure');
 for (const page of pages) {

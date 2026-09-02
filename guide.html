@@ -24,24 +24,26 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <p class="hero__lede" id="lede"></p>
   </header>
 
-  <!-- Une seule barre : la recherche d'abord (c'est ce qu'on veut sur toutes les
-       adresses), puis les villes en pastilles, puis les axes secondaires en
-       menus. Quatre rangées de pastilles faisaient un pavé illisible. -->
+  <!-- La recherche, puis une matrice villes × envies. Les pastilles de ville et
+       le menu des envies obligeaient à croiser deux commandes à l'aveugle, sans
+       jamais montrer ce qu'il y avait derrière. La matrice affiche les
+       compteurs : on voit d'un coup où sont les 319 adresses, et on atteint
+       n'importe quel croisement en un clic. -->
   <div class="tools">
     <label class="search">
       <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
       <input type="search" id="search" placeholder="Chercher une adresse, un quartier…"
              autocomplete="off" spellcheck="false">
     </label>
-    <div class="chipbar" data-facet="city"></div>
     <div class="tools__selects">
-      <select id="f-category" aria-label="Filtrer par envie"></select>
       <select id="f-priority" aria-label="Filtrer par priorité"></select>
       <select id="f-source" aria-label="Filtrer par provenance"></select>
     </div>
     <output id="count" class="tools__count" aria-live="polite"></output>
     <button class="chip" id="reset" hidden>Réinitialiser</button>
   </div>
+
+  <div class="mat" id="mat"></div>
 
   <div class="spotgrid" id="grid"></div>
   <p class="empty" id="empty" hidden>Rien ne correspond. Essaie un autre mot ou élargis les filtres.</p>
@@ -76,34 +78,28 @@ const FACETS = {
   source:   [{ id: 'all', name: 'Peu importe' }, ...SOURCES],
 };
 
-const state = { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' };
+// On peut arriver ici déjà filtré : ?ville=kyoto&envie=t6 depuis la page du
+// jour ou un lien partagé. Sans ça, « les adresses de Kyoto » obligeait à
+// refaire le filtrage à la main en arrivant.
+const entree = new URLSearchParams(location.search);
+const valide = (v, liste) => (v && liste.some((x) => x.id === v) ? v : 'all');
+
+const state = {
+  city: valide(entree.get('ville'), FACETS.city),
+  category: valide(entree.get('envie'), FACETS.category),
+  priority: valide(entree.get('priorite'), FACETS.priority),
+  source: 'all',
+  q: entree.get('q') || '',
+};
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
 q('lede').innerHTML =
   `${SPOTS.length} adresses. Chaque carte ouvre Google Maps. ` +
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
-// --- filtres -----------------------------------------------------------------
-// La ville reste en pastilles : c'est l'axe principal, et la couleur y sert.
-const cityBar = document.querySelector('[data-facet="city"]');
-cityBar.innerHTML = FACETS.city.map((o) => `
-  <button class="chip" data-value="${o.id}" aria-pressed="${o.id === 'all'}">
-    ${o.color ? `<span class="chip__dot" style="background:${o.color}"></span>` : ''}${esc(o.name)}
-  </button>`).join('');
-
-cityBar.addEventListener('click', (e) => {
-  const btn = e.target.closest('.chip');
-  if (!btn) return;
-  state.city = btn.dataset.value;
-  cityBar.querySelectorAll('.chip').forEach((c) =>
-    c.setAttribute('aria-pressed', String(c === btn)));
-  render();
-});
-
-// Les trois autres axes tiennent dans des menus : douze pastilles de plus
-// n'apportaient rien qu'un pavé.
+// --- filtres secondaires ------------------------------------------------------
 const LABEL = { category: 'Toutes les envies', priority: 'Toutes priorités', source: 'Toutes provenances' };
-for (const facet of ['category', 'priority', 'source']) {
+for (const facet of ['priority', 'source']) {
   const sel = q(`f-${facet}`);
   sel.innerHTML = FACETS[facet].map((o) =>
     `<option value="${o.id}">${o.id === 'all' ? LABEL[facet] : esc(o.name)}</option>`).join('');
@@ -112,15 +108,6 @@ for (const facet of ['category', 'priority', 'source']) {
 
 q('search').addEventListener('input', (e) => {
   state.q = e.target.value.trim().toLowerCase();
-  render();
-});
-
-q('reset').addEventListener('click', () => {
-  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' });
-  q('search').value = '';
-  ['category', 'priority', 'source'].forEach((f) => (q(`f-${f}`).value = 'all'));
-  cityBar.querySelectorAll('.chip').forEach((c) =>
-    c.setAttribute('aria-pressed', String(c.dataset.value === 'all')));
   render();
 });
 
@@ -137,13 +124,89 @@ const hay = (s) => {
 };
 const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-const matches = (s) =>
-  (state.city === 'all'
-    || (state.city === 'partout' ? s.cityId === null : s.cityId === state.city))
-  && (state.category === 'all' || s.category === state.category)
-  && (state.priority === 'all' || s.priority === state.priority)
-  && (state.source === 'all' || s.source === state.source)
-  && (!state.q || hay(s).includes(norm(state.q)));
+/**
+ * Le prédicat de filtrage, paramétrable par un état.
+ *
+ * Les compteurs de la matrice l'appellent avec un état modifié, si bien que le
+ * nombre affiché dans une case EST le nombre de résultats qu'on obtient en
+ * cliquant dessus. Dupliquer cette logique, c'était s'assurer qu'un jour la
+ * matrice mentirait.
+ */
+const matchesWith = (st) => (s) =>
+  (st.city === 'all'
+    || (st.city === 'partout' ? s.cityId === null : s.cityId === st.city))
+  && (st.category === 'all' || s.category === st.category)
+  && (st.priority === 'all' || s.priority === st.priority)
+  && (st.source === 'all' || s.source === st.source)
+  && (!st.q || hay(s).includes(norm(st.q)));
+
+const matches = (s) => matchesWith(state)(s);
+
+// --- la matrice ---------------------------------------------------------------
+// Les compteurs tiennent compte de la recherche, de la priorité et de la
+// provenance — mais PAS de la ville ni de l'envie, qui sont les deux axes de la
+// matrice elle-même. Autrement dit : le nombre affiché dans une case est
+// exactement le nombre de résultats qu'on obtient en cliquant dessus. Une
+// matrice qui ment est pire qu'un menu.
+const matLarge = matchMedia('(min-width: 760px)').matches;
+
+// Le même prédicat que la grille, avec la ville et l'envie de la case : le
+// compteur ne peut donc pas diverger du résultat.
+const compte = (city, category) =>
+  SPOTS.filter(matchesWith({ ...state, city, category })).length;
+
+const COLS = [{ id: 'all', name: 'Tout' }, ...CATEGORIES];
+const ROWS = FACETS.city;
+
+function renderMat() {
+  const actuelle = ROWS.find((r) => r.id === state.city);
+  const actuelleCat = COLS.find((c) => c.id === state.category);
+  const filtre = state.city !== 'all' || state.category !== 'all';
+
+  q('mat').innerHTML = `
+    <details class="mat__pli"${matLarge ? ' open' : ''}>
+      <summary class="mat__resume">
+        <span class="mat__resumeQuoi">
+          <b>${esc(filtre ? [actuelle?.name, actuelleCat?.id !== 'all' ? actuelleCat?.name : null].filter(Boolean).join(' · ') : 'Toutes les adresses')}</b>
+        </span>
+        <span class="mat__resumeAction">Choisir</span>
+      </summary>
+      <div class="mat__grille" style="--cols:${COLS.length}">
+        <span class="mat__coin" aria-hidden="true"></span>
+        ${COLS.map((c) => `
+          <button class="mat__tete${state.category === c.id ? ' is-actif' : ''}"
+                  data-col="${c.id}" title="${esc(c.name)} — toutes villes">${esc(c.name)}</button>`).join('')}
+        ${ROWS.map((r) => `
+          <button class="mat__tete mat__tete--ligne${state.city === r.id ? ' is-actif' : ''}"
+                  data-row="${r.id}" ${r.color ? `style="--c:${r.color}"` : ''}
+                  title="${esc(r.name)} — toutes envies">${esc(r.name)}</button>
+          ${COLS.map((c) => {
+            const n = compte(r.id, c.id);
+            const actif = state.city === r.id && state.category === c.id;
+            return `
+            <button class="mat__case${actif ? ' is-actif' : ''}${n === 0 ? ' is-vide' : ''}"
+                    data-row="${r.id}" data-col="${c.id}" ${n === 0 ? 'disabled' : ''}
+                    ${r.color ? `style="--c:${r.color}"` : ''}
+                    aria-label="${esc(r.name)}, ${esc(c.name)} : ${n}">${n || '·'}</button>`;
+          }).join('')}`).join('')}
+      </div>
+    </details>`;
+}
+
+q('mat').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-row], [data-col]');
+  if (!b || b.disabled) return;
+  // Une en-tête ne touche qu'à son axe ; une case fixe les deux.
+  if (b.dataset.row !== undefined && b.dataset.col !== undefined) {
+    state.city = b.dataset.row; state.category = b.dataset.col;
+  } else if (b.dataset.row !== undefined) {
+    state.city = state.city === b.dataset.row ? 'all' : b.dataset.row;
+  } else {
+    state.category = state.category === b.dataset.col ? 'all' : b.dataset.col;
+  }
+  render();
+});
+
 
 const catName = Object.fromEntries(CATEGORIES.map((c) => [c.id, c.name]));
 const prioName = Object.fromEntries(PRIORITIES.map((p) => [p.id, p.name]));
@@ -236,6 +299,10 @@ q('grid').addEventListener('click', (e) => {
 });
 
 function render() {
+  // La matrice se redessine avec la grille : ses compteurs dépendent de la
+  // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
+  renderMat();
+
   const list = SPOTS.filter(matches);
   q('grid').innerHTML = list.map(card).join('');
   q('empty').hidden = list.length > 0;
@@ -246,6 +313,20 @@ function render() {
     : `${SPOTS.length} adresses`;
   q('reset').hidden = !filtered;
 }
+
+q('reset').addEventListener('click', () => {
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' });
+  q('search').value = '';
+  q('f-priority').value = 'all';
+  q('f-source').value = 'all';
+  render();
+});
+
+// L'état peut venir de l'URL : les commandes doivent le refléter au premier
+// rendu, sinon la page dit « Kyoto » et le menu dit « toutes ».
+q('search').value = state.q;
+q('f-priority').value = state.priority;
+q('f-source').value = state.source;
 
 render();
 

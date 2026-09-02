@@ -1912,3 +1912,179 @@
   }
   .sheet__acces b { color: var(--ink); margin-right: var(--s-2); }
 }
+
+/* --- la matrice du guide -----------------------------------------------------
+   Les pastilles de ville et le menu des envies obligeaient à croiser deux
+   commandes à l'aveugle, sans jamais montrer ce qu'il y avait derrière : on
+   cliquait « Kanazawa » puis « Insolite » pour découvrir qu'il y en a deux.
+   La matrice affiche les compteurs — on voit la forme du guide, et chaque
+   croisement s'atteint en un clic. Même principe que le calendrier de la page
+   du jour : un objet dense qui remplace une chasse. */
+@layer components {
+  .mat { margin: 0 0 var(--s-5); }
+
+  .mat__pli > summary { list-style: none; cursor: pointer; }
+  .mat__pli > summary::-webkit-details-marker { display: none; }
+  .mat__resume {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 44px; padding-block: var(--s-2);
+  }
+  .mat__resumeQuoi b { font-size: var(--t-base); font-weight: 600; }
+  .mat__resumeAction {
+    margin-left: auto; font-size: var(--t-xs); font-weight: 600; color: var(--acc);
+  }
+  .mat__resumeAction::after { content: ' ▾'; }
+  .mat__pli[open] .mat__resumeAction::after { content: ' ▴'; }
+  @media (min-width: 760px) {
+    .mat__pli[open] > summary { display: none; }
+  }
+
+  .mat__grille {
+    display: grid;
+    grid-template-columns: minmax(88px, auto) repeat(var(--cols), minmax(0, 1fr));
+    gap: 2px; overflow-x: auto;
+  }
+
+  .mat__coin { background: transparent; }
+
+  .mat__tete {
+    background: transparent; border: 0; padding: var(--s-2) 4px;
+    font-size: 10px; font-weight: 600; color: var(--mut);
+    letter-spacing: .02em; line-height: 1.2;
+    cursor: pointer; text-align: center;
+    min-height: 34px;
+  }
+  .mat__tete--ligne {
+    text-align: left; font-size: var(--t-xs);
+    padding-left: 0; padding-right: var(--s-2);
+    color: var(--ink); min-height: 38px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .mat__tete--ligne::before {
+    content: ''; width: 7px; height: 7px; flex: none;
+    border-radius: 2px; background: var(--c, var(--line-2));
+  }
+  .mat__tete:hover { color: var(--acc); }
+  .mat__tete.is-actif { color: var(--acc); }
+
+  .mat__case {
+    min-height: 38px; border-radius: var(--r-s);
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+    font-family: var(--f-data); font-size: var(--t-xs); font-weight: 600;
+    color: var(--ink); cursor: pointer;
+  }
+  /* la densité se lit à la teinte : une case chargée est plus colorée */
+  .mat__case:not(.is-vide) {
+    background: color-mix(in srgb, var(--c, var(--mut)) 9%, var(--paper-2));
+  }
+  .mat__case:hover:not(:disabled) { border-color: var(--c, var(--acc)); }
+  .mat__case.is-vide { color: var(--line-2); cursor: default; background: var(--paper); }
+  .mat__case.is-actif {
+    background: var(--c, var(--ink)); border-color: var(--c, var(--ink)); color: #fff;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--c, var(--ink)) 30%, transparent);
+  }
+
+  @media (max-width: 760px) {
+    .mat__grille { grid-template-columns: minmax(74px, auto) repeat(var(--cols), minmax(34px, 1fr)); }
+    .mat__tete { font-size: 9px; }
+    .mat__case { min-height: 34px; }
+  }
+}
+
+/* --- passerelles depuis la page du jour ------------------------------------- */
+@layer components {
+  .jour__ailleurs {
+    display: flex; flex-wrap: wrap; gap: var(--s-2);
+    margin-top: var(--s-6); padding-top: var(--s-5);
+    border-top: 1px solid var(--line);
+  }
+  .jour__ailleurs .btn { font-size: var(--t-xs); }
+}
+
+/* --- le budget, en trois chiffres et une barre -------------------------------
+   Un total de 7 359 € ne dit rien : personne n'a d'intuition sur ce nombre.
+   Ce qui se compare, c'est le prix par personne et par jour. Et la barre montre
+   en une seconde que l'hébergement et les vols pèsent les deux tiers, ce
+   qu'aucune colonne de chiffres ne fait aussi vite. */
+@layer components {
+  .chiffres {
+    display: grid; gap: var(--s-3);
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin-bottom: var(--s-6);
+  }
+  .chiffre {
+    padding: var(--s-4) var(--s-5);
+    background: var(--paper-2); border: 1px solid var(--line);
+    border-radius: var(--r-m);
+  }
+  .chiffre--fort { background: var(--ink); border-color: var(--ink); }
+  .chiffre--reste { background: var(--acc-soft); border-color: color-mix(in srgb, var(--acc) 28%, transparent); }
+
+  .chiffre__quoi {
+    display: block; font-size: var(--t-xs); font-weight: 600;
+    color: var(--mut); letter-spacing: .04em; text-transform: uppercase;
+  }
+  .chiffre__n {
+    display: block; margin-top: var(--s-2);
+    font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+  }
+  .chiffre__sous { display: block; margin-top: var(--s-2); font-size: var(--t-xs); }
+
+  /* la carte sombre est en inversé : ses trois lignes doivent suivre */
+  .chiffre--fort .chiffre__quoi,
+  .chiffre--fort .chiffre__n,
+  .chiffre--fort .chiffre__sous { color: var(--paper); }
+  .chiffre--fort .chiffre__quoi { opacity: .75; }
+  .chiffre--fort .chiffre__sous { opacity: .8; }
+  .chiffre--reste .chiffre__n { color: var(--acc); }
+
+  /* la répartition ---------------------------------------------------------- */
+  .repart__bar {
+    display: flex; height: 14px; border-radius: var(--r-full);
+    overflow: hidden; background: var(--paper-3);
+  }
+  .repart__seg {
+    display: block; height: 100%;
+    background: var(--teinte); border-right: 1px solid var(--paper);
+    transition: filter .15s;
+  }
+  .repart__seg:last-child { border-right: 0; }
+  .repart__seg:hover { filter: brightness(1.15); }
+
+  /* La teinte de chaque poste est posée en style inline par le script (voir
+     TEINTES dans budget.html) : la palette d'automne du site, du plus lourd au
+     plus léger. Ici on ne garde qu'un repli. */
+  .repart__seg, .repart__legende li { --teinte: var(--mut); }
+
+  .repart__legende {
+    list-style: none; margin: var(--s-4) 0 0; padding: 0;
+    display: grid; gap: var(--s-2);
+  }
+  .repart__legende li {
+    display: flex; align-items: baseline; gap: var(--s-3);
+    font-size: var(--t-sm); min-height: 28px;
+  }
+  .repart__pastille {
+    width: 9px; height: 9px; flex: none; border-radius: 2px;
+    background: var(--teinte);
+  }
+  .repart__legende a { color: var(--ink); text-decoration: none; }
+  .repart__legende a:hover { color: var(--acc); text-decoration: underline; }
+  .repart__legende b { margin-left: auto; font-weight: 700; }
+  .repart__legende .mut { min-width: 3.2em; text-align: right; font-size: var(--t-xs); }
+
+  .budget__row.is-regle .budget__amount { color: var(--pine); }
+
+  /* une carte qui n'est qu'un renvoi -------------------------------------- */
+  .cardlink { padding: 0; overflow: hidden; }
+  .cardlink__in {
+    display: flex; align-items: center; gap: var(--s-4);
+    padding: var(--s-5); text-decoration: none; color: var(--ink);
+    min-height: 56px;
+  }
+  .cardlink__in:hover { background: var(--paper-3); }
+  .cardlink__texte b { display: block; font-size: var(--t-md); }
+  .cardlink__texte .mut { display: block; margin-top: var(--s-2); font-size: var(--t-sm); }
+  .cardlink__fleche { margin-left: auto; font-size: var(--t-xl); color: var(--mut); flex: none; }
+}

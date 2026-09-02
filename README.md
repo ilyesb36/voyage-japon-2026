@@ -56,7 +56,7 @@ de `tools/lib/` correspondant :
 ```bash
 node tools/extract.mjs        # legacy/ + tools/lib/ → data/*.js
 node tools/fetch-images.mjs   # OBLIGATOIRE : réécrit les photos vers img/
-node tools/verify.mjs         # 121 assertions
+node tools/verify.mjs         # 123 assertions
 ```
 
 **`fetch-images.mjs` n'est pas optionnel.** L'extraction repart des pages
@@ -74,7 +74,7 @@ l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v20';
+const V = 'v21';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne

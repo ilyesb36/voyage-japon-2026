@@ -1,12 +1,17 @@
 // Chrome de page et petits composants partagés par les cinq pages.
 import { TRIP } from '../data/trip.js';
 
+// « La journée » et « Jour par jour » étaient indistinguables dans la barre.
+// Chaque libellé dit maintenant ce que la page EST : le voyage vu de haut, ce
+// qu'il faut faire maintenant, une journée sur le terrain, le programme complet,
+// les adresses, l'intendance.
 const PAGES = [
   { href: 'index.html',      label: 'Le voyage' },
   { href: 'aujourdhui.html', label: "Aujourd'hui" },
   { href: 'jour.html',       label: 'La journée' },
-  { href: 'itineraire.html', label: 'Jour par jour' },
+  { href: 'itineraire.html', label: 'Le programme' },
   { href: 'guide.html',      label: 'Le guide' },
+  { href: 'budget.html',     label: 'Le budget' },
   { href: 'pratique.html',   label: 'Pratique' },
 ];
 

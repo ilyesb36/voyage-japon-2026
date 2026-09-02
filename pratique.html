@@ -46,19 +46,8 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
 
   <section class="section">
-    <div class="shead">
-      <h2>Budget</h2>
-      <p>Ajuste les montants variables, les totaux suivent.</p>
-    </div>
-    <div id="budget"></div>
-  </section>
-
-  <section class="section">
-    <div class="shead">
-      <h2>Paiements</h2>
-      <p>Mémorisé sur cet appareil.</p>
-    </div>
-    <div id="payments"></div>
+    <div class="shead"><h2>L'argent</h2></div>
+    <div class="card cardlink" id="vers-budget"></div>
   </section>
 
   <section class="section">
@@ -68,7 +57,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 </main>
 
 <script type="module">
-import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, BUDGET, AMENITY_LABELS } from './data/trip.js';
+import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, AMENITY_LABELS } from './data/trip.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today, bindLightbox } from './app/ui.js';
 
 mountChrome('pratique.html');
@@ -160,166 +149,22 @@ q('hotels').innerHTML = HOTELS.map((h) => {
 
 bindLightbox(q('hotels'));
 
-// --- le budget ----------------------------------------------------------------
-// Le poste hébergement est la somme des réservations, jamais une saisie.
-const RATE_LABEL = { vol: '€ / personne', train: '€ / personne', food: '€ / jour / pers.', act: '€ / jour / pers.' };
-const MULT = { vol: 2, train: 2, food: 24 * 2, act: 24 * 2 };
+// --- l'argent vit sur sa propre page -----------------------------------------
+// Pratique faisait quatre choses : les lits, le budget, les paiements et le
+// hors-ligne. Le budget a sa page ; il ne reste ici qu'un renvoi qui donne le
+// chiffre, pour ne pas avoir à cliquer juste pour savoir où on en est.
+const totalHeb = HOTELS.reduce((s, h) => s + h.price, 0);
+const dejaPaye = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
 
-const rates = loadRates();
-
-function loadRates() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('jp2026_rates') || '{}');
-    return { ...BUDGET.defaults, ...saved };
-  } catch { return { ...BUDGET.defaults }; }
-}
-const saveRates = () => localStorage.setItem('jp2026_rates', JSON.stringify(rates));
-
-const hotelsTotal = HOTELS.reduce((s, h) => s + h.price, 0);
-
-// Les compteurs se comptent. Écrits en dur, ils survivent aux données qu'ils
-// décrivent — c'est comme ça qu'un « 15 novembre » a tenu des semaines.
-const fukuya = HOTELS.find((h) => h.cityId === 'hakone');
-const arrivee = STEPS.find((s) => s.hotelId === fukuya?.id)?.from;
-q('cover-sub').textContent =
-  `${HOTELS.length} adresses, ${TRIP.nights} nuits, un budget`;
-q('cover-credit').textContent = fukuya && arrivee
-  ? `Le rotenburo du ${fukuya.name.replace(/^Hananoyado /, '')}, Hakone — nuit du ${formatDate(arrivee)}`
-  : '';
-q('lede').textContent =
-  `Les ${HOTELS.length} hébergements sont confirmés. Le budget est calculé depuis ces réservations, pas estimé.`;
-
-function lineTotal(item) {
-  if (item.fromHotel) return HOTELS.find((h) => h.id === item.fromHotel).price;
-  if (item.fix != null) return item.fix;
-  return (rates[item.dyn] || 0) * MULT[item.dyn];
-}
-const grandTotal = () =>
-  BUDGET.categories.reduce((s, c) => s + c.items.reduce((t, i) => t + lineTotal(i), 0), 0);
-
-function renderBudget() {
-  q('budget').innerHTML = `
-    <div class="budget">
-      ${BUDGET.categories.map((cat) => `
-        <section class="budget__cat">
-          <header>
-            <h3>${esc(cat.name)}</h3>
-            <span class="mut">${esc(cat.sub)}</span>
-            <b class="data" data-cat-total="${cat.id}">${eur(cat.items.reduce((t, i) => t + lineTotal(i), 0))}</b>
-          </header>
-          ${cat.items.map((i) => `
-            <div class="budget__row">
-              <span class="budget__label">
-                <b>${esc(i.label)}</b>
-                ${i.sub ? `<span class="mut">${esc(i.sub)}</span>` : ''}
-              </span>
-              ${i.dyn ? `
-                <label class="budget__input">
-                  <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
-                         aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
-                  <span class="mut">${RATE_LABEL[i.dyn]}</span>
-                </label>` : ''}
-              <span class="budget__amount data" data-line="${i.key}">${eur(lineTotal(i))}</span>
-            </div>`).join('')}
-        </section>`).join('')}
-
-      <div class="budget__total">
-        <div>
-          <span class="label">Total du voyage</span>
-          <b class="data" id="grand">${eur(grandTotal())}</b>
-          <span class="mut">2 personnes · <span class="data" id="perhead">${eur(grandTotal() / 2)}</span> chacun</span>
-        </div>
-        <p class="mut">Hors shopping et souvenirs. Prix d'hébergement = les réservations Booking réelles.</p>
-      </div>
-    </div>`;
-
-  q('budget').querySelectorAll('input[data-rate]').forEach((input) => {
-    input.addEventListener('input', () => {
-      rates[input.dataset.rate] = Math.max(0, +input.value || 0);
-      saveRates();
-      refreshTotals();
-    });
-  });
-}
-
-function refreshTotals() {
-  for (const cat of BUDGET.categories) {
-    for (const i of cat.items) {
-      const cell = q('budget').querySelector(`[data-line="${i.key}"]`);
-      if (cell) cell.textContent = eur(lineTotal(i));
-    }
-    const catCell = q('budget').querySelector(`[data-cat-total="${cat.id}"]`);
-    if (catCell) catCell.textContent = eur(cat.items.reduce((t, i) => t + lineTotal(i), 0));
-  }
-  q('grand').textContent = eur(grandTotal());
-  q('perhead').textContent = eur(grandTotal() / 2);
-}
-
-renderBudget();
-
-// --- les paiements ------------------------------------------------------------
-// On relit les anciennes clés pour ne pas perdre ce qui était déjà coché.
-function loadPaid() {
-  try {
-    const now = JSON.parse(localStorage.getItem('jp2026_paid') || 'null');
-    if (now) return now;
-    return JSON.parse(localStorage.getItem('bdg_paid') || '{}');
-  } catch { return {}; }
-}
-const paid = loadPaid();
-const savePaid = () => localStorage.setItem('jp2026_paid', JSON.stringify(paid));
-
-// Les hôtels déjà réglés via Booking sont cochés d'office et non décochables :
-// c'est un fait, pas une préférence.
-// Idem pour les billets datés déjà payés : `settled` vient des données, pas
-// d'une case cochée par l'utilisateur.
-const prepaid = new Set([
-  ...HOTELS.filter((h) => h.paid).map((h) => h.id),
-  ...BUDGET.categories.flatMap((c) => c.items).filter((i) => i.settled).map((i) => i.key),
-]);
-
-function renderPayments() {
-  const lines = BUDGET.categories.flatMap((c) =>
-    c.items.map((i) => ({ ...i, cat: c.name, amount: lineTotal(i) })));
-  const settled = lines.filter((l) => prepaid.has(l.key) || paid[l.key]);
-  const sum = (ls) => ls.reduce((s, l) => s + l.amount, 0);
-  const pct = Math.round((sum(settled) / sum(lines)) * 100) || 0;
-
-  q('payments').innerHTML = `
-    <div class="pay">
-      <div class="prog__bar"><span style="width:${pct}%"></span></div>
-      <p class="pay__sum">
-        <b class="data">${eur(sum(settled))}</b> réglés sur <b class="data">${eur(sum(lines))}</b>
-        <span class="mut">· reste <span class="data">${eur(sum(lines) - sum(settled))}</span></span>
-      </p>
-      ${BUDGET.categories.map((c) => `
-        <section class="pay__cat">
-          <h3>${esc(c.name)}</h3>
-          ${c.items.map((i) => {
-            const locked = prepaid.has(i.key);
-            const on = locked || !!paid[i.key];
-            return `
-            <label class="pay__row${on ? ' is-paid' : ''}">
-              <input type="checkbox" data-key="${i.key}" ${on ? 'checked' : ''} ${locked ? 'disabled' : ''}>
-              <span class="pay__label">
-                <b>${esc(i.label)}</b>
-                <span class="mut">${locked ? (i.settled ? `payé · ${esc(i.sub || '')}` : 'réglé via Booking') : esc(i.sub || '')}</span>
-              </span>
-              <span class="data">${eur(lineTotal(i))}</span>
-            </label>`;
-          }).join('')}
-        </section>`).join('')}
-    </div>`;
-
-  q('payments').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach((cb) => {
-    cb.addEventListener('change', () => {
-      paid[cb.dataset.key] = cb.checked;
-      savePaid();
-      renderPayments();
-    });
-  });
-}
-renderPayments();
+q('vers-budget').innerHTML = `
+  <a class="cardlink__in" href="budget.html">
+    <span class="cardlink__texte">
+      <b>Le budget et les paiements</b>
+      <span class="mut">${eur(totalHeb)} d'hébergement, dont ${eur(dejaPaye)} déjà réglés.
+        Le détail, les totaux et ce qui reste à sortir sont sur leur page.</span>
+    </span>
+    <span class="cardlink__fleche" aria-hidden="true">›</span>
+  </a>`;
 
 // --- hors-ligne ---------------------------------------------------------------
 // Une action explicite, avec une progression réelle. Le pré-chargement

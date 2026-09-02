@@ -15,13 +15,13 @@
 
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
 // le cache sert l'ancienne version et personne ne voit la mise à jour.
-const V = 'v20';
+const V = 'v21';
 const SHELL = `jp-shell-${V}`;
 const MEDIA = `jp-media-${V}`;
 const TILES = `jp-tiles-${V}`;
 
 const PAGES = [
-  './', 'index.html', 'aujourdhui.html', 'jour.html', 'itineraire.html', 'guide.html', 'pratique.html',
+  './', 'index.html', 'aujourdhui.html', 'jour.html', 'itineraire.html', 'guide.html', 'budget.html', 'pratique.html',
   'manifest.webmanifest', 'app.css',
   'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js', 'app/resa.js',
   'data/trip.js', 'data/days.js', 'data/spots.js', 'data/pratique.js', 'data/lieux.js',
@@ -117,7 +117,7 @@ async function mediaList() {
   // fois, et ça ne se voit qu'une fois hors-ligne, trop tard.
   const sources = ['data/spots.js', 'data/trip.js', 'data/days.js',
                    'index.html', 'itineraire.html', 'guide.html',
-                   'pratique.html', 'aujourdhui.html', 'jour.html'];
+                   'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html'];
   for (const file of sources) {
     try {
       const src = await (await fetch(file, { cache: 'reload' })).text();
