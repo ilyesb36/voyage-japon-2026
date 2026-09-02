@@ -16,7 +16,7 @@ python3 -m http.server 4173     # puis http://localhost:4173
 | Page | Ce qu'elle fait |
 |---|---|
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
-| `itineraire.html` | les 25 jours et les 30 journées type |
+| `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 30 journées type — une seule fois |
 | `guide.html` | 319 adresses, filtrables, avec notice historique |
 | `budget.html` | les trois chiffres qui parlent, la répartition en barre, le détail ajustable, ce qui est réglé |
 | `pratique.html` | les six hébergements, les réflexes de terrain, le mode hors-ligne |
@@ -75,7 +75,7 @@ l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v22';
+const V = 'v23';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne

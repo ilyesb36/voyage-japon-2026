@@ -66,7 +66,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     </section>
 
     <section class="section">
-      <div class="shead disc"><h2>Réservations</h2></div>
+      <div class="shead disc"><h2>L'argent</h2></div>
       <div id="progress"></div>
     </section>
   </div>
@@ -76,6 +76,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <script type="module">
 import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
+import { DAYS } from './data/days.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { renderMomijiBand } from './app/momiji.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
@@ -95,10 +96,19 @@ const HERO = {"ouverture": "img/hero/ouverture.webp", "tokyo": "img/hero/tokyo.w
 // Tokyo est deux étapes : la seconde a sa propre image, sinon la page bégaie.
 const heroFor = (step) => (step.n === 6 && HERO.tokyo2) ? HERO.tokyo2 : HERO[step.cityId];
 
+// Le bloc de ville disait où l'on dort et rien de ce qu'on y fait : la moitié
+// droite restait vide sous cinq lignes. Il porte maintenant les incontournables
+// de la ville et le nombre d'adresses du guide — avec le lien déjà filtré.
 q('cities').innerHTML = STEPS.map((step) => {
   const c = CITIES[step.cityId];
   const h = HOTELS.find((x) => x.id === step.hotelId);
   const excs = EXCURSIONS.filter((e) => e.fromStepId === step.id);
+  const dansLaVille = SPOTS.filter((sp) => sp.cityId === step.cityId);
+  const nbAdresses = dansLaVille.length;
+  // Tokyo a deux étapes : la seconde montre d'autres incontournables que la première.
+  const obs = dansLaVille.filter((sp) => sp.priority === 'ob');
+  const incontournables = (step.n === 6 ? obs.slice(3, 6) : obs.slice(0, 3));
+  const premierJour = DAYS.find((d) => d.stepId === step.id && d.kind !== 'vol');
   return `
   <article class="city" style="--c:${c.color}">
     <figure class="city__shot">
@@ -110,6 +120,15 @@ q('cities').innerHTML = STEPS.map((step) => {
       <p class="city__when">${formatDate(step.from)} → ${formatDate(step.to)} · ${step.nights} nuit${step.nights > 1 ? 's' : ''}</p>
       <p class="city__hotel">${esc(h.name)}<span class="mut"> · ${esc(h.room)}</span></p>
       ${excs.length ? `<p class="city__exc">Excursions : ${excs.map((e) => esc(e.name)).join(', ')}</p>` : ''}
+      ${incontournables.length ? `
+      <p class="city__ob">
+        <span class="label">À ne pas rater</span>
+        ${incontournables.map((sp) => `<a href="guide.html?ville=${esc(step.cityId)}&q=${encodeURIComponent(sp.name)}">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
+      </p>` : ''}
+      <p class="city__liens">
+        <a class="btn btn--ghost" href="jour.html?d=${premierJour ? premierJour.n : 1}">Les journées</a>
+        <a class="btn btn--ghost" href="guide.html?ville=${esc(step.cityId)}">${nbAdresses} adresses</a>
+      </p>
     </div>
   </article>`;
 }).join('');
@@ -151,7 +170,6 @@ function stop(step) {
         <span class="rt__when data">${formatDate(step.from)} → ${formatDate(step.to)}</span>
         <span class="rt__nights">${step.nights} nuit${step.nights > 1 ? 's' : ''}</span>
       </div>
-      <p class="rt__hotel">${esc(h.name)} <span class="mut">· ${esc(h.room)}</span></p>
       ${excs.length ? `<ul class="rt__branches">
         ${excs.map((e) => `<li><span class="rt__branch"></span>${esc(e.name)}
           <span class="mut data">${esc(e.date)}</span></li>`).join('')}
@@ -226,24 +244,18 @@ const pct = Math.round((paidHotels / totalHotels) * 100);
 const ryokan = HOTELS.find((h) => h.cancelBefore);
 const daysToCancel = ryokan ? daysBetween(today(), ryokan.cancelBefore) : null;
 
+// Le suivi des paiements a sa page. Ici, juste le chiffre et le renvoi — pas
+// une troisième liste de ce qui est réservé.
 q('progress').innerHTML = `
-  <div class="prog">
-    <div class="prog__bar" role="img"
-         aria-label="${pct} % de l'hébergement est réglé">
-      <span style="width:${pct}%"></span>
-    </div>
-    <p class="prog__line">
-      <b class="data">${eur(paidHotels)}</b> réglés sur <b class="data">${eur(totalHotels)}</b>
-      d'hébergement — <span class="mut">${HOTELS.filter((h) => !h.paid).length} réservations à payer sur place ou avant.</span>
-    </p>
-    <ul class="prog__list">
-      <li><span class="prog__ok">✓</span> Les ${HOTELS.length} hôtels sont confirmés</li>
-      <li><span class="prog__ok">✓</span> Les ${FLIGHTS.length} vols sont pris — China Eastern via Shanghai</li>
-      ${RESERVATIONS.map((r) => `
-      <li><span class="prog__ok">✓</span> ${esc(r.title)} — ${esc(formatDate(r.date))}, ${esc(r.slot)}, ${esc(r.status)}</li>`).join('')}
-      <li><span class="prog__warn">!</span> Pass Hakone et Nikko à acheter à l'avance</li>
-    </ul>
-    <p class="prog__more"><a class="btn btn--ghost" href="pratique.html">Voir le budget complet</a></p>
+  <div class="card cardlink">
+    <a class="cardlink__in" href="budget.html">
+      <span class="cardlink__texte">
+        <b>${eur(paidHotels)} réglés sur ${eur(totalHotels)} d'hébergement</b>
+        <span class="mut">Les ${HOTELS.length} hôtels et les ${FLIGHTS.length} vols sont pris${RESERVATIONS.length ? `, le ${esc(RESERVATIONS[0].title)} est payé` : ''}.
+          Le budget complet, ligne par ligne, et ce qui reste à sortir.</span>
+      </span>
+      <span class="cardlink__fleche" aria-hidden="true">›</span>
+    </a>
   </div>`;
 
 initReveal();

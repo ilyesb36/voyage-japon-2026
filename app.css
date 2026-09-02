@@ -612,7 +612,9 @@
   /* accueil : les villes ----------------------------------------------------
      Une par écran ou presque : grande image, texte dans la marge. C'est le
      cœur du voyage, pas une ligne de tableau. */
-  .cities { margin: var(--s-9) 0; display: flex; flex-direction: column; gap: var(--s-9); }
+  /* 96 px d'écart entre deux villes creusait un vide sous chaque bloc dont la
+     photo dépasse le texte. 64 suffisent maintenant que les blocs sont remplis. */
+  .cities { margin: var(--s-8) 0; display: flex; flex-direction: column; gap: var(--s-8); }
   .city {
     max-width: var(--wrap); margin-inline: auto; padding-inline: var(--s-5);
     display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
@@ -2168,4 +2170,40 @@
   .avant__comment > summary::after { content: ' ▾'; }
   .avant__comment[open] > summary::after { content: ' ▴'; }
   .avant__comment p { margin-top: var(--s-2); font-size: var(--t-xs); max-width: 62ch; }
+}
+
+/* --- le bloc de ville, rempli -----------------------------------------------
+   Il disait où l'on dort et rien de ce qu'on y fait. Les incontournables et le
+   compte d'adresses lui donnent une raison d'être lu. */
+@layer components {
+  .city__ob { margin-top: var(--s-4); font-size: var(--t-sm); line-height: 1.7; }
+  .city__ob .label { display: block; margin-bottom: 2px; }
+  .city__ob a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line-2); }
+  .city__ob a:hover { color: var(--c); border-color: var(--c); }
+  .city__liens { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+  .city__liens .btn { font-size: var(--t-xs); }
+}
+
+/* --- une journée du programme : une ligne, pas un accordéon -----------------
+   Le détail de chaque journée vit sur jour.html, avec la carte et le parcours.
+   Le programme ne fait plus que donner la vue d'ensemble : 25 lignes qu'on
+   balaie d'un regard, chacune menant à sa page. Dix écrans → trois. */
+@layer components {
+  .day--lien {
+    display: grid; grid-template-columns: 46px minmax(0, 1fr) auto;
+    gap: var(--s-4); align-items: center;
+    padding: var(--s-3) var(--s-2); text-decoration: none; color: var(--ink);
+    border-bottom: 1px solid var(--line); border-radius: var(--r-s);
+    min-height: 56px;
+  }
+  .day--lien:hover { background: var(--paper-3); }
+  .day--lien .day__title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2) var(--s-3); }
+  .day__apercu {
+    flex-basis: 100%; font-size: var(--t-xs); line-height: 1.5;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .day--lien .day__car { color: var(--mut); font-size: var(--t-lg); }
+  .day--today.day--lien { background: var(--acc-soft); border-left: 3px solid var(--acc); }
+  .day--past.day--lien { opacity: .55; }
+  @media (max-width: 560px) { .day__apercu { white-space: normal; } }
 }

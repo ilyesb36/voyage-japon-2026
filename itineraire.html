@@ -65,7 +65,6 @@ const tplByCity = TEMPLATES.reduce((m, t) => ((m[t.cityId] ||= []).push(t), m), 
 
 // Une journée est libre si elle le dit, ou si son programme tient en trois
 // lignes. Ces jours-là renvoient vers les journées type de leur ville.
-const isFree = (d) => d.kind === 'etape' && (/\blibre\b/i.test(d.title) || d.items.length <= 3);
 
 // Tokyo est deux étapes distinctes mais une seule ville : ses journées type ne
 // se rendent qu'à la première, la seconde y renvoie.
@@ -185,7 +184,7 @@ for (const step of STEPS) {
     </header>
 
     ${days.map((d) => renderDay(d, c)).join('')}
-    ${renderTemplates(step, c)}
+    
   </section>`;
 }
 
@@ -193,32 +192,6 @@ for (const step of STEPS) {
  * Les journées type de la ville, une seule fois par étape et non sous chaque
  * jour : les répéter était précisément le défaut qu'on corrige.
  */
-function renderTemplates(step, c) {
-  const tpls = tplByCity[step.cityId] || [];
-  if (!tpls.length) return '';
-
-  const home = firstStepOfCity[step.cityId];
-  if (home !== step.id) {
-    return `<p class="alt-ref">
-      Les <a href="#tpl-${home}">${tpls.length} journées type à ${esc(c.name)}</a>
-      sont listées à la première étape.</p>`;
-  }
-
-  const free = STEPS.filter((s) => s.cityId === step.cityId)
-    .flatMap((s) => byStep[s.id] || []).filter(isFree).length;
-
-  return `
-  <details class="alt alt--phase" id="tpl-${step.id}">
-    <summary class="alt__head">
-      <b>Les journées type à ${esc(c.name)}</b>
-      <span class="mut">${tpls.length} façons d'occuper une journée${free ? ` — ${free} jour${free > 1 ? 's' : ''} libre${free > 1 ? 's' : ''} dans cette ville` : ''}</span>
-      <span class="day__car" aria-hidden="true">›</span>
-    </summary>
-    <div class="alt__list">
-      ${tpls.map(templateItem).join('')}
-    </div>
-  </details>`;
-}
 
 function templateItem(t) {
   return `
@@ -257,68 +230,39 @@ if (depart.length) {
 q('itin').innerHTML = html;
 
 function renderDay(d, c) {
-  const kind = isFree(d) ? KIND.libre : KIND[d.kind];
+  const kind = KIND[d.kind];
   const past = d.date < now;
   const isToday = d.date === now;
-  const free = isFree(d) && (tplByCity[d.cityId] || []).length;
+  // Deux lignes d'aperçu suffisent : le détail — les arrêts situés, la carte,
+  // le parcours dans Maps — vit sur la page du jour. Dérouler ici la même liste
+  // faisait dix écrans à faire défiler, pour du contenu lu deux fois.
+  const apercu = d.items.slice(0, 2).map((i) => esc(i.text.replace(/\s*[—:(].*$/, '').slice(0, 64))).join(' · ');
+  const reste = d.items.length - 2;
+  const resa = resasForDate(d.date).length;
 
   return `
-  <details class="day${past ? ' day--past' : ''}${isToday ? ' day--today' : ''}" id="jour-${d.n}"${isToday ? ' open' : ''}>
-    <summary class="day__head">
-      <span class="day__date">
-        <b class="data">${d.label.split(' ')[0]}</b>
-        <span class="label">${d.label.split(' ')[1]}</span>
-      </span>
-      <span class="day__title">
-        <b>${esc(d.title)}</b>
-        ${kind ? `<span class="day__kind">${kind}</span>` : ''}
-        ${resasForDate(d.date).length ? '<span class="day__kind day__kind--resa">billet daté</span>' : ''}
-      </span>
-      <span class="day__count mut data">${d.items.length}</span>
-      <span class="day__car" aria-hidden="true">›</span>
-    </summary>
-
-    <div class="day__body">
-      ${resaStrip(d.date)}
-      <ul class="day__items">
-        ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
-      </ul>
-      ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
-      <p class="day__go"><a class="btn btn--ghost" href="jour.html?d=${d.n}">Cette journée sur la carte</a></p>
-      ${free ? `<p class="day__free">Rien de calé : ${free} journées type sont proposées
-        <a href="#tpl-${firstStepOfCity[d.cityId]}">plus bas</a>.</p>` : ''}
-    </div>
-  </details>`;
+  <a class="day day--lien${past ? ' day--past' : ''}${isToday ? ' day--today' : ''}" id="jour-${d.n}" href="jour.html?d=${d.n}">
+    <span class="day__date">
+      <b class="data">${d.label.split(' ')[0]}</b>
+      <span class="label">${d.label.split(' ')[1]}</span>
+    </span>
+    <span class="day__title">
+      <b>${esc(d.title)}</b>
+      ${kind ? `<span class="day__kind">${kind}</span>` : ''}
+      ${resa ? '<span class="day__kind day__kind--resa">billet daté</span>' : ''}
+      <span class="day__apercu mut">${apercu}${reste > 0 ? ` <span class="data">+${reste}</span>` : ''}</span>
+    </span>
+    <span class="day__car" aria-hidden="true">›</span>
+  </a>`;
 }
 
-// Aucune journée type ne doit rester orpheline : celles rattachées à un lieu
-// qui n'est pas une étape (les day trips) sont regroupées en fin de page.
-const stepCities = new Set(STEPS.map((s) => s.cityId));
-const orphans = TEMPLATES.filter((t) => !stepCities.has(t.cityId));
-
-if (orphans.length) {
-  q('itin').insertAdjacentHTML('beforeend', `
-  <section class="phase" id="autres">
-    <header class="phase__head">
-      <span class="step-num" style="--c:var(--mut)">+</span>
-      <div>
-        <h2>Les autres journées type</h2>
-        <p class="phase__sub">${orphans.length} idées de journées qui ne tombent pas sur un jour libre.</p>
-      </div>
-    </header>
-    <div class="alt alt--standalone">
-      <div class="alt__list">
-        ${orphans.map(templateItem).join('')}
-      </div>
-    </div>
-  </section>`);
-}
+// Les journées type ne sont plus redistribuées sous chaque étape ni regroupées
+// en fin de page : la grille du haut les montre toutes, filtrables par ville,
+// orphelines comprises. Elles apparaissaient trois fois sur la même page.
 
 // Ouvrir le jour ciblé par l'ancre, et le placer sous la nav collante.
 if (location.hash) {
-  const el = document.querySelector(location.hash);
-  if (el?.tagName === 'DETAILS') el.open = true;
-  el?.scrollIntoView({ block: 'start' });
+  document.querySelector(location.hash)?.scrollIntoView({ block: 'start' });
 }
 
 initReveal();

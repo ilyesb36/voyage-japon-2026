@@ -87,9 +87,16 @@ function before() {
 
   <section class="section">
     <div class="shead"><h2>Le premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
-    ${dayCard(DAYS[0])}
+    <div class="card cardlink">
+      <a class="cardlink__in" href="jour.html?d=1">
+        <span class="cardlink__texte">
+          <b>${esc(DAYS[0].title)}</b>
+          <span class="mut">${esc(DAYS[0].items[0]?.text || '')}</span>
+        </span>
+        <span class="cardlink__fleche" aria-hidden="true">›</span>
+      </a>
+    </div>
     <p class="jour__liens">
-      <a class="btn btn--ghost" href="jour.html?d=1">Cette journée sur la carte</a>
       <a class="btn btn--ghost" href="pratique.html">Ce qu'il faut savoir sur place</a>
     </p>
   </section>`;
