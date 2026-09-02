@@ -18,7 +18,8 @@ python3 -m http.server 4173     # puis http://localhost:4173
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
 | `itineraire.html` | les 25 jours et les 30 journées type |
 | `guide.html` | 319 adresses, filtrables, avec notice historique |
-| `pratique.html` | les six hébergements, le budget, les paiements, le hors-ligne |
+| `budget.html` | les trois chiffres qui parlent, la répartition en barre, le détail ajustable, ce qui est réglé |
+| `pratique.html` | les six hébergements et le mode hors-ligne |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
 | `aujourdhui.html` | avant : le compte à rebours et les démarches. Pendant : le jour même |
 
