@@ -207,11 +207,22 @@ function openSheet(id) {
       </div>
     </div>`;
 
-  const close = () => { el.remove(); document.removeEventListener('keydown', onKey); };
+  // Même traitement que la visionneuse : le fond devient inerte le temps de la
+  // fiche, sinon Tab s'échappe dans les 277 cartes qu'on ne voit plus, et le
+  // focus revient sur la carte cliquée à la fermeture.
+  const veniat = document.activeElement;
+  const fond = [...document.body.children];
+  const close = () => {
+    el.remove();
+    document.removeEventListener('keydown', onKey);
+    fond.forEach((n) => n.removeAttribute('inert'));
+    veniat?.focus?.();
+  };
   const onKey = (e) => { if (e.key === 'Escape') close(); };
   el.addEventListener('click', (e) => { if (e.target === el) close(); });
   el.querySelector('.sheet__close').addEventListener('click', close);
   document.addEventListener('keydown', onKey);
+  fond.forEach((n) => n.setAttribute('inert', ''));
   document.body.appendChild(el);
   el.querySelector('.sheet__close').focus();
 }

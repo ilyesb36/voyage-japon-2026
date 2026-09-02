@@ -133,7 +133,10 @@ q('tplgrid').addEventListener('click', (e) => {
   e.preventDefault();
   target.closest('details.alt')?.setAttribute('open', '');
   target.setAttribute('open', '');
-  target.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  // Le défilement animé est une animation comme une autre : si le système
+  // demande de les réduire, on saute directement à la cible.
+  const anime = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  target.scrollIntoView({ block: 'center', behavior: anime ? 'smooth' : 'auto' });
 });
 
 // --- navigation par étape -----------------------------------------------------

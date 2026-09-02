@@ -197,7 +197,18 @@ export function lightbox(images, start = 0, captions = []) {
     cap.textContent = captions[i] || (images.length > 1 ? `${i + 1} / ${images.length}` : '');
   };
   const move = (d) => { i = (i + d + images.length) % images.length; show(); };
-  const close = () => { box.remove(); document.removeEventListener('keydown', onKey); };
+
+  // Au clavier, Tab sortait de la visionneuse vers la page derrière : on
+  // tabulait dans du contenu qu'on ne voit plus. Le fond passe `inert` le temps
+  // de l'ouverture, et le focus revient d'où il venait à la fermeture.
+  const veniat = document.activeElement;
+  const fond = [...document.body.children];
+  const close = () => {
+    box.remove();
+    document.removeEventListener('keydown', onKey);
+    fond.forEach((el) => el.removeAttribute('inert'));
+    veniat?.focus?.();
+  };
   const onKey = (e) => {
     if (e.key === 'Escape') close();
     if (e.key === 'ArrowLeft') move(-1);
@@ -211,6 +222,8 @@ export function lightbox(images, start = 0, captions = []) {
   document.addEventListener('keydown', onKey);
 
   show();
+  box.setAttribute('aria-modal', 'true');
+  fond.forEach((el) => el.setAttribute('inert', ''));
   document.body.appendChild(box);
   box.querySelector('.lightbox__close').focus();
 }

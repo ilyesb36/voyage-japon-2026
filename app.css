@@ -50,7 +50,7 @@
     --paper-3:  #EDE7DA;
     --ink:      #1F1B17;
     --ink-2:    #46403A;
-    --mut:      #7A7168;
+    --mut:      #6B6259;   /* 4,85:1 minimum : #7A7168 tombait à 3,88 sur les bandes */
     --line:     #E2DACB;
     --line-2:   #CFC5B2;
 
@@ -842,7 +842,9 @@
   .foot__in b { font-size: var(--t-base); font-weight: 600; color: var(--ink); }
   .foot nav { display: flex; gap: var(--s-4); margin-left: auto; flex-wrap: wrap; }
   .foot a:hover { color: var(--acc); }
-  .foot small { width: 100%; font-size: var(--t-xs); opacity: .7; }
+  /* Pas d'opacité : --mut est déjà la couleur discrète, et à 0,7 la ligne
+     tombait à 2,9:1 — illisible au soleil, ce qui est précisément le contexte. */
+  .foot small { width: 100%; font-size: var(--t-xs); }
   @media (max-width: 640px) { .foot nav { margin-left: 0; } }
 
   /* visionneuse ------------------------------------------------------------ */
@@ -993,12 +995,16 @@
     background: var(--ink); color: var(--paper); border-radius: var(--r-m);
   }
   .budget__total > div { display: flex; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; }
-  .budget__total .label { color: var(--paper); opacity: .65; }
+  /* Le bloc est en inversé : fond --ink, texte --paper. Le total portait
+     `color: var(--ink)` — encre sur encre, soit le plus gros chiffre de la
+     page rendu invisible. Les opacités sont remontées : sous 0,75 le texte
+     passait sous le seuil de contraste. */
+  .budget__total .label { color: var(--paper); opacity: .8; }
   .budget__total b { font-family: var(--f-data); font-size: 1.75rem; font-weight: 700;
-                     letter-spacing: -0.045em; color: var(--ink); }
-  .budget__total .mut { color: var(--paper); opacity: .7; }
+                     letter-spacing: -0.045em; color: var(--paper); }
+  .budget__total .mut { color: var(--paper); opacity: .85; }
   .budget__total > p { margin-top: var(--s-3); font-size: var(--t-xs);
-                       color: var(--paper); opacity: .55; }
+                       color: var(--paper); opacity: .78; }
 
   @media (max-width: 640px) {
     .budget__row { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
@@ -1525,4 +1531,67 @@
     color: var(--mut); background: var(--paper-3);
     border-color: var(--line-2);
   }
+}
+
+/* --- doigts, pas souris ----------------------------------------------------
+   Ce site se consulte au Japon, sur un téléphone, souvent en marchant. Les
+   commandes principales étaient dimensionnées pour un curseur : le « ↗ » qui
+   lance l'itinéraire Google Maps faisait 10 × 16 px, et il apparaît 165 fois.
+   On agrandit la zone tapable, pas le dessin. */
+@layer components {
+  /* Une zone tapable posée par-dessus, en absolu : rien ne bouge dans la page. */
+  .alt__pin { position: relative; }
+  .alt__pin::after { content: ''; position: absolute; inset: -12px; }
+
+  /* Même principe pour les autres liens en ligne, trop fins pour un pouce. */
+  .todo__link, .spot__maps, .know__item a, .day__tip a {
+    position: relative; display: inline-block;
+  }
+  .todo__link::after, .spot__maps::after {
+    content: ''; position: absolute; inset: -10px -4px;
+  }
+
+  .tools .chip { height: 40px; }
+  .tools__selects select, .tools select { min-height: 40px; }
+  .tools .search, .tools label.search { min-height: 40px; }
+
+  .chip { min-height: 40px; }
+
+  .nav__theme { width: 40px; height: 40px; }
+  .nav__burger { min-width: 40px; min-height: 40px; }
+  /* Le sélecteur du site est `.nav a:not(.nav__brand)`, pas `.nav__links a` :
+     viser le mauvais laissait les liens à 21 px de haut. */
+  .nav a { min-height: 40px; display: inline-flex; align-items: center; }
+
+  /* La case reste petite, mais toute la ligne est tapable — c'est un label. */
+  .pay__row { min-height: 44px; }
+  .pay__row input[type="checkbox"] { width: 20px; height: 20px; }
+}
+
+/* --- accents de ville en thème sombre --------------------------------------
+   Le JS écrit `style="--c: #0369A1"` avec les couleurs claires de trip.js, ce
+   qui court-circuite la palette sombre. Plutôt que de retirer le style inline
+   (il sert aussi aux pastilles et aux traits, qui passent), on éclaircit les
+   deux endroits où cette couleur porte du texte. */
+@layer components {
+  :root[data-theme="dark"] .city__n,
+  :root[data-theme="dark"] .rt__mode {
+    color: color-mix(in srgb, var(--c) 45%, var(--ink));
+  }
+}
+
+/* --- animation : respecter le réglage système ------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+}
+
+/* --- textes inversés -------------------------------------------------------
+   `.mut` et `.label` vivent dans la couche `utilities`, qui passe APRÈS
+   `components` quelle que soit la spécificité : une règle plus précise posée
+   dans `components` ne pouvait pas les rattraper. Sur le bandeau du budget,
+   qui est en inversé (fond --ink), ça laissait le texte secondaire à 2,9:1.
+   La correction doit donc vivre ici, dans la même couche. */
+@layer utilities {
+  .budget__total .mut,
+  .budget__total .label { color: var(--paper); }
 }
