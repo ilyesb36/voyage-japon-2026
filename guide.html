@@ -178,7 +178,7 @@ function renderMat() {
                   data-col="${c.id}" title="${esc(c.name)} — toutes villes">${esc(c.name)}</button>`).join('')}
         ${ROWS.map((r) => `
           <button class="mat__tete mat__tete--ligne${state.city === r.id ? ' is-actif' : ''}"
-                  data-row="${r.id}" ${r.color ? `style="--c:${r.color}"` : ''}
+                  data-row="${r.id}" ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
                   title="${esc(r.name)} — toutes envies">${esc(r.name)}</button>
           ${COLS.map((c) => {
             const n = compte(r.id, c.id);
@@ -186,7 +186,7 @@ function renderMat() {
             return `
             <button class="mat__case${actif ? ' is-actif' : ''}${n === 0 ? ' is-vide' : ''}"
                     data-row="${r.id}" data-col="${c.id}" ${n === 0 ? 'disabled' : ''}
-                    ${r.color ? `style="--c:${r.color}"` : ''}
+                    ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
                     aria-label="${esc(r.name)}, ${esc(c.name)} : ${n}">${n || '·'}</button>`;
           }).join('')}`).join('')}
       </div>
@@ -215,7 +215,7 @@ function card(s) {
   const city = s.cityId ? CITIES[s.cityId] : null;
   return `
   <button class="card card--link spot" type="button" data-id="${esc(s.id)}">
-    <div class="thumb thumb--wide${s.img ? '' : ' thumb--nue'}"${city ? ` style="--c:${city.color}"` : ''}>
+    <div class="thumb thumb--wide${s.img ? '' : ' thumb--nue'}"${city ? ` style="--c:var(--c-${city.id})"` : ''}>
       ${s.img
         ? `<img src="${esc(s.img)}" alt="${esc(s.name)}" loading="lazy" decoding="async">`
         : `<span class="thumb__initiale" aria-hidden="true">${esc(s.name.trim()[0] || '·')}</span>`}
@@ -226,7 +226,7 @@ function card(s) {
       <h3>${esc(s.name)}</h3>
       <p>${esc(s.blurb)}</p>
       <p class="spot__meta">
-        <span class="city-dot" style="--c:${city ? city.color : 'var(--mut)'}">${city ? esc(city.name) : 'Partout'}</span>
+        <span class="city-dot" style="--c:${city ? `var(--c-${city.id})` : 'var(--mut)'}">${city ? esc(city.name) : 'Partout'}</span>
         <span class="spot__facts">
           <span>${esc(s.duration)}</span>
           <span>${esc(s.budget)}</span>
@@ -254,7 +254,7 @@ function openSheet(id) {
       ${s.img ? `<img class="sheet__img" src="${esc(s.img)}" alt="">` : ''}
       <div class="sheet__body">
         <p class="sheet__where">
-          <span class="city-dot" style="--c:${city ? city.color : 'var(--mut)'}">${city ? esc(city.name) : 'Partout au Japon'}</span>
+          <span class="city-dot" style="--c:${city ? `var(--c-${city.id})` : 'var(--mut)'}">${city ? esc(city.name) : 'Partout au Japon'}</span>
           <span class="mut">· ${catName[s.category]}</span>
           <span class="prio prio--${s.priority}">${prioName[s.priority]}</span>
         </p>

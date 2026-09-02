@@ -72,9 +72,9 @@ export function renderMomijiBand(el) {
             #6B5648 ${Math.min(100, b + 6)}%,
             #5C5A52 100%)`;
           return `
-          <li class="momiji__row" style="--c:${city.color}">
+          <li class="momiji__row" style="--c:var(--c-${city.id})">
             <span class="momiji__name">
-              <span class="step-num" style="--c:${city.color}">${s.n}</span>
+              <span class="step-num" style="--c:var(--c-${city.id})">${s.n}</span>
               ${city.name}
             </span>
             <span class="momiji__track">

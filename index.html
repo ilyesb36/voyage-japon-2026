@@ -83,6 +83,22 @@ import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAl
 
 mountChrome('index.html');
 
+// Pendant le voyage, l'accueil reste la couverture du magazine — mais la
+// première chose à voir, c'est la journée en cours. Un bandeau au-dessus de la
+// photo y mène ; il n'existe qu'entre le 8 novembre et le 3 décembre.
+{
+  const jourEnCours = DAYS.find((d) => d.date === today());
+  if (jourEnCours) {
+    const c = CITIES[STEPS.find((s) => s.id === jourEnCours.stepId)?.cityId];
+    document.querySelector('.cover')?.insertAdjacentHTML('beforebegin', `
+      <a class="ojd" href="jour.html?d=${jourEnCours.n}" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
+        <span class="ojd__quand">Aujourd'hui · jour ${jourEnCours.n} sur ${DAYS.length}</span>
+        <b class="ojd__quoi">${esc(jourEnCours.title)}</b>
+        <span class="ojd__aller">La journée sur la carte ›</span>
+      </a>`);
+  }
+}
+
 // Une phrase, pas une rangée de gros chiffres : l'information est la même et
 // elle se lit d'un trait.
 const q = (id) => document.getElementById(id);
@@ -110,7 +126,7 @@ q('cities').innerHTML = STEPS.map((step) => {
   const incontournables = (step.n === 6 ? obs.slice(3, 6) : obs.slice(0, 3));
   const premierJour = DAYS.find((d) => d.stepId === step.id && d.kind !== 'vol');
   return `
-  <article class="city" style="--c:${c.color}">
+  <article class="city" style="--c:var(--c-${c.id})">
     <figure class="city__shot">
       <img src="${heroFor(step)}" alt="${esc(c.name)}" loading="lazy" decoding="async">
     </figure>
@@ -162,7 +178,7 @@ function stop(step) {
   const h = HOTELS.find((x) => x.id === step.hotelId);
   const excs = excBySt[step.id] || [];
   return `
-  <li class="rt__stop" style="--c:${c.color}">
+  <li class="rt__stop" style="--c:var(--c-${c.id})">
     <span class="rt__rail"><span class="rt__node">${step.n}</span></span>
     <div class="rt__body">
       <div class="rt__head">
@@ -182,7 +198,7 @@ function leg(seg) {
   const to = STEPS.find((x) => x.id === seg.toStepId);
   const c = CITIES[to.cityId];
   return `
-  <li class="rt__leg rt__leg--${seg.mode}" style="--c:${c.color}">
+  <li class="rt__leg rt__leg--${seg.mode}" style="--c:var(--c-${c.id})">
     <span class="rt__rail"></span>
     <div class="rt__body">
       <span class="rt__mode">${MODES[seg.mode]}</span>

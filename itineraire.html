@@ -103,7 +103,7 @@ function paintTemplates() {
   q('tplgrid').innerHTML = list.map((t) => {
     const c = t.cityId ? CITIES[t.cityId] : null;
     return `
-    <a class="card card--link tpl" href="#${t.id}" style="--c:${c ? c.color : 'var(--mut)'}">
+    <a class="card card--link tpl" href="#${t.id}" style="--c:${c ? `var(--c-${c.id})` : 'var(--mut)'}">
       <div class="thumb thumb--wide">
         ${t.img ? `<img src="${esc(t.img)}" alt="" loading="lazy" decoding="async">` : ''}
         ${t.category ? `<span class="tpl__tag">${esc(t.category)}</span>` : ''}
@@ -112,7 +112,7 @@ function paintTemplates() {
         <h3>${esc(t.title)}</h3>
         <p>${esc(t.sub)}</p>
         <p class="tpl__meta">
-          <span class="city-dot" style="--c:${c ? c.color : 'var(--mut)'}">${c ? esc(c.name) : 'Day trip'}</span>
+          <span class="city-dot" style="--c:${c ? `var(--c-${c.id})` : 'var(--mut)'}">${c ? esc(c.name) : 'Day trip'}</span>
           <span class="mut">${t.steps.length} étapes</span>
         </p>
       </div>
@@ -141,7 +141,7 @@ q('tplgrid').addEventListener('click', (e) => {
 // --- navigation par étape -----------------------------------------------------
 q('daynav').innerHTML = STEPS.map((s) => {
   const c = CITIES[s.cityId];
-  return `<a class="chip" href="#${s.id}" style="--c:${c.color}">
+  return `<a class="chip" href="#${s.id}" style="--c:var(--c-${c.id})">
     <span class="chip__dot" style="background:${c.color}"></span>${esc(c.name)}
     <span class="mut data"> ${formatDate(s.from).replace(/ (novembre|décembre)/, (m, p) => ' ' + p.slice(0, 3))}</span>
   </a>`;
@@ -166,12 +166,12 @@ for (const step of STEPS) {
   const seg = SEGMENTS.find((g) => g.toStepId === step.id);
 
   html += `
-  <section class="phase" id="${step.id}" style="--c:${c.color}">
+  <section class="phase" id="${step.id}" style="--c:var(--c-${c.id})">
     <figure class="phase__shot">
       <img src="${heroFor(step)}" alt="${esc(c.name)}" loading="lazy" decoding="async">
     </figure>
     <header class="phase__head">
-      <span class="step-num" style="--c:${c.color}">${step.n}</span>
+      <span class="step-num" style="--c:var(--c-${c.id})">${step.n}</span>
       <div>
         <h2>${esc(c.name)}${step.area ? ` <span class="mut">· ${esc(step.area)}</span>` : ''}</h2>
         <p class="phase__sub">

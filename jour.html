@@ -59,7 +59,10 @@ const url = new URLSearchParams(location.search);
 const parNum = DAYS.find((d) => String(d.n) === url.get('d'));
 const parDate = DAYS.find((d) => d.date === url.get('date'));
 const duJour = DAYS.find((d) => d.date === today());
-const jour = parNum || parDate || duJour || DAYS[0];
+// Sans paramètre et hors voyage, on ouvre la première journée qui a des arrêts
+// situés — pas le vol Paris → Shanghai, qui ne montre qu'une ligne.
+const premiereSituee = DAYS.find((d) => d.items.some((i) => i.lieux)) || DAYS[0];
+const jour = parNum || parDate || duJour || premiereSituee;
 
 const step = STEPS.find((s) => s.id === jour.stepId);
 const ville = step ? CITIES[step.cityId] : null;
@@ -117,7 +120,7 @@ q('cal').innerHTML = `
     <b class="cal__titre">${MOIS[+cases[0].slice(5, 7) - 1]} — ${MOIS[+cases[cases.length - 1].slice(5, 7) - 1]} 2026</b>
     <span class="cal__legende">
       ${Object.entries(CITIES).map(([, c]) => `
-        <span class="cal__pastille" style="--c:${c.color}">${esc(c.name)}</span>`).join('')}
+        <span class="cal__pastille" style="--c:var(--c-${c.id})">${esc(c.name)}</span>`).join('')}
     </span>
   </div>
   <div class="cal__grille" role="group" aria-label="Choisir une journée">
@@ -130,7 +133,7 @@ q('cal').innerHTML = `
       const actif = date === jour.date;
       return `
       <a class="cal__case${actif ? ' is-actif' : ''}${date < today() ? ' is-passe' : ''}"
-         href="?d=${d.n}" style="--c:${c ? c.color : '#78766D'}"
+         href="?d=${d.n}" style="--c:${c ? `var(--c-${c.id})` : 'var(--mut)'}"
          ${actif ? 'aria-current="date"' : ''}
          title="${esc(formatDate(date, { weekday: true }))} — ${esc(d.title)}">
         <b>${num}</b>
@@ -146,7 +149,7 @@ q('tete').innerHTML = `
   <p class="eyebrow">Jour ${jour.n} sur ${DAYS.length} · ${esc(formatDate(jour.date, { weekday: true }))}</p>
   <h1>${esc(jour.title)}</h1>
   ${ville ? `<p class="jour__ou">
-    <span class="city-dot" style="--c:${ville.color}">${esc(ville.name)}</span>
+    <span class="city-dot" style="--c:var(--c-${ville.id})">${esc(ville.name)}</span>
     ${step.area ? `<span class="mut">· ${esc(step.area)}</span>` : ''}
     ${KIND[jour.kind] ? `<span class="day__kind">${KIND[jour.kind]}</span>` : ''}
   </p>` : ''}`;
@@ -256,7 +259,7 @@ if (points.length) {
       const m = L.marker([l.lat, l.lng], {
         icon: L.divIcon({
           className: '',
-          html: `<div class="map-pin" style="background:${ville ? ville.color : '#78766D'}">${k}</div>`,
+          html: `<div class="map-pin" style="background:${ville ? ville.color : 'var(--mut)'}">${k}</div>`,
           iconSize: [26, 26], iconAnchor: [13, 13],
         }),
       }).addTo(map).bindPopup(
@@ -266,7 +269,7 @@ if (points.length) {
   }
   if (ll.length > 1) {
     L.polyline(ll, {
-      color: ville ? ville.color : '#78766D',
+      color: ville ? ville.color : 'var(--mut)',
       weight: 2, opacity: .55, dashArray: '4 5',
     }).addTo(map);
   }

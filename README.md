@@ -13,6 +13,16 @@ python3 -m http.server 4173     # puis http://localhost:4173
 
 ## Les pages
 
+La barre de navigation **change selon le moment** (`moment()` dans `app/ui.js`) :
+avant le départ elle mène aux préparatifs et au budget ; pendant le voyage,
+« Aujourd'hui » est la page du jour, le guide passe en deuxième, le budget
+recule ; après, c'est un souvenir. Aucune page n'est supprimée, seule la barre
+bouge. Le paramètre `?date=2026-11-18` permet de voir chaque moment.
+
+Les couleurs de ville s'écrivent `var(--c-tokyo)` et jamais en hexadécimal
+dans le JS : c'est ainsi que la palette sombre s'applique aux pastilles, aux
+calendriers et aux matrices sans qu'une seule règle ne le sache.
+
 | Page | Ce qu'elle fait |
 |---|---|
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
@@ -21,7 +31,7 @@ python3 -m http.server 4173     # puis http://localhost:4173
 | `budget.html` | les trois chiffres qui parlent, la répartition en barre, le détail ajustable, ce qui est réglé |
 | `pratique.html` | les six hébergements, les réflexes de terrain, le mode hors-ligne |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
-| `aujourdhui.html` | avant : le compte à rebours et **une seule liste d'échéances**, cochable. Pendant : ce qui a une heure — le train, le vol, le rendez-vous, le lit |
+| `aujourdhui.html` | **Préparatifs** : le compte à rebours et une seule liste d'échéances, cochable. Pendant le voyage, elle renvoie à la journée en cours |
 
 `aujourdhui.html?date=2026-11-18` permet de voir n'importe quel jour du voyage
 sans attendre novembre.
@@ -75,7 +85,7 @@ l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v23';
+const V = 'v24';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne

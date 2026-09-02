@@ -672,6 +672,8 @@ for (const s of STEPS) {
   delete s.hotelName;
 }
 
+for (const [id, c] of Object.entries(CITIES)) c.id = id;   // var(--c-<id>) dans les pages
+
 const TRIP = {
   start: '2026-11-08', end: '2026-12-03',
   travellers: 2,

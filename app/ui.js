@@ -1,19 +1,54 @@
 // Chrome de page et petits composants partagés par les cinq pages.
 import { TRIP } from '../data/trip.js';
 
-// « La journée » et « Jour par jour » étaient indistinguables dans la barre.
-// Chaque libellé dit maintenant ce que la page EST : le voyage vu de haut, ce
-// qu'il faut faire maintenant, une journée sur le terrain, le programme complet,
-// les adresses, l'intendance.
-const PAGES = [
-  { href: 'index.html',      label: 'Le voyage' },
-  { href: 'aujourdhui.html', label: "Aujourd'hui" },
-  { href: 'jour.html',       label: 'La journée' },
-  { href: 'itineraire.html', label: 'Le programme' },
-  { href: 'guide.html',      label: 'Le guide' },
-  { href: 'budget.html',     label: 'Le budget' },
-  { href: 'pratique.html',   label: 'Pratique' },
-];
+/**
+ * Le moment du voyage : avant, pendant, après.
+ *
+ * Le site a trois vies et la même barre servait aux trois. Avant, on prépare :
+ * échéances, budget, programme. Pendant, téléphone en main, on veut la journée
+ * et le guide — pas le compte à rebours ni le budget. Après, c'est un souvenir.
+ * La barre change d'ordre et de libellés selon le moment, et cache ce qui ne
+ * sert plus. Rien n'est supprimé : toutes les pages restent atteignables par
+ * leur adresse.
+ */
+export function moment() {
+  const t = today();
+  if (t < TRIP.start) return 'avant';
+  if (t <= TRIP.end) return 'pendant';
+  return 'apres';
+}
+
+const PAGES_PAR_MOMENT = {
+  avant: [
+    { href: 'index.html',      label: 'Le voyage' },
+    { href: 'aujourdhui.html', label: 'Préparatifs' },
+    { href: 'itineraire.html', label: 'Le programme' },
+    { href: 'jour.html',       label: 'La journée' },
+    { href: 'guide.html',      label: 'Le guide' },
+    { href: 'budget.html',     label: 'Le budget' },
+    { href: 'pratique.html',   label: 'Pratique' },
+  ],
+  // Pendant : « Aujourd'hui » EST la page du jour, qui s'ouvre sur la date du
+  // jour. Le compte à rebours et le budget reculent — on ne les cherche pas dans
+  // le métro. Le voyage (l'accueil) reste là pour le montrer à quelqu'un.
+  pendant: [
+    { href: 'jour.html',       label: "Aujourd'hui" },
+    { href: 'guide.html',      label: 'Le guide' },
+    { href: 'itineraire.html', label: 'Le programme' },
+    { href: 'pratique.html',   label: 'Pratique' },
+    { href: 'budget.html',     label: 'Le budget' },
+    { href: 'index.html',      label: 'Le voyage' },
+  ],
+  apres: [
+    { href: 'index.html',      label: 'Le voyage' },
+    { href: 'itineraire.html', label: 'Le programme' },
+    { href: 'jour.html',       label: 'Les journées' },
+    { href: 'guide.html',      label: 'Le guide' },
+    { href: 'budget.html',     label: 'Le budget' },
+    { href: 'pratique.html',   label: 'Pratique' },
+  ],
+};
+const PAGES = PAGES_PAR_MOMENT[moment()];
 
 export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) =>

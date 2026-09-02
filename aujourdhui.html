@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aujourd'hui — Japon 2026</title>
+<title>Préparatifs — Japon 2026</title>
 <meta name="description" content="Le programme du jour, l'hôtel du soir et le prochain train.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
@@ -41,7 +41,12 @@ const away = daysBetween(now, TRIP.start);
 // La page a deux vies : un compte à rebours avant le départ, un compagnon de
 // route pendant. Le paramètre ?date=2026-11-18 permet de voir la seconde
 // sans attendre novembre.
-app.innerHTML = day ? during(day) : (away > 0 ? before() : after());
+// Pendant le voyage, cette page n'a plus de raison d'être : la journée en cours
+// vit sur jour.html, avec la carte et le parcours. Elle y renvoie sans rien
+// afficher entre-temps. Avant, c'est la page des préparatifs ; après, le mot de
+// la fin.
+if (day) location.replace(`jour.html?d=${day.n}`);
+app.innerHTML = day ? '' : (away > 0 ? before() : after());
 
 // La météo arrive après le rendu : elle ne doit jamais retarder la page.
 if (document.getElementById('meteo')) paintMeteo();
@@ -244,10 +249,10 @@ function during(d) {
   // chose. Cette page ne garde que ce qui a une heure : le train à prendre, le
   // vol, le rendez-vous payé, le temps qu'il fait, et le lit du soir.
   return `
-  <header class="section today" ${c ? `style="--c:${c.color}"` : ''}>
+  <header class="section today" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
     <p class="eyebrow">${formatDate(d.date, { weekday: true })} · jour ${d.n} sur ${DAYS.length}</p>
     <h1>${esc(d.title)}</h1>
-    ${c ? `<p class="today__where"><span class="city-dot" style="--c:${c.color}">${esc(c.name)}</span>
+    ${c ? `<p class="today__where"><span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>
       ${step.area ? `<span class="mut">· ${esc(step.area)}</span>` : ''}</p>` : ''}
   </header>
 
@@ -366,7 +371,7 @@ function after() {
 // puis le relevé du moment se glisse dedans. Rien ne saute, rien n'attend.
 function meteoSkeleton() {
   return meteoCities().map((c) => `
-    <div class="meteo__row" style="--c:${c.color}" data-city="${c.cityId}">
+    <div class="meteo__row" style="--c:var(--c-${c.id})" data-city="${c.cityId}">
       <span class="meteo__city">${esc(c.name)}</span>
       <span class="meteo__now" data-now><span class="meteo__dots" aria-hidden="true"></span></span>
       <span class="meteo__norm data">${METEO[c.cityId].max}° / ${METEO[c.cityId].min}°
@@ -401,7 +406,7 @@ async function paintMeteo() {
 function dayCard(d) {
   const c = d.cityId ? CITIES[d.cityId] : null;
   return `
-  <div class="card daycard" ${c ? `style="--c:${c.color}"` : ''}>
+  <div class="card daycard" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
     <ul class="day__items">
       ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
     </ul>

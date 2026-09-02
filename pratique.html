@@ -91,12 +91,12 @@ q('hotels').innerHTML = HOTELS.map((h) => {
   const cancel = h.cancelBefore ? daysBetween(today(), h.cancelBefore) : null;
 
   return `
-  <article class="hotel card" style="--c:${c.color}">
+  <article class="hotel card" style="--c:var(--c-${c.id})">
     <div class="hotel__shots">
       ${h.images.slice(0, 4).map((src, i) => `
         <img src="${esc(src)}" alt="${esc(h.name)} — photo ${i + 1}"
              loading="lazy" decoding="async" data-full="${esc(src)}">`).join('')}
-      <span class="hotel__step step-num" style="--c:${c.color}">${step.n}</span>
+      <span class="hotel__step step-num" style="--c:var(--c-${c.id})">${step.n}</span>
     </div>
 
     <div class="hotel__body">
@@ -104,7 +104,7 @@ q('hotels').innerHTML = HOTELS.map((h) => {
         <div>
           <h3>${esc(h.name)}</h3>
           <p class="hotel__where">
-            <span class="city-dot" style="--c:${c.color}">${esc(c.name)}</span>
+            <span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>
             ${h.address ? `<span class="mut">· ${esc(h.address)}</span>` : ''}
           </p>
         </div>
