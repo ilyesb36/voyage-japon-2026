@@ -95,26 +95,45 @@ function bilan(items = ITEMS) {
   const part = total / 2;
   // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
   return {
-    total, paye, reste: total - paye, avI, avM, flou,
+    total, paye, reste: total - paye, avI, avM, flou, moitie,
     solde: (avI - avM) / 2,
     resteI: Math.max(0, part - avI - moitie),
     resteM: Math.max(0, part - avM - moitie),
   };
 }
 
-// « Mathilde doit 223 € à Ilyès » — la même phrase pour le voyage et pour
-// chaque poste : c'est poste par poste qu'on se rembourse, les hôtels surtout.
+// Le compte, en tableau : une colonne par personne, trois lignes — sa part,
+// ce qu'il a payé, ce qu'il lui reste. C'est lisible d'un coup d'œil là où une
+// phrase mélangeait tout. « Lui reste » suppose qu'on ne se rembourse pas :
+// chacun paie jusqu'à sa part. La phrase du dessous donne l'autre option.
+function compteHTML(b) {
+  const part = b.total / 2;
+  const flou = somme(b.flou);
+  const payeI = b.avI + (b.moitie || 0);
+  const payeM = b.avM + (b.moitie || 0);
+  return `
+    <div class="compte" role="table">
+      <span class="compte__coin"></span><span class="compte__t">Ilyès</span><span class="compte__t">Mathilde</span>
+      <span class="compte__l">Sa part</span><span class="data">${eur(part)}</span><span class="data">${eur(part)}</span>
+      <span class="compte__l">A payé</span><span class="data">${eur(payeI)}${flou ? '<sup>?</sup>' : ''}</span><span class="data">${eur(payeM)}${flou ? '<sup>?</sup>' : ''}</span>
+      <span class="compte__l">Lui reste à payer</span><b class="data">${eur(b.resteI)}</b><b class="data">${eur(b.resteM)}</b>
+    </div>`;
+}
+
+// Une seule phrase, qui lie les deux nombres au lieu de les poser côte à côte :
+// si l'un rembourse l'autre, le reste se partage en deux.
 function phraseSolde(b) {
   const s = Math.round(Math.abs(b.solde));
-  if (!b.avI && !b.avM) return b.flou.length ? 'payé, sans savoir par qui' : '';
-  if (s === 0) return 'à l\'équilibre';
-  return b.solde > 0
-    ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
-    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
+  if (!b.avI && !b.avM) return '';
+  if (s === 0) return 'Chacun a mis autant.';
+  const [doit, a] = b.solde > 0 ? ['Mathilde', 'Ilyès'] : ['Ilyès', 'Mathilde'];
+  if (b.reste === 0) return `${doit} doit <b class="data">${eur(s)}</b> à ${a}.`;
+  // « Ou bien » : le tableau dit ce qu'il reste à chacun sans se rembourser ;
+  // la phrase donne l'autre option, pas un chiffre de plus à additionner.
+  return `Ou bien ${doit} rembourse <b class="data">${eur(s)}</b> à ${a}, et il reste <span class="data">${eur(b.reste / 2)}</span> chacun.`;
 }
-const phraseAvances = (b) =>
-  `Ilyès a avancé <span class="data">${eur(b.avI)}</span>, Mathilde <span class="data">${eur(b.avM)}</span>${
-    b.flou.length ? ` · ${b.flou.length} ${b.flou.length > 1 ? 'lignes payées' : 'ligne payée'} sans savoir par qui` : ''}`;
+const phraseFlou = (b) => b.flou.length
+  ? `<sup>?</sup> ${eur(somme(b.flou))} payés sans savoir par qui, comptés moitié-moitié.` : '';
 
 q('lede').textContent =
   'Qui a payé quoi, ce qu\'il reste, et qui doit combien à l\'autre. Mémorisé sur cet appareil.';
@@ -122,32 +141,24 @@ q('lede').textContent =
 // --- le bilan : trois lignes ----------------------------------------------------
 function renderBilan() {
   const b = bilan();
+  const s = Math.round(Math.abs(b.solde));
   const phrase = !b.avI && !b.avM ? 'Personne n\'a encore rien avancé'
-    : b.solde === 0 ? 'Vous êtes à l\'équilibre' : phraseSolde(b);
+    : s === 0 ? 'Vous êtes à l\'équilibre'
+    : b.solde > 0 ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
+    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
 
   q('bilan').innerHTML = `
-    <p class="bilan__solde">
+    <div class="bilan__solde">
       <span class="chiffre__quoi">Entre vous</span>
       <span class="bilan__phrase">${phrase}</span>
-      <span class="bilan__sous mut">${phraseAvances(b)}</span>
-    </p>
-    <dl class="bilan__faits">
-      <div>
-        <dt>Reste à payer</dt>
-        <dd class="data bilan__fort">${eur(b.reste)}</dd>
-        <dd class="mut">Ilyès <span class="data">${eur(b.resteI)}</span> · Mathilde <span class="data">${eur(b.resteM)}</span></dd>
-      </div>
-      <div>
-        <dt>Déjà payé</dt>
-        <dd class="data">${eur(b.paye)}</dd>
-        <dd class="mut">${b.total ? Math.round((b.paye / b.total) * 100) : 0} % du voyage</dd>
-      </div>
-      <div>
-        <dt>Le voyage</dt>
-        <dd class="data">${eur(b.total)}</dd>
-        <dd class="mut"><span class="data">${eur(b.total / 2)}</span> chacun · <span class="data">${eur(b.total / 2 / TRIP.days)}</span> par jour</dd>
-      </div>
-    </dl>`;
+      <span class="bilan__sous">${s && b.reste ? phraseSolde(b) : ''}</span>
+      <span class="bilan__sous mut">
+        Le voyage <span class="data">${eur(b.total)}</span> · reste à payer <b class="data">${eur(b.reste)}</b>
+        · <span class="data">${eur(b.total / 2 / TRIP.days)}</span> par jour et par personne
+      </span>
+      ${b.flou.length ? `<span class="bilan__sous mut">${phraseFlou(b)}</span>` : ''}
+    </div>
+    ${compteHTML(b)}`;
 }
 
 // --- la liste : une ligne par dépense ---------------------------------------------
@@ -195,22 +206,20 @@ function renderDep() {
   });
 }
 
-// Sous le nom du poste, tout ce qu'on veut savoir de lui sans ouvrir une ligne :
-// ce qu'il reste à payer (et par tête), ce qui est payé, et qui doit quoi à
-// l'autre sur ce poste — les hôtels surtout, c'est là qu'on se rembourse.
+// Sous le nom du poste : le même tableau que le bilan, à l'échelle du poste,
+// et la phrase qui lie remboursement et reste. Les hôtels surtout : c'est là
+// que l'un avance pour l'autre.
 function posteSolde(cat) {
   const b = bilan(cat.items);
-  const gauche = b.reste === 0
+  const etat = b.reste === 0
     ? `<span class="dep__ok">Tout est payé</span>`
-    : `<span>Reste <b class="data dep__reste">${eur(b.reste)}</b>
-         <span class="mut">· Ilyès <span class="data">${eur(b.resteI)}</span> · Mathilde <span class="data">${eur(b.resteM)}</span>${
-           b.paye ? ` · payé <span class="data">${eur(b.paye)}</span>` : ''}</span></span>`;
-  const phrase = phraseSolde(b);
-  const droite = phrase
-    ? `<span class="dep__entre">${(b.avI || b.avM)
-        ? `<span class="mut">I <span class="data">${eur(b.avI)}</span> · M <span class="data">${eur(b.avM)}</span> → </span>` : ''}${phrase}</span>`
-    : '';
-  return gauche + droite;
+    : `<span>Reste à payer <b class="data dep__reste">${eur(b.reste)}</b></span>`;
+  return `
+    <span class="dep__etat">${etat}
+      ${phraseSolde(b) ? `<span>${phraseSolde(b)}</span>` : ''}
+      ${b.flou.length ? `<span class="mut">${phraseFlou(b)}</span>` : ''}
+    </span>
+    ${compteHTML(b)}`;
 }
 
 function ligne(i) {

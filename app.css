@@ -1548,9 +1548,6 @@
    dans `components` ne pouvait pas les rattraper. Sur le bandeau du budget,
    qui est en inversé (fond --ink), ça laissait le texte secondaire à 2,9:1.
    La correction doit donc vivre ici, dans la même couche. */
-@layer utilities {
-  .bilan__faits dd.mut { color: var(--mut); }
-}
 
 /* --- une réservation, avec son visage --------------------------------------
    « Réserver Rurikō-in avant le 5 novembre » ne dit rien si on ne sait pas ce
@@ -1980,15 +1977,13 @@
   .bilan__phrase b { color: var(--acc); }
   .bilan__sous { font-size: var(--t-xs); }
 
-  .bilan__faits { margin: 0; display: grid; gap: var(--s-2) var(--s-4); grid-template-columns: auto 1fr; align-content: start; }
-  .bilan__faits > div { display: contents; }
-  .bilan__faits dt { font-size: var(--t-sm); color: var(--mut); padding-top: 2px; }
-  .bilan__faits dd { margin: 0; font-weight: 600; font-size: var(--t-base); grid-column: 2; }
-  .bilan__faits dd.mut { font-weight: 400; font-size: var(--t-xs); margin-top: -4px; }
-  .bilan__fort { color: var(--acc); font-size: var(--t-md); }
+  .bilan .compte { justify-self: end; font-size: var(--t-sm); grid-template-columns: auto 6.5em 6.5em; gap: var(--s-1) var(--s-4); }
+  .bilan .compte__t { font-size: var(--t-xs); }
+  .bilan__sous b { color: var(--acc); }
   @media (max-width: 720px) {
     .bilan { grid-template-columns: 1fr; }
     .bilan__phrase { font-size: 1.25rem; }
+    .bilan .compte { justify-self: start; }
   }
 
   /* la liste --------------------------------------------------------------- */
@@ -2018,14 +2013,26 @@
      droite il débordait, et élargir cette colonne aurait désaligné les montants. */
   .dep__solde {
     grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between;
-    gap: var(--s-1) var(--s-3); font-size: var(--t-xs); font-weight: 500;
+    align-items: start; gap: var(--s-2) var(--s-5); padding: var(--s-1) 0 var(--s-2);
+    font-size: var(--t-xs); font-weight: 500;
   }
   .dep__solde:empty { display: none; }
-  .dep__solde b { color: var(--acc); font-weight: 700; }
-  .dep__solde .dep__reste { font-size: var(--t-sm); }
-  .dep__solde .mut { font-weight: 400; }
+  .dep__etat { display: flex; flex-direction: column; gap: var(--s-1); max-width: 34em; }
+  .dep__etat b { color: var(--acc); font-weight: 700; }
+  .dep__reste { font-size: var(--t-sm); }
   .dep__ok { color: var(--pine); font-weight: 600; }
-  .dep__entre { text-align: right; }
+
+  /* le compte : une colonne par personne, sa part / a payé / lui reste */
+  .compte {
+    display: grid; grid-template-columns: auto 6em 6em; gap: 2px var(--s-3);
+    font-size: var(--t-xs); align-self: start;
+  }
+  .compte > span, .compte > b { text-align: right; font-variant-numeric: tabular-nums; }
+  .compte__coin { visibility: hidden; }
+  .compte__t { font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
+  .compte > .compte__l { text-align: left; color: var(--mut); font-weight: 400; }
+  .compte > b { color: var(--acc); font-weight: 700; }
+  .compte sup { color: var(--mut); font-weight: 400; }
   .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
   .dep__pied .dep__n { font-size: var(--t-md); }
 
@@ -2058,6 +2065,7 @@
 
   @media (max-width: 640px) {
     .dep__ligne { grid-template-columns: minmax(0, 1fr) 72px 108px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
+    .dep__solde .compte { flex-basis: 100%; }
     .dep__n { font-size: var(--t-sm); }
     .qui button { width: 36px; }
   }
