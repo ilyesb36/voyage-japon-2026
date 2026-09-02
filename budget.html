@@ -16,8 +16,9 @@
 <main class="wrap">
   <!-- À deux, le budget c'est trois questions : qui doit combien à l'autre,
        qu'est-ce qui reste à payer, et qui a payé quoi. La page fait ça et rien
-       d'autre : un bilan de trois lignes, puis la liste, une ligne par dépense
-       avec le payeur. -->
+       d'autre : une phrase, un tableau, une liste. Le tableau et la liste sont
+       deux onglets : répéter le compte sous chaque poste de la liste empilait
+       des petites lignes que personne ne lisait. -->
   <header class="section">
     <h1>Le budget</h1>
     <p class="hero__lede" id="lede"></p>
@@ -28,8 +29,17 @@
   </section>
 
   <section class="section">
-    <p class="dep__legende mut"><b>I</b> Ilyès · <b>M</b> Mathilde · <b>½</b> moitié chacun. Re-cliquer efface.</p>
-    <div class="dep" id="dep"></div>
+    <div class="chipbar onglets" role="tablist" aria-label="Vue">
+      <button class="chip" type="button" role="tab" data-onglet="compte" aria-selected="true" id="tab-compte" aria-controls="compte">Le compte</button>
+      <button class="chip" type="button" role="tab" data-onglet="dep" aria-selected="false" id="tab-dep" aria-controls="dep">Les dépenses</button>
+    </div>
+
+    <div id="compte" role="tabpanel" aria-labelledby="tab-compte"></div>
+
+    <div id="dep" role="tabpanel" aria-labelledby="tab-dep" hidden>
+      <p class="dep__legende mut"><b>I</b> Ilyès · <b>M</b> Mathilde · <b>½</b> moitié chacun. Re-cliquer efface.</p>
+      <div class="dep" id="dep-liste"></div>
+    </div>
   </section>
 
   <section class="section">
@@ -96,78 +106,95 @@ function bilan(items = ITEMS) {
   // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
   return {
     total, paye, reste: total - paye, avI, avM, flou, moitie,
+    payeI: avI + moitie, payeM: avM + moitie,
     solde: (avI - avM) / 2,
     resteI: Math.max(0, part - avI - moitie),
     resteM: Math.max(0, part - avM - moitie),
   };
 }
 
-// Le compte, en tableau : une colonne par personne, trois lignes — sa part,
-// ce qu'il a payé, ce qu'il lui reste. C'est lisible d'un coup d'œil là où une
-// phrase mélangeait tout. « Lui reste » suppose qu'on ne se rembourse pas :
-// chacun paie jusqu'à sa part. La phrase du dessous donne l'autre option.
-function compteHTML(b) {
-  const part = b.total / 2;
-  const flou = somme(b.flou);
-  const payeI = b.avI + (b.moitie || 0);
-  const payeM = b.avM + (b.moitie || 0);
-  return `
-    <div class="compte" role="table">
-      <span class="compte__coin"></span><span class="compte__t">Ilyès</span><span class="compte__t">Mathilde</span>
-      <span class="compte__l">Sa part</span><span class="data">${eur(part)}</span><span class="data">${eur(part)}</span>
-      <span class="compte__l">A payé</span><span class="data">${eur(payeI)}${flou ? '<sup>?</sup>' : ''}</span><span class="data">${eur(payeM)}${flou ? '<sup>?</sup>' : ''}</span>
-      <span class="compte__l">Lui reste à payer</span><b class="data">${eur(b.resteI)}</b><b class="data">${eur(b.resteM)}</b>
-    </div>`;
-}
-
-// Une seule phrase, qui lie les deux nombres au lieu de les poser côte à côte :
-// si l'un rembourse l'autre, le reste se partage en deux.
-function phraseSolde(b) {
+// « Mathilde doit 581 € à Ilyès » : ce que l'un rembourse à l'autre pour être à
+// égalité maintenant. L'autre option — ne rien rembourser, l'autre paie plus du
+// reste — c'est ce que disent les colonnes « lui reste » du tableau.
+function phraseDoit(b) {
   const s = Math.round(Math.abs(b.solde));
   if (!b.avI && !b.avM) return '';
-  if (s === 0) return 'Chacun a mis autant.';
+  if (s === 0) return 'chacun a mis autant';
   const [doit, a] = b.solde > 0 ? ['Mathilde', 'Ilyès'] : ['Ilyès', 'Mathilde'];
-  if (b.reste === 0) return `${doit} doit <b class="data">${eur(s)}</b> à ${a}.`;
-  // « Ou bien » : le tableau dit ce qu'il reste à chacun sans se rembourser ;
-  // la phrase donne l'autre option, pas un chiffre de plus à additionner.
-  return `Ou bien ${doit} rembourse <b class="data">${eur(s)}</b> à ${a}, et il reste <span class="data">${eur(b.reste / 2)}</span> chacun.`;
+  return `${doit} doit <b class="data">${eur(s)}</b> à ${a}`;
 }
-const phraseFlou = (b) => b.flou.length
-  ? `<sup>?</sup> ${eur(somme(b.flou))} payés sans savoir par qui, comptés moitié-moitié.` : '';
 
 q('lede').textContent =
   'Qui a payé quoi, ce qu\'il reste, et qui doit combien à l\'autre. Mémorisé sur cet appareil.';
 
-// --- le bilan : trois lignes ----------------------------------------------------
+// --- le bilan : la phrase, et l'autre option ------------------------------------
 function renderBilan() {
   const b = bilan();
   const s = Math.round(Math.abs(b.solde));
   const phrase = !b.avI && !b.avM ? 'Personne n\'a encore rien avancé'
     : s === 0 ? 'Vous êtes à l\'équilibre'
-    : b.solde > 0 ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
-    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
+    : phraseDoit(b);
+  const autre = s && b.reste
+    ? `Après remboursement, il reste <span class="data">${eur(b.reste / 2)}</span> chacun.
+       Sans remboursement, ${b.solde > 0 ? 'Mathilde' : 'Ilyès'} paie plus du reste : c'est le tableau.`
+    : '';
 
   q('bilan').innerHTML = `
     <div class="bilan__solde">
       <span class="chiffre__quoi">Entre vous</span>
       <span class="bilan__phrase">${phrase}</span>
-      <span class="bilan__sous">${s && b.reste ? phraseSolde(b) : ''}</span>
-      <span class="bilan__sous mut">
-        Le voyage <span class="data">${eur(b.total)}</span> · reste à payer <b class="data">${eur(b.reste)}</b>
-        · <span class="data">${eur(b.total / 2 / TRIP.days)}</span> par jour et par personne
-      </span>
-      ${b.flou.length ? `<span class="bilan__sous mut">${phraseFlou(b)}</span>` : ''}
+      ${autre ? `<span class="bilan__sous">${autre}</span>` : ''}
     </div>
-    ${compteHTML(b)}`;
+    <dl class="bilan__faits">
+      <div><dt>Reste à payer</dt><dd class="data bilan__fort">${eur(b.reste)}</dd></div>
+      <div><dt>Déjà payé</dt><dd class="data">${eur(b.paye)}</dd></div>
+      <div><dt>Le voyage</dt><dd class="data">${eur(b.total)}</dd></div>
+      <div><dt>Par jour et par personne</dt><dd class="data">${eur(b.total / 2 / TRIP.days)}</dd></div>
+    </dl>`;
 }
 
-// --- la liste : une ligne par dépense ---------------------------------------------
-// Trois colonnes, toujours les mêmes : quoi, combien, qui a payé. Les en-têtes
-// de poste sont dans la même grille, leur total dans la colonne des montants.
+// --- le compte : un tableau, une ligne par poste ---------------------------------
+// Les colonnes qu'on lit : ce qu'il reste à payer, et ce qu'il reste à chacun
+// s'il paie jusqu'à sa part sans se faire rembourser. Sous le nom du poste, ce
+// que l'un doit à l'autre s'il préfère se faire rembourser tout de suite.
+function renderCompte() {
+  const ligne = (nom, b, cls = '') => `
+    <div class="cpt__ligne ${cls}">
+      <span class="cpt__poste">
+        <b>${esc(nom)}</b>
+        <span class="mut">${b.reste === 0 ? '<span class="cpt__ok">tout est payé</span>' : `${eur(b.total)} au total`}${
+          phraseDoit(b) ? ` · ${phraseDoit(b)}` : ''}${
+          b.flou.length ? ` · <span class="data">${eur(somme(b.flou))}</span> payés sans savoir par qui<sup>?</sup>` : ''}</span>
+      </span>
+      <span class="cpt__n data cpt__reste">${b.reste ? eur(b.reste) : '—'}</span>
+      <span class="cpt__n data"><span class="cpt__paye mut">${eur(b.payeI)}</span>${b.resteI ? eur(b.resteI) : '—'}</span>
+      <span class="cpt__n data"><span class="cpt__paye mut">${eur(b.payeM)}</span>${b.resteM ? eur(b.resteM) : '—'}</span>
+    </div>`;
+
+  const tout = bilan();
+  q('compte').innerHTML = `
+    <div class="cpt">
+      <div class="cpt__ligne cpt__tete" aria-hidden="true">
+        <span></span>
+        <span class="cpt__n">Reste<br><small>à payer</small></span>
+        <span class="cpt__n">Ilyès<br><small>a payé · lui reste</small></span>
+        <span class="cpt__n">Mathilde<br><small>a payé · lui reste</small></span>
+      </div>
+      ${BUDGET.categories.map((cat) => ligne(cat.name, bilan(cat.items))).join('')}
+      ${ligne('Le voyage', tout, 'cpt__pied')}
+    </div>
+    <p class="cpt__note mut">
+      « Lui reste » : ce que chacun paie encore pour atteindre sa part, la moitié, sans se faire rembourser.
+      La part de chacun sur le voyage : <span class="data">${eur(tout.total / 2)}</span>.${
+      tout.flou.length ? ' <sup>?</sup> Compté moitié-moitié en attendant de savoir qui a payé.' : ''}
+    </p>`;
+}
+
+// --- les dépenses : une ligne par dépense, avec son payeur -----------------------
 const court = (i) => (i.sub || '').split(' · ')[0];
 
 function renderDep() {
-  q('dep').innerHTML = `
+  q('dep-liste').innerHTML = `
     <div class="dep__ligne dep__tete" aria-hidden="true">
       <span>Dépense</span><span class="dep__n">Montant</span>
       <span class="dep__qui">Qui a payé</span>
@@ -176,7 +203,7 @@ function renderDep() {
       <h2 class="dep__ligne dep__poste" id="cat-${cat.id}">
         <span>${esc(cat.name)}</span>
         <span class="dep__n data mut" data-cat="${cat.id}">${eur(somme(cat.items))}</span>
-        <span class="dep__solde" data-solde="${cat.id}">${posteSolde(cat)}</span>
+        <span class="dep__n dep__resteCat" data-reste="${cat.id}">${resteCat(cat)}</span>
       </h2>
       ${cat.items.map(ligne).join('')}`).join('')}
     <div class="dep__ligne dep__pied">
@@ -185,7 +212,7 @@ function renderDep() {
       <span></span>
     </div>`;
 
-  q('dep').querySelectorAll('input[data-rate]').forEach((input) => {
+  q('dep-liste').querySelectorAll('input[data-rate]').forEach((input) => {
     input.addEventListener('input', () => {
       rates[input.dataset.rate] = Math.max(0, +input.value || 0);
       saveRates();
@@ -193,7 +220,7 @@ function renderDep() {
     });
   });
 
-  q('dep').querySelectorAll('.qui button').forEach((btn) => {
+  q('dep-liste').querySelectorAll('.qui button').forEach((btn) => {
     btn.addEventListener('click', () => {
       const key = btn.closest('.qui').dataset.key;
       // Re-cliquer le payeur choisi l'efface : la ligne redevient « pas payé »,
@@ -206,20 +233,10 @@ function renderDep() {
   });
 }
 
-// Sous le nom du poste : le même tableau que le bilan, à l'échelle du poste,
-// et la phrase qui lie remboursement et reste. Les hôtels surtout : c'est là
-// que l'un avance pour l'autre.
-function posteSolde(cat) {
+// Dans la colonne de droite de l'en-tête de poste : juste le reste, en un mot.
+function resteCat(cat) {
   const b = bilan(cat.items);
-  const etat = b.reste === 0
-    ? `<span class="dep__ok">Tout est payé</span>`
-    : `<span>Reste à payer <b class="data dep__reste">${eur(b.reste)}</b></span>`;
-  return `
-    <span class="dep__etat">${etat}
-      ${phraseSolde(b) ? `<span>${phraseSolde(b)}</span>` : ''}
-      ${b.flou.length ? `<span class="mut">${phraseFlou(b)}</span>` : ''}
-    </span>
-    ${compteHTML(b)}`;
+  return b.reste ? `reste <b class="data">${eur(b.reste)}</b>` : '<span class="dep__ok">tout est payé</span>';
 }
 
 function ligne(i) {
@@ -251,9 +268,10 @@ function sousLigne(i) {
   return lieu;
 }
 
-// En place : redessiner ferait perdre le focus du forfait qu'on tape.
+// En place : redessiner la liste ferait perdre le focus du forfait qu'on tape.
+// Le compte et le bilan, eux, se redessinent : rien n'y a le focus.
 function refresh() {
-  const root = q('dep');
+  const root = q('dep-liste');
   for (const cat of BUDGET.categories) {
     for (const i of cat.items) {
       root.querySelector(`[data-line="${i.key}"]`).textContent = eur(montant(i));
@@ -264,14 +282,34 @@ function refresh() {
       if (sub) sub.textContent = sousLigne(i);
     }
     root.querySelector(`[data-cat="${cat.id}"]`).textContent = eur(somme(cat.items));
-    root.querySelector(`[data-solde="${cat.id}"]`).innerHTML = posteSolde(cat);
+    root.querySelector(`[data-reste="${cat.id}"]`).innerHTML = resteCat(cat);
   }
   root.querySelector('[data-cat="tout"]').textContent = eur(somme(ITEMS));
   renderBilan();
+  renderCompte();
 }
 
+// --- les onglets ---------------------------------------------------------------
+// Le dernier onglet ouvert est retenu : on revient voir le compte plus souvent
+// qu'on ne coche une dépense.
+let onglet = location.hash === '#dep' ? 'dep' : location.hash === '#compte' ? 'compte'
+  : (lire('jp2026_budget_onglet', 'compte'));
+function montreOnglet(id) {
+  onglet = id;
+  localStorage.setItem('jp2026_budget_onglet', id);
+  document.querySelectorAll('.onglets .chip').forEach((b) => {
+    const actif = b.dataset.onglet === id;
+    b.setAttribute('aria-selected', String(actif));
+    b.setAttribute('aria-pressed', String(actif));
+    q(b.dataset.onglet).hidden = !actif;
+  });
+}
+document.querySelectorAll('.onglets .chip').forEach((b) => b.addEventListener('click', () => montreOnglet(b.dataset.onglet)));
+
 renderBilan();
+renderCompte();
 renderDep();
+montreOnglet(onglet);
 initReveal();
 </script>
 </body>

@@ -1977,13 +1977,55 @@
   .bilan__phrase b { color: var(--acc); }
   .bilan__sous { font-size: var(--t-xs); }
 
-  .bilan .compte { justify-self: end; font-size: var(--t-sm); grid-template-columns: auto 6.5em 6.5em; gap: var(--s-1) var(--s-4); }
-  .bilan .compte__t { font-size: var(--t-xs); }
   .bilan__sous b { color: var(--acc); }
+  .bilan__faits {
+    margin: 0; display: grid; grid-template-columns: auto auto; gap: var(--s-2) var(--s-5);
+    align-content: start; justify-content: end;
+  }
+  .bilan__faits > div { display: contents; }
+  .bilan__faits dt { font-size: var(--t-sm); color: var(--mut); }
+  .bilan__faits dd { margin: 0; font-weight: 600; text-align: right; }
+  .bilan__fort { color: var(--acc); }
   @media (max-width: 720px) {
     .bilan { grid-template-columns: 1fr; }
     .bilan__phrase { font-size: 1.25rem; }
-    .bilan .compte { justify-self: start; }
+    .bilan__faits { justify-content: start; }
+  }
+
+  /* les onglets ------------------------------------------------------------- */
+  .onglets { margin-bottom: var(--s-4); }
+  .onglets .chip { min-height: 40px; padding-inline: var(--s-4); }
+
+  /* le compte : une ligne par poste ---------------------------------------- */
+  .cpt { border-top: 1px solid var(--line-2); }
+  .cpt__ligne {
+    display: grid; align-items: center; gap: var(--s-2) var(--s-3);
+    grid-template-columns: minmax(0, 1fr) 96px 120px 120px;
+    padding: var(--s-3) var(--s-2); border-bottom: 1px solid var(--line);
+  }
+  .cpt__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cpt__tete {
+    padding-top: var(--s-2); padding-bottom: var(--s-2); align-items: end;
+    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+    letter-spacing: .04em; text-transform: uppercase; border-bottom-color: var(--line-2);
+  }
+  .cpt__tete small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .cpt__poste { display: flex; flex-direction: column; min-width: 0; }
+  .cpt__poste b { font-weight: 600; font-size: var(--t-base); }
+  .cpt__poste .mut { font-size: var(--t-xs); }
+  .cpt__poste .mut b { color: var(--acc); font-weight: 700; font-size: var(--t-xs); }
+  .cpt__ok { color: var(--pine); font-weight: 600; }
+  .cpt__reste { color: var(--acc); font-weight: 700; font-size: var(--t-md); }
+  /* dans les colonnes de chacun : ce qu'il a payé en petit, ce qu'il lui reste en gras */
+  .cpt__n .cpt__paye { display: block; font-size: var(--t-xs); font-weight: 400; }
+  .cpt__ligne:not(.cpt__tete) .cpt__n:not(.cpt__reste) { font-weight: 700; }
+  .cpt__pied { border-top: 2px solid var(--ink); border-bottom: 0; margin-top: -1px; }
+  .cpt__pied .cpt__poste b { font-size: var(--t-md); }
+  .cpt__note { font-size: var(--t-xs); margin: var(--s-3) 0 0; max-width: 60ch; }
+  @media (max-width: 640px) {
+    .cpt__ligne { grid-template-columns: minmax(0, 1fr) 64px 76px 76px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
+    .cpt__n { font-size: var(--t-sm); }
+    .cpt__reste { font-size: var(--t-base); }
   }
 
   /* la liste --------------------------------------------------------------- */
@@ -2009,30 +2051,9 @@
     border-bottom-color: var(--line-2);
   }
   .dep__poste .dep__n { font-weight: 500; }
-  /* Le solde du poste sur sa propre ligne, pleine largeur : dans la colonne de
-     droite il débordait, et élargir cette colonne aurait désaligné les montants. */
-  .dep__solde {
-    grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between;
-    align-items: start; gap: var(--s-2) var(--s-5); padding: var(--s-1) 0 var(--s-2);
-    font-size: var(--t-xs); font-weight: 500;
-  }
-  .dep__solde:empty { display: none; }
-  .dep__etat { display: flex; flex-direction: column; gap: var(--s-1); max-width: 34em; }
-  .dep__etat b { color: var(--acc); font-weight: 700; }
-  .dep__reste { font-size: var(--t-sm); }
+  .dep__resteCat { font-size: var(--t-xs); font-weight: 500; color: var(--mut); }
+  .dep__resteCat b { color: var(--acc); font-weight: 700; }
   .dep__ok { color: var(--pine); font-weight: 600; }
-
-  /* le compte : une colonne par personne, sa part / a payé / lui reste */
-  .compte {
-    display: grid; grid-template-columns: auto 6em 6em; gap: 2px var(--s-3);
-    font-size: var(--t-xs); align-self: start;
-  }
-  .compte > span, .compte > b { text-align: right; font-variant-numeric: tabular-nums; }
-  .compte__coin { visibility: hidden; }
-  .compte__t { font-weight: 600; color: var(--mut); text-transform: uppercase; letter-spacing: .04em; font-size: 10px; }
-  .compte > .compte__l { text-align: left; color: var(--mut); font-weight: 400; }
-  .compte > b { color: var(--acc); font-weight: 700; }
-  .compte sup { color: var(--mut); font-weight: 400; }
   .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
   .dep__pied .dep__n { font-size: var(--t-md); }
 
@@ -2065,7 +2086,6 @@
 
   @media (max-width: 640px) {
     .dep__ligne { grid-template-columns: minmax(0, 1fr) 72px 108px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
-    .dep__solde .compte { flex-basis: 100%; }
     .dep__n { font-size: var(--t-sm); }
     .qui button { width: 36px; }
   }

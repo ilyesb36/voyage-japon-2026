@@ -28,7 +28,7 @@ calendriers et aux matrices sans qu'une seule règle ne le sache.
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
 | `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 30 journées type — une seule fois |
 | `guide.html` | 319 adresses, filtrables, avec notice historique |
-| `budget.html` | sous chaque poste et en global : reste à payer, reste par personne (sa part moins ce qu'il a avancé), déjà payé, et qui doit quoi à l'autre ; puis une ligne par dépense avec son payeur (Ilyès, Mathilde, moitié) |
+| `budget.html` | « Entre vous » en tête, puis deux onglets : *Le compte*, un tableau par poste (reste à payer, et pour chacun ce qu'il a payé et ce qu'il lui reste) ; *Les dépenses*, une ligne par dépense avec son payeur (Ilyès, Mathilde, moitié) |
 | `pratique.html` | les six hébergements, les réflexes de terrain, le mode hors-ligne |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
 | `aujourdhui.html` | **Préparatifs** : le compte à rebours et un échéancier par mois, une ligne par démarche, cochable, le détail replié. Pendant le voyage, elle renvoie à la journée en cours |
