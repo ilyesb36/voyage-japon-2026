@@ -86,6 +86,7 @@ export const SPOT_FIXES = {
     note: 'Comprend le palais Ninomaru. Le palais Honmaru demande un billet et une réservation à part.',
   },
   'Temple ninja (Myoryu-ji)': {
+    category: 't6',
     budget: '1 200 ¥',
     when: 'réservation obligatoire, par téléphone',
     note: 'Réservation obligatoire par téléphone, paiement en espèces uniquement. Créneaux courts et peu nombreux : à caler bien avant le départ.',
@@ -148,6 +149,15 @@ export const SPOT_FIXES = {
     when: 'au coucher du soleil pour le toit-terrasse',
     lore: "Inauguré le 17 avril 2024 à l'angle d'Omotesando et de Meiji-dori. Sept étages, une soixantaine d'enseignes, un toit-jardin ouvert sur Harajuku — et, au sous-sol, un bain public de quartier, geste rare dans un centre commercial neuf.",
   },
+
+  // --- reclassés en « Insolite » ---------------------------------------------
+  // Ces lieux étaient rangés par leur nature (un temple, une boutique) alors
+  // qu'on les cherche par leur étrangeté. Ils changent de catégorie, pas de
+  // contenu.
+  'Gotoku-ji': { category: 't6' },
+  'Otagi Nenbutsu-ji': { category: 't6' },
+  'Namba Yasaka': { category: 't6' },
+  'Faux plats en cire': { category: 't6' },
 
   // --- photo d'homonyme -------------------------------------------------------
   // La recherche d'images avait ramené le Kimono Forest (les colonnes de tissu

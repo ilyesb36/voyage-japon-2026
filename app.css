@@ -1669,31 +1669,147 @@
   }
 }
 
+/* --- le calendrier de la page du jour ----------------------------------------
+   Choisir une journée devait se faire en treize appuis sur « suivant ». Une
+   grille de dates la donne en un clic, et montre au passage la forme du voyage :
+   où l'on est, ce qui est passé, quand on change de ville. */
+@layer components {
+  .cal {
+    margin: var(--s-4) 0 var(--s-5);
+    padding-bottom: var(--s-4);
+    border-bottom: 1px solid var(--line);
+  }
+  /* Replié, le calendrier ne montre que la date du jour et une invitation.
+     Déplié sur grand écran par défaut : là, la place ne manque pas. */
+  .cal__pli > summary { list-style: none; cursor: pointer; }
+  .cal__pli > summary::-webkit-details-marker { display: none; }
+  .cal__resume {
+    display: flex; align-items: baseline; gap: var(--s-3);
+    flex-wrap: wrap; min-height: 44px; padding-block: var(--s-2);
+  }
+  .cal__resumeDate b { font-size: var(--t-md); font-weight: 600; }
+  .cal__resumeDate .mut { font-size: var(--t-sm); }
+  .cal__resumeAction {
+    margin-left: auto; font-size: var(--t-xs); font-weight: 600;
+    color: var(--acc);
+  }
+  .cal__resumeAction::after { content: ' ▾'; }
+  .cal__pli[open] .cal__resumeAction::after { content: ' ▴'; }
+  /* Déplié sur grand écran, le résumé ne sert plus à rien : la grille dit tout.
+     Replié sur téléphone, c'est l'inverse — c'est lui qui porte la date, et
+     l'en-tête n'a pas à la répéter deux lignes plus bas. */
+  @media (min-width: 700px) {
+    .cal__pli[open] > summary { display: none; }
+  }
+  @media (max-width: 699px) {
+    .jour__tete .eyebrow { display: none; }
+  }
+
+  .cal__tete {
+    display: flex; align-items: baseline; gap: var(--s-4);
+    flex-wrap: wrap; margin-bottom: var(--s-3);
+  }
+  .cal__titre { font-size: var(--t-sm); font-weight: 600; }
+  .cal__legende { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-left: auto; }
+  .cal__pastille {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: var(--t-xs); color: var(--mut);
+  }
+  .cal__pastille::before {
+    content: ''; width: 7px; height: 7px; border-radius: 2px; background: var(--c);
+  }
+
+  .cal__grille {
+    display: grid; grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px; max-width: 560px;
+  }
+  .cal__jsem {
+    font-family: var(--f-data); font-size: 10px; color: var(--mut);
+    text-align: center; padding-bottom: 2px; letter-spacing: .04em;
+  }
+
+  .cal__case {
+    position: relative; min-height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; border-radius: var(--r-s);
+    border: 1px solid var(--line);
+    background: var(--paper-2); color: var(--ink);
+    text-decoration: none; line-height: 1;
+  }
+  .cal__case b { font-family: var(--f-data); font-size: var(--t-sm); font-weight: 600; }
+  .cal__ville {
+    font-size: 9px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--c); font-weight: 700;
+  }
+  /* un liseré à gauche dit la ville sans manger de hauteur */
+  .cal__case::after {
+    content: ''; position: absolute; inset: 4px auto 4px 3px;
+    width: 2px; border-radius: 2px; background: var(--c);
+  }
+  .cal__case:hover { border-color: var(--c); background: var(--paper-3); }
+  .cal__case.is-passe { opacity: .45; }
+  .cal__case.is-actif {
+    background: var(--c); border-color: var(--c); color: #fff;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--c) 30%, transparent);
+  }
+  .cal__case.is-actif .cal__ville { color: #fff; opacity: .85; }
+  .cal__case.is-actif::after { background: rgba(255,255,255,.55); }
+
+  .cal__case--hors {
+    min-height: 38px; display: grid; place-items: center;
+    font-family: var(--f-data); font-size: var(--t-xs);
+    color: var(--line-2);
+  }
+
+  @media (max-width: 560px) {
+    .cal__grille { gap: 2px; }
+    .cal__case, .cal__case--hors { min-height: 36px; }
+    .cal__ville { display: none; }
+    .cal__legende { margin-left: 0; }
+  }
+}
+
 /* --- la page d'une journée ---------------------------------------------------
    Écrite pour être suivie sur place, un téléphone à la main, en marchant.
    Le programme disait « Tenryu-ji → bambouseraie → déjeuner au bord de la
-   rivière » : trois recherches Google Maps par ligne. Ici les arrêts sont
-   numérotés, situés, et un seul bouton envoie tout le parcours dans Maps. */
+   rivière » : trois recherches Google Maps par ligne.
+
+   Sur grand écran, la carte et le bouton restent collés à droite pendant qu'on
+   lit la liste à gauche — sinon on fait défiler la liste entière pour revoir la
+   carte, puis on remonte. Sur téléphone la carte passe en tête, parce que la
+   colonne collante n'a pas de sens quand il n'y a qu'une colonne. */
 @layer components {
+  .jour__tete { padding-block: 0 var(--s-5); }
   .jour__ou {
     margin-top: var(--s-3); display: flex; align-items: center;
     gap: var(--s-3); flex-wrap: wrap; font-size: var(--t-sm);
   }
 
-  /* le bouton qui justifie la page : il ne doit pas se chercher */
-  .parcours__go {
-    display: flex; flex-wrap: wrap; gap: var(--s-3);
-    align-items: center; margin-bottom: var(--s-6);
+  .jour__grille {
+    display: grid; gap: var(--s-6);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
+    align-items: start; padding-bottom: var(--s-8);
+  }
+  .jour__aside { order: 2; }
+  .jour__corps { order: 1; min-width: 0; }
+  .jour__sticky { position: sticky; top: calc(var(--nav-h) + var(--s-4)); }
+
+  .map--jour { height: 380px; border-radius: var(--r-m); border: 1px solid var(--line); }
+  .jour__carteMeta {
+    margin: var(--s-3) 0 0; font-size: var(--t-xs); font-family: var(--f-data);
+  }
+  .jour__actions {
+    display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4);
   }
   .btn--big {
-    font-size: var(--t-base); padding: var(--s-3) var(--s-5);
+    font-size: var(--t-sm); padding: var(--s-3) var(--s-4);
     min-height: 48px; display: inline-flex; align-items: center;
   }
-  .parcours__tronque { flex-basis: 100%; font-size: var(--t-xs); margin: 0; }
+  .jour__tronque { flex-basis: 100%; font-size: var(--t-xs); margin: 0; }
 
   .etapes { list-style: none; margin: 0; padding: 0; }
   .etape {
-    display: grid; grid-template-columns: 34px minmax(0, 1fr);
+    display: grid; grid-template-columns: 32px minmax(0, 1fr);
     gap: var(--s-4); padding-bottom: var(--s-5);
   }
   /* le filet vertical porte la continuité du parcours */
@@ -1705,24 +1821,21 @@
   .etape:last-child .etape__num::before { display: none; }
   .etape__num b {
     position: relative; z-index: 1;
-    width: 28px; height: 28px; border-radius: var(--r-full);
+    width: 26px; height: 26px; border-radius: var(--r-full);
     background: var(--ink); color: var(--paper);
     display: grid; place-items: center;
     font-family: var(--f-data); font-size: var(--t-xs); font-weight: 700;
   }
   .etape__num span {
     position: relative; z-index: 1; margin-top: 6px;
-    width: 8px; height: 8px; border-radius: var(--r-full);
+    width: 7px; height: 7px; border-radius: var(--r-full);
     background: var(--line-2); color: transparent;
   }
   .etape--sansLieu .etape__texte { color: var(--mut); }
   .etape--soir .etape__texte::before { content: '☾ '; color: var(--mut); }
 
-  .etape__ecart {
-    font-family: var(--f-data); font-size: var(--t-xs);
-    margin: 0 0 var(--s-2);
-  }
-  .etape__texte { margin: 0; font-size: var(--t-base); line-height: 1.55; max-width: 62ch; }
+  .etape__ecart { font-family: var(--f-data); font-size: var(--t-xs); margin: 0 0 var(--s-2); }
+  .etape__texte { margin: 0; font-size: var(--t-base); line-height: 1.55; }
   .etape__lieux { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0 0; }
 
   .lieu {
@@ -1731,28 +1844,20 @@
     background: var(--paper-2); border: 1px solid var(--line);
     border-radius: var(--r-s);
     font-size: var(--t-sm); font-weight: 500; color: var(--ink);
-    text-decoration: none;
+    text-decoration: none; cursor: pointer;
   }
   .lieu::before { content: '↗'; color: var(--acc); font-size: var(--t-xs); }
   .lieu:hover { border-color: var(--acc); background: var(--acc-soft); }
   .lieu__approx { color: var(--mut); font-family: var(--f-data); }
+  .lieu--carte { color: var(--mut); font-weight: 400; }
+  .lieu--carte::before { content: '◎'; }
 
-  .map--jour { height: 460px; border-radius: var(--r-m); border: 1px solid var(--line); }
-  @media (max-width: 640px) { .map--jour { height: 340px; } }
-
-  .jnav {
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    gap: var(--s-3); align-items: center;
-    border-top: 1px solid var(--line); padding-top: var(--s-5);
-  }
-  .jnav .btn { min-height: 44px; }
-  .jnav__prev { justify-self: start; }
-  .jnav__next { justify-self: end; text-align: right; }
-  .jnav a span { display: block; font-size: var(--t-xs); }
-
-  @media (max-width: 640px) {
-    .jnav { grid-template-columns: 1fr; }
-    .jnav__prev, .jnav__next { justify-self: stretch; text-align: left; }
+  @media (max-width: 900px) {
+    .jour__grille { grid-template-columns: 1fr; gap: var(--s-5); }
+    .jour__aside { order: 0; }         /* la carte passe devant la liste */
+    .jour__corps { order: 1; }
+    .jour__sticky { position: static; }
+    .map--jour { height: 300px; }
   }
 }
 
@@ -1761,4 +1866,15 @@
   .day__go { margin-top: var(--s-4); }
   .day__go .btn { font-size: var(--t-xs); }
   .jour__liens { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+}
+
+/* --- dernières cibles trop petites -----------------------------------------
+   Les commandes de zoom de Leaflet font 30 px et les liens du pied de page 21 :
+   ils échappaient à la règle `.nav a`, qui ne vise que la barre du haut. */
+@layer components {
+  /* Leaflet vit dans la couche `vendor`, la plus basse : une règle ici gagne
+     sans `!important`. C'est tout l'intérêt d'avoir importé sa feuille dans
+     une couche. */
+  .leaflet-control-zoom a { width: 40px; height: 40px; line-height: 40px; }
+  .foot nav a { min-height: 40px; display: inline-flex; align-items: center; }
 }

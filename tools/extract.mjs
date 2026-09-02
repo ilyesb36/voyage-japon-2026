@@ -484,12 +484,21 @@ function parseSpotMeta() {
   // explicite dans META : ils ne sont pas touchés.
   if (def.t3) def.t3.when = 'selon l\'envie';
 
+  // La catégorie « Insolite » n'existait pas dans l'ancien site : elle n'a donc
+  // pas de défaut hérité. Ses entrées portent presque toutes leurs propres
+  // valeurs ; ce défaut n'est qu'un filet.
+  def.t6 = { duration: '1–2h', budget: 'à vérifier', when: 'selon l\'envie' };
+
   return { meta, def };
 }
 
 const CATEGORY_NAMES = {
   t0: 'Monuments', t1: 'Food', t2: 'Day trips',
   t3: 'Expériences', t4: 'Shopping', t5: 'Insta',
+  // Ajoutée après coup : les lieux dont on parle en rentrant. Elle prend des
+  // entrées aux autres catégories, parce qu'un temple aux 1 200 statues
+  // moussues se cherche par son étrangeté, pas par son statut de monument.
+  t6: 'Insolite',
 };
 const PRIORITY_NAMES = { ob: 'Obligatoire', top: 'À voir', symp: 'Sympa', niche: 'Niche' };
 
