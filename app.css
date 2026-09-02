@@ -965,29 +965,6 @@
     .hotel__body { padding: var(--s-4); }
   }
 
-  /* budget : une ligne de détail ------------------------------------------- */
-  .budget__row {
-    display: flex; align-items: center; gap: var(--s-4);
-    padding: var(--s-3) 0; border-bottom: 1px solid var(--line);
-  }
-  .budget__label { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .budget__label b { font-weight: 500; font-size: var(--t-base); }
-  .budget__label .mut { font-size: var(--t-xs); }
-  .budget__input { display: flex; align-items: center; gap: var(--s-2); flex: none; }
-  .budget__input input {
-    width: 78px; padding: var(--s-2); text-align: right;
-    font-family: var(--f-data); font-variant-numeric: tabular-nums;
-    background: var(--paper-2); border: 1px solid var(--line-2);
-    border-radius: var(--r-s); color: var(--ink);
-  }
-  .budget__input .mut { font-size: var(--t-xs); white-space: nowrap; }
-  .budget__amount { flex: none; width: 96px; text-align: right; font-weight: 600; }
-
-  @media (max-width: 640px) {
-    .budget__row { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
-    .budget__label { flex-basis: 100%; }
-    .budget__amount { margin-left: auto; width: auto; }
-  }
 
   /* pratique : paiements ------------------------------------------------------ */
   .pay__sum { margin: var(--s-3) 0 var(--s-6); font-size: var(--t-base); }
@@ -1572,7 +1549,7 @@
    qui est en inversé (fond --ink), ça laissait le texte secondaire à 2,9:1.
    La correction doit donc vivre ici, dans la même couche. */
 @layer utilities {
-  .solde__faits dd .mut { color: var(--mut); }
+  .bilan__faits dd.mut { color: var(--mut); }
 }
 
 /* --- une réservation, avec son visage --------------------------------------
@@ -1981,125 +1958,96 @@
   .jour__ailleurs .btn { font-size: var(--t-xs); }
 }
 
-/* --- le budget : le reste, puis poste par poste -------------------------------
-   La question devant cette page est « combien il me reste à sortir, et pour
-   quoi ». Donc un seul gros chiffre, le reste, dans l'unité choisie (par
-   personne ou à deux), puis une matrice courte : un poste par ligne, payé /
-   reste / total. Le fond de chaque ligne se remplit à mesure qu'on paie. Le
-   détail — où l'on coche — est replié sous chaque poste. */
+/* --- le budget : le solde entre vous, puis une ligne par dépense ----------------
+   Trois questions à deux : qui doit combien à l'autre, ce qu'il reste à payer,
+   qui a payé quoi. Un bilan de trois lignes, puis une liste sur une grille
+   fixe — quoi, combien, qui a payé — pour que tout soit aligné. */
 @layer components {
-  .budget__tete {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: var(--s-3) var(--s-5); flex-wrap: wrap;
-  }
-  .budget__tete > div:first-child { flex: 1 1 320px; min-width: 0; }
-  .unite { flex: none; }
-  .unite .chip { min-height: 40px; }
-
   .chiffre__quoi {
     display: block; font-size: var(--t-xs); font-weight: 600;
     color: var(--mut); letter-spacing: .04em; text-transform: uppercase;
   }
-  .chiffre__n {
-    display: block; margin-top: var(--s-2);
-    font-size: 2.25rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+
+  /* le bilan --------------------------------------------------------------- */
+  .bilan {
+    display: grid; gap: var(--s-4) var(--s-6);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    padding: var(--s-4) var(--s-5);
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-m);
+  }
+  .bilan__solde { margin: 0; display: flex; flex-direction: column; gap: var(--s-2); }
+  .bilan__phrase { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .bilan__phrase b { color: var(--acc); }
+  .bilan__sous { font-size: var(--t-xs); }
+
+  .bilan__faits { margin: 0; display: grid; gap: var(--s-2) var(--s-4); grid-template-columns: auto 1fr; align-content: start; }
+  .bilan__faits > div { display: contents; }
+  .bilan__faits dt { font-size: var(--t-sm); color: var(--mut); padding-top: 2px; }
+  .bilan__faits dd { margin: 0; font-weight: 600; font-size: var(--t-base); grid-column: 2; }
+  .bilan__faits dd.mut { font-weight: 400; font-size: var(--t-xs); margin-top: -4px; }
+  .bilan__fort { color: var(--acc); font-size: var(--t-md); }
+  @media (max-width: 720px) {
+    .bilan { grid-template-columns: 1fr; }
+    .bilan__phrase { font-size: 1.25rem; }
   }
 
-  /* le solde ----------------------------------------------------------------- */
-  .solde {
-    display: grid; gap: var(--s-3) var(--s-6);
-    grid-template-columns: auto 1fr; align-items: end;
-    padding: var(--s-4) var(--s-5); margin-bottom: var(--s-5);
-    background: var(--acc-soft); border-radius: var(--r-m);
-    border: 1px solid color-mix(in srgb, var(--acc) 28%, transparent);
+  /* la liste --------------------------------------------------------------- */
+  .dep { border-top: 1px solid var(--line-2); }
+  .dep__ligne {
+    display: grid; align-items: center; gap: var(--s-1) var(--s-3);
+    grid-template-columns: minmax(0, 1fr) 92px 126px;
+    padding: var(--s-2) var(--s-2); min-height: 48px;
+    border-bottom: 1px solid var(--line);
   }
-  .solde__reste .chiffre__n { color: var(--acc); }
-  .solde__bar {
-    grid-column: 1 / -1; height: 8px; border-radius: var(--r-full);
-    background: color-mix(in srgb, var(--acc) 18%, var(--paper));
-    overflow: hidden;
-  }
-  .solde__bar > span { display: block; height: 100%; background: var(--pine); border-radius: inherit; }
-  .solde__faits {
-    /* à droite du gros chiffre, sur la même ligne : la barre, qui prend toute
-       la largeur, aurait sinon poussé les faits en troisième rangée */
-    grid-area: 1 / 2;
-    display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5);
-    justify-content: flex-end; margin: 0;
-  }
-  .solde__faits > div { display: flex; flex-direction: column; gap: 2px; }
-  .solde__faits dt { font-size: var(--t-xs); color: var(--mut); }
-  .solde__faits dd { margin: 0; font-weight: 600; font-size: var(--t-base); }
-  .solde__faits dd .mut { font-weight: 400; font-size: var(--t-xs); }
-  @media (max-width: 640px) {
-    .solde { grid-template-columns: 1fr; align-items: start; }
-    .solde__faits { grid-area: auto; justify-content: flex-start; }
-  }
-
-  /* la matrice des postes ---------------------------------------------------- */
-  .bmat { border-top: 1px solid var(--line-2); }
-  .bmat__ligne {
-    display: grid; align-items: center; gap: var(--s-2) var(--s-3);
-    grid-template-columns: minmax(0, 1fr) repeat(3, 5.2em);
-    padding: var(--s-3) var(--s-2); min-height: 52px;
-  }
-  .bmat__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .bmat__tete {
+  .dep__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .dep__tete {
     min-height: 0; padding-top: var(--s-2); padding-bottom: var(--s-2);
     font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-    letter-spacing: .04em; text-transform: uppercase;
-    border-bottom: 1px solid var(--line-2);
+    letter-spacing: .04em; text-transform: uppercase; border-bottom-color: var(--line-2);
   }
-  .bmat__nom { display: flex; flex-direction: column; min-width: 0; }
-  .bmat__nom b { font-weight: 600; font-size: var(--t-base); }
-  .bmat__nom .mut { font-size: var(--t-xs); }
-  .bmat__paye { color: var(--pine); font-weight: 500; }
-  .bmat__reste { color: var(--acc); font-weight: 700; font-size: var(--t-md); }
-  .bmat__reste.is-zero { color: var(--pine); font-weight: 500; }
-  .bmat__total { font-weight: 400; }
+  .dep__tete .dep__qui { text-align: right; white-space: nowrap; }
+  .dep__legende { font-size: var(--t-xs); margin: 0 0 var(--s-3); }
+  .dep__legende b { color: var(--ink); font-weight: 700; }
+  .dep__poste {
+    margin: 0; padding-top: var(--s-4); min-height: 0;
+    font-size: var(--t-sm); font-weight: 700; letter-spacing: .02em;
+    border-bottom-color: var(--line-2);
+  }
+  .dep__poste .dep__n { font-weight: 500; }
+  .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
+  .dep__pied .dep__n { font-size: var(--t-md); }
 
-  .bmat__poste > summary {
-    list-style: none; cursor: pointer;
-    border-bottom: 1px solid var(--line);
-    /* la part déjà payée, en fond : elle avance de gauche à droite */
-    background: linear-gradient(90deg,
-      color-mix(in srgb, var(--pine) 13%, transparent) var(--part, 0%),
-      transparent var(--part, 0%));
-  }
-  .bmat__poste > summary::-webkit-details-marker { display: none; }
-  .bmat__poste > summary:hover { filter: brightness(.97); }
-  .bmat__nom b::after { content: ' ▾'; font-size: var(--t-xs); color: var(--mut); }
-  .bmat__poste[open] .bmat__nom b::after { content: ' ▴'; }
-  .bmat__pied .bmat__nom b::after { content: none; }
-  .bmat__lignes { padding: 0 var(--s-2) var(--s-3) var(--s-6); border-bottom: 1px solid var(--line); }
-  .bmat__pied { border-top: 2px solid var(--ink); margin-top: -1px; }
+  .dep__quoi { display: flex; flex-direction: column; min-width: 0; }
+  .dep__quoi b { font-weight: 500; font-size: var(--t-base); }
+  .dep__quoi .mut { font-size: var(--t-xs); }
+  .dep__row .dep__n { font-weight: 600; }
+  .dep__row.is-paye .dep__n { color: var(--pine); }
+  .dep__row.is-paye .dep__quoi b { color: var(--mut); }
 
-  .budget__row { cursor: pointer; }
-  .budget__row > input[type="checkbox"] {
-    width: 18px; height: 18px; flex: none; cursor: pointer;
+  .dep__forfait { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: 2px; }
+  .dep__forfait input {
+    width: 58px; padding: 2px var(--s-2); text-align: right;
+    font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: var(--t-sm);
+    background: var(--paper-2); border: 1px solid var(--line-2);
+    border-radius: var(--r-s); color: var(--ink);
   }
-  .budget__row.is-regle .budget__amount { color: var(--pine); }
-  .budget__row.is-regle .budget__label b { color: var(--mut); }
-  .budget__row:hover { background: var(--paper-3); }
+  .dep__forfait .mut { white-space: nowrap; }
+
+  /* qui a payé : trois boutons, un seul allumé, re-cliquer éteint */
+  .qui { display: inline-flex; justify-self: end; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
+  .qui button {
+    width: 40px; height: 36px; border: 0; border-left: 1px solid var(--line-2);
+    background: var(--paper-2); color: var(--mut);
+    font-weight: 600; font-size: var(--t-sm); cursor: pointer;
+  }
+  .qui button:first-child { border-left: 0; }
+  .qui button:hover { background: var(--paper-3); color: var(--ink); }
+  .qui button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
 
   @media (max-width: 640px) {
-    /* des colonnes en px, pas en em : l'em de la ligne est celui du texte
-       courant, et trois colonnes de 4,6em ne laissaient que 104 px au nom */
-    .bmat__ligne { grid-template-columns: minmax(0, 1fr) repeat(3, 58px); gap: var(--s-1) var(--s-2); padding-inline: var(--s-1); }
-    .bmat__n { font-size: var(--t-sm); }
-    .bmat__reste { font-size: var(--t-base); }
-    .bmat__lignes { padding-left: var(--s-2); }
-    .chiffre__n { font-size: 2rem; }
-    /* la ligne de détail : case et libellé côte à côte, montant à droite,
-       le forfait sous le libellé — quatre lignes empilées devenaient deux */
-    .budget__row {
-      display: grid; grid-template-columns: 18px minmax(0, 1fr) auto;
-      align-items: start; gap: var(--s-2) var(--s-3);
-    }
-    .budget__row > input[type="checkbox"] { margin-top: 2px; }
-    .budget__label { flex-basis: auto; }
-    .budget__input { grid-column: 2 / -1; }
-    .budget__amount { width: auto; margin-left: 0; }
+    .dep__ligne { grid-template-columns: minmax(0, 1fr) 72px 108px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
+    .dep__n { font-size: var(--t-sm); }
+    .qui button { width: 36px; }
   }
 
   /* une carte qui n'est qu'un renvoi -------------------------------------- */

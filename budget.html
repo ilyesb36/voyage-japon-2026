@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Le budget — Japon 2026</title>
-<meta name="description" content="Ce qu'il reste à payer, par personne et poste par poste, calculé depuis les réservations réelles.">
+<meta name="description" content="Qui a payé quoi, ce qu'il reste à payer, et qui doit combien à l'autre.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -14,24 +14,22 @@
 <body>
 
 <main class="wrap">
-  <!-- La question qu'on se pose devant cette page n'est pas « combien coûte le
-       voyage » mais « combien il me reste à sortir, et pour quoi ». Tout est donc
-       organisé autour du reste, et tout s'affiche dans l'unité qu'on choisit :
-       par personne (on partage) ou à deux. -->
-  <header class="section budget__tete">
-    <div>
-      <h1>Le budget</h1>
-      <p class="hero__lede" id="lede"></p>
-    </div>
-    <div class="chipbar unite" role="group" aria-label="Afficher les montants">
-      <button class="chip" type="button" data-unite="pers" aria-pressed="true">Par personne</button>
-      <button class="chip" type="button" data-unite="deux" aria-pressed="false">À deux</button>
-    </div>
+  <!-- À deux, le budget c'est trois questions : qui doit combien à l'autre,
+       qu'est-ce qui reste à payer, et qui a payé quoi. La page fait ça et rien
+       d'autre : un bilan de trois lignes, puis la liste, une ligne par dépense
+       avec le payeur. -->
+  <header class="section">
+    <h1>Le budget</h1>
+    <p class="hero__lede" id="lede"></p>
   </header>
 
   <section class="section">
-    <div class="solde" id="solde"></div>
-    <div class="bmat" id="bmat"></div>
+    <div class="bilan" id="bilan"></div>
+  </section>
+
+  <section class="section">
+    <p class="dep__legende mut"><b>I</b> Ilyès · <b>M</b> Mathilde · <b>½</b> moitié chacun. Re-cliquer efface.</p>
+    <div class="dep" id="dep"></div>
   </section>
 
   <section class="section">
@@ -49,139 +47,117 @@ import { mountChrome, initReveal, esc, eur } from './app/ui.js';
 mountChrome('budget.html');
 const q = (id) => document.getElementById(id);
 
-// --- l'unité : par personne ou à deux ------------------------------------------
-// Les montants des réservations sont pour deux ; les forfaits sont saisis par
-// personne. Ici tout ce qui s'affiche est ramené à l'unité choisie, et rien
-// d'autre ne change : cocher, ajuster, c'est le même geste dans les deux cas.
-let unite = localStorage.getItem('jp2026_unite') || 'pers';
-const div = () => (unite === 'pers' ? 2 : 1);
-const show = (n) => eur(n / div());
-// « × 2 pers. » dans un libellé n'a plus de sens quand on affiche par personne.
-const lib = (s) => (unite === 'pers' ? s.replace(/\s[×·]\s2 pers\./, '') : s);
+const QUI = { I: 'Ilyès', M: 'Mathilde', D: 'moitié chacun' };
 
 // --- le calcul ----------------------------------------------------------------
 // Le poste hébergement est la somme des réservations, jamais une saisie.
 const RATE_LABEL = { vol: '€ / pers.', train: '€ / pers.', food: '€ / jour / pers.', act: '€ / jour / pers.' };
 const MULT = { vol: 2, train: 2, food: 24 * 2, act: 24 * 2 };
 
-const rates = loadRates();
-function loadRates() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('jp2026_rates') || '{}');
-    return { ...BUDGET.defaults, ...saved };
-  } catch { return { ...BUDGET.defaults }; }
-}
+const lire = (k, repli) => { try { return JSON.parse(localStorage.getItem(k)) ?? repli; } catch { return repli; } };
+const rates = { ...BUDGET.defaults, ...lire('jp2026_rates', {}) };
 const saveRates = () => localStorage.setItem('jp2026_rates', JSON.stringify(rates));
 
-function lineTotal(item) {
+function montant(item) {
   if (item.fromHotel) return HOTELS.find((h) => h.id === item.fromHotel).price;
   if (item.fix != null) return item.fix;
   return (rates[item.dyn] || 0) * MULT[item.dyn];
 }
-const somme = (items) => items.reduce((t, i) => t + lineTotal(i), 0);
+const somme = (items) => items.reduce((t, i) => t + montant(i), 0);
 const ITEMS = BUDGET.categories.flatMap((c) => c.items);
 
-// Ce qui est déjà sorti du compte : hôtels prépayés et billets datés payés.
-const prepaid = new Set([
+// Ce qui est déjà sorti d'un compte, sans qu'on sache duquel : hôtels
+// prépayés via Booking, billets datés. C'est un fait, pas une case à cocher.
+const prepaye = new Set([
   ...HOTELS.filter((h) => h.paid).map((h) => h.id),
   ...ITEMS.filter((i) => i.settled).map((i) => i.key),
 ]);
 
-function loadPaid() {
-  try {
-    const now = JSON.parse(localStorage.getItem('jp2026_paid') || 'null');
-    if (now) return now;
-    return JSON.parse(localStorage.getItem('bdg_paid') || '{}');
-  } catch { return {}; }
-}
-const paid = loadPaid();
-const savePaid = () => localStorage.setItem('jp2026_paid', JSON.stringify(paid));
-const estRegle = (i) => prepaid.has(i.key) || !!paid[i.key];
+// Qui a payé : 'I', 'M', 'D' (moitié chacun) ou rien. L'ancienne case « payé »
+// sans payeur est reprise comme payé par on-ne-sait-qui.
+const payeur = lire('jp2026_payeur', {});
+const ancien = lire('jp2026_paid', lire('bdg_paid', {}));
+const savePayeur = () => localStorage.setItem('jp2026_payeur', JSON.stringify(payeur));
 
-// Les trois nombres d'un poste — ou du voyage entier.
-const bilan = (items) => {
-  const total = somme(items);
-  const paye = somme(items.filter(estRegle));
-  return { total, paye, reste: total - paye };
-};
+const estPaye = (i) => prepaye.has(i.key) || !!ancien[i.key] || !!payeur[i.key];
+const sansPayeur = (i) => estPaye(i) && !payeur[i.key];
+
+function bilan() {
+  const total = somme(ITEMS);
+  const paye = somme(ITEMS.filter(estPaye));
+  const avI = somme(ITEMS.filter((i) => payeur[i.key] === 'I'));
+  const avM = somme(ITEMS.filter((i) => payeur[i.key] === 'M'));
+  const flou = ITEMS.filter(sansPayeur);
+  // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
+  return { total, paye, reste: total - paye, avI, avM, solde: (avI - avM) / 2, flou };
+}
 
 q('lede').textContent =
-  'Calculé depuis les réservations réelles, hors shopping et souvenirs. '
-  + 'Coche ce qui est payé, ajuste les forfaits : tout suit, mémorisé sur cet appareil.';
+  'Qui a payé quoi, ce qu\'il reste, et qui doit combien à l\'autre. Mémorisé sur cet appareil.';
 
-// --- le solde -----------------------------------------------------------------
-// Un seul bloc, un seul gros chiffre : le reste. Le total, le déjà-payé et le
-// prix par jour sont là, mais en second rang — on ne les lit qu'après.
-function renderSolde() {
-  const b = bilan(ITEMS);
-  const part = b.total ? Math.round((b.paye / b.total) * 100) : 0;
-  q('solde').innerHTML = `
-    <div class="solde__reste">
-      <span class="chiffre__quoi">Reste à payer, ${unite === 'pers' ? 'par personne' : 'à deux'}</span>
-      <b class="chiffre__n data">${show(b.reste)}</b>
-    </div>
-    <div class="solde__bar" role="img" aria-label="${part} % déjà payés">
-      <span style="width:${part}%"></span>
-    </div>
-    <dl class="solde__faits">
-      <div><dt>Déjà payé</dt><dd class="data">${show(b.paye)} <span class="mut">· ${part} %</span></dd></div>
-      <div><dt>Le voyage</dt><dd class="data">${show(b.total)}</dd></div>
-      <div><dt>Par jour</dt><dd class="data">${eur(b.total / 2 / TRIP.days)} <span class="mut">/ pers.</span></dd></div>
+// --- le bilan : trois lignes ----------------------------------------------------
+function renderBilan() {
+  const b = bilan();
+  const s = Math.round(Math.abs(b.solde));
+  const phrase = !b.avI && !b.avM
+    ? 'Personne n\'a encore rien avancé'
+    : s === 0 ? 'Vous êtes à l\'équilibre'
+    : b.solde > 0 ? `Mathilde doit <b class="data">${eur(s)}</b> à Ilyès`
+    : `Ilyès doit <b class="data">${eur(s)}</b> à Mathilde`;
+
+  q('bilan').innerHTML = `
+    <p class="bilan__solde">
+      <span class="chiffre__quoi">Entre vous</span>
+      <span class="bilan__phrase">${phrase}</span>
+      <span class="bilan__sous mut">
+        Ilyès a avancé <span class="data">${eur(b.avI)}</span>, Mathilde <span class="data">${eur(b.avM)}</span>${
+        b.flou.length ? ` · ${b.flou.length} ${b.flou.length > 1 ? 'lignes payées' : 'ligne payée'} sans savoir par qui` : ''}
+      </span>
+    </p>
+    <dl class="bilan__faits">
+      <div>
+        <dt>Reste à payer</dt>
+        <dd class="data bilan__fort">${eur(b.reste)}</dd>
+        <dd class="mut"><span class="data">${eur(b.reste / 2)}</span> chacun</dd>
+      </div>
+      <div>
+        <dt>Déjà payé</dt>
+        <dd class="data">${eur(b.paye)}</dd>
+        <dd class="mut">${b.total ? Math.round((b.paye / b.total) * 100) : 0} % du voyage</dd>
+      </div>
+      <div>
+        <dt>Le voyage</dt>
+        <dd class="data">${eur(b.total)}</dd>
+        <dd class="mut"><span class="data">${eur(b.total / 2)}</span> chacun · <span class="data">${eur(b.total / 2 / TRIP.days)}</span> par jour</dd>
+      </div>
     </dl>`;
 }
 
-// --- la matrice des postes ------------------------------------------------------
-// Une ligne par poste, trois colonnes : payé, reste, total. Le reste est la
-// colonne qu'on lit, les deux autres l'expliquent. Le fond de chaque ligne se
-// remplit à mesure qu'on paie. Ouvrir une ligne montre ses détails, et c'est là
-// qu'on coche — la matrice reste courte.
-const OUVERTS_KEY = 'jp2026_budget_ouverts';
-const ouverts = new Set(JSON.parse(localStorage.getItem(OUVERTS_KEY) || '[]'));
-const saveOuverts = () => localStorage.setItem(OUVERTS_KEY, JSON.stringify([...ouverts]));
+// --- la liste : une ligne par dépense ---------------------------------------------
+// Trois colonnes, toujours les mêmes : quoi, combien, qui a payé. Les en-têtes
+// de poste sont dans la même grille, leur total dans la colonne des montants.
+const court = (i) => (i.sub || '').split(' · ')[0];
 
-const cellules = (b, attrs = '') => `
-  <span class="bmat__n bmat__paye data" ${attrs ? `data-paye="${attrs}"` : ''}>${b.paye ? show(b.paye) : '—'}</span>
-  <span class="bmat__n bmat__reste data${b.reste ? '' : ' is-zero'}" ${attrs ? `data-reste="${attrs}"` : ''}>${b.reste ? show(b.reste) : '✓'}</span>
-  <span class="bmat__n bmat__total data mut" ${attrs ? `data-total="${attrs}"` : ''}>${show(b.total)}</span>`;
-
-function renderMat() {
-  q('bmat').innerHTML = `
-    <div class="bmat__ligne bmat__tete" aria-hidden="true">
-      <span>Poste</span><span class="bmat__n">Payé</span><span class="bmat__n">Reste</span><span class="bmat__n">Total</span>
+function renderDep() {
+  q('dep').innerHTML = `
+    <div class="dep__ligne dep__tete" aria-hidden="true">
+      <span>Dépense</span><span class="dep__n">Montant</span>
+      <span class="dep__qui">Qui a payé</span>
     </div>
-    ${BUDGET.categories.map((cat) => {
-      const b = bilan(cat.items);
-      const part = b.total ? (b.paye / b.total) * 100 : 0;
-      const aRegler = cat.items.filter((i) => !estRegle(i)).length;
-      return `
-      <details class="bmat__poste" id="cat-${cat.id}" data-cat="${cat.id}" ${ouverts.has(cat.id) ? 'open' : ''}>
-        <summary class="bmat__ligne" style="--part:${part}%">
-          <span class="bmat__nom">
-            <b>${esc(cat.name)}</b>
-            <span class="mut" data-sub="${cat.id}">${esc(sousTitre(cat, aRegler))}</span>
-          </span>
-          ${cellules(b, cat.id)}
-        </summary>
-        <div class="bmat__lignes">
-          ${cat.items.map(ligne).join('')}
-        </div>
-      </details>`;
-    }).join('')}
-    <div class="bmat__ligne bmat__pied" id="bmat-total">
-      <span class="bmat__nom"><b>Le voyage</b></span>
-      ${cellules(bilan(ITEMS), 'tout')}
+    ${BUDGET.categories.map((cat) => `
+      <h2 class="dep__ligne dep__poste" id="cat-${cat.id}">
+        <span>${esc(cat.name)}</span>
+        <span class="dep__n data mut" data-cat="${cat.id}">${eur(somme(cat.items))}</span>
+        <span></span>
+      </h2>
+      ${cat.items.map(ligne).join('')}`).join('')}
+    <div class="dep__ligne dep__pied">
+      <span>Le voyage</span>
+      <span class="dep__n data" data-cat="tout">${eur(somme(ITEMS))}</span>
+      <span></span>
     </div>`;
 
-  q('bmat').querySelectorAll('details').forEach((d) => {
-    d.addEventListener('toggle', () => {
-      d.open ? ouverts.add(d.dataset.cat) : ouverts.delete(d.dataset.cat);
-      saveOuverts();
-    });
-  });
-
-  q('bmat').querySelectorAll('input[data-rate]').forEach((input) => {
-    // Un clic dans le champ ne doit pas cocher le label qui l'entoure.
-    input.addEventListener('click', (e) => e.preventDefault());
+  q('dep').querySelectorAll('input[data-rate]').forEach((input) => {
     input.addEventListener('input', () => {
       rates[input.dataset.rate] = Math.max(0, +input.value || 0);
       saveRates();
@@ -189,90 +165,68 @@ function renderMat() {
     });
   });
 
-  q('bmat').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach((cb) => {
-    cb.addEventListener('change', () => {
-      paid[cb.dataset.key] = cb.checked;
-      savePaid();
-      cb.closest('.budget__row').classList.toggle('is-regle', cb.checked);
+  q('dep').querySelectorAll('.qui button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const key = btn.closest('.qui').dataset.key;
+      // Re-cliquer le payeur choisi l'efface : la ligne redevient « pas payé »,
+      // sauf si c'est un fait (prépayé) — alors seul le payeur s'efface.
+      payeur[key] = payeur[key] === btn.dataset.qui ? undefined : btn.dataset.qui;
+      if (!payeur[key]) { delete payeur[key]; delete ancien[key]; localStorage.setItem('jp2026_paid', JSON.stringify(ancien)); }
+      savePayeur();
       refresh();
     });
   });
 }
 
-// La deuxième ligne d'un poste dit où on en est, pas ce qu'il contient : le
-// détail est juste en dessous.
-function sousTitre(cat, aRegler) {
-  const n = cat.items.length;
-  if (aRegler === 0) return n > 1 ? 'tout est payé' : 'payé';
-  if (cat.id === 'place') return 'pendant le voyage';
-  if (aRegler === n) return n > 1 ? `${n} lignes à payer` : 'à payer';
-  return `${aRegler} sur ${n} à payer`;
-}
-
 function ligne(i) {
-  const bloque = prepaid.has(i.key);
-  const coche = bloque || !!paid[i.key];
+  const paye = estPaye(i);
+  const sub = i.dyn
+    ? `<label class="dep__forfait">
+         <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
+                aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
+         <span class="mut">${RATE_LABEL[i.dyn]}</span>
+       </label>`
+    : `<span class="mut" data-sub="${i.key}">${esc(sousLigne(i))}</span>`;
   return `
-    <label class="budget__row${coche ? ' is-regle' : ''}">
-      <input type="checkbox" data-key="${i.key}" ${coche ? 'checked' : ''} ${bloque ? 'disabled' : ''}
-             aria-label="${esc(i.label)} — marquer comme payé">
-      <span class="budget__label">
-        <b>${esc(lib(i.label))}</b>
-        ${i.sub ? `<span class="mut">${esc(lib(i.sub))}</span>` : ''}
-        ${bloque ? `<span class="mut">${i.settled ? 'payé' : 'réglé via Booking'}</span>` : ''}
+    <div class="dep__ligne dep__row${paye ? ' is-paye' : ''}" data-row="${i.key}">
+      <span class="dep__quoi"><b>${esc(i.label)}</b>${sub}</span>
+      <span class="dep__n data" data-line="${i.key}">${eur(montant(i))}</span>
+      <span class="qui" role="group" data-key="${i.key}" aria-label="Qui a payé ${esc(i.label)}">
+        ${['I', 'M', 'D'].map((k) => `
+          <button type="button" data-qui="${k}" aria-pressed="${payeur[i.key] === k}"
+                  title="${k === 'D' ? 'Moitié chacun' : `${QUI[k]} a payé`}">${k === 'D' ? '½' : k}</button>`).join('')}
       </span>
-      ${i.dyn ? `
-        <span class="budget__input">
-          <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
-                 aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
-          <span class="mut">${RATE_LABEL[i.dyn]}</span>
-        </span>` : ''}
-      <span class="budget__amount data" data-line="${i.key}">${show(lineTotal(i))}</span>
-    </label>`;
+    </div>`;
 }
 
-// Les montants se rafraîchissent en place : redessiner ferait perdre le focus
-// du champ qu'on tape, et refermerait le poste qu'on vient d'ouvrir.
+// Sous le libellé : le lieu, et l'état quand il manque quelque chose.
+function sousLigne(i) {
+  const lieu = court(i);
+  if (prepaye.has(i.key) && !payeur[i.key]) return `${lieu} · ${i.settled ? 'payé' : 'réglé via Booking'} — par qui ?`;
+  if (ancien[i.key] && !payeur[i.key]) return `${lieu} · payé — par qui ?`;
+  return lieu;
+}
+
+// En place : redessiner ferait perdre le focus du forfait qu'on tape.
 function refresh() {
-  const root = q('bmat');
-  const maj = (b, id) => {
-    const paye = root.querySelector(`[data-paye="${id}"]`);
-    const reste = root.querySelector(`[data-reste="${id}"]`);
-    const total = root.querySelector(`[data-total="${id}"]`);
-    paye.textContent = b.paye ? show(b.paye) : '—';
-    reste.textContent = b.reste ? show(b.reste) : '✓';
-    reste.classList.toggle('is-zero', !b.reste);
-    total.textContent = show(b.total);
-  };
+  const root = q('dep');
   for (const cat of BUDGET.categories) {
     for (const i of cat.items) {
-      const cell = root.querySelector(`[data-line="${i.key}"]`);
-      if (cell) cell.textContent = show(lineTotal(i));
+      root.querySelector(`[data-line="${i.key}"]`).textContent = eur(montant(i));
+      const row = root.querySelector(`[data-row="${i.key}"]`);
+      row.classList.toggle('is-paye', estPaye(i));
+      row.querySelectorAll('.qui button').forEach((b) => b.setAttribute('aria-pressed', String(payeur[i.key] === b.dataset.qui)));
+      const sub = row.querySelector('[data-sub]');
+      if (sub) sub.textContent = sousLigne(i);
     }
-    const b = bilan(cat.items);
-    maj(b, cat.id);
-    const aRegler = cat.items.filter((i) => !estRegle(i)).length;
-    root.querySelector(`[data-sub="${cat.id}"]`).textContent = sousTitre(cat, aRegler);
-    root.querySelector(`#cat-${cat.id} > summary`).style.setProperty('--part', `${b.total ? (b.paye / b.total) * 100 : 0}%`);
+    root.querySelector(`[data-cat="${cat.id}"]`).textContent = eur(somme(cat.items));
   }
-  maj(bilan(ITEMS), 'tout');
-  renderSolde();
+  root.querySelector('[data-cat="tout"]').textContent = eur(somme(ITEMS));
+  renderBilan();
 }
 
-// Changer d'unité redessine tout : il n'y a alors ni focus ni case en cours.
-document.querySelectorAll('.unite .chip').forEach((btn) => {
-  btn.setAttribute('aria-pressed', String(btn.dataset.unite === unite));
-  btn.addEventListener('click', () => {
-    unite = btn.dataset.unite;
-    localStorage.setItem('jp2026_unite', unite);
-    document.querySelectorAll('.unite .chip').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-    renderSolde();
-    renderMat();
-  });
-});
-
-renderSolde();
-renderMat();
+renderBilan();
+renderDep();
 initReveal();
 </script>
 </body>
