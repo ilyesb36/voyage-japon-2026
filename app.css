@@ -965,16 +965,7 @@
     .hotel__body { padding: var(--s-4); }
   }
 
-  /* pratique : budget -------------------------------------------------------- */
-  .budget__cat { margin-bottom: var(--s-5); }
-  .budget__cat > header {
-    display: flex; align-items: baseline; gap: var(--s-3);
-    padding-bottom: var(--s-2); border-bottom: 1px solid var(--line-2);
-  }
-  .budget__cat > header h3 { font-size: var(--t-md); }
-  .budget__cat > header .mut { font-size: var(--t-sm); flex: 1; }
-  .budget__cat > header b { font-size: var(--t-md); font-weight: 700; }
-
+  /* budget : une ligne de détail ------------------------------------------- */
   .budget__row {
     display: flex; align-items: center; gap: var(--s-4);
     padding: var(--s-3) 0; border-bottom: 1px solid var(--line);
@@ -991,22 +982,6 @@
   }
   .budget__input .mut { font-size: var(--t-xs); white-space: nowrap; }
   .budget__amount { flex: none; width: 96px; text-align: right; font-weight: 600; }
-
-  .budget__total {
-    margin-top: var(--s-6); padding: var(--s-5);
-    background: var(--ink); color: var(--paper); border-radius: var(--r-m);
-  }
-  .budget__total > div { display: flex; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; }
-  /* Le bloc est en inversé : fond --ink, texte --paper. Le total portait
-     `color: var(--ink)` — encre sur encre, soit le plus gros chiffre de la
-     page rendu invisible. Les opacités sont remontées : sous 0,75 le texte
-     passait sous le seuil de contraste. */
-  .budget__total .label { color: var(--paper); opacity: .8; }
-  .budget__total b { font-family: var(--f-data); font-size: 1.75rem; font-weight: 700;
-                     letter-spacing: -0.045em; color: var(--paper); }
-  .budget__total .mut { color: var(--paper); opacity: .85; }
-  .budget__total > p { margin-top: var(--s-3); font-size: var(--t-xs);
-                       color: var(--paper); opacity: .78; }
 
   @media (max-width: 640px) {
     .budget__row { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
@@ -1285,11 +1260,14 @@
   @keyframes pulse { 0%, 100% { opacity: .35 } 50% { opacity: .9 } }
 
   @media (max-width: 720px) {
-    .meteo__row { flex-wrap: wrap; gap: var(--s-2) var(--s-3); }
+    .meteo__row { flex-wrap: wrap; gap: var(--s-1) var(--s-3); padding: var(--s-2) 0; }
     .meteo__city { width: auto; flex: 1; }
     .meteo__now { width: auto; }
     .meteo__norm { width: auto; }
-    .meteo__note { flex-basis: 100%; padding-left: var(--s-4); }
+    /* « en novembre » est déjà dit dans l'en-tête du bloc : sur téléphone, il
+       faisait passer la ligne à trois hauteurs */
+    .meteo__norm .mut { display: none; }
+    .meteo__note { flex-basis: 100%; padding-left: var(--s-4); font-size: var(--t-xs); }
   }
 }
 
@@ -1594,9 +1572,7 @@
    qui est en inversé (fond --ink), ça laissait le texte secondaire à 2,9:1.
    La correction doit donc vivre ici, dans la même couche. */
 @layer utilities {
-  .budget__total .mut,
-  .budget__total .label,
-  .chiffre--fort .mut { color: var(--paper); }
+  .solde__faits dd .mut { color: var(--mut); }
 }
 
 /* --- une réservation, avec son visage --------------------------------------
@@ -2005,24 +1981,20 @@
   .jour__ailleurs .btn { font-size: var(--t-xs); }
 }
 
-/* --- le budget, en trois chiffres et une barre -------------------------------
-   Un total de 7 359 € ne dit rien : personne n'a d'intuition sur ce nombre.
-   Ce qui se compare, c'est le prix par personne et par jour. Et la barre montre
-   en une seconde que l'hébergement et les vols pèsent les deux tiers, ce
-   qu'aucune colonne de chiffres ne fait aussi vite. */
+/* --- le budget : le reste, puis poste par poste -------------------------------
+   La question devant cette page est « combien il me reste à sortir, et pour
+   quoi ». Donc un seul gros chiffre, le reste, dans l'unité choisie (par
+   personne ou à deux), puis une matrice courte : un poste par ligne, payé /
+   reste / total. Le fond de chaque ligne se remplit à mesure qu'on paie. Le
+   détail — où l'on coche — est replié sous chaque poste. */
 @layer components {
-  .chiffres {
-    display: grid; gap: var(--s-3);
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    margin-bottom: var(--s-6);
+  .budget__tete {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: var(--s-3) var(--s-5); flex-wrap: wrap;
   }
-  .chiffre {
-    padding: var(--s-4) var(--s-5);
-    background: var(--paper-2); border: 1px solid var(--line);
-    border-radius: var(--r-m);
-  }
-  .chiffre--fort { background: var(--ink); border-color: var(--ink); }
-  .chiffre--reste { background: var(--acc-soft); border-color: color-mix(in srgb, var(--acc) 28%, transparent); }
+  .budget__tete > div:first-child { flex: 1 1 320px; min-width: 0; }
+  .unite { flex: none; }
+  .unite .chip { min-height: 40px; }
 
   .chiffre__quoi {
     display: block; font-size: var(--t-xs); font-weight: 600;
@@ -2030,56 +2002,78 @@
   }
   .chiffre__n {
     display: block; margin-top: var(--s-2);
-    font-size: 1.75rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+    font-size: 2.25rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
   }
-  .chiffre__sous { display: block; margin-top: var(--s-2); font-size: var(--t-xs); }
 
-  /* la carte sombre est en inversé : ses trois lignes doivent suivre */
-  .chiffre--fort .chiffre__quoi,
-  .chiffre--fort .chiffre__n,
-  .chiffre--fort .chiffre__sous { color: var(--paper); }
-  .chiffre--fort .chiffre__quoi { opacity: .75; }
-  .chiffre--fort .chiffre__sous { opacity: .8; }
-  .chiffre--reste .chiffre__n { color: var(--acc); }
+  /* le solde ----------------------------------------------------------------- */
+  .solde {
+    display: grid; gap: var(--s-3) var(--s-6);
+    grid-template-columns: auto 1fr; align-items: end;
+    padding: var(--s-4) var(--s-5); margin-bottom: var(--s-5);
+    background: var(--acc-soft); border-radius: var(--r-m);
+    border: 1px solid color-mix(in srgb, var(--acc) 28%, transparent);
+  }
+  .solde__reste .chiffre__n { color: var(--acc); }
+  .solde__bar {
+    grid-column: 1 / -1; height: 8px; border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--acc) 18%, var(--paper));
+    overflow: hidden;
+  }
+  .solde__bar > span { display: block; height: 100%; background: var(--pine); border-radius: inherit; }
+  .solde__faits {
+    /* à droite du gros chiffre, sur la même ligne : la barre, qui prend toute
+       la largeur, aurait sinon poussé les faits en troisième rangée */
+    grid-area: 1 / 2;
+    display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5);
+    justify-content: flex-end; margin: 0;
+  }
+  .solde__faits > div { display: flex; flex-direction: column; gap: 2px; }
+  .solde__faits dt { font-size: var(--t-xs); color: var(--mut); }
+  .solde__faits dd { margin: 0; font-weight: 600; font-size: var(--t-base); }
+  .solde__faits dd .mut { font-weight: 400; font-size: var(--t-xs); }
+  @media (max-width: 640px) {
+    .solde { grid-template-columns: 1fr; align-items: start; }
+    .solde__faits { grid-area: auto; justify-content: flex-start; }
+  }
 
-  /* la répartition ---------------------------------------------------------- */
-  .repart__bar {
-    display: flex; height: 14px; border-radius: var(--r-full);
-    overflow: hidden; background: var(--paper-3);
+  /* la matrice des postes ---------------------------------------------------- */
+  .bmat { border-top: 1px solid var(--line-2); }
+  .bmat__ligne {
+    display: grid; align-items: center; gap: var(--s-2) var(--s-3);
+    grid-template-columns: minmax(0, 1fr) repeat(3, 5.2em);
+    padding: var(--s-3) var(--s-2); min-height: 52px;
   }
-  .repart__seg {
-    display: block; height: 100%;
-    background: var(--teinte); border-right: 1px solid var(--paper);
-    transition: filter .15s;
+  .bmat__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bmat__tete {
+    min-height: 0; padding-top: var(--s-2); padding-bottom: var(--s-2);
+    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+    letter-spacing: .04em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line-2);
   }
-  .repart__seg:last-child { border-right: 0; }
-  .repart__seg:hover { filter: brightness(1.15); }
+  .bmat__nom { display: flex; flex-direction: column; min-width: 0; }
+  .bmat__nom b { font-weight: 600; font-size: var(--t-base); }
+  .bmat__nom .mut { font-size: var(--t-xs); }
+  .bmat__paye { color: var(--pine); font-weight: 500; }
+  .bmat__reste { color: var(--acc); font-weight: 700; font-size: var(--t-md); }
+  .bmat__reste.is-zero { color: var(--pine); font-weight: 500; }
+  .bmat__total { font-weight: 400; }
 
-  /* La teinte de chaque poste est posée en style inline par le script (voir
-     TEINTES dans budget.html) : la palette d'automne du site, du plus lourd au
-     plus léger. Ici on ne garde qu'un repli. */
-  .repart__seg, .repart__legende li { --teinte: var(--mut); }
+  .bmat__poste > summary {
+    list-style: none; cursor: pointer;
+    border-bottom: 1px solid var(--line);
+    /* la part déjà payée, en fond : elle avance de gauche à droite */
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--pine) 13%, transparent) var(--part, 0%),
+      transparent var(--part, 0%));
+  }
+  .bmat__poste > summary::-webkit-details-marker { display: none; }
+  .bmat__poste > summary:hover { filter: brightness(.97); }
+  .bmat__nom b::after { content: ' ▾'; font-size: var(--t-xs); color: var(--mut); }
+  .bmat__poste[open] .bmat__nom b::after { content: ' ▴'; }
+  .bmat__pied .bmat__nom b::after { content: none; }
+  .bmat__lignes { padding: 0 var(--s-2) var(--s-3) var(--s-6); border-bottom: 1px solid var(--line); }
+  .bmat__pied { border-top: 2px solid var(--ink); margin-top: -1px; }
 
-  /* La légende ne redit pas les montants : les en-têtes de poste les portent,
-     avec la même teinte. Elle sert juste à nommer les segments et à y sauter. */
-  .repart__legende {
-    display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4);
-    margin: var(--s-3) 0 0;
-  }
-  .repart__cle {
-    display: inline-flex; align-items: center; gap: var(--s-2);
-    min-height: 32px; font-size: var(--t-sm);
-    color: var(--ink); text-decoration: none;
-  }
-  .repart__cle::before {
-    content: ''; width: 9px; height: 9px; flex: none;
-    border-radius: 2px; background: var(--teinte);
-  }
-  .repart__cle:hover { color: var(--acc); }
-  .repart__cle .mut { font-size: var(--t-xs); }
-
-  /* La ligne est devenue un label : une case, le libellé, le forfait s'il y en
-     a un, le montant. Un seul tableau au lieu de deux qui se répétaient. */
   .budget__row { cursor: pointer; }
   .budget__row > input[type="checkbox"] {
     width: 18px; height: 18px; flex: none; cursor: pointer;
@@ -2088,18 +2082,25 @@
   .budget__row.is-regle .budget__label b { color: var(--mut); }
   .budget__row:hover { background: var(--paper-3); }
 
-  .budget__cat > header {
-    border-left: 3px solid var(--teinte, transparent);
-    padding-left: var(--s-3);
-    /* Le pourcentage ajouté à droite débordait sur téléphone : l'en-tête ne
-       savait pas passer à la ligne. */
-    flex-wrap: wrap;
+  @media (max-width: 640px) {
+    /* des colonnes en px, pas en em : l'em de la ligne est celui du texte
+       courant, et trois colonnes de 4,6em ne laissaient que 104 px au nom */
+    .bmat__ligne { grid-template-columns: minmax(0, 1fr) repeat(3, 58px); gap: var(--s-1) var(--s-2); padding-inline: var(--s-1); }
+    .bmat__n { font-size: var(--t-sm); }
+    .bmat__reste { font-size: var(--t-base); }
+    .bmat__lignes { padding-left: var(--s-2); }
+    .chiffre__n { font-size: 2rem; }
+    /* la ligne de détail : case et libellé côte à côte, montant à droite,
+       le forfait sous le libellé — quatre lignes empilées devenaient deux */
+    .budget__row {
+      display: grid; grid-template-columns: 18px minmax(0, 1fr) auto;
+      align-items: start; gap: var(--s-2) var(--s-3);
+    }
+    .budget__row > input[type="checkbox"] { margin-top: 2px; }
+    .budget__label { flex-basis: auto; }
+    .budget__input { grid-column: 2 / -1; }
+    .budget__amount { width: auto; margin-left: 0; }
   }
-  .budget__cat > header .mut { min-width: 0; }
-  .budget__regle {
-    font-size: var(--t-xs); font-weight: 600; color: var(--pine);
-  }
-  .budget__part { min-width: 3em; text-align: right; font-size: var(--t-xs); }
 
   /* une carte qui n'est qu'un renvoi -------------------------------------- */
   .cardlink { padding: 0; overflow: hidden; }
@@ -2118,59 +2119,73 @@
    La page disait quatre fois la même chose : « À réserver », « À faire »,
    « Réservations » et « Billets datés » se recouvraient, et deux entrées
    étaient littéralement la même démarche écrite deux fois. Une seule liste
-   d'échéances, triée, cochable. Ce qui est fait descend et se réduit à une
-   ligne : on ne relit pas ce qu'on a déjà fait. */
+   d'échéances, triée, cochable, une ligne par entrée : le détail se replie sous
+   chacune. Ce qui est fait descend et se réduit à une ligne barrée. */
 @layer components {
-  .avant { margin-top: var(--s-4); }
+  .ech { list-style: none; margin: var(--s-4) 0 0; padding: 0; }
 
-  .avant__item {
-    display: grid; grid-template-columns: 28px 116px minmax(0, 1fr);
-    gap: var(--s-4); align-items: start;
+  /* un séparateur de mois : le calendrier sans les cases */
+  .ech__mois {
+    padding: var(--s-4) 0 var(--s-1); font-size: var(--t-xs); font-weight: 600;
+    color: var(--mut); letter-spacing: .04em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line-2);
   }
-  .avant__item--nue { grid-template-columns: 28px minmax(0, 1fr); }
+  .ech__mois:first-child { padding-top: 0; }
 
-  .avant__coche { display: flex; align-items: center; min-height: 40px; }
-  .avant__coche input { width: 20px; height: 20px; cursor: pointer; }
+  .ech__item {
+    display: grid; grid-template-columns: 28px minmax(0, 1fr);
+    gap: var(--s-3); align-items: start;
+    border-bottom: 1px solid var(--line);
+  }
+  .ech__item > input[type="checkbox"] {
+    width: 20px; height: 20px; margin: 16px 0 0 4px; cursor: pointer;
+  }
+  .ech__pli { min-width: 0; }
+  .ech__pli > summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 52px; padding: var(--s-2) 0;
+  }
+  .ech__pli > summary::-webkit-details-marker { display: none; }
+  .ech__pli > summary:hover .ech__quoi b { color: var(--acc); }
 
-  .avant__shot {
+  .ech__quoi { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .ech__quoi b { font-weight: 600; font-size: var(--t-base); }
+  .ech__quoi .mut { font-size: var(--t-xs); }
+  .ech__quand {
+    flex: none; display: flex; flex-direction: column; align-items: flex-end;
+    min-width: 4.2em;
+  }
+  .ech__quand b { font-weight: 700; font-size: var(--t-base); }
+  .ech__quand .mut { font-size: var(--t-xs); white-space: nowrap; }
+  .ech__item.is-urgent .ech__quand b { color: var(--acc); }
+  .ech__item.is-passe .ech__quand b { color: var(--acc); font-weight: 600; }
+
+  /* le détail, replié : photo à gauche, ce que c'est, où et comment réserver */
+  .ech__detail {
+    display: grid; grid-template-columns: 116px minmax(0, 1fr);
+    gap: var(--s-4); padding: var(--s-1) 0 var(--s-4);
+    font-size: var(--t-sm);
+  }
+  .ech__detail--nue { grid-template-columns: minmax(0, 1fr); }
+  .ech__shot {
     width: 116px; aspect-ratio: 4 / 3; object-fit: cover;
     border-radius: var(--r-m); background: var(--paper-3);
   }
+  .ech__detail p + p { margin-top: var(--s-2); }
+  .ech__blurb { color: var(--ink-2); }
+  .ech__detail .resa-item__actions { margin-top: var(--s-3); }
 
   /* fait : une ligne, barrée, et rien de plus */
-  .avant__item--fait {
-    grid-template-columns: 1fr; padding-bottom: var(--s-2);
-    border-bottom: 0;
-  }
-  .avant__item--fait .avant__coche {
-    gap: var(--s-3); min-height: 32px;
-    font-size: var(--t-sm); color: var(--mut);
-  }
-  .avant__item--fait span {
-    text-decoration: line-through;
-    text-decoration-color: var(--line-2);
-  }
+  .ech__item--fait { border-bottom: 0; align-items: center; }
+  .ech__item--fait > input[type="checkbox"] { margin-top: 0; }
+  .ech__item--fait .ech__quoi { min-height: 36px; justify-content: center; font-size: var(--t-sm); color: var(--mut); }
+  .ech__item--fait s { text-decoration-color: var(--line-2); }
 
   @media (max-width: 560px) {
-    .avant__item { grid-template-columns: 28px minmax(0, 1fr); }
-    .avant__shot { display: none; }
+    .ech__detail { grid-template-columns: minmax(0, 1fr); }
+    .ech__shot { width: 100%; aspect-ratio: 16 / 7; }
   }
-}
-
-/* --- le mode d'emploi, replié -----------------------------------------------
-   Le détail « où et comment réserver » sert au moment de réserver, pas en
-   survolant la liste : déplié, il triplait la hauteur de chaque entrée. */
-@layer components {
-  .avant__comment { margin-top: var(--s-3); }
-  .avant__comment > summary {
-    cursor: pointer; list-style: none;
-    min-height: 32px; display: inline-flex; align-items: center;
-    font-size: var(--t-xs); font-weight: 600; color: var(--acc);
-  }
-  .avant__comment > summary::-webkit-details-marker { display: none; }
-  .avant__comment > summary::after { content: ' ▾'; }
-  .avant__comment[open] > summary::after { content: ' ▴'; }
-  .avant__comment p { margin-top: var(--s-2); font-size: var(--t-xs); max-width: 62ch; }
 }
 
 /* --- le bloc de ville, rempli -----------------------------------------------

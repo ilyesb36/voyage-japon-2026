@@ -75,10 +75,23 @@ function before() {
   ${RESERVATIONS.length ? `
   <section class="section">
     <div class="shead">
-      <h2>${RESERVATIONS.length > 1 ? 'Billets datés' : 'Le billet daté'}</h2>
-      <p>Payé, à une heure précise. Rien d'autre dans le voyage n'a d'horaire aussi ferme.</p>
+      <h2>${RESERVATIONS.length > 1 ? 'Déjà en poche' : 'Déjà en poche'}</h2>
+      <p>Payé, à une heure précise. Le détail du jour même est sur la journée.</p>
     </div>
-    ${RESERVATIONS.map((r) => resaCard(r, { withDate: true })).join('')}
+    ${RESERVATIONS.map((r) => {
+      const dj = DAYS.find((d) => d.date === r.date);
+      return `
+      <div class="card cardlink">
+        <a class="cardlink__in" href="${dj ? `jour.html?d=${dj.n}` : 'itineraire.html'}">
+          <span class="cardlink__texte">
+            <b>${esc(r.title)}</b>
+            <span class="mut">${formatDate(r.date, { weekday: true })} · <span class="data">${esc(r.slot)}</span>
+              · ${esc(r.where)} · ${esc(r.status)}</span>
+          </span>
+          <span class="cardlink__fleche" aria-hidden="true">›</span>
+        </a>
+      </div>`;
+    }).join('')}
   </section>` : ''}
 
   <section class="section">
@@ -120,22 +133,38 @@ function renderAvant() {
   const cible = document.getElementById('avant');
   if (!cible) return;
 
-  const tout = [...AVANT, ...RESERVER]
+  const tout = [
+    ...AVANT.map((x) => ({ ...x, genre: 'démarche' })),
+    ...RESERVER.map((x) => ({ ...x, genre: 'réservation' })),
+  ]
     .map((x) => ({ ...x, fait: !!faits[x.id] }))
     .sort((a, b) => (a.fait - b.fait) || a.deadline.localeCompare(b.deadline));
 
   const restants = tout.filter((x) => !x.fait);
-  const pct = Math.round(((tout.length - restants.length) / tout.length) * 100);
+  const faites = tout.filter((x) => x.fait);
+  const pct = Math.round((faites.length / tout.length) * 100);
+
+  // Les échéances se lisent par mois : un séparateur quand le mois change,
+  // comme sur un calendrier, plutôt que treize dates à comparer de tête.
+  let mois = '';
+  const lignes = restants.map((x) => {
+    const m = MOIS[+x.deadline.slice(5, 7) - 1];
+    const sep = m !== mois ? `<li class="ech__mois" aria-hidden="true">${m}</li>` : '';
+    mois = m;
+    return sep + ligneAvant(x);
+  }).join('');
 
   cible.innerHTML = `
     <div class="shead">
       <h2>Avant de partir</h2>
-      <p>Démarches et réservations, dans l'ordre des échéances.</p>
-      <span class="shead__meta data">${tout.length - restants.length} sur ${tout.length}</span>
+      <p>Démarches et réservations, dans l'ordre des échéances. Une ligne s'ouvre sur son détail.</p>
+      <span class="shead__meta data">${faites.length} sur ${tout.length}</span>
     </div>
     <div class="prog__bar"><span style="width:${pct}%"></span></div>
-    <ol class="todo avant">
-      ${tout.map((x) => ligneAvant(x)).join('')}
+    <ol class="ech">
+      ${lignes}
+      ${faites.length ? `<li class="ech__mois" aria-hidden="true">Fait</li>` : ''}
+      ${faites.map((x) => ligneAvant(x)).join('')}
     </ol>`;
 
   cible.querySelectorAll('input[data-fait]').forEach((cb) => {
@@ -145,71 +174,85 @@ function renderAvant() {
       renderAvant();
     });
   });
+  cible.querySelectorAll('details[data-id]').forEach((d) => {
+    d.addEventListener('toggle', () => {
+      d.open ? ouverts.add(d.dataset.id) : ouverts.delete(d.dataset.id);
+      localStorage.setItem('jp2026_ech_ouverts', JSON.stringify([...ouverts]));
+    });
+  });
 }
 
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
+  'septembre', 'octobre', 'novembre', 'décembre'];
+const MOIS_COURT = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const court = (iso) => `${+iso.slice(8, 10)} ${MOIS_COURT[+iso.slice(5, 7) - 1]}`;
+const ouverts = new Set((() => {
+  try { return JSON.parse(localStorage.getItem('jp2026_ech_ouverts') || '[]'); } catch { return []; }
+})());
+
+// Une ligne : la case, le titre et où ça se passe, l'échéance à droite. Tout le
+// reste — photo, ce que c'est, où réserver, comment — est replié dessous. On
+// balaie treize lignes d'un regard ; on n'ouvre que celle qu'on traite.
 function ligneAvant(x) {
   const j = daysBetween(now, x.deadline);
   const passe = j < 0;
   const urgent = !passe && j <= 14;
 
-  // La fiche du guide fournit la photo et le lieu : « réserver Rurikō-in » ne
-  // dit rien si on ne sait pas ce que c'est.
   const spot = x.spotId ? SPOTS.find((s) => s.id === x.spotId) : null;
   const hotel = x.hotelId ? HOTELS.find((h) => h.id === x.hotelId) : null;
   const ville = spot ? CITIES[spot.cityId] : hotel ? CITIES[hotel.cityId] : null;
   const img = spot?.img || hotel?.images?.[0] || null;
   const maps = spot?.maps || hotel?.maps || null;
 
-  const brut = spot?.area || hotel?.address || null;
-  const plat = (v) => (v || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const utile = brut && plat(brut) !== plat(ville?.name)
-    && !plat(spot?.name || hotel?.name).includes(plat(brut));
-  const lieu = [ville?.name, utile ? brut.charAt(0).toUpperCase() + brut.slice(1) : null]
-    .filter(Boolean).join(' · ');
-
   if (x.fait) {
     return `
-    <li class="avant__item avant__item--fait">
-      <label class="avant__coche">
-        <input type="checkbox" data-fait="${esc(x.id)}" checked>
-        <span>${esc(x.title)}</span>
-      </label>
+    <li class="ech__item ech__item--fait">
+      <input type="checkbox" data-fait="${esc(x.id)}" checked aria-label="${esc(x.title)} — fait">
+      <span class="ech__quoi"><s>${esc(x.title)}</s></span>
     </li>`;
   }
 
+  // « Tokyo · pour le 11 nov. » dit déjà que c'est une réservation ; le mot
+  // n'est utile que pour les démarches sans lieu.
+  const meta = [
+    ville?.name,
+    ville ? null : x.genre,
+    x.forDate ? `pour le ${court(x.forDate)}` : null,
+    x.hard ? 'date ferme' : null,
+    x.check ? 'à vérifier' : null,
+  ].filter(Boolean).join(' · ');
+
   return `
-  <li class="avant__item${img ? '' : ' avant__item--nue'}">
-    <label class="avant__coche" aria-label="Marquer « ${esc(x.title)} » comme fait">
-      <input type="checkbox" data-fait="${esc(x.id)}">
-    </label>
-    ${img ? `<img class="avant__shot" src="${esc(img)}" alt="" loading="lazy" decoding="async">` : ''}
-    <div class="avant__corps">
-      <div class="todo__head">
-        <h3>${esc(x.title)}</h3>
-        ${x.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
-        ${x.tag ? `<span class="todo__tag">${esc(x.tag)}</span>` : ''}
-        ${x.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
-        <span class="todo__when${urgent ? ' is-urgent' : ''}">
-          ${passe ? `échéance passée (${formatDate(x.deadline)})`
-                  : `avant le ${formatDate(x.deadline)} · J−${j}`}
+  <li class="ech__item${urgent ? ' is-urgent' : ''}${passe ? ' is-passe' : ''}">
+    <input type="checkbox" data-fait="${esc(x.id)}" aria-label="Marquer « ${esc(x.title)} » comme fait">
+    <details class="ech__pli" data-id="${esc(x.id)}" ${ouverts.has(x.id) ? 'open' : ''}>
+      <summary>
+        <span class="ech__quoi">
+          <b>${esc(x.title)}</b>
+          <span class="mut">${esc(meta)}</span>
         </span>
+        <span class="ech__quand">
+          <b class="data">${passe ? 'passée' : `J−${j}`}</b>
+          <span class="mut">${court(x.deadline)}</span>
+        </span>
+      </summary>
+      <div class="ech__detail${img ? '' : ' ech__detail--nue'}">
+        ${img ? `<img class="ech__shot" src="${esc(img)}" alt="" loading="lazy" decoding="async">` : ''}
+        <div>
+          ${spot?.blurb ? `<p class="ech__blurb">${esc(spot.blurb)}</p>` : ''}
+          <p>${esc(x.what)}</p>
+          ${x.tag ? `<p class="mut">${esc(x.tag)}.</p>` : ''}
+          ${x.commentReserver ? `<p class="mut"><b>Comment</b> ${esc(x.commentReserver)}</p>` : ''}
+          <p class="resa-item__actions">
+            ${x.url ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
+              x.canal === 'téléphone' ? 'Voir le numéro' : x.canal ? 'Réserver' : 'Ouvrir le site officiel'}</a>` : ''}
+            ${x.tel ? `<a class="btn btn--ghost" href="tel:${esc(x.tel.replace(/[^+\d]/g, ''))}">${esc(x.tel)}</a>` : ''}
+            ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
+            ${x.forDate ? `<a class="btn btn--ghost" href="jour.html?date=${x.forDate}">La journée</a>` : ''}
+          </p>
+        </div>
       </div>
-      ${lieu ? `<p class="resa-item__ou mut">${esc(lieu)}</p>` : ''}
-      ${spot?.blurb ? `<p class="resa-item__quoi">${esc(spot.blurb)}</p>` : ''}
-      <p>${esc(x.what)}</p>
-      ${x.forDate ? `<p class="mut">Pour la journée du ${formatDate(x.forDate, { weekday: true })}.</p>` : ''}
-      <p class="resa-item__actions">
-        ${x.url ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
-          x.canal === 'téléphone' ? 'Voir le numéro' : x.canal ? 'Réserver' : 'Ouvrir le site officiel'}</a>` : ''}
-        ${x.tel ? `<a class="btn btn--ghost" href="tel:${esc(x.tel.replace(/[^+\d]/g, ''))}">${esc(x.tel)}</a>` : ''}
-        ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
-      </p>
-      ${x.commentReserver ? `
-      <details class="avant__comment">
-        <summary>Comment s'y prendre</summary>
-        <p class="mut">${esc(x.commentReserver)}</p>
-      </details>` : ''}
-    </div>
+    </details>
   </li>`;
 }
 

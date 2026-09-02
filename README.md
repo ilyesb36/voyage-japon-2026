@@ -28,10 +28,10 @@ calendriers et aux matrices sans qu'une seule règle ne le sache.
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
 | `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 30 journées type — une seule fois |
 | `guide.html` | 319 adresses, filtrables, avec notice historique |
-| `budget.html` | les trois chiffres qui parlent, la répartition en barre, le détail ajustable, ce qui est réglé |
+| `budget.html` | le reste à payer, par personne ou à deux, puis une matrice payé / reste / total par poste ; le détail cochable se replie sous chaque poste |
 | `pratique.html` | les six hébergements, les réflexes de terrain, le mode hors-ligne |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
-| `aujourdhui.html` | **Préparatifs** : le compte à rebours et une seule liste d'échéances, cochable. Pendant le voyage, elle renvoie à la journée en cours |
+| `aujourdhui.html` | **Préparatifs** : le compte à rebours et un échéancier par mois, une ligne par démarche, cochable, le détail replié. Pendant le voyage, elle renvoie à la journée en cours |
 
 `aujourdhui.html?date=2026-11-18` permet de voir n'importe quel jour du voyage
 sans attendre novembre.
