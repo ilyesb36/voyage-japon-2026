@@ -150,6 +150,20 @@ export const SPOT_FIXES = {
     lore: "Inauguré le 17 avril 2024 à l'angle d'Omotesando et de Meiji-dori. Sept étages, une soixantaine d'enseignes, un toit-jardin ouvert sur Harajuku — et, au sous-sol, un bain public de quartier, geste rare dans un centre commercial neuf.",
   },
 
+  // --- reclassés en « Insolite », avec les précisions de la recherche ---------
+  'Todoroki, la vallée': {
+    category: 't6',
+    budget: 'gratuit',
+    when: 'rouvert depuis mars 2026 — le matin',
+    note: 'À quelques pas de la gare de Todoroki, ligne Tokyu Oimachi, une vingtaine de minutes depuis Shibuya. Le sentier mène au temple Todoroki Fudo et à la cascade Fudo-no-taki, qui servait aux ablutions des pèlerins.',
+  },
+  'Natadera': {
+    category: 't6',
+    budget: '600 ¥',
+    when: 'bus toutes les 2 h environ — vérifier les horaires avant de partir',
+    note: 'Depuis Kanazawa : express jusqu’à Kaga-Onsen (~25 min) puis bus CAN (~35 à 50 min), peu fréquent. Le pavillon principal s’adosse à une cavité que l’on traverse dans le noir : le passage figure un retour au ventre maternel, dont on ressort purifié.',
+  },
+
   // --- reclassés en « Insolite » ---------------------------------------------
   // Ces lieux étaient rangés par leur nature (un temple, une boutique) alors
   // qu'on les cherche par leur étrangeté. Ils changent de catégorie, pas de

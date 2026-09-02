@@ -1,362 +1,518 @@
 {
   "Icho Namiki, Jingu Gaien": {
-    "img": "img/icho-namiki-jingu-gaien-b43c13b4.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Meiji_Jingu_Gaien_Ginkgo_Festival_(53442108490).jpg",
+    "img": "img/icho-namiki-jingu-gaien-350ddb6c.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Meiji_Jingu_Gaien_Ginkgo_Festival_(53441835008).jpg",
     "licence": "CC BY 2.0",
     "author": "Dick Thomas Johnson from Tokyo, Japan"
   },
   "Koishikawa Korakuen": {
-    "img": "img/koishikawa-korakuen-c419187b.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Koishikawa_Korakuen_Gardens_(11168283853).jpg",
+    "img": "img/koishikawa-korakuen-d3c0a742.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Koishikawa_Korakuen_Gardens_(11168252323).jpg",
     "licence": "CC BY 2.0",
     "author": "Guilhem Vellut from Annecy, France"
   },
   "Kyu-Furukawa": {
-    "img": "img/kyu-furukawa-ff96937c.webp",
+    "img": "img/kyu-furukawa-2b70550c.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kyu-Furukawa_Gardens_-_Japanese_garden_2024-12-12.jpg",
     "licence": "CC0",
     "author": "Asanagi"
   },
   "Kiyosumi Teien": {
-    "img": "img/kiyosumi-teien-b61db5c1.webp",
+    "img": "img/kiyosumi-teien-a9d1cced.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kiyosumi-1.JPG",
     "licence": "CC BY-SA 3.0",
     "author": "Irina Gelbukh"
   },
   "Todoroki, la vallée": {
-    "img": "img/todoroki-la-vallee-59f9fb8f.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Chigo_Daishi-do_-_Todoroki_Valley_-_Tokyo,_Japan_-_DSC09474.jpg",
+    "img": "img/todoroki-la-vallee-b842dcea.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Todoroki_Valley_-_Tokyo,_Japan_-_DSC09432.jpg",
     "licence": "CC0",
     "author": "Daderot"
   },
   "Musée Nezu": {
-    "img": "img/musee-nezu-f00fcb89.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Nezu_Museum_Garten-20091020-RM-114344.jpg",
+    "img": "img/musee-nezu-619f520b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Nezu_Museum_P5091893.jpg",
     "licence": "CC BY-SA 4.0",
-    "author": "Ermell"
+    "author": "Fukumoto"
   },
   "Senkyaku Banrai, Toyosu": {
-    "img": "img/senkyaku-banrai-toyosu-db226d79.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Toyosu_Market_Tokyo_2.jpg",
-    "licence": "CC BY-SA 3.0 de",
-    "author": "Arne Müseler"
+    "img": "img/senkyaku-banrai-toyosu-109684f0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Toyosu_fish_market,_at_Toyosu,_Koto,_Tokyo_(2019-01-01)_04.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Lombroso"
   },
   "Azabudai Hills": {
-    "img": "img/azabudai-hills-f0f44d90.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Azabudai_Hills_opening_day.jpg",
-    "licence": "CC0",
-    "author": "Syced"
+    "img": "img/azabudai-hills-e9fafee0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Azabudai_Hills_Garden_Plaza_A_and_B_20241021.jpg",
+    "licence": "CC BY 4.0",
+    "author": "This Photo was taken by Supanut Arunoprayote.\n\nFeel free to use any of my images"
   },
   "Tokyu Plaza Harakado": {
-    "img": "img/tokyu-plaza-harakado-7479b168.webp",
+    "img": "img/tokyu-plaza-harakado-a2289396.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Harajuku_harakado_(53946033526).jpg",
     "licence": "CC BY 2.0",
     "author": "lazy fri13th"
   },
   "Kabukicho Tower": {
-    "img": "img/kabukicho-tower-1a8f1f60.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Tokyu_Kabukicho_Tower_(53134319583).jpg",
+    "img": "img/kabukicho-tower-23cc70f2.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kabukicho_(53086146849).jpg",
     "licence": "CC BY 2.0",
     "author": "Dick Thomas Johnson from Tokyo, Japan"
   },
   "Genko-an": {
-    "img": "img/genko-an-b45b787f.webp",
+    "img": "img/genko-an-f8ce4683.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Genk%C5%8D-an_Kyoto_Hdsr_IMG_3045.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Hyppolyte de Saint-Rambert"
   },
   "Enko-ji": {
-    "img": "img/enko-ji-20f7d951.webp",
+    "img": "img/enko-ji-3f6fccd5.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Enkoji_In_Kyoto_Japan_One_Summer_S_Day_(216167691).jpeg",
     "licence": "CC BY 3.0",
     "author": "Jung Van"
   },
   "Shisen-do": {
-    "img": "img/shisen-do-07616795.webp",
+    "img": "img/shisen-do-1f14807d.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Shisendo-8080.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Bigjap"
   },
   "Jojakko-ji": {
-    "img": "img/jojakko-ji-7f5981a0.webp",
+    "img": "img/jojakko-ji-160fa793.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Jojakkoji_-_Kyoto_-_DSC06137.JPG",
     "licence": "CC0",
     "author": "Daderot"
   },
   "Ohara & Sanzen-in": {
-    "img": "img/ohara-sanzen-in-c599ed0e.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Sanzen_in_Daikon_daki.jpg",
-    "licence": "CC0",
-    "author": "Hahifuheho"
+    "img": "img/ohara-sanzen-in-e6b8609c.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Sanzen-in_%E4%B8%89%E5%8D%83%E9%99%A2_(KYOTO-JAPAN)_(4950794717).jpg",
+    "licence": "CC BY 2.0",
+    "author": "Chi King"
   },
   "Kitano Tenmangu, le Momiji-en": {
-    "img": "img/kitano-tenmangu-le-momiji-en-6675e102.webp",
+    "img": "img/kitano-tenmangu-le-momiji-en-5e12301c.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kitano-tenmangu_(Kamigyo-ku_Kyoto)_Tenjin-san_hdsr_Shrine_S5_17.jpg",
     "licence": "CC BY 4.0",
     "author": "Hyppolyte de Saint-Rambert"
   },
   "Daigo-ji": {
-    "img": "img/daigo-ji-e1ba683d.webp",
+    "img": "img/daigo-ji-07f18d42.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Momiji_in_Daigo-ji_20161116-2.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Suicasmo"
   },
   "Konkai Komyo-ji": {
-    "img": "img/konkai-komyo-ji-970a017a.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Konkai-Komyoji_001.jpg",
-    "licence": "CC0",
-    "author": "Brakeet"
+    "img": "img/konkai-komyo-ji-cbbd8eb9.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Konkai-Komyoji_nokotsudo.jpg",
+    "licence": "CC BY-SA 3.0",
+    "author": "KENPEI"
   },
   "Shoren-in": {
-    "img": "img/shoren-in-2d39964b.webp",
+    "img": "img/shoren-in-7ce6b00a.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Sh%C5%8Dren-in_overview.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Christophe95"
   },
   "Nintendo Museum, Uji": {
-    "img": "img/nintendo-museum-uji-6c5dd819.webp",
+    "img": "img/nintendo-museum-uji-3cdd2769.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Nintendo_Museum_Entrance.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Nagomijirap"
   },
   "Minoo, la cascade": {
-    "img": "img/minoo-la-cascade-89b739d2.webp",
+    "img": "img/minoo-la-cascade-eb99ac4a.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Minoo_Park_-_Falls_Trail_-_Osaka.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Otto Domes"
   },
   "Katsuo-ji": {
-    "img": "img/katsuo-ji-b99e9f37.webp",
+    "img": "img/katsuo-ji-01dd46c5.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Bridge_at_Katsuo-ji_Osaka_Japan_by_Don_Ramey_Logan.jpg",
     "licence": "CC BY 4.0",
     "author": "Don Ramey Logan"
   },
   "Hozen-ji Yokocho": {
-    "img": "img/hozen-ji-yokocho-8618cf04.webp",
+    "img": "img/hozen-ji-yokocho-291d14db.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Hozenji_(Osaka_Chuo-ku)_Temple_hdsr_S5_24.jpg",
     "licence": "CC BY 4.0",
     "author": "Hyppolyte de Saint-Rambert"
   },
   "Nakanoshima, le musée": {
-    "img": "img/nakanoshima-le-musee-81f62e39.webp",
+    "img": "img/nakanoshima-le-musee-592f7854.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Nakanoshima_Museum_of_Art_(Osaka_Kita-ku)_hdsr_S5_01.jpg",
     "licence": "CC BY 4.0",
     "author": "Hyppolyte de Saint-Rambert"
   },
   "Tsuzumi-mon": {
-    "img": "img/tsuzumi-mon-65ae4552.webp",
+    "img": "img/tsuzumi-mon-f1472b57.webp",
     "source": "https://commons.wikimedia.org/wiki/File:20190705_Kanazawa_station_entrance-1.jpg",
     "licence": "CC0",
     "author": "Balon Greyjoy"
   },
   "Kenroku-en illuminé": {
-    "img": "img/kenroku-en-illumine-68c94519.webp",
+    "img": "img/kenroku-en-illumine-27b3583f.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Ishikawa_Kenrokuen_at_night_608_xl.jpg",
     "licence": "CC BY 4.0",
     "author": "zoosan"
   },
   "Natadera": {
-    "img": "img/natadera-3ad0b56e.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Natadera_6733.jpg",
-    "licence": "CC0",
-    "author": "Brakeet"
+    "img": "img/natadera-92a815c1.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Basho_Stone_tablet_in_Natadera.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "藤谷良秀"
   },
   "Musée d'art de Hakone": {
-    "img": "img/musee-d-art-de-hakone-7ee6cf64.webp",
+    "img": "img/musee-d-art-de-hakone-a6aef548.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Interior_view_-_Hakone_Museum_of_Art_-_Hakone,_Kanagawa,_Japan_-_DSC08274.jpg",
     "licence": "CC0",
     "author": "Daderot"
   },
   "Yoshikien": {
-    "img": "img/yoshikien-f30f92b5.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Yoshiki-en.jpg",
-    "licence": "CC BY-SA 4.0",
-    "author": "Christophe95"
+    "img": "img/yoshikien-4d3baccf.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Nara_Yoshikien_Chashitsu_and_Pond_May_11,_2018.jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "Kimon Berlin"
   },
   "Gyokusen'inmaru Garden": {
-    "img": "img/gyokusen-inmaru-garden-c8c56e83.webp",
+    "img": "img/gyokusen-inmaru-garden-611072fd.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Gyokuseninmaru_Garden_(118911057).jpeg",
     "licence": "CC BY-SA 3.0",
     "author": "Okochuke"
   },
   "Kazuemachi Chaya": {
-    "img": "img/kazuemachi-chaya-aeef7d52.webp",
+    "img": "img/kazuemachi-chaya-697c14db.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kazuemachi_18-Sept-2022.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "皓月旗"
   },
   "Bibliothèque Umimirai": {
-    "img": "img/bibliotheque-umimirai-e28ed35a.webp",
+    "img": "img/bibliotheque-umimirai-7bb6282a.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kanazawa_Umimirai_Library_2F_ac_(1).jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Asturio Cantabrio"
   },
   "Ohi Museum": {
-    "img": "img/ohi-museum-454018df.webp",
+    "img": "img/ohi-museum-ec601ab8.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Bowl,_Ohi_ware_-_Ishikawa_Prefectural_Museum_of_Traditional_Arts_and_Crafts_-_Kanazawa,_Japan_-_DSC09833.jpg",
     "licence": "CC0",
     "author": "Daderot"
   },
   "Fumuroya Cafe": {
-    "img": "img/fumuroya-cafe-ec312079.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Fu_Shin_Estate_cooked_food_stalls.jpg",
+    "img": "img/fumuroya-cafe-4af5aaa5.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Wah_Fu_Estate_Kai_Bo_Food_Supermarket_17-08-2025(1).jpg",
     "licence": "CC BY-SA 4.0",
-    "author": "Exploringlife"
+    "author": "LN9267"
   },
   "Champion Curry": {
-    "img": "img/champion-curry-7af52c77.webp",
+    "img": "img/champion-curry-00963a28.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Kanazawa_Curry_(31151752452).jpg",
     "licence": "CC BY-SA 2.0",
     "author": "pelican from Tokyo, Japan"
   },
   "Shirakawa-go": {
-    "img": "img/shirakawa-go-2e3c38fb.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:2024-10-26_Shirakawa-go_11.jpg",
+    "img": "img/shirakawa-go-005f7edd.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:2024-10-25_Shirakawa-go_2.jpg",
     "licence": "CC BY 4.0",
     "author": "Alexkom000"
   },
   "Yamanaka Onsen": {
-    "img": "img/yamanaka-onsen-3c3a7dc1.webp",
+    "img": "img/yamanaka-onsen-d2c2c893.webp",
     "source": "https://commons.wikimedia.org/wiki/File:260606_Doumyogafuchi_Kakusenkei_Kaga_Ishikawa_pref_Japan03s3.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "663highland"
   },
   "Kotoji-toro": {
-    "img": "img/kotoji-toro-35c056c4.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Kotoji-toro_lantern,_Kenroku-en_(3810739126).jpg",
-    "licence": "CC BY 2.0",
-    "author": "Andrea Schaffer from Sydney, Australia"
+    "img": "img/kotoji-toro-f5a5c82d.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kotoji_Toro_(lantern)_-_Kenroku-en_-_Kanazawa,_Japan_-_DSC09657.jpg",
+    "licence": "CC0",
+    "author": "Daderot"
   },
   "Amazake-chaya": {
-    "img": "img/amazake-chaya-f49a82b8.webp",
+    "img": "img/amazake-chaya-c547538e.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Interior_of_Amazake-chaya_(9409306027).jpg",
     "licence": "CC BY 2.0",
     "author": "Maarten Heerlien from Voorschoten, The Netherlands"
   },
   "Bakery & Table Hakone": {
-    "img": "img/bakery-table-hakone-64f73517.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Lake_Ashi_From_north_to_south2023.jpg",
+    "img": "img/bakery-table-hakone-3db8cede.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:A_view_of_Lake_Ashi_with_Peace_Torii_gate,_Hakone,_Japan1.jpg",
     "licence": "CC BY-SA 4.0",
-    "author": "Charlie fong"
+    "author": "Joli Rumi"
   },
   "Marqueterie de Hatajuku": {
-    "img": "img/marqueterie-de-hatajuku-c9fafa2b.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Yosegi_Zaiku_display_-_Hakone_Checkpoint_Exhibition_Hall_-_Hakone_no_Seki_(barrier_station)_-_Hakone,_Japan_-_DSC06051.jpg",
-    "licence": "CC0",
-    "author": "Daderot"
+    "img": "img/marqueterie-de-hatajuku-33fc2323.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Yosegi_IMG_6573.jpg",
+    "licence": "CC BY-SA 2.0 fr",
+    "author": "Rama"
   },
   "Gotemba Premium Outlets": {
-    "img": "img/gotemba-premium-outlets-1fa3f1dd.webp",
+    "img": "img/gotemba-premium-outlets-02694e98.webp",
     "source": "https://commons.wikimedia.org/wiki/File:GotembaOutletShuttleBus_651-EVA.jpeg",
     "licence": "CC BY 4.0",
     "author": "ja:User:江戸前鰻"
   },
   "Parc impérial d'Hakone": {
-    "img": "img/parc-imperial-d-hakone-d51318f0.webp",
+    "img": "img/parc-imperial-d-hakone-c8892f20.webp",
     "source": "https://commons.wikimedia.org/wiki/File:230909_Onshi_Hakone_Park_Hakone_Japan01s3.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "663highland"
   },
   "Choan-ji": {
-    "img": "img/choan-ji-f4d84968.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Ch%C5%8Dan-ji_(Higashi-Ik%C5%8D,_Adachi)_02.jpg",
+    "img": "img/choan-ji-f9998295.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Ch%C5%8Dan-ji_(Taito,_Tokyo)_01.jpg",
     "licence": "CC0",
     "author": "Higa4"
   },
   "Gora Park": {
-    "img": "img/gora-park-27edebb1.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Gora_Park_-_Hakone,_Kanagawa,_Japan_-_DSC08378.jpg",
-    "licence": "CC0",
-    "author": "Daderot"
+    "img": "img/gora-park-a1afb2c2.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:2026-06-13_Fru%C5%A1ka_Gora_National_Park_19.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Alexkom000"
   },
   "Barrière d'Hakone": {
-    "img": "img/barriere-d-hakone-ad48caf0.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Checkpoint_Museum,_construction_detail,_May_2017.jpg",
+    "img": "img/barriere-d-hakone-c97b0b8a.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Checkpoint_Museum,_May_2017.jpg",
     "licence": "CC BY-SA 3.0",
     "author": "Celuici"
   },
   "Osaka Tenmangu": {
-    "img": "img/osaka-tenmangu-6bf719f0.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Osaka_Tenmangu_Hatsumoude_2025-2.jpg",
-    "licence": "CC BY-SA 4.0",
-    "author": "Mr.ちゅらさん"
+    "img": "img/osaka-tenmangu-88cf4f54.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Tenjinnomori_Tenmangu_(Osaka_Nishinari-ku)_Shrine_hdsr_S5_50.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
   },
   "Hall public central": {
-    "img": "img/hall-public-central-b2502271.webp",
+    "img": "img/hall-public-central-139d3e2d.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Osaka_City_Central_Public_Hall_main_facade_2026_dllu.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Daniel Lu (User:dllu)"
   },
   "Namba Parks": {
-    "img": "img/namba-parks-31ef54d9.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Namba_parks04s3872.jpg",
-    "licence": "CC BY 2.5",
-    "author": "663highland"
+    "img": "img/namba-parks-a8ab726d.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:The_illuminations_at_Namba_Parks.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Tokumeigakarinoaoshima"
   },
   "Abeno Harukas 300": {
-    "img": "img/abeno-harukas-300-bafe98ad.webp",
+    "img": "img/abeno-harukas-300-59c6c757.webp",
     "source": "https://commons.wikimedia.org/wiki/File:View_of_Abeno_Harukas_and_Shitenn%C5%8D-ji_five-storied_pagoda_at_dusk,_January_2024_(clone_version)_-_9978.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Laitche"
   },
   "Train panoramique de Sagano": {
-    "img": "img/train-panoramique-de-sagano-194dfb86.webp",
+    "img": "img/train-panoramique-de-sagano-38893b93.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Sagano_Scenic_Railway_Hozu_River_2016-08-26.jpg",
     "licence": "CC BY-SA 2.0",
     "author": "pang yu liu from Taoyuan, TW"
   },
   "Takao (Jingo-ji)": {
-    "img": "img/takao-jingo-ji-713e292f.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Jingo-ji_(6920612150).jpg",
+    "img": "img/takao-jingo-ji-2b85f3c8.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Jingo-ji_(6920601898).jpg",
     "licence": "CC BY-SA 2.0",
     "author": "KimonBerlin"
   },
   "% Arabica Higashiyama": {
-    "img": "img/arabica-higashiyama-37865d75.webp",
+    "img": "img/arabica-higashiyama-4a2c925b.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Mauritia_arabica_01.JPG",
     "licence": "CC BY-SA 3.0",
     "author": "H. Zell"
   },
   "SOU SOU": {
-    "img": "img/sou-sou-5c28fc66.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Kimono_Forest_at_night,_Arashiyama_Station,_Arashiyama,_Kyoto,_Japan.jpg",
+    "img": "img/sou-sou-5e0bfcc0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:At_Kyoto_2024_314_-_Woodland_Kyoto_QR_Train.jpg",
     "licence": "CC BY-SA 4.0",
-    "author": "Yasumichi Morita (designer)\n\nBasile Morin (photographer)"
+    "author": "Photograph by Mike Peel (www.mikepeel.net)."
   },
   "Chion-in": {
-    "img": "img/chion-in-8c6a0e25.webp",
+    "img": "img/chion-in-5896308c.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Stone_bridge_leading_to_a_cemetery_surrounded_by_trees_in_the_compounds_of_Chion-in_Kyoto_Japan.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Basile Morin"
   },
   "Mont Takao": {
-    "img": "img/mont-takao-fa20c22d.webp",
+    "img": "img/mont-takao-ea4e01f6.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Mount_Takao_hike_in_January_3.jpg",
     "licence": "CC0",
     "author": "Syced"
   },
   "Gare de Tokyo (Marunouchi)": {
-    "img": "img/gare-de-tokyo-marunouchi-a45fc861.webp",
+    "img": "img/gare-de-tokyo-marunouchi-9a26e211.webp",
     "source": "https://commons.wikimedia.org/wiki/File:Marunouchi_Central_Plaza_with_blue_sky,_Tokyo_station_and_Shin-Marunouchi_Building,_panoramic_view_from_JP_Tower,_Tokyo,_Japan.jpg",
     "licence": "CC BY-SA 4.0",
     "author": "Basile Morin"
   },
+  "Musée de la parasitologie de Meguro": {
+    "img": "img/musee-de-la-parasitologie-de-meguro-34774489.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Exhibits_at_Meguro_Parasitological_Museum_15.jpg",
+    "licence": "CC0",
+    "author": "Syced"
+  },
+  "Nokogiriyama et le Nihon-ji": {
+    "img": "img/nokogiriyama-et-le-nihon-ji-e0a8c34d.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Quarry_remains_at_Mt_Nokogiriyama,_Chiba,_Japan4.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Joli Rumi"
+  },
+  "Grottes de glace et de vent d'Aokigahara": {
+    "img": "img/grottes-de-glace-et-de-vent-d-aokigahara-c957c1d1.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Narusawa_Hyoketsu_Entrance_20161025.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Kounoichi"
+  },
+  "Jindai-ji et sa rue des yokai": {
+    "img": "img/jindai-ji-et-sa-rue-des-yokai-ca0edfee.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Jindaiji_temple_%E3%81%9D%E3%81%B0%E3%82%B5%E3%83%B3%E3%83%89_(31866953042).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "nakashi from Chofu, Tokyo, JAPAN"
+  },
+  "Sengaku-ji, tombes des 47 rōnin": {
+    "img": "img/sengaku-ji-tombes-des-47-ronin-d2486c34.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Sengakuji_cour.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
+  },
+  "Adashino Nenbutsu-ji": {
+    "img": "img/adashino-nenbutsu-ji-d0539990.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kyoto_Adashino_Nenbutsu-ji_6.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Zairon"
+  },
+  "Yasui Konpira-gu": {
+    "img": "img/yasui-konpira-gu-a0e6b7df.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Yasui_Kompira-gu_three_monkeys.jpg",
+    "licence": "CC BY 3.0",
+    "author": "josef knecht"
+  },
+  "Mimizuka (tertre des oreilles)": {
+    "img": "img/mimizuka-tertre-des-oreilles-b6c613f1.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Mimizuka_-_Kyoto,_Japan_-_DSC07245.jpg",
+    "licence": "CC0",
+    "author": "Daderot"
+  },
+  "Sanjusangen-do": {
+    "img": "img/sanjusangen-do-77ed4310.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hanging_Around,_Sanjusangen-do_Temple_(12020823704).jpg",
+    "licence": "CC BY 2.0",
+    "author": "Stephen Kelly"
+  },
+  "Isshin-ji, le Bouddha d'ossements": {
+    "img": "img/isshin-ji-le-bouddha-d-ossements-82a508c3.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Isshinji_(Osaka_Tennoji-ku)_hdsr_Temple_S5_02.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
+  },
+  "Okunoin, cimetière du Koyasan": {
+    "img": "img/okunoin-cimetiere-du-koyasan-2d91ddbb.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Gravestones_Okunoin_cemetery.jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "Stéfan Le Dû"
+  },
+  "Fermes anciennes du Japon (Toyonaka)": {
+    "img": "img/fermes-anciennes-du-japon-toyonaka-c20df6f0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Open-Air_Museum_of_Old_Japanese_Farm_Houses_3-26_(25929498883).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "KimonBerlin"
+  },
   "MoN Takanawa (Museum of Narratives)": {
-    "img": "img/mon-takanawa-museum-of-narratives-692e982d.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:MoN_Takanawa%EF%BC%9AThe_Museum_of_Narratives_-_MoN_Shrine.jpg",
+    "img": "img/mon-takanawa-museum-of-narratives-3c8b4559.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:MoN_Takanawa%EF%BC%9AThe_Museum_of_Narratives_perth.jpg",
     "licence": "CC0",
     "author": "電車(新幹線)でゴー！"
   },
   "Yamatoya": {
-    "img": "img/yamatoya-a885c1c7.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Groceries_in_Yamatoya_Main_Store_03.jpg",
+    "img": "img/yamatoya-e9692a37.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Rear_View_of_Yamatoya_Main_Store,_Rear_View_of_House_of_Uemura.jpg",
     "licence": "CC BY 2.0",
     "author": "Kentaro Ohno"
   },
+  "Jardin Isuien": {
+    "img": "img/jardin-isuien-64dad2ca.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Isuien_garden_in_Nara_(11140700163).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "KimonBerlin"
+  },
   "Naramachi": {
-    "img": "img/naramachi-4347e73f.webp",
-    "source": "https://commons.wikimedia.org/wiki/File:Naramachi_Karakuri_Omocha_Kan_20141001.jpg",
-    "licence": "CC BY 3.0",
-    "author": "Degueulasse"
+    "img": "img/naramachi-882473a0.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kontaiji_(Nara_Naramachi)_Temple_hdsr_S5_25.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
+  },
+  "Musée du verre de Venise (Glass Forest)": {
+    "img": "img/musee-du-verre-de-venise-glass-forest-d8c4ce39.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hakone_Venetian_Glass_Museum,_Hakone,_Kanagawa_Prefecture,_November_2017_(1).jpg",
+    "licence": "CC BY 2.0",
+    "author": "Raita Futo"
+  },
+  "Rue commerçante de Hakone-Yumoto": {
+    "img": "img/rue-commercante-de-hakone-yumoto-da8e0e2f.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hakone-Yumoto_Station_2023_Dec_5_various_21_08_47_838000.jpeg",
+    "licence": "CC BY 4.0",
+    "author": "Nesnad"
+  },
+  "Suzugamori, le tertre d'exécution": {
+    "img": "img/suzugamori-le-tertre-d-execution-c3a8f698.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Suzugamori_Iseki_execution_ground_2016.jpg",
+    "licence": "Public domain",
+    "author": "Esemono"
+  },
+  "Masakado-zuka, le tertre de la tête": {
+    "img": "img/masakado-zuka-le-tertre-de-la-tete-cd85601b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taira_no_Masakado_Kubizuka.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "菊竹若狭"
+  },
+  "Yokoamichō et le Mémorial de Tokyo": {
+    "img": "img/yokoamicho-et-le-memorial-de-tokyo-302d1a87.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Yokoamicho_Park_(Tokyo,_Sumida)_hdsr_Tokyo_Memorial_S5_01.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
+  },
+  "Ekō-in, le temple des âmes sans nom": {
+    "img": "img/eko-in-le-temple-des-ames-sans-nom-c7cf263b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:T%C5%8Dto_ry%C5%8Dgoku_ek%C5%8Din_keidai_sum%C5%8D_no_zu.jpg",
+    "licence": "CC BY 4.0",
+    "author": ""
+  },
+  "Oiwa Inari Tamiya-jinja": {
+    "img": "img/oiwa-inari-tamiya-jinja-f527a523.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Oiwa_Inari_Tamiya_Shrine_-_Hokora.jpg",
+    "licence": "CC BY-SA 4.0",
+    "author": "Fred Cherrygarden"
+  },
+  "Hase-dera, les jizō des enfants perdus": {
+    "img": "img/hase-dera-les-jizo-des-enfants-perdus-00baeaff.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Hasedera_temple_in_Kamakura_(2575941825).jpg",
+    "licence": "CC BY-SA 2.0",
+    "author": "KimonBerlin"
+  },
+  "Rokudō Chinnō-ji, le carrefour des morts": {
+    "img": "img/rokudo-chinno-ji-le-carrefour-des-morts-382bbd9b.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:150124_Rokudo-Chinnoji_Kyoto_Japan02n.jpg",
+    "licence": "CC BY 2.5",
+    "author": "663highland"
+  },
+  "Rokuharamitsu-ji et le moine aux six bouddhas": {
+    "img": "img/rokuharamitsu-ji-et-le-moine-aux-six-bou-5dba2a99.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:150124_Rokuharamitsu-ji_Kyoto_Japan04n.jpg",
+    "licence": "CC BY 2.5",
+    "author": "663highland"
+  },
+  "Kamigoryō-jinja, le sanctuaire des esprits vengeurs": {
+    "img": "img/kamigoryo-jinja-le-sanctuaire-des-esprit-0bfe014e.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Kamigory%C5%8D-jinja_(Kamigy%C5%8D-ku_Kyoto)_Shrine_hdsr_S5_01.jpg",
+    "licence": "CC BY 4.0",
+    "author": "Hyppolyte de Saint-Rambert"
+  },
+  "Mémorial du séisme, port de Kobe": {
+    "img": "img/memorial-du-seisme-port-de-kobe-a86d9857.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Port_of_Kobe_Earthquake_Memorial_Park,_gaikan-1.jpg",
+    "licence": "CC0",
+    "author": "Saigen Jiro"
+  },
+  "Bouddhas de pierre de Moto-Hakone": {
+    "img": "img/bouddhas-de-pierre-de-moto-hakone-97e683d7.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Moto-Hakone_sekibutsu_2.JPG",
+    "licence": "CC BY-SA 3.0",
+    "author": "Bamse"
   }
 }

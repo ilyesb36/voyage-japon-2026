@@ -55,10 +55,14 @@ export async function fetchMeteo() {
   const cached = readCache();
   if (cached && Date.now() - cached.at < MAX_AGE) return { ...cached, fresh: true };
 
+  // On demande aussi les 7 jours de prévision : sur place, ce qui décide de la
+  // journée n'est pas la température de l'instant mais l'amplitude et la pluie.
   const url = 'https://api.open-meteo.com/v1/forecast?' + new URLSearchParams({
     latitude: cities.map((c) => c.ll[0]).join(','),
     longitude: cities.map((c) => c.ll[1]).join(','),
     current: 'temperature_2m,weather_code',
+    daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset',
+    forecast_days: '7',
     timezone: 'Asia/Tokyo',
   });
 
@@ -75,7 +79,26 @@ export async function fetchMeteo() {
       if (!c || !row.current) return;
       const code = row.current.weather_code;
       const [label, icon] = WMO[code] || ['—', '·'];
-      out[c.cityId] = { temp: Math.round(row.current.temperature_2m), code, label, icon };
+
+      // Les prévisions, indexées par date : la page du jour n'a plus qu'à
+      // demander la sienne.
+      const jours = {};
+      const d = row.daily;
+      if (d?.time) {
+        d.time.forEach((date, k) => {
+          const cd = d.weather_code?.[k];
+          const [lab, ic] = WMO[cd] || ['—', '·'];
+          jours[date] = {
+            code: cd, label: lab, icon: ic,
+            max: Math.round(d.temperature_2m_max?.[k]),
+            min: Math.round(d.temperature_2m_min?.[k]),
+            pluie: d.precipitation_probability_max?.[k] ?? null,
+            coucher: d.sunset?.[k]?.slice(11, 16) || null,
+          };
+        });
+      }
+
+      out[c.cityId] = { temp: Math.round(row.current.temperature_2m), code, label, icon, jours };
     });
 
     const payload = { at: Date.now(), cities: out };
@@ -95,4 +118,26 @@ export function heureJapon() {
 
 export function normale(cityId) {
   return METEO[cityId];
+}
+
+/**
+ * La météo d'une journée précise, pour une ville.
+ *
+ * Renvoie `{ source: 'prevision' | 'normale', ... }` : au-delà de la fenêtre
+ * de prévision (7 jours), il n'existe aucune prévision — on rend alors les
+ * normales de saison, et on le dit. Annoncer une prévision qu'on n'a pas
+ * serait pire que ne rien annoncer : on ferait la valise dessus.
+ */
+export async function meteoDuJour(cityId, date) {
+  const normales = METEO[cityId];
+  const data = await fetchMeteo();
+  const prev = data?.cities?.[cityId]?.jours?.[date];
+  if (prev && Number.isFinite(prev.max)) {
+    return { source: 'prevision', fresh: !!data.fresh, ...prev };
+  }
+  return {
+    source: 'normale', fresh: false,
+    max: normales?.max, min: normales?.min,
+    label: normales?.note, icon: '·', pluie: null, coucher: null,
+  };
 }

@@ -180,7 +180,9 @@
     "when": "fermé le mardi — caler la visite un autre jour",
     "lore": "Jardin de promenade en deux parties, dont l'arrière fut aménagé en 1899. Il pratique le shakkei, le « paysage emprunté » : la porte Nandaimon du Todai-ji et les collines de Wakakusa sont intégrées à la composition comme si elles en faisaient partie. Un salon de thé et le musée Neiraku le complètent.",
     "maps": "https://www.google.com/maps/search/?api=1&query=Isuien+Garden+Nara+Japon",
-    "pourquoi": "Nara est maigre dans le guide au-delà des daims et du Todai-ji ; ce jardin, superbe en feuillage d'automne, offre une vraie pause au calme. Éviter le mardi (fermé)."
+    "pourquoi": "Nara est maigre dans le guide au-delà des daims et du Todai-ji ; ce jardin, superbe en feuillage d'automne, offre une vraie pause au calme. Éviter le mardi (fermé).",
+    "commons": "Isuien garden Nara",
+    "mustMatch": "isuien"
   },
   {
     "name": "Naramachi",
@@ -208,7 +210,9 @@
     "when": "journée",
     "lore": "Premier musée du Japon dédié au verre de Venise, il réunit une centaine de pièces courant du XVIe au XXe siècle. Dans le jardin, un passage tendu d'ornements de cristal scintille au moindre rayon — l'un des décors les plus photographiés de Hakone — et un café-restaurant donne chaque jour une canzone italienne en live.",
     "maps": "https://www.google.com/maps/search/?api=1&query=Hakone+Venetian+Glass+Museum+Japon",
-    "pourquoi": "Hakone n'a aucun spot photo « facile » dans le guide : le tunnel de cristal est spectaculaire et l'intérieur au chaud, parfait par temps de fin novembre. Tarif à confirmer."
+    "pourquoi": "Hakone n'a aucun spot photo « facile » dans le guide : le tunnel de cristal est spectaculaire et l'intérieur au chaud, parfait par temps de fin novembre. Tarif à confirmer.",
+    "commons": "Hakone Venetian Glass Museum",
+    "mustMatch": "glass"
   },
   {
     "name": "Rue commerçante de Hakone-Yumoto",
@@ -222,6 +226,8 @@
     "when": "à l'arrivée ou au départ, depuis la gare",
     "lore": "De la gare de Hakone-Yumoto, porte d'entrée de la région, part une longue rue bordée d'échoppes : marqueterie yosegi-zaiku, manju chauds aux sources chaudes, kamaboko d'Odawara et confiseries à emporter.",
     "maps": "https://www.google.com/maps/search/?api=1&query=Hakone+Yumoto+shopping+street+Japon",
-    "pourquoi": "Hakone n'a aucune adresse shopping dans le guide ; cette rue, sur leur trajet de gare, règle les souvenirs et le grignotage sans détour."
+    "pourquoi": "Hakone n'a aucune adresse shopping dans le guide ; cette rue, sur leur trajet de gare, règle les souvenirs et le grignotage sans détour.",
+    "commons": "Hakone Yumoto station street",
+    "mustMatch": "yumoto"
   }
 ]

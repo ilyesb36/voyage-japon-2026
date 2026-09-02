@@ -16,8 +16,12 @@ import { ADDITIONS } from './lib/additions.mjs';
 // Le second lot d'ajouts (spots-nouveaux.json) passe par le même tuyau : il a
 // besoin des mêmes photos et du même garde-fou anti-homonyme.
 const ROOT_ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const NOUVEAUX = JSON.parse(fs.readFileSync(path.join(ROOT_, 'tools/lib/spots-nouveaux.json'), 'utf8'));
-const TOUS = [...ADDITIONS, ...NOUVEAUX];
+// Tous les lots tools/lib/spots-*.json passent par le même tuyau : ils ont
+// besoin des mêmes photos et du même garde-fou anti-homonyme.
+const LOTS = fs.readdirSync(path.join(ROOT_, 'tools/lib'))
+  .filter((f) => /^spots-.*\.json$/.test(f)).sort()
+  .flatMap((f) => JSON.parse(fs.readFileSync(path.join(ROOT_, 'tools/lib', f), 'utf8')));
+const TOUS = [...ADDITIONS, ...LOTS];
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const IMG = path.join(ROOT, 'img');
@@ -34,7 +38,10 @@ async function search(term) {
   const url = 'https://commons.wikimedia.org/w/api.php?' + new URLSearchParams({
     action: 'query', format: 'json', origin: '*',
     generator: 'search', gsrsearch: `${term} filetype:bitmap`,
-    gsrnamespace: '6', gsrlimit: '8',
+    // 20 et non 8 : le filtre ne garde que le paysage assez grand, et sur des
+    // lieux peu photographiés (une carrière souterraine, une grotte de glace)
+    // les huit premiers résultats sont tous en portrait.
+    gsrnamespace: '6', gsrlimit: '20',
     prop: 'imageinfo', iiprop: 'url|size|extmetadata', iiurlwidth: '960',
   });
   const res = await fetch(url, { headers: { 'User-Agent': UA } });

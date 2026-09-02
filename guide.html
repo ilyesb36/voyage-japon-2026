@@ -204,6 +204,7 @@ function openSheet(id) {
           <div><dt>Le bon moment</dt><dd>${esc(s.when)}</dd></div>
         </dl>
         ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
+        ${s.acces ? `<p class="sheet__acces"><b>Y aller</b> ${esc(s.acces)}</p>` : ''}
         ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : ''}
         <a class="btn" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
       </div>

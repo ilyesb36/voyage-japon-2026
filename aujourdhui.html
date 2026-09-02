@@ -21,11 +21,11 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <main class="wrap" id="app"></main>
 
 <script type="module">
-import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
+import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS, FLIGHTS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { AVANT, SURPLACE, METEO, RESERVER } from './data/pratique.js';
-import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
+import { fetchMeteo, meteoCities, heureJapon, meteoDuJour } from './app/meteo.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { RESERVATIONS } from './data/trip.js';
 import { resaStrip, resasForDate, resaCard } from './app/resa.js';
@@ -218,6 +218,10 @@ function during(d) {
 
   const lastDay = d.date === TRIP.end || d.n === DAYS.length;
 
+  // Le jour du vol, l'heure de décollage est l'information de la journée. Elle
+  // n'était affichée nulle part dans le mode « pendant le voyage ».
+  const volDuJour = FLIGHTS.find((f) => f.date === d.date) || null;
+
   return `
   <header class="section today" ${c ? `style="--c:${c.color}"` : ''}>
     <p class="eyebrow">${formatDate(d.date, { weekday: true })} · jour ${d.n} sur ${DAYS.length}</p>
@@ -238,6 +242,27 @@ function during(d) {
          · <span class="data">${esc(leg.pricePerPerson)}</span></p>
       ${hotel ? `<p class="alert__note">Arrivée possible <span class="data">${esc(hotel.checkIn)}</span>
         à ${esc(hotel.name)}.</p>` : ''}
+    </div>
+  </section>` : ''}
+
+  <section class="section">
+    <div id="meteo-jour"></div>
+  </section>
+
+  ${volDuJour ? `
+  <section class="section">
+    <div class="shead"><h2>Le vol</h2><span class="shead__meta">${esc(volDuJour.airline)}</span></div>
+    <div class="alert">
+      <p class="alert__main">${esc(volDuJour.total)}</p>
+      ${volDuJour.legs.map((l) => `
+      <p class="mut">
+        <span class="data">${esc(l.flight)}</span> ·
+        ${esc(l.fromCity)} <span class="data">${esc(l.depart)}</span>
+        → ${esc(l.toCity)} <span class="data">${esc(l.arrive)}</span>
+        ${l.dayShift ? '<span class="mut">+1</span>' : ''}
+        · ${esc(l.duration)}
+      </p>`).join('')}
+      ${volDuJour.layover ? `<p class="alert__note">Escale de ${esc(volDuJour.layover.duration)} à ${esc(volDuJour.layover.at)}.</p>` : ''}
     </div>
   </section>` : ''}
 
@@ -347,6 +372,31 @@ function dayCard(d) {
     </ul>
     ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
   </div>`;
+}
+
+// La météo de la journée en cours, dans le mode « pendant le voyage ». Le bloc
+// météo n'existait que dans le compte à rebours, où il ne sert à rien.
+const cible = document.getElementById('meteo-jour');
+if (cible && day && day.stepId) {
+  const s = STEPS.find((x) => x.id === day.stepId);
+  if (s) {
+    meteoDuJour(s.cityId, jour.date).then((m) => {
+      if (!m || !Number.isFinite(m.max)) return;
+      const prev = m.source === 'prevision';
+      cible.innerHTML = `
+        <div class="shead"><h2>Le temps aujourd'hui</h2></div>
+        <div class="mjour${prev ? ' mjour--prev' : ''}">
+          <span class="mjour__icone" aria-hidden="true">${m.icon}</span>
+          <span class="mjour__temp data"><b>${m.max}°</b> / ${m.min}°</span>
+          <span class="mjour__quoi">${esc(m.label || '')}</span>
+          ${m.pluie != null ? `<span class="mjour__pluie data">${m.pluie} % de pluie</span>` : ''}
+          ${m.coucher ? `<span class="mjour__nuit mut">nuit à ${esc(m.coucher)}</span>` : ''}
+          <span class="mjour__source mut">${prev
+            ? (m.fresh ? 'prévision' : 'dernière prévision connue')
+            : 'normales de novembre'}</span>
+        </div>`;
+    });
+  }
 }
 
 initReveal();

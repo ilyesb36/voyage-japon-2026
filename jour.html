@@ -30,6 +30,7 @@
         <div id="map" class="map map--jour"></div>
         <p class="jour__carteMeta mut" id="carte-meta"></p>
         <div class="jour__actions" id="go"></div>
+        <div id="meteo"></div>
       </div>
     </aside>
 
@@ -48,6 +49,7 @@ import { LIEUX } from './data/lieux.js';
 import { mountChrome, esc, formatDate, today } from './app/ui.js';
 import { resaStrip } from './app/resa.js';
 import { createMap } from './app/map.js';
+import { meteoDuJour } from './app/meteo.js';
 
 mountChrome('jour.html');
 const q = (id) => document.getElementById(id);
@@ -346,6 +348,29 @@ q('soir').innerHTML = `
       <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
     </div>
   </div>` : ''}`;
+
+// --- la météo de cette journée ------------------------------------------------
+// Sur place, ce qui décide d'une journée n'est pas la température de l'instant
+// mais l'amplitude et la pluie. Au-delà de la fenêtre de prévision, on affiche
+// les normales de saison en le disant : annoncer une prévision qu'on n'a pas
+// serait pire que se taire.
+if (ville) {
+  meteoDuJour(step.cityId, jour.date).then((m) => {
+    if (!m || !Number.isFinite(m.max)) return;
+    const prev = m.source === 'prevision';
+    q('meteo').innerHTML = `
+      <div class="mjour${prev ? ' mjour--prev' : ''}">
+        <span class="mjour__icone" aria-hidden="true">${m.icon}</span>
+        <span class="mjour__temp data"><b>${m.max}°</b> / ${m.min}°</span>
+        <span class="mjour__quoi">${esc(m.label || '')}</span>
+        ${m.pluie != null ? `<span class="mjour__pluie data">${m.pluie} % de pluie</span>` : ''}
+        ${m.coucher ? `<span class="mjour__nuit mut">nuit à ${esc(m.coucher)}</span>` : ''}
+        <span class="mjour__source mut">${prev
+          ? (m.fresh ? 'prévision' : 'dernière prévision connue')
+          : 'normales de novembre — trop loin pour une prévision'}</span>
+      </div>`;
+  });
+}
 
 // --- clavier ------------------------------------------------------------------
 // Flèches gauche/droite pour changer de journée : plus rapide que viser une

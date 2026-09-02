@@ -17,7 +17,7 @@ python3 -m http.server 4173     # puis http://localhost:4173
 |---|---|
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
 | `itineraire.html` | les 25 jours et les 30 journées type |
-| `guide.html` | 277 adresses, filtrables, avec notice historique |
+| `guide.html` | 319 adresses, filtrables, avec notice historique |
 | `pratique.html` | les six hébergements, le budget, les paiements, le hors-ligne |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
 | `aujourdhui.html` | avant : le compte à rebours et les démarches. Pendant : le jour même |
@@ -46,7 +46,7 @@ de `tools/lib/` correspondant :
 | `lore*.json` | les notices historiques ; tout fichier `lore*.json` est fusionné |
 | `lieux.json` | les lieux du programme, géolocalisés (nom, lat/lng, ville, confiance) |
 | `jours-lieux.json` | quelle ligne de quelle journée renvoie à quels lieux |
-| `spots-nouveaux.json` | second lot d'adresses, avec leurs propres tarifs et notices |
+| `spots-*.json` | les lots d'adresses ajoutés après coup, fusionnés par ordre alphabétique : `spots-nouveaux` (cafés, bars, ouvertures récentes), `spots-insolites`, `spots-sombres` |
 | `reserver-liens.json` | où réserver chaque billet (canal, URL officielle, mode d'emploi) |
 | `additions.mjs` | les adresses ajoutées au guide d'origine |
 | `flights.mjs`, `gazetteer.mjs`, `heroes.json` | vols, villes, images d'ouverture |
@@ -56,7 +56,7 @@ de `tools/lib/` correspondant :
 ```bash
 node tools/extract.mjs        # legacy/ + tools/lib/ → data/*.js
 node tools/fetch-images.mjs   # OBLIGATOIRE : réécrit les photos vers img/
-node tools/verify.mjs         # 117 assertions
+node tools/verify.mjs         # 121 assertions
 ```
 
 **`fetch-images.mjs` n'est pas optionnel.** L'extraction repart des pages
@@ -74,7 +74,7 @@ l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v18';
+const V = 'v20';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne

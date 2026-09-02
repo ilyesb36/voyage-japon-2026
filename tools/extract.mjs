@@ -600,31 +600,40 @@ function parseSpots() {
     });
   }
 
-  // Second lot d'ajouts, recherché à part (septembre 2026) : les cafés de
-  // spécialité, les bars, les disquaires et les ouvertures 2025-2026 que la
-  // sélection d'origine ne pouvait pas connaître. Il porte ses propres
-  // `duration`/`budget`/`when`/`lore`, déjà vérifiés, donc pas de défaut de
-  // catégorie ici.
-  const NOUVEAUX = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/spots-nouveaux.json'), 'utf8'));
-  for (const a of NOUVEAUX) {
-    const id = `spot-${slug(a.name)}`;
-    if (seen.has(id)) throw new Error(`spots-nouveaux : « ${a.name} » fait doublon avec un spot existant`);
-    seen.add(id);
-    SPOTS.push({
-      id, name: a.name,
-      cityId: a.cityId, area: a.area || null,
-      category: a.category, priority: a.priority,
-      blurb: a.blurb,
-      guideTip: false,
-      source: 'claude',
-      duration: a.duration || (def[a.category] || def.t0).duration,
-      budget: a.budget || 'à vérifier',
-      when: a.when || (def[a.category] || def.t0).when,
-      ...(a.lore ? { lore: a.lore } : {}),
-      ...(SPOT_FIXES[a.name] || {}),
-      img: images[a.name]?.img || null,
-      maps: a.maps,
-    });
+  // Les lots ajoutés après coup vivent dans tools/lib/spots-*.json et sont
+  // fusionnés par ordre alphabétique : les cafés et ouvertures récentes
+  // (spots-nouveaux), les lieux insolites (spots-insolites), le Japon des morts
+  // et des esprits (spots-sombres). Un nouveau lot se pose là, sans toucher au
+  // générateur — même principe que les notices lore*.json.
+  //
+  // Ils portent leurs propres `duration`/`budget`/`when`/`lore`, déjà vérifiés,
+  // et parfois un champ `acces` que les autres n'ont pas : plusieurs demandent
+  // un bus rare ou deux heures de trajet, et l'ignorer coûterait la journée.
+  const libDir = path.join(ROOT, 'tools/lib');
+  for (const f of fs.readdirSync(libDir).filter((f) => /^spots-.*\.json$/.test(f)).sort()) {
+    const lot = JSON.parse(fs.readFileSync(path.join(libDir, f), 'utf8'));
+    for (const a of lot) {
+      const id = `spot-${slug(a.name)}`;
+      if (seen.has(id)) throw new Error(`${f} : « ${a.name} » fait doublon avec un spot existant`);
+      seen.add(id);
+      const parDefaut = def[a.category] || def.t0;
+      SPOTS.push({
+        id, name: a.name,
+        cityId: a.cityId, area: a.area || null,
+        category: a.category, priority: a.priority,
+        blurb: a.blurb,
+        guideTip: false,
+        source: 'claude',
+        duration: a.duration || parDefaut.duration,
+        budget: a.budget || 'à vérifier',
+        when: a.when || parDefaut.when,
+        ...(a.acces ? { acces: a.acces } : {}),
+        ...(a.lore ? { lore: a.lore } : {}),
+        ...(SPOT_FIXES[a.name] || {}),
+        img: images[a.name]?.img || null,
+        maps: a.maps,
+      });
+    }
   }
 
   return SPOTS;

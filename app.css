@@ -1878,3 +1878,37 @@
   .leaflet-control-zoom a { width: 40px; height: 40px; line-height: 40px; }
   .foot nav a { min-height: 40px; display: inline-flex; align-items: center; }
 }
+
+/* --- la météo d'une journée -------------------------------------------------
+   Ce qui décide d'une journée sur place : l'amplitude et la pluie. Pas la
+   température de l'instant. Au-delà de la fenêtre de prévision on montre les
+   normales de saison, en gris et en le disant — une prévision inventée ferait
+   faire la valise de travers. */
+@layer components {
+  .mjour {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-2) var(--s-3);
+    margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+    background: var(--paper-3); border-radius: var(--r-s);
+    font-size: var(--t-sm);
+  }
+  .mjour--prev { background: var(--paper-2); border: 1px solid var(--line); }
+  .mjour__icone { font-size: var(--t-md); line-height: 1; }
+  .mjour__temp b { font-size: var(--t-md); font-weight: 700; letter-spacing: -0.03em; }
+  .mjour__quoi { color: var(--ink-2); }
+  .mjour__pluie { font-size: var(--t-xs); }
+  .mjour__nuit, .mjour__source { font-size: var(--t-xs); }
+  .mjour__source { flex-basis: 100%; }
+}
+
+/* --- comment y aller ---------------------------------------------------------
+   Les lieux insolites ne sont pas au coin de la rue : une carrière souterraine
+   à Utsunomiya, un cimetière de 200 000 tombes à deux heures d'Osaka, un bus
+   toutes les deux heures pour Natadera. Le trajet fait partie de la décision. */
+@layer components {
+  .sheet__acces {
+    margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+    background: var(--paper-3); border-radius: var(--r-s);
+    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
+  }
+  .sheet__acces b { color: var(--ink); margin-right: var(--s-2); }
+}

@@ -9,8 +9,14 @@ import { AVANT, SURPLACE, RESERVER, METEO } from '../data/pratique.js';
 import { LIEUX } from '../data/lieux.js';
 import fs from 'node:fs';
 
+// Les lots ajoutés après le site d'origine : ce sont les seuls qui ont le
+// droit de ne pas avoir de photo, Commons ne couvrant ni les cafés de
+// spécialité ni les carrières souterraines.
 const NOUVEAUX_NOMS = new Set(
-  JSON.parse(fs.readFileSync(new URL('./lib/spots-nouveaux.json', import.meta.url), 'utf8')).map((x) => x.name),
+  fs.readdirSync(new URL('./lib', import.meta.url))
+    .filter((f) => /^spots-.*\.json$/.test(f))
+    .flatMap((f) => JSON.parse(fs.readFileSync(new URL(`./lib/${f}`, import.meta.url), 'utf8')))
+    .map((x) => x.name),
 );
 
 let failures = 0, checks = 0, pending = 0;
@@ -45,9 +51,9 @@ const ajouts = SPOTS.filter((s) => s.source === 'claude');
 ok('220 spots d\'origine (236 − 16 retirés)', originaux.length, 220);
 // Les conseils de l'amie guide sont intouchables : ce compte ne doit jamais bouger.
 ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
-// 57 au premier lot, 16 au second (cafés de spécialité, bars, disquaires,
-// ouvertures 2025-2026) — voir tools/lib/spots-nouveaux.json.
-ok('73 idées ajoutées', ajouts.length, 73);
+// 57 au premier lot, 16 au second (cafés, bars, disquaires, ouvertures
+// 2025-2026), 13 au troisième (les lieux insolites, catégorie t6).
+ok('99 idées ajoutées', ajouts.length, 99);
 // Le premier lot venait de Commons, qui couvre bien les temples et les jardins.
 // Le second lot est fait de cafés de spécialité, de bars et de disquaires : ils
 // ne sont pas sur Commons, et un garde-fou anti-homonyme refuse d'illustrer
@@ -56,7 +62,7 @@ ok('73 idées ajoutées', ajouts.length, 73);
 const sansPhoto = ajouts.filter((s) => !s.img);
 assert(`au moins 55 ajouts illustrés (${ajouts.length - sansPhoto.length} sur ${ajouts.length})`,
   ajouts.length - sansPhoto.length >= 55, sansPhoto.map((s) => s.name).join(', '));
-assert('les ajouts sans photo sont tous du second lot',
+assert('les ajouts sans photo sont tous des lots récents',
   sansPhoto.every((s) => NOUVEAUX_NOMS.has(s.name)),
   sansPhoto.filter((s) => !NOUVEAUX_NOMS.has(s.name)).map((s) => s.name).join(', '));
 
@@ -348,6 +354,32 @@ assert('identifiants uniques — à réserver',
 const resaBruit = SPOTS.filter((s) => s.when === 'résa conseillée').map((s) => s.name);
 assert('« résa conseillée » n\'est plus un défaut de catégorie',
   resaBruit.length === 0, resaBruit.join(', '));
+
+// --- la catégorie Insolite ----------------------------------------------------
+// Un lieu n'entre ici que pour son histoire : sans notice, il n'a rien à y
+// faire. Et plusieurs demandent un bus rare ou deux heures de trajet — l'oubli
+// du champ `acces` coûterait la journée sur place.
+
+console.log('\nInsolite');
+const insolites = SPOTS.filter((s) => s.category === 't6');
+assert(`au moins 30 lieux insolites (${insolites.length})`, insolites.length >= 30);
+
+const sansNotice = insolites.filter((s) => !s.lore).map((s) => s.name);
+assert('chaque lieu insolite a sa notice', sansNotice.length === 0, sansNotice.join(', '));
+
+// Les entrées venant des lots récents portent un accès ; celles reclassées
+// depuis l'ancien site n'en ont pas, et c'est normal — elles sont en ville.
+const lotsRecents = new Set(
+  fs.readdirSync(new URL('./lib', import.meta.url))
+    .filter((f) => /^spots-.*\.json$/.test(f))
+    .flatMap((f) => JSON.parse(fs.readFileSync(new URL(`./lib/${f}`, import.meta.url), 'utf8')))
+    .filter((x) => x.category === 't6')
+    .map((x) => x.name),
+);
+const sansAcces = insolites.filter((s) => lotsRecents.has(s.name) && !s.acces).map((s) => s.name);
+assert('chaque lieu insolite ajouté dit comment y aller', sansAcces.length === 0, sansAcces.join(', '));
+
+assert('la catégorie Insolite est déclarée', CATEGORIES.some((c) => c.id === 't6'));
 
 // --- les lieux du programme ---------------------------------------------------
 // Une coordonnée fausse envoie marcher au mauvais endroit : c'est pire que pas
