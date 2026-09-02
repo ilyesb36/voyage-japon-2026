@@ -284,6 +284,7 @@ function renderDay(d, c) {
         ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
       </ul>
       ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
+      <p class="day__go"><a class="btn btn--ghost" href="jour.html?d=${d.n}">Cette journée sur la carte</a></p>
       ${free ? `<p class="day__free">Rien de calé : ${free} journées type sont proposées
         <a href="#tpl-${firstStepOfCity[d.cityId]}">plus bas</a>.</p>` : ''}
     </div>

@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La journée — Japon 2026</title>
+<meta name="description" content="Une journée à la fois : les étapes dans l'ordre, sur une carte, et tout le parcours en un lien.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+<script src="vendor/leaflet.js"></script>
+</head>
+<body>
+
+<main class="wrap">
+  <header class="section" id="tete"></header>
+
+  <div id="resa"></div>
+
+  <section class="section">
+    <div id="parcours"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead"><h2>Sur la carte</h2><span class="shead__meta" id="carte-meta"></span></div>
+    <div id="map" class="map map--jour"></div>
+  </section>
+
+  <section class="section">
+    <div id="soir"></div>
+  </section>
+
+  <nav class="section jnav" id="jnav" aria-label="Changer de journée"></nav>
+</main>
+
+<script type="module">
+import { CITIES, STEPS, HOTELS, SEGMENTS } from './data/trip.js';
+import { DAYS } from './data/days.js';
+import { LIEUX } from './data/lieux.js';
+import { mountChrome, initProgressBar, esc, formatDate, today } from './app/ui.js';
+import { resaStrip } from './app/resa.js';
+import { createMap } from './app/map.js';
+
+mountChrome('jour.html');
+const q = (id) => document.getElementById(id);
+
+// --- quelle journée ? ---------------------------------------------------------
+// ?d=14 par numéro, ?date=2026-11-21 par date, sinon la journée du jour, sinon
+// la première. On veut pouvoir arriver ici depuis n'importe où sans réfléchir.
+const url = new URLSearchParams(location.search);
+const parNum = DAYS.find((d) => String(d.n) === url.get('d'));
+const parDate = DAYS.find((d) => d.date === url.get('date'));
+const duJour = DAYS.find((d) => d.date === today());
+const jour = parNum || parDate || duJour || DAYS[0];
+
+const step = STEPS.find((s) => s.id === jour.stepId);
+const ville = step ? CITIES[step.cityId] : null;
+const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
+const precedent = DAYS[DAYS.indexOf(jour) - 1];
+const suivant = DAYS[DAYS.indexOf(jour) + 1];
+
+document.title = `${jour.title} — ${formatDate(jour.date)} · Japon 2026`;
+
+// --- distances ----------------------------------------------------------------
+// À vol d'oiseau : on ne connaît pas le tracé des rues. C'est un ordre de
+// grandeur pour savoir si l'étape suivante est à deux pas ou de l'autre côté
+// de la ville — pas un temps de trajet.
+function metres(a, b) {
+  const R = 6371000, rad = (x) => (x * Math.PI) / 180;
+  const dLat = rad(b.lat - a.lat), dLng = rad(b.lng - a.lng);
+  const h = Math.sin(dLat / 2) ** 2
+    + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+const ecart = (m) => {
+  if (m < 250) return 'à côté';
+  if (m < 1200) return `${Math.round(m / 100) * 100} m à vol d'oiseau`;
+  return `${(m / 1000).toFixed(1)} km à vol d'oiseau`;
+};
+
+// --- les étapes de la journée -------------------------------------------------
+// Une « étape » = une ligne du programme qui a au moins un lieu. Les autres
+// lignes (un train, un dîner libre) restent affichées mais sans pastille.
+const etapes = [];
+jour.items.forEach((it, i) => {
+  const lieux = (it.lieux || []).map((id) => LIEUX[id]).filter(Boolean);
+  etapes.push({ ...it, i, lieux });
+});
+const situees = etapes.filter((e) => e.lieux.length);
+const points = situees.flatMap((e) => e.lieux);
+
+// --- le lien qui ouvre tout le parcours --------------------------------------
+// C'est la raison d'être de cette page : un seul appui, et Google Maps a la
+// journée entière. Le schéma d'URL accepte 9 arrêts intermédiaires ; au-delà,
+// on garde les premiers et on le dit plutôt que de tronquer en silence.
+const MAX_ETAPES = 11;
+const gardes = points.slice(0, MAX_ETAPES);
+const tronque = points.length - gardes.length;
+const coord = (l) => `${l.lat},${l.lng}`;
+
+function lienParcours(mode = 'walking') {
+  if (gardes.length < 2) return null;
+  const p = new URLSearchParams({
+    api: '1',
+    origin: coord(gardes[0]),
+    destination: coord(gardes[gardes.length - 1]),
+    travelmode: mode,
+  });
+  const inter = gardes.slice(1, -1);
+  if (inter.length) p.set('waypoints', inter.map(coord).join('|'));
+  return `https://www.google.com/maps/dir/?${p}`;
+}
+
+const lienLieu = (l) => `https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lng}`;
+
+// --- en-tête ------------------------------------------------------------------
+const KIND = { transfert: 'Transfert', vol: 'Vol', etape: null };
+q('tete').innerHTML = `
+  <p class="eyebrow">Jour ${jour.n} sur ${DAYS.length} · ${esc(formatDate(jour.date, { weekday: true }))}</p>
+  <h1>${esc(jour.title)}</h1>
+  ${ville ? `<p class="jour__ou">
+    <span class="city-dot" style="--c:${ville.color}">${esc(ville.name)}</span>
+    ${step.area ? `<span class="mut">· ${esc(step.area)}</span>` : ''}
+    ${KIND[jour.kind] ? `<span class="day__kind">${KIND[jour.kind]}</span>` : ''}
+  </p>` : ''}`;
+
+q('resa').innerHTML = resaStrip(jour.date).trim()
+  ? `<section class="section"><div class="shead"><h2>Le rendez-vous du jour</h2></div>${resaStrip(jour.date)}</section>`
+  : '';
+
+// --- le parcours --------------------------------------------------------------
+let numero = 0;
+const lignes = etapes.map((e) => {
+  const situee = e.lieux.length > 0;
+  if (situee) numero += 1;
+  const n = numero;
+
+  // l'écart avec l'étape située précédente
+  const rang = situees.indexOf(e);
+  const avant = rang > 0 ? situees[rang - 1] : null;
+  const d = avant ? metres(avant.lieux[avant.lieux.length - 1], e.lieux[0]) : null;
+
+  return `
+  <li class="etape${situee ? '' : ' etape--sansLieu'}${e.evening ? ' etape--soir' : ''}">
+    <div class="etape__num">${situee ? `<b>${n}</b>` : '<span aria-hidden="true">·</span>'}</div>
+    <div class="etape__corps">
+      ${d !== null ? `<p class="etape__ecart mut">${esc(ecart(d))}</p>` : ''}
+      <p class="etape__texte">${esc(e.text)}</p>
+      ${situee ? `<p class="etape__lieux">
+        ${e.lieux.map((l) => `
+          <a class="lieu" href="${esc(lienLieu(l))}" target="_blank" rel="noopener">
+            ${esc(l.nom)}${l.quartier ? `<span class="mut"> · ${esc(l.quartier)}</span>` : ''}
+            ${l.confiance === 'approx' ? '<span class="lieu__approx" title="position approchée">≈</span>' : ''}
+          </a>`).join('')}
+      </p>` : ''}
+    </div>
+  </li>`;
+}).join('');
+
+const lien = lienParcours();
+q('parcours').innerHTML = `
+  <div class="shead">
+    <h2>Le parcours</h2>
+    <p>${situees.length} arrêt${situees.length > 1 ? 's' : ''} situé${situees.length > 1 ? 's' : ''} sur ${etapes.length} ligne${etapes.length > 1 ? 's' : ''} de programme.</p>
+  </div>
+  ${lien ? `
+  <div class="parcours__go">
+    <a class="btn btn--big" href="${esc(lien)}" target="_blank" rel="noopener">
+      Ouvrir tout le parcours dans Google Maps
+    </a>
+    <a class="btn btn--ghost" href="${esc(lienParcours('transit'))}" target="_blank" rel="noopener">
+      En transports
+    </a>
+    ${tronque > 0 ? `<p class="mut parcours__tronque">Google Maps s'arrête à ${MAX_ETAPES} arrêts : les ${tronque} derniers ne sont pas dans le lien, ils sont dans la liste.</p>` : ''}
+  </div>` : '<p class="mut">Aucun lieu situé pour cette journée — c\'est un jour de trajet.</p>'}
+  <ol class="etapes">${lignes}</ol>
+  ${jour.tip ? `<p class="day__tip">${esc(jour.tip.replace(/^💡\s*/, ''))}</p>` : ''}`;
+
+// --- la carte -----------------------------------------------------------------
+if (points.length) {
+  const map = createMap('map', { scrollWheelZoom: false });
+  const ll = [];
+  let k = 0;
+  for (const e of situees) {
+    k += 1;
+    for (const l of e.lieux) {
+      ll.push([l.lat, l.lng]);
+      L.marker([l.lat, l.lng], {
+        icon: L.divIcon({
+          className: '',
+          html: `<div class="map-pin" style="background:${ville ? ville.color : '#78766D'}">${k}</div>`,
+          iconSize: [26, 26], iconAnchor: [13, 13],
+        }),
+      }).addTo(map).bindPopup(`<b>${esc(l.nom)}</b><br><a href="${esc(lienLieu(l))}" target="_blank" rel="noopener">Y aller</a>`);
+    }
+  }
+  if (ll.length > 1) {
+    L.polyline(ll, { color: ville ? ville.color : '#78766D', weight: 2, opacity: .55, dashArray: '4 5' }).addTo(map);
+  }
+
+  // Leaflet calcule le cadrage depuis la taille du conteneur : appelé trop tôt,
+  // il tombe sur une largeur de 0 et zoome au maximum sur un point au hasard.
+  // On recadre à chaque changement de taille, après un tour de rendu pour que
+  // la mise en page soit faite.
+  // Même précaution que dans app/map.js : une vue de repli tout de suite, le
+  // cadrage exact dès que le conteneur a une largeur.
+  const el = q('map');
+  const bornes = L.latLngBounds(ll);
+  if (ll.length === 1) map.setView(ll[0], 15);
+  else map.setView(bornes.getCenter(), 12);
+
+  const cadrer = () => {
+    map.invalidateSize(true);
+    if (ll.length > 1) map.fitBounds(bornes, { padding: [40, 40], animate: false });
+  };
+  let restant = 12;
+  const tenter = () => {
+    if (el.clientWidth > 0) { cadrer(); return; }
+    if (restant-- > 0) requestAnimationFrame(tenter);
+  };
+  tenter();
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (el.clientWidth > 0) cadrer(); }).observe(el);
+  addEventListener('load', tenter);
+
+  window.__carte = map;   // pour inspecter le cadrage depuis la console
+
+  const total = situees.reduce((m, e, i) =>
+    i === 0 ? 0 : m + metres(situees[i - 1].lieux[situees[i - 1].lieux.length - 1], e.lieux[0]), 0);
+  q('carte-meta').innerHTML = `<span class="data">${(total / 1000).toFixed(1)} km</span> cumulés, à vol d'oiseau`;
+} else {
+  q('map').remove();
+  q('carte-meta').textContent = '';
+}
+
+// --- le soir ------------------------------------------------------------------
+const legDuJour = SEGMENTS.find((g) => {
+  const to = STEPS.find((s) => s.id === g.toStepId);
+  return to && to.from === jour.date;
+});
+
+q('soir').innerHTML = `
+  ${legDuJour ? `
+  <div class="shead"><h2>Le trajet du jour</h2></div>
+  <div class="alert">
+    <p class="alert__main">
+      ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.fromStepId).cityId].name)}
+      → ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.toStepId).cityId].name)}
+    </p>
+    <p class="mut">${esc(legDuJour.label)} · <span class="data">${esc(legDuJour.duration)}</span>
+       · <span class="data">${esc(legDuJour.pricePerPerson)}</span></p>
+  </div>` : ''}
+
+  ${hotel ? `
+  <div class="shead"><h2>Ce soir</h2></div>
+  <div class="card tonight">
+    <div class="tonight__body">
+      <h3>${esc(hotel.name)}</h3>
+      <p class="mut">${esc(hotel.address)}</p>
+      <dl class="tonight__facts">
+        <div><dt>Arrivée</dt><dd class="data">${esc(hotel.checkIn)}</dd></div>
+        <div><dt>Chambre</dt><dd>${esc(hotel.room)}</dd></div>
+        ${hotel.meals ? `<div><dt>Repas</dt><dd>${esc(hotel.meals)}</dd></div>` : ''}
+      </dl>
+      ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
+      <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
+    </div>
+  </div>` : ''}`;
+
+// --- navigation ---------------------------------------------------------------
+q('jnav').innerHTML = `
+  ${precedent ? `<a class="btn btn--ghost jnav__prev" href="?d=${precedent.n}">
+    <span class="mut">Jour ${precedent.n}</span> ${esc(precedent.title)}</a>` : '<span></span>'}
+  <a class="btn btn--ghost jnav__all" href="itineraire.html#jour-${jour.n}">Tous les jours</a>
+  ${suivant ? `<a class="btn btn--ghost jnav__next" href="?d=${suivant.n}">
+    <span class="mut">Jour ${suivant.n}</span> ${esc(suivant.title)}</a>` : '<span></span>'}`;
+
+initProgressBar();
+</script>
+</body>
+</html>

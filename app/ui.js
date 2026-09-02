@@ -4,6 +4,7 @@ import { TRIP } from '../data/trip.js';
 const PAGES = [
   { href: 'index.html',      label: 'Le voyage' },
   { href: 'aujourdhui.html', label: "Aujourd'hui" },
+  { href: 'jour.html',       label: 'La journée' },
   { href: 'itineraire.html', label: 'Jour par jour' },
   { href: 'guide.html',      label: 'Le guide' },
   { href: 'pratique.html',   label: 'Pratique' },

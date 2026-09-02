@@ -19,6 +19,7 @@ python3 -m http.server 4173     # puis http://localhost:4173
 | `itineraire.html` | les 25 jours et les 30 journées type |
 | `guide.html` | 277 adresses, filtrables, avec notice historique |
 | `pratique.html` | les six hébergements, le budget, les paiements, le hors-ligne |
+| `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
 | `aujourdhui.html` | avant : le compte à rebours et les démarches. Pendant : le jour même |
 
 `aujourdhui.html?date=2026-11-18` permet de voir n'importe quel jour du voyage
@@ -43,6 +44,10 @@ de `tools/lib/` correspondant :
 | `spot-fixes.mjs` | tarifs, horaires et fermetures vérifiés, par nom de lieu |
 | `guide-removals.mjs` | les entrées retirées du guide, **par identifiant** |
 | `lore*.json` | les notices historiques ; tout fichier `lore*.json` est fusionné |
+| `lieux.json` | les lieux du programme, géolocalisés (nom, lat/lng, ville, confiance) |
+| `jours-lieux.json` | quelle ligne de quelle journée renvoie à quels lieux |
+| `spots-nouveaux.json` | second lot d'adresses, avec leurs propres tarifs et notices |
+| `reserver-liens.json` | où réserver chaque billet (canal, URL officielle, mode d'emploi) |
 | `additions.mjs` | les adresses ajoutées au guide d'origine |
 | `flights.mjs`, `gazetteer.mjs`, `heroes.json` | vols, villes, images d'ouverture |
 
@@ -51,7 +56,7 @@ de `tools/lib/` correspondant :
 ```bash
 node tools/extract.mjs        # legacy/ + tools/lib/ → data/*.js
 node tools/fetch-images.mjs   # OBLIGATOIRE : réécrit les photos vers img/
-node tools/verify.mjs         # 78 assertions
+node tools/verify.mjs         # 117 assertions
 ```
 
 **`fetch-images.mjs` n'est pas optionnel.** L'extraction repart des pages
@@ -69,7 +74,7 @@ l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v13';
+const V = 'v18';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne
@@ -106,3 +111,8 @@ le site servi n'a aucune dépendance.
 - **Les captures d'écran du navigateur sortent parfois blanches** après un
   défilement programmatique. C'est un artefact de l'outil : vérifier par le DOM
   (`img.complete`, `naturalWidth`) plutôt que de croire l'image.
+- **Une carte Leaflet sans vue ne s'affiche pas du tout**, et lire ses bornes
+  lève « Set map center and zoom first ». Or `fitBounds` ne peut rien calculer
+  tant que le conteneur a une largeur de 0, ce qui arrive quand la carte est
+  loin sous la ligne de flottaison. `createMap` pose donc toujours une vue de
+  repli sur le Japon, et le cadrage exact se fait quand la taille arrive.

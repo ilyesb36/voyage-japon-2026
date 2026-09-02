@@ -211,6 +211,34 @@
   },
   "2026-11-19": {
     "0": [
+      "kinkaku-ji",
+      "ryoan-ji"
+    ],
+    "1": [
+      "ninna-ji",
+      "daitoku-ji"
+    ],
+    "2": [
+      "kitano-tenmangu"
+    ],
+    "3": [
+      "matsuba"
+    ],
+    "4": [
+      "nishiki-market"
+    ],
+    "5": [
+      "pontocho"
+    ],
+    "6": [
+      "pontocho"
+    ],
+    "7": [
+      "gion-kinana"
+    ]
+  },
+  "2026-11-20": {
+    "0": [
       "nanzen-ji"
     ],
     "1": [
@@ -226,35 +254,6 @@
     ],
     "5": [
       "eikan-do"
-    ]
-  },
-  "2026-11-20": {
-    "0": [
-      "kinkaku-ji",
-      "ryoan-ji"
-    ],
-    "1": [
-      "ninna-ji",
-      "daitoku-ji"
-    ],
-    "2": [
-      "kitano-tenmangu"
-    ],
-    "3": [
-      "honke-owariya",
-      "matsuba"
-    ],
-    "4": [
-      "nishiki-market"
-    ],
-    "5": [
-      "pontocho"
-    ],
-    "6": [
-      "pontocho"
-    ],
-    "7": [
-      "gion-kinana"
     ]
   },
   "2026-11-21": {
@@ -351,18 +350,22 @@
   },
   "2026-11-25": {
     "0": [
-      "odawara-station",
-      "motohakone-port",
-      "ryokan-fukuya"
+      "odawara-station"
     ],
     "1": [
       "hakone-yumoto"
     ],
     "2": [
-      "ryokan-fukuya"
+      "motohakone-port"
     ],
     "4": [
+      "ryokan-fukuya"
+    ],
+    "5": [
       "torii-hakone-jinja"
+    ],
+    "6": [
+      "ryokan-fukuya"
     ]
   },
   "2026-11-26": {

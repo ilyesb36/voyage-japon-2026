@@ -1668,3 +1668,97 @@
     letter-spacing: -0.04em; user-select: none;
   }
 }
+
+/* --- la page d'une journée ---------------------------------------------------
+   Écrite pour être suivie sur place, un téléphone à la main, en marchant.
+   Le programme disait « Tenryu-ji → bambouseraie → déjeuner au bord de la
+   rivière » : trois recherches Google Maps par ligne. Ici les arrêts sont
+   numérotés, situés, et un seul bouton envoie tout le parcours dans Maps. */
+@layer components {
+  .jour__ou {
+    margin-top: var(--s-3); display: flex; align-items: center;
+    gap: var(--s-3); flex-wrap: wrap; font-size: var(--t-sm);
+  }
+
+  /* le bouton qui justifie la page : il ne doit pas se chercher */
+  .parcours__go {
+    display: flex; flex-wrap: wrap; gap: var(--s-3);
+    align-items: center; margin-bottom: var(--s-6);
+  }
+  .btn--big {
+    font-size: var(--t-base); padding: var(--s-3) var(--s-5);
+    min-height: 48px; display: inline-flex; align-items: center;
+  }
+  .parcours__tronque { flex-basis: 100%; font-size: var(--t-xs); margin: 0; }
+
+  .etapes { list-style: none; margin: 0; padding: 0; }
+  .etape {
+    display: grid; grid-template-columns: 34px minmax(0, 1fr);
+    gap: var(--s-4); padding-bottom: var(--s-5);
+  }
+  /* le filet vertical porte la continuité du parcours */
+  .etape__num { position: relative; display: flex; justify-content: center; }
+  .etape__num::before {
+    content: ''; position: absolute; top: 0; bottom: calc(-1 * var(--s-5));
+    width: 1px; background: var(--line);
+  }
+  .etape:last-child .etape__num::before { display: none; }
+  .etape__num b {
+    position: relative; z-index: 1;
+    width: 28px; height: 28px; border-radius: var(--r-full);
+    background: var(--ink); color: var(--paper);
+    display: grid; place-items: center;
+    font-family: var(--f-data); font-size: var(--t-xs); font-weight: 700;
+  }
+  .etape__num span {
+    position: relative; z-index: 1; margin-top: 6px;
+    width: 8px; height: 8px; border-radius: var(--r-full);
+    background: var(--line-2); color: transparent;
+  }
+  .etape--sansLieu .etape__texte { color: var(--mut); }
+  .etape--soir .etape__texte::before { content: '☾ '; color: var(--mut); }
+
+  .etape__ecart {
+    font-family: var(--f-data); font-size: var(--t-xs);
+    margin: 0 0 var(--s-2);
+  }
+  .etape__texte { margin: 0; font-size: var(--t-base); line-height: 1.55; max-width: 62ch; }
+  .etape__lieux { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-3) 0 0; }
+
+  .lieu {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    min-height: 40px; padding: var(--s-2) var(--s-3);
+    background: var(--paper-2); border: 1px solid var(--line);
+    border-radius: var(--r-s);
+    font-size: var(--t-sm); font-weight: 500; color: var(--ink);
+    text-decoration: none;
+  }
+  .lieu::before { content: '↗'; color: var(--acc); font-size: var(--t-xs); }
+  .lieu:hover { border-color: var(--acc); background: var(--acc-soft); }
+  .lieu__approx { color: var(--mut); font-family: var(--f-data); }
+
+  .map--jour { height: 460px; border-radius: var(--r-m); border: 1px solid var(--line); }
+  @media (max-width: 640px) { .map--jour { height: 340px; } }
+
+  .jnav {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: var(--s-3); align-items: center;
+    border-top: 1px solid var(--line); padding-top: var(--s-5);
+  }
+  .jnav .btn { min-height: 44px; }
+  .jnav__prev { justify-self: start; }
+  .jnav__next { justify-self: end; text-align: right; }
+  .jnav a span { display: block; font-size: var(--t-xs); }
+
+  @media (max-width: 640px) {
+    .jnav { grid-template-columns: 1fr; }
+    .jnav__prev, .jnav__next { justify-self: stretch; text-align: left; }
+  }
+}
+
+/* --- passerelles vers la page du jour --------------------------------------- */
+@layer components {
+  .day__go { margin-top: var(--s-4); }
+  .day__go .btn { font-size: var(--t-xs); }
+  .jour__liens { display: flex; flex-wrap: wrap; gap: var(--s-3); }
+}

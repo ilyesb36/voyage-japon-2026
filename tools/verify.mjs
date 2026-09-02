@@ -6,6 +6,7 @@ import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, BUDGET, RES
 import { DAYS, TEMPLATES } from '../data/days.js';
 import { SPOTS, CATEGORIES, PRIORITIES } from '../data/spots.js';
 import { AVANT, SURPLACE, RESERVER, METEO } from '../data/pratique.js';
+import { LIEUX } from '../data/lieux.js';
 import fs from 'node:fs';
 
 const NOUVEAUX_NOMS = new Set(
@@ -348,13 +349,61 @@ const resaBruit = SPOTS.filter((s) => s.when === 'résa conseillée').map((s) =>
 assert('« résa conseillée » n\'est plus un défaut de catégorie',
   resaBruit.length === 0, resaBruit.join(', '));
 
+// --- les lieux du programme ---------------------------------------------------
+// Une coordonnée fausse envoie marcher au mauvais endroit : c'est pire que pas
+// de coordonnée. Le piège principal est l'homonyme — plusieurs temples portent
+// le même nom dans des préfectures différentes.
+
+console.log('\nLieux du programme');
+const CENTRES = {
+  tokyo: [35.68, 139.75], kanazawa: [36.56, 136.66], kyoto: [35.01, 135.77],
+  osaka: [34.69, 135.50], hakone: [35.20, 139.03],
+};
+const km = (a, b, c, d) => {
+  const R = 6371, r = (x) => (x * Math.PI) / 180;
+  const dl = r(c - a), dg = r(d - b);
+  const h = Math.sin(dl / 2) ** 2 + Math.cos(r(a)) * Math.cos(r(c)) * Math.sin(dg / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+};
+
+const lieux = Object.entries(LIEUX);
+assert(`au moins 140 lieux géolocalisés (${lieux.length})`, lieux.length >= 140);
+assert('chaque lieu est au Japon',
+  lieux.every(([, l]) => l.lat > 30 && l.lat < 46 && l.lng > 128 && l.lng < 146),
+  lieux.filter(([, l]) => !(l.lat > 30 && l.lat < 46 && l.lng > 128 && l.lng < 146)).map(([k]) => k).join(', '));
+assert('chaque lieu a une ville connue',
+  lieux.every(([, l]) => CENTRES[l.cityId]),
+  lieux.filter(([, l]) => !CENTRES[l.cityId]).map(([k]) => k).join(', '));
+
+// Nikko est à 120 km de Tokyo et s'y rattache : c'est une excursion, pas une
+// erreur. Au-delà de 150 km, c'est un homonyme.
+const egares = lieux.filter(([, l]) => {
+  const c = CENTRES[l.cityId];
+  return c && km(c[0], c[1], l.lat, l.lng) > 150;
+}).map(([k, l]) => `${k} (${l.cityId})`);
+assert('aucun lieu à plus de 150 km de sa ville', egares.length === 0, egares.join(', '));
+
+// Le lieu fermé ne doit plus être une destination.
+assert('Honke Owariya, fermé, ne figure plus dans les lieux', !LIEUX['honke-owariya']);
+
+// Chaque ligne de programme qui porte des lieux doit les porter tous.
+const lignesSituees = DAYS.flatMap((d) => d.items).filter((i) => i.lieux);
+assert(`au moins 120 lignes de programme situées (${lignesSituees.length})`, lignesSituees.length >= 120);
+assert('chaque lieu cité par une journée existe',
+  lignesSituees.every((i) => i.lieux.every((id) => LIEUX[id])),
+  lignesSituees.flatMap((i) => i.lieux).filter((id) => !LIEUX[id]).join(', '));
+
+// Un jour de visite sans aucun lieu situé serait une page vide.
+const joursVides = DAYS.filter((d) => d.kind === 'etape' && !d.items.some((i) => i.lieux)).map((d) => d.date);
+assert('chaque journée de visite a au moins un lieu situé', joursVides.length === 0, joursVides.join(', '));
+
 // --- structure des pages ------------------------------------------------------
 // Un <div class="wrap"> laissé ouvert sur l'accueil en enfermait un second :
 // le navigateur refermait tout seul à </main>, si bien que rien ne cassait —
 // mais toute la moitié basse de la page prenait un rembourrage double et se
 // retrouvait plus étroite que le haut. Personne ne voit ça sans mesurer.
 
-const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html'];
+const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html'];
 
 console.log('\nStructure');
 for (const page of pages) {

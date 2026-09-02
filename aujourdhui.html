@@ -110,6 +110,7 @@ function before() {
   <section class="section">
     <div class="shead"><h2>Premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
     ${dayCard(DAYS[0])}
+    <p class="jour__liens"><a class="btn btn--ghost" href="jour.html?d=1">Cette journée sur la carte</a></p>
   </section>`;
 }
 
@@ -278,7 +279,10 @@ function during(d) {
   ${knowBlock()}
 
   <section class="section">
-    <p><a class="btn btn--ghost" href="itineraire.html#jour-${d.n}">Voir tout l'itinéraire</a></p>
+    <p class="jour__liens">
+      <a class="btn" href="jour.html?d=${d.n}">La journée sur la carte</a>
+      <a class="btn btn--ghost" href="itineraire.html#jour-${d.n}">Voir tout l'itinéraire</a>
+    </p>
   </section>`;
 }
 

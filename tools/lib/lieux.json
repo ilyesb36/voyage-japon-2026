@@ -889,16 +889,6 @@
     "source": "points",
     "confiance": "sure"
   },
-  "honke-owariya": {
-    "nom": "Honke Owariya",
-    "lat": 35.01108,
-    "lng": 135.76224,
-    "cityId": "kyoto",
-    "quartier": "Centre",
-    "maps": "https://www.google.com/maps/search/?api=1&query=35.01108,135.76224",
-    "source": "points",
-    "confiance": "sure"
-  },
   "pontocho": {
     "nom": "Pontochō",
     "lat": 35.00453,

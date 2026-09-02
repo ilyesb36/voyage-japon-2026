@@ -676,6 +676,43 @@ writeModule('data/trip.js', 'Voyage, étapes, hôtels, trajets, budget.', [
   arrayBlock('RESERVATIONS', RESERVATIONS),
 ]);
 
+// Les lieux du programme, géolocalisés. Sans ça, « Tenryu-ji → bambouseraie →
+// déjeuner au bord de la rivière » demande trois recherches Google Maps sur
+// place, à chaque ligne de chaque journée.
+const LIEUX = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/lieux.json'), 'utf8'));
+const JOURS_LIEUX = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/lib/jours-lieux.json'), 'utf8'));
+
+// Contrôles avant écriture : une coordonnée fausse envoie marcher au mauvais
+// endroit, ce qui est pire que pas de coordonnée du tout.
+for (const [id, l] of Object.entries(LIEUX)) {
+  if (l.lat < 30 || l.lat > 46 || l.lng < 128 || l.lng > 146) {
+    throw new Error(`lieu « ${id} » hors du Japon : ${l.lat}, ${l.lng}`);
+  }
+  if (!CITIES[l.cityId]) throw new Error(`lieu « ${id} » : ville inconnue « ${l.cityId} »`);
+}
+for (const [date, lignes] of Object.entries(JOURS_LIEUX)) {
+  const jour = DAYS.find((d) => d.date === date);
+  if (!jour) throw new Error(`jours-lieux : date inconnue ${date}`);
+  for (const [i, ids] of Object.entries(lignes)) {
+    if (!jour.items[+i]) throw new Error(`jours-lieux ${date} : la ligne ${i} n'existe pas`);
+    for (const id of ids) if (!LIEUX[id]) throw new Error(`jours-lieux ${date}[${i}] : lieu inconnu « ${id} »`);
+  }
+}
+
+// On accroche les lieux directement sur les lignes du programme : la page du
+// jour n'a plus qu'à lire les journées.
+for (const jour of DAYS) {
+  const lignes = JOURS_LIEUX[jour.date] || {};
+  jour.items = jour.items.map((it, i) => {
+    const ids = lignes[String(i)] || [];
+    return ids.length ? { ...it, lieux: ids } : it;
+  });
+}
+
+writeModule('data/lieux.js', 'Les lieux du programme, géolocalisés.', [
+  `export const LIEUX = Object.freeze(${j(LIEUX)});`,
+]);
+
 writeModule('data/days.js', 'Les 25 jours du voyage et les 30 journées type.', [
   arrayBlock('DAYS', DAYS),
   arrayBlock('TEMPLATES', TEMPLATES),

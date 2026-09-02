@@ -21,6 +21,13 @@ export function createMap(el, opts = {}) {
     ...opts.leaflet,
   });
 
+  // Une carte Leaflet sans vue ne s'affiche PAS du tout, et toute lecture de
+  // ses bornes lève « Set map center and zoom first ». Or le cadrage réel
+  // dépend de la taille du conteneur, qui vaut parfois 0 au moment de la
+  // création. On pose donc d'abord une vue par défaut sur le Japon central :
+  // au pire elle est grossière, jamais absente.
+  map.setView([35.4, 137.5], 6);
+
   L.tileLayer(`${ESRI}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`,
     { maxZoom: 16, attribution: ATTRIB }).addTo(map);
   L.tileLayer(`${ESRI}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`,
@@ -91,6 +98,34 @@ export function excursionLine(exc, steps) {
   });
 }
 
+/**
+ * Cadre la carte sur tous les points.
+ *
+ * Leaflet calcule le zoom depuis la taille du conteneur. Appelé avant que la
+ * mise en page ne soit faite — c'est le cas quand la carte est loin sous la
+ * ligne de flottaison — il tombe sur une largeur de 0 et zoome au maximum sur
+ * un point arbitraire. On recadre donc dès que le conteneur a une taille.
+ */
 export function fitAll(map, latlngs, padding = 46) {
-  if (latlngs.length) map.fitBounds(L.latLngBounds(latlngs), { padding: [padding, padding] });
+  if (!latlngs.length) return;
+  const el = map.getContainer();
+  const bornes = L.latLngBounds(latlngs);
+
+  const cadrer = () => {
+    map.invalidateSize(true);
+    map.fitBounds(bornes, { padding: [padding, padding], animate: false });
+  };
+
+  // Tant que le conteneur n'a pas de largeur, Leaflet ne peut pas calculer le
+  // zoom. On réessaie quelques fois plutôt qu'une seule : sur un téléphone
+  // lent, la mise en page arrive après le script. Au pire on garde la vue par
+  // défaut posée par createMap, qui montre au moins le Japon.
+  let restant = 12;
+  const tenter = () => {
+    if (el.clientWidth > 0) { cadrer(); return; }
+    if (restant-- > 0) requestAnimationFrame(tenter);
+  };
+  tenter();
+  if ('ResizeObserver' in window) new ResizeObserver(() => { if (el.clientWidth > 0) cadrer(); }).observe(el);
+  addEventListener('load', tenter);
 }
