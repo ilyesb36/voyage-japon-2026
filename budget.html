@@ -88,8 +88,18 @@ function bilan(items = ITEMS) {
   const avI = somme(items.filter((i) => payeur[i.key] === 'I'));
   const avM = somme(items.filter((i) => payeur[i.key] === 'M'));
   const flou = items.filter(sansPayeur);
+  // Ce que chacun a déjà mis : ce qu'il a avancé, plus la moitié de ce qui a été
+  // payé à deux — et, faute de mieux, la moitié de ce qui est payé sans qu'on
+  // sache par qui.
+  const moitie = (somme(items.filter((i) => payeur[i.key] === 'D')) + somme(flou)) / 2;
+  const part = total / 2;
   // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
-  return { total, paye, reste: total - paye, avI, avM, solde: (avI - avM) / 2, flou };
+  return {
+    total, paye, reste: total - paye, avI, avM, flou,
+    solde: (avI - avM) / 2,
+    resteI: Math.max(0, part - avI - moitie),
+    resteM: Math.max(0, part - avM - moitie),
+  };
 }
 
 // « Mathilde doit 223 € à Ilyès » — la même phrase pour le voyage et pour
@@ -125,7 +135,7 @@ function renderBilan() {
       <div>
         <dt>Reste à payer</dt>
         <dd class="data bilan__fort">${eur(b.reste)}</dd>
-        <dd class="mut"><span class="data">${eur(b.reste / 2)}</span> chacun</dd>
+        <dd class="mut">Ilyès <span class="data">${eur(b.resteI)}</span> · Mathilde <span class="data">${eur(b.resteM)}</span></dd>
       </div>
       <div>
         <dt>Déjà payé</dt>
@@ -185,15 +195,22 @@ function renderDep() {
   });
 }
 
-// Le solde du poste, à droite de son en-tête : ce que l'un a avancé pour
-// l'autre sur les hôtels, sur les billets… Vide tant que personne n'a rien payé.
+// Sous le nom du poste, tout ce qu'on veut savoir de lui sans ouvrir une ligne :
+// ce qu'il reste à payer (et par tête), ce qui est payé, et qui doit quoi à
+// l'autre sur ce poste — les hôtels surtout, c'est là qu'on se rembourse.
 function posteSolde(cat) {
   const b = bilan(cat.items);
+  const gauche = b.reste === 0
+    ? `<span class="dep__ok">Tout est payé</span>`
+    : `<span>Reste <b class="data dep__reste">${eur(b.reste)}</b>
+         <span class="mut">· Ilyès <span class="data">${eur(b.resteI)}</span> · Mathilde <span class="data">${eur(b.resteM)}</span>${
+           b.paye ? ` · payé <span class="data">${eur(b.paye)}</span>` : ''}</span></span>`;
   const phrase = phraseSolde(b);
-  if (!phrase) return '';
-  const detail = (b.avI || b.avM)
-    ? `<span class="mut">I <span class="data">${eur(b.avI)}</span> · M <span class="data">${eur(b.avM)}</span></span>` : '';
-  return `${detail}<span>${phrase}</span>`;
+  const droite = phrase
+    ? `<span class="dep__entre">${(b.avI || b.avM)
+        ? `<span class="mut">I <span class="data">${eur(b.avI)}</span> · M <span class="data">${eur(b.avM)}</span> → </span>` : ''}${phrase}</span>`
+    : '';
+  return gauche + droite;
 }
 
 function ligne(i) {

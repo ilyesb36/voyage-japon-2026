@@ -2022,7 +2022,10 @@
   }
   .dep__solde:empty { display: none; }
   .dep__solde b { color: var(--acc); font-weight: 700; }
+  .dep__solde .dep__reste { font-size: var(--t-sm); }
   .dep__solde .mut { font-weight: 400; }
+  .dep__ok { color: var(--pine); font-weight: 600; }
+  .dep__entre { text-align: right; }
   .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
   .dep__pied .dep__n { font-size: var(--t-md); }
 
