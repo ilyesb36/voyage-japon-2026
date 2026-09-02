@@ -10,6 +10,7 @@
 export const AVANT = Object.freeze([
   {
     id: 'vjw',
+    deadline: '2026-11-05',
     title: 'Visit Japan Web',
     what: "Pré-enregistrement immigration et douane. On remplit en ligne, on obtient deux QR codes à présenter à l'arrivée — ça évite les formulaires papier et la file.",
     when: 'Dans les jours avant le départ',
@@ -18,6 +19,7 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'esim',
+    deadline: '2026-11-01',
     title: 'eSIM',
     what: "À commander avant de partir et à activer une fois posés à Haneda. Compter 10–25 € pour 20 jours de data. Le wifi des konbini dépanne, mais pas pour naviguer.",
     when: 'Une semaine avant',
@@ -25,6 +27,7 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'suica',
+    deadline: '2026-11-06',
     title: 'Suica dans le Wallet',
     what: "Sur iPhone, la Suica s'ajoute directement dans Wallet et se recharge à la carte bancaire — pas besoin de passer par un guichet. Elle sert au métro, aux trains locaux, aux konbini et aux casiers de gare.",
     when: 'Avant de partir',
@@ -32,6 +35,7 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'cartes',
+    deadline: '2026-11-06',
     title: 'Cartes hors-ligne',
     what: "Télécharger les zones Tokyo, Kyoto, Osaka, Kanazawa et Hakone dans Google Maps. Le site aussi fonctionne hors-ligne — le bouton est sur la page Pratique.",
     when: 'Avant de partir',
@@ -39,6 +43,7 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'pass',
+    deadline: '2026-11-01',
     canal: 'en ligne',
     url: 'https://www.hakonenavi.jp/international/en/discount_passes/free_pass',
     commentReserver: 'HAKONE FREEPASS : achat en ligne avant de partir sous forme de pass numérique (smartphone) via EMot Online Tickets (emot-tickets.jp) ou Klook. Tarifs 2026 depuis Shinjuku : 2 jours 7 100 ¥ / 3 jours 7 500 ¥ (depuis Odawara : 6 000 / 6 400 ¥). Le pass numérique s\'active dans l\'appli EMot, AUCUN bon papier à échanger ; à défaut, version papier à retirer via bon aux Odakyu Sightseeing Service Centers (Shinjuku/Odawara). NIKKO PASS WORLD HERITAGE AREA : 2 jours, 3 000 ¥ adulte / 1 500 ¥ enfant. Achat en ligne officiel via Tobu (https://www.tobu.co.jp/en/ticket/nikko/city.html) de J-90 à J-2, ou via Klook. La version papier s\'échange sur bon au Tobu Tourist Information Center d\'Asakusa ; une version numérique existe (même prix, sans échange).',
@@ -48,22 +53,20 @@ export const AVANT = Object.freeze([
     tag: null,
   },
   {
-    id: 'especes',
-    title: 'Espèces',
-    what: "Le Japon reste très liquide : petits restaurants, temples, marchés. Les distributeurs des 7-Eleven et de la Japan Post acceptent les cartes étrangères, 24h/24. Prévoir du liquide dès l'aéroport.",
-    when: 'Sur place',
-    tag: null,
-  },
-  {
     id: 'medicaments',
+    deadline: '2026-10-15',
     title: 'Médicaments : la douane est stricte',
     what: "Le Japon interdit à l'importation la pseudoéphédrine (beaucoup de traitements du rhume) et la codéine. Au-delà d'un mois de traitement, ou pour tout produit sensible, il faut un certificat « Yakkan Shoumei », à demander par mail au moins deux semaines avant. Vérifier chaque boîte de la trousse.",
     when: 'Mi-octobre au plus tard',
-    url: 'https://www.mhlw.go.jp/english/policy/health-medical/pharmaceuticals/01.html',
+    url: 'https://impconf.mhlw.go.jp/',
+    tel: '+81-48-740-0800',
+    commentReserver: "Demande en ligne sur le portail, ou par mail au bureau régional Kanto-Shinetsu (yakkan@mhlw.go.jp) pour une arrivée à Haneda. Compter au moins deux semaines.",
+    hard: true,
     tag: 'Refoulé à la douane sinon',
   },
   {
     id: 'assurance',
+    deadline: '2026-10-25',
     title: 'Assurance santé',
     what: "La carte européenne ne vaut rien au Japon : les soins sont payés d'avance, et une hospitalisation chiffre vite. Vérifier ce que couvre la carte bancaire — beaucoup de cartes premium incluent une couverture voyage, mais souvent limitée aux 90 premiers jours et sous conditions.",
     when: 'Avant de partir',
@@ -71,6 +74,7 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'prise',
+    deadline: '2026-11-07',
     title: 'Adaptateur type A',
     what: "Prises à deux lames plates, 100 V. La plupart des chargeurs récents encaissent le 100 V sans transformateur — vérifier la mention « 100–240 V » sur le bloc.",
     when: 'Dans la valise',
@@ -99,6 +103,10 @@ export const SURPLACE = Object.freeze([
   {
     title: 'Faire suivre les valises',
     what: "Le takkyubin envoie les bagages d'un hôtel au suivant pour ~2 000 ¥ la pièce, livrés le lendemain. Utile avant Hakone : le ryokan se rejoint en bus et en bateau.",
+  },
+  {
+    title: 'Espèces',
+    what: "Le Japon reste très liquide : petits restaurants, temples, marchés. Les distributeurs des 7-Eleven et de la Japan Post acceptent les cartes étrangères, 24h/24. Prévoir du liquide dès l'aéroport.",
   },
   {
     title: 'Taxe de séjour',
@@ -155,17 +163,6 @@ export const METEO = Object.freeze({
 // pas rester dans une liste de choses à faire, sinon la liste ne se lit plus.
 
 export const RESERVER = Object.freeze([
-  {
-    id: 'yakkan',
-    canal: 'en ligne',
-    url: 'https://impconf.mhlw.go.jp/',
-    tel: '+81-48-740-0800',
-    commentReserver: 'Certificat d\'importation de médicaments (輸入確認証, ex-« Yakkan Shoumei »). Pour une arrivée à Haneda (comme à Narita), le bureau régional compétent est le Kanto-Shinetsu Regional Bureau of Health and Welfare (関東信越厚生局). Demande en ligne via le système officiel impconf.mhlw.go.jp (compte à créer), ou par courriel/poste/fax avec le formulaire. Courriel du bureau : yakkan@mhlw.go.jp (y joindre diagnostic, principes actifs, posologie et quantités ; le formulaire en anglais est aussi téléchargeable sur les sites des ambassades du Japon, ex. fr.emb-japan.go.jp). Délai annoncé : déposer la demande au moins 1 semaine avant le départ, davantage en période de forte affluence / fêtes japonaises. Tél. du bureau : 048-740-0800.',
-    title: 'Certificat médicaments (Yakkan Shoumei), si besoin',
-    what: "Nécessaire au-delà d'un mois de traitement ou pour tout produit à codéine ou pseudoéphédrine. Deux semaines de délai minimum.",
-    deadline: '2026-10-15',
-    hard: true,
-  },
   {
     id: 'shibuya-sky',
     canal: 'en ligne',

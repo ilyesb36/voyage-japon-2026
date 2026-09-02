@@ -50,6 +50,16 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <div class="card cardlink" id="vers-budget"></div>
   </section>
 
+  <!-- Les réflexes de terrain vivaient sur la page du compte à rebours, où ils
+       ne servent à rien 67 jours avant le départ. Ils appartiennent ici. -->
+  <section class="section">
+    <div class="shead disc">
+      <h2>Bon à savoir</h2>
+      <p>Ce qui surprend un Français au Japon, et ce qui coûte cher à ignorer.</p>
+    </div>
+    <div class="know" id="know"></div>
+  </section>
+
   <section class="section">
     <div class="shead"><h2>Hors-ligne</h2></div>
     <div id="offline"></div>
@@ -58,6 +68,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <script type="module">
 import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, AMENITY_LABELS } from './data/trip.js';
+import { SURPLACE } from './data/pratique.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today, bindLightbox } from './app/ui.js';
 
 mountChrome('pratique.html');
@@ -148,6 +159,13 @@ q('hotels').innerHTML = HOTELS.map((h) => {
 }).join('');
 
 bindLightbox(q('hotels'));
+
+q('know').innerHTML = SURPLACE.map((k) => `
+  <div class="know__item${k.check ? ' know__item--check' : ''}">
+    <h3>${esc(k.title)}</h3>
+    <p>${esc(k.what)}</p>
+    ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
+  </div>`).join('');
 
 // --- l'argent vit sur sa propre page -----------------------------------------
 // Pratique faisait quatre choses : les lits, le budget, les paiements et le

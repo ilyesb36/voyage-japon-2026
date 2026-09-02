@@ -2057,24 +2057,46 @@
      plus léger. Ici on ne garde qu'un repli. */
   .repart__seg, .repart__legende li { --teinte: var(--mut); }
 
+  /* La légende ne redit pas les montants : les en-têtes de poste les portent,
+     avec la même teinte. Elle sert juste à nommer les segments et à y sauter. */
   .repart__legende {
-    list-style: none; margin: var(--s-4) 0 0; padding: 0;
-    display: grid; gap: var(--s-2);
+    display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4);
+    margin: var(--s-3) 0 0;
   }
-  .repart__legende li {
-    display: flex; align-items: baseline; gap: var(--s-3);
-    font-size: var(--t-sm); min-height: 28px;
+  .repart__cle {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    min-height: 32px; font-size: var(--t-sm);
+    color: var(--ink); text-decoration: none;
   }
-  .repart__pastille {
-    width: 9px; height: 9px; flex: none; border-radius: 2px;
-    background: var(--teinte);
+  .repart__cle::before {
+    content: ''; width: 9px; height: 9px; flex: none;
+    border-radius: 2px; background: var(--teinte);
   }
-  .repart__legende a { color: var(--ink); text-decoration: none; }
-  .repart__legende a:hover { color: var(--acc); text-decoration: underline; }
-  .repart__legende b { margin-left: auto; font-weight: 700; }
-  .repart__legende .mut { min-width: 3.2em; text-align: right; font-size: var(--t-xs); }
+  .repart__cle:hover { color: var(--acc); }
+  .repart__cle .mut { font-size: var(--t-xs); }
 
+  /* La ligne est devenue un label : une case, le libellé, le forfait s'il y en
+     a un, le montant. Un seul tableau au lieu de deux qui se répétaient. */
+  .budget__row { cursor: pointer; }
+  .budget__row > input[type="checkbox"] {
+    width: 18px; height: 18px; flex: none; cursor: pointer;
+  }
   .budget__row.is-regle .budget__amount { color: var(--pine); }
+  .budget__row.is-regle .budget__label b { color: var(--mut); }
+  .budget__row:hover { background: var(--paper-3); }
+
+  .budget__cat > header {
+    border-left: 3px solid var(--teinte, transparent);
+    padding-left: var(--s-3);
+    /* Le pourcentage ajouté à droite débordait sur téléphone : l'en-tête ne
+       savait pas passer à la ligne. */
+    flex-wrap: wrap;
+  }
+  .budget__cat > header .mut { min-width: 0; }
+  .budget__regle {
+    font-size: var(--t-xs); font-weight: 600; color: var(--pine);
+  }
+  .budget__part { min-width: 3em; text-align: right; font-size: var(--t-xs); }
 
   /* une carte qui n'est qu'un renvoi -------------------------------------- */
   .cardlink { padding: 0; overflow: hidden; }
@@ -2087,4 +2109,63 @@
   .cardlink__texte b { display: block; font-size: var(--t-md); }
   .cardlink__texte .mut { display: block; margin-top: var(--s-2); font-size: var(--t-sm); }
   .cardlink__fleche { margin-left: auto; font-size: var(--t-xl); color: var(--mut); flex: none; }
+}
+
+/* --- la liste d'avant-départ -------------------------------------------------
+   La page disait quatre fois la même chose : « À réserver », « À faire »,
+   « Réservations » et « Billets datés » se recouvraient, et deux entrées
+   étaient littéralement la même démarche écrite deux fois. Une seule liste
+   d'échéances, triée, cochable. Ce qui est fait descend et se réduit à une
+   ligne : on ne relit pas ce qu'on a déjà fait. */
+@layer components {
+  .avant { margin-top: var(--s-4); }
+
+  .avant__item {
+    display: grid; grid-template-columns: 28px 116px minmax(0, 1fr);
+    gap: var(--s-4); align-items: start;
+  }
+  .avant__item--nue { grid-template-columns: 28px minmax(0, 1fr); }
+
+  .avant__coche { display: flex; align-items: center; min-height: 40px; }
+  .avant__coche input { width: 20px; height: 20px; cursor: pointer; }
+
+  .avant__shot {
+    width: 116px; aspect-ratio: 4 / 3; object-fit: cover;
+    border-radius: var(--r-m); background: var(--paper-3);
+  }
+
+  /* fait : une ligne, barrée, et rien de plus */
+  .avant__item--fait {
+    grid-template-columns: 1fr; padding-bottom: var(--s-2);
+    border-bottom: 0;
+  }
+  .avant__item--fait .avant__coche {
+    gap: var(--s-3); min-height: 32px;
+    font-size: var(--t-sm); color: var(--mut);
+  }
+  .avant__item--fait span {
+    text-decoration: line-through;
+    text-decoration-color: var(--line-2);
+  }
+
+  @media (max-width: 560px) {
+    .avant__item { grid-template-columns: 28px minmax(0, 1fr); }
+    .avant__shot { display: none; }
+  }
+}
+
+/* --- le mode d'emploi, replié -----------------------------------------------
+   Le détail « où et comment réserver » sert au moment de réserver, pas en
+   survolant la liste : déplié, il triplait la hauteur de chaque entrée. */
+@layer components {
+  .avant__comment { margin-top: var(--s-3); }
+  .avant__comment > summary {
+    cursor: pointer; list-style: none;
+    min-height: 32px; display: inline-flex; align-items: center;
+    font-size: var(--t-xs); font-weight: 600; color: var(--acc);
+  }
+  .avant__comment > summary::-webkit-details-marker { display: none; }
+  .avant__comment > summary::after { content: ' ▾'; }
+  .avant__comment[open] > summary::after { content: ' ▴'; }
+  .avant__comment p { margin-top: var(--s-2); font-size: var(--t-xs); max-width: 62ch; }
 }

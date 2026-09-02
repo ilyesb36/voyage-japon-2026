@@ -27,20 +27,16 @@
     <div class="repart" id="repart"></div>
   </section>
 
+  <!-- Une seule liste. « Le détail » et « Ce qui est réglé » affichaient
+       exactement les mêmes lignes, l'une avec les montants, l'autre avec les
+       montants ET une case : il fallait faire défiler deux fois le même tableau
+       pour cocher ce qu'on venait de lire. -->
   <section class="section">
     <div class="shead">
-      <h2>Le détail</h2>
-      <p>Les montants variables s'ajustent, tout le reste suit.</p>
+      <h2>Ligne par ligne</h2>
+      <p>Coche ce qui est payé, ajuste les forfaits — tout suit. Mémorisé sur cet appareil.</p>
     </div>
     <div id="budget"></div>
-  </section>
-
-  <section class="section">
-    <div class="shead">
-      <h2>Ce qui est réglé</h2>
-      <p>Mémorisé sur cet appareil.</p>
-    </div>
-    <div id="payments"></div>
   </section>
 
   <section class="section">
@@ -141,6 +137,15 @@ function renderChiffres() {
 // d'attribut : `[style*="--i:0"]` aurait attrapé n'importe quel élément du site.
 const TEINTES = ['#B4451F', '#C9962F', '#6E8B4B', '#0F766E', '#6B5648', '#7A7168'];
 
+// La même teinte pour un poste, dans la barre et dans son en-tête : c'est ce
+// qui permet de sauter de l'une à l'autre sans relire le libellé.
+const TEINTE_CAT = Object.fromEntries(
+  BUDGET.categories
+    .map((c) => ({ id: c.id, montant: c.items.reduce((s, i) => s + lineTotal(i), 0) }))
+    .sort((a, b) => b.montant - a.montant)
+    .map((c, i) => [c.id, TEINTES[i] || TEINTES.at(-1)]),
+);
+
 function renderRepart() {
   const t = grandTotal();
   const parts = BUDGET.categories
@@ -156,120 +161,103 @@ function renderRepart() {
            style="width:${(p.montant / t) * 100}%; --teinte:${TEINTES[i] || TEINTES.at(-1)}"
            title="${esc(p.name)} — ${eur(p.montant)}"></a>`).join('')}
     </div>
-    <ul class="repart__legende">
+    <p class="repart__legende">
       ${parts.map((p, i) => `
-        <li style="--teinte:${TEINTES[i] || TEINTES.at(-1)}">
-          <span class="repart__pastille"></span>
-          <a href="#cat-${p.id}">${esc(p.name)}</a>
-          <b class="data">${eur(p.montant)}</b>
-          <span class="mut data">${Math.round((p.montant / t) * 100)} %</span>
-        </li>`).join('')}
-    </ul>`;
+        <a class="repart__cle" href="#cat-${p.id}" style="--teinte:${TEINTES[i] || TEINTES.at(-1)}">
+          ${esc(p.name)} <span class="data mut">${Math.round((p.montant / t) * 100)} %</span>
+        </a>`).join('')}
+    </p>`;
 }
 
-// --- le détail ----------------------------------------------------------------
+// --- la liste, une seule fois -------------------------------------------------
+// Chaque ligne porte tout ce qu'on veut d'elle : son libellé, son forfait
+// ajustable s'il y en a un, son montant, et l'état « payé ». Les deux tableaux
+// d'avant disaient la même chose à deux endroits.
 function renderBudget() {
+  const t = grandTotal();
+
   q('budget').innerHTML = `
     <div class="budget">
-      ${BUDGET.categories.map((cat) => `
-        <section class="budget__cat" id="cat-${cat.id}">
+      ${BUDGET.categories.map((cat) => {
+        const total = catTotal(cat);
+        const regle = cat.items.filter(estRegle).reduce((s, i) => s + lineTotal(i), 0);
+        return `
+        <section class="budget__cat" id="cat-${cat.id}" style="--teinte:${TEINTE_CAT[cat.id] || 'var(--mut)'}">
           <header>
             <h3>${esc(cat.name)}</h3>
             <span class="mut">${esc(cat.sub)}</span>
-            <b class="data" data-cat-total="${cat.id}">${eur(catTotal(cat))}</b>
+            ${regle > 0 ? `<span class="budget__regle" title="déjà payé">${eur(regle)} payés</span>` : ''}
+            <b class="data" data-cat-total="${cat.id}">${eur(total)}</b>
+            <span class="budget__part data mut">${Math.round((total / t) * 100)} %</span>
           </header>
-          ${cat.items.map((i) => `
-            <div class="budget__row${estRegle(i) ? ' is-regle' : ''}">
+          ${cat.items.map((i) => {
+            const bloque = prepaid.has(i.key);
+            const coche = bloque || !!paid[i.key];
+            return `
+            <label class="budget__row${coche ? ' is-regle' : ''}">
+              <input type="checkbox" data-key="${i.key}" ${coche ? 'checked' : ''} ${bloque ? 'disabled' : ''}
+                     aria-label="${esc(i.label)} — marquer comme payé">
               <span class="budget__label">
                 <b>${esc(i.label)}</b>
                 ${i.sub ? `<span class="mut">${esc(i.sub)}</span>` : ''}
+                ${bloque ? `<span class="mut">${i.settled ? 'payé' : 'réglé via Booking'}</span>` : ''}
               </span>
               ${i.dyn ? `
-                <label class="budget__input">
+                <span class="budget__input">
                   <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
                          aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
                   <span class="mut">${RATE_LABEL[i.dyn]}</span>
-                </label>` : ''}
+                </span>` : ''}
               <span class="budget__amount data" data-line="${i.key}">${eur(lineTotal(i))}</span>
-            </div>`).join('')}
-        </section>`).join('')}
+            </label>`;
+          }).join('')}
+        </section>`;
+      }).join('')}
     </div>`;
 
   q('budget').querySelectorAll('input[data-rate]').forEach((input) => {
+    // Un clic dans le champ ne doit pas cocher le label qui l'entoure.
+    input.addEventListener('click', (e) => e.preventDefault());
     input.addEventListener('input', () => {
       rates[input.dataset.rate] = Math.max(0, +input.value || 0);
       saveRates();
       refreshTotals();
     });
   });
+
+  q('budget').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      paid[cb.dataset.key] = cb.checked;
+      savePaid();
+      cb.closest('.budget__row').classList.toggle('is-regle', cb.checked);
+      refreshTotals();
+    });
+  });
 }
 
-// Les montants se rafraîchissent en place : redessiner tout le bloc ferait
-// perdre le focus du champ qu'on est en train de taper.
+// Les montants se rafraîchissent en place : redessiner le bloc ferait perdre le
+// focus du champ qu'on est en train de taper, et la case qu'on vient de cocher.
 function refreshTotals() {
+  const t = grandTotal();
   for (const cat of BUDGET.categories) {
     for (const i of cat.items) {
       const cell = q('budget').querySelector(`[data-line="${i.key}"]`);
       if (cell) cell.textContent = eur(lineTotal(i));
     }
     const catCell = q('budget').querySelector(`[data-cat-total="${cat.id}"]`);
-    if (catCell) catCell.textContent = eur(catTotal(cat));
+    if (catCell) {
+      catCell.textContent = eur(catTotal(cat));
+      const part = catCell.nextElementSibling;
+      if (part) part.textContent = `${Math.round((catTotal(cat) / t) * 100)} %`;
+    }
   }
   renderChiffres();
   renderRepart();
-  renderPayments();
-}
-
-// --- ce qui est réglé ---------------------------------------------------------
-function renderPayments() {
-  const lines = BUDGET.categories.flatMap((c) =>
-    c.items.map((i) => ({ ...i, cat: c.name, amount: lineTotal(i) })));
-  const settled = lines.filter(estRegle);
-  const sum = (ls) => ls.reduce((s, l) => s + l.amount, 0);
-  const pct = Math.round((sum(settled) / sum(lines)) * 100) || 0;
-
-  q('payments').innerHTML = `
-    <div class="pay">
-      <div class="prog__bar"><span style="width:${pct}%"></span></div>
-      <p class="pay__sum">
-        <b class="data">${eur(sum(settled))}</b> réglés sur <b class="data">${eur(sum(lines))}</b>
-        <span class="mut">· reste <span class="data">${eur(sum(lines) - sum(settled))}</span></span>
-      </p>
-      ${BUDGET.categories.map((c) => `
-        <section class="pay__cat">
-          <h3>${esc(c.name)}</h3>
-          ${c.items.map((i) => {
-            const locked = prepaid.has(i.key);
-            const on = locked || !!paid[i.key];
-            return `
-            <label class="pay__row${on ? ' is-paid' : ''}">
-              <input type="checkbox" data-key="${i.key}" ${on ? 'checked' : ''} ${locked ? 'disabled' : ''}>
-              <span class="pay__label">
-                <b>${esc(i.label)}</b>
-                <span class="mut">${locked ? (i.settled ? `payé · ${esc(i.sub || '')}` : 'réglé via Booking') : esc(i.sub || '')}</span>
-              </span>
-              <span class="data">${eur(lineTotal(i))}</span>
-            </label>`;
-          }).join('')}
-        </section>`).join('')}
-    </div>`;
-
-  q('payments').querySelectorAll('input[type=checkbox]:not(:disabled)').forEach((cb) => {
-    cb.addEventListener('change', () => {
-      paid[cb.dataset.key] = cb.checked;
-      savePaid();
-      renderPayments();
-      renderChiffres();
-      q('budget').querySelectorAll('.budget__row').forEach(() => {});
-      renderBudget();
-    });
-  });
 }
 
 renderChiffres();
 renderRepart();
 renderBudget();
-renderPayments();
 initReveal();
 </script>
 </body>

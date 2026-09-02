@@ -47,45 +47,34 @@ app.innerHTML = day ? during(day) : (away > 0 ? before() : after());
 if (document.getElementById('meteo')) paintMeteo();
 
 // --- avant le départ ----------------------------------------------------------
+// La page disait quatre fois la même chose : « À réserver », « À faire »,
+// « Réservations » et « Billets datés » se recouvraient largement — et deux
+// entrées, le certificat médicaments et le Yakkan Shoumei, étaient littéralement
+// la même démarche écrite deux fois. Tout tient désormais dans UNE liste
+// d'échéances, triée, cochable, avec son avancement.
 function before() {
-  const toGo = HOTELS.filter((h) => !h.paid);
-
   return `
   <header class="section countdown">
     <p class="eyebrow">Départ le ${formatDate(TRIP.start, { weekday: true })}</p>
     <h1><span class="countdown__n data">J−${away}</span></h1>
     <p class="hero__lede">
       ${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes, ${EXCURSIONS.length} excursions.
+      Les ${HOTELS.length} hébergements et les ${FLIGHTS.length} vols sont pris.
     </p>
   </header>
 
-  ${reserverBlock()}
-
   <section class="section">
-    <div class="shead"><h2>À faire</h2><p>Du plus lointain au plus proche du départ.</p></div>
-    <ol class="todo">
-      ${AVANT.map((t) => `
-        <li class="todo__item">
-          <div class="todo__head">
-            <h3>${esc(t.title)}</h3>
-            ${t.tag ? `<span class="todo__tag">${esc(t.tag)}</span>` : ''}
-            <span class="todo__when">${esc(t.when)}</span>
-          </div>
-          <p>${esc(t.what)}</p>
-          ${t.url ? `<p><a class="todo__link" href="${esc(t.url)}" target="_blank" rel="noopener">Ouvrir le site officiel</a></p>` : ''}
-        </li>`).join('')}
-    </ol>
+    <div id="avant"></div>
   </section>
 
+  ${RESERVATIONS.length ? `
   <section class="section">
-    <div class="shead"><h2>Réservations</h2></div>
-    <ul class="check">
-      <li class="is-done"><span aria-hidden="true">✓</span>Les ${HOTELS.length} hébergements sont confirmés</li>
-      <li class="is-done"><span aria-hidden="true">✓</span>Le ryokan de Hakone est validé</li>
-      <li class="is-done"><span aria-hidden="true">✓</span>Les vols sont pris — China Eastern via Shanghai</li>
-      <li><span aria-hidden="true">○</span>${toGo.length} hébergements à régler sur place ou avant — ${eur(toGo.reduce((s, h) => s + h.price, 0))}</li>
-    </ul>
-  </section>
+    <div class="shead">
+      <h2>${RESERVATIONS.length > 1 ? 'Billets datés' : 'Le billet daté'}</h2>
+      <p>Payé, à une heure précise. Rien d'autre dans le voyage n'a d'horaire aussi ferme.</p>
+    </div>
+    ${RESERVATIONS.map((r) => resaCard(r, { withDate: true })).join('')}
+  </section>` : ''}
 
   <section class="section">
     <div class="shead">
@@ -96,94 +85,120 @@ function before() {
     <div class="meteo" id="meteo">${meteoSkeleton()}</div>
   </section>
 
-  ${RESERVATIONS.length ? `
   <section class="section">
-    <div class="shead">
-      <h2>Billets datés</h2>
-      <p>Payés, à une heure précise. Ce sont les seuls rendez-vous du voyage qu'on ne peut pas déplacer.</p>
-    </div>
-    ${RESERVATIONS.map((r) => resaCard(r, { withDate: true })).join('')}
-  </section>` : ''}
-
-  ${knowBlock()}
-
-  <section class="section">
-    <div class="shead"><h2>Premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
+    <div class="shead"><h2>Le premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
     ${dayCard(DAYS[0])}
-    <p class="jour__liens"><a class="btn btn--ghost" href="jour.html?d=1">Cette journée sur la carte</a></p>
+    <p class="jour__liens">
+      <a class="btn btn--ghost" href="jour.html?d=1">Cette journée sur la carte</a>
+      <a class="btn btn--ghost" href="pratique.html">Ce qu'il faut savoir sur place</a>
+    </p>
   </section>`;
 }
 
-// « Résa conseillée » sans date ne veut rien dire. Ce bloc trie par échéance et
-// compte les jours qui restent : c'est la seule façon qu'une échéance soit lue
-// avant d'être dépassée. Ce qui est passé reste affiché, barré — l'effacer
-// donnerait l'illusion que tout va bien.
-function reserverBlock() {
-  const now = today();
-  const items = RESERVER.slice().sort((a, b) => a.deadline.localeCompare(b.deadline));
-  const restants = items.filter((r) => r.deadline >= now).length;
+// --- la liste des échéances ---------------------------------------------------
+// Démarches et réservations sont la même chose : quelque chose à faire avant une
+// date. Les séparer obligeait à lire deux listes pour savoir ce qui presse.
+// Ce qui est coché descend en bas, replié : on ne relit pas ce qui est fait.
+const faits = (() => {
+  try { return JSON.parse(localStorage.getItem('jp2026_faits') || '{}'); } catch { return {}; }
+})();
+const noteFait = () => localStorage.setItem('jp2026_faits', JSON.stringify(faits));
+
+function renderAvant() {
+  const cible = document.getElementById('avant');
+  if (!cible) return;
+
+  const tout = [...AVANT, ...RESERVER]
+    .map((x) => ({ ...x, fait: !!faits[x.id] }))
+    .sort((a, b) => (a.fait - b.fait) || a.deadline.localeCompare(b.deadline));
+
+  const restants = tout.filter((x) => !x.fait);
+  const pct = Math.round(((tout.length - restants.length) / tout.length) * 100);
+
+  cible.innerHTML = `
+    <div class="shead">
+      <h2>Avant de partir</h2>
+      <p>Démarches et réservations, dans l'ordre des échéances.</p>
+      <span class="shead__meta data">${tout.length - restants.length} sur ${tout.length}</span>
+    </div>
+    <div class="prog__bar"><span style="width:${pct}%"></span></div>
+    <ol class="todo avant">
+      ${tout.map((x) => ligneAvant(x)).join('')}
+    </ol>`;
+
+  cible.querySelectorAll('input[data-fait]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      faits[cb.dataset.fait] = cb.checked;
+      noteFait();
+      renderAvant();
+    });
+  });
+}
+
+function ligneAvant(x) {
+  const j = daysBetween(now, x.deadline);
+  const passe = j < 0;
+  const urgent = !passe && j <= 14;
+
+  // La fiche du guide fournit la photo et le lieu : « réserver Rurikō-in » ne
+  // dit rien si on ne sait pas ce que c'est.
+  const spot = x.spotId ? SPOTS.find((s) => s.id === x.spotId) : null;
+  const hotel = x.hotelId ? HOTELS.find((h) => h.id === x.hotelId) : null;
+  const ville = spot ? CITIES[spot.cityId] : hotel ? CITIES[hotel.cityId] : null;
+  const img = spot?.img || hotel?.images?.[0] || null;
+  const maps = spot?.maps || hotel?.maps || null;
+
+  const brut = spot?.area || hotel?.address || null;
+  const plat = (v) => (v || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const utile = brut && plat(brut) !== plat(ville?.name)
+    && !plat(spot?.name || hotel?.name).includes(plat(brut));
+  const lieu = [ville?.name, utile ? brut.charAt(0).toUpperCase() + brut.slice(1) : null]
+    .filter(Boolean).join(' · ');
+
+  if (x.fait) {
+    return `
+    <li class="avant__item avant__item--fait">
+      <label class="avant__coche">
+        <input type="checkbox" data-fait="${esc(x.id)}" checked>
+        <span>${esc(x.title)}</span>
+      </label>
+    </li>`;
+  }
 
   return `
-  <section class="section">
-    <div class="shead">
-      <h2>À réserver, et avant quand</h2>
-      <p>Novembre est le pic des momiji : c'est la période la plus tendue de l'année au Japon.</p>
-      <span class="shead__meta data">${restants} sur ${items.length}</span>
+  <li class="avant__item${img ? '' : ' avant__item--nue'}">
+    <label class="avant__coche" aria-label="Marquer « ${esc(x.title)} » comme fait">
+      <input type="checkbox" data-fait="${esc(x.id)}">
+    </label>
+    ${img ? `<img class="avant__shot" src="${esc(img)}" alt="" loading="lazy" decoding="async">` : ''}
+    <div class="avant__corps">
+      <div class="todo__head">
+        <h3>${esc(x.title)}</h3>
+        ${x.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
+        ${x.tag ? `<span class="todo__tag">${esc(x.tag)}</span>` : ''}
+        ${x.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
+        <span class="todo__when${urgent ? ' is-urgent' : ''}">
+          ${passe ? `échéance passée (${formatDate(x.deadline)})`
+                  : `avant le ${formatDate(x.deadline)} · J−${j}`}
+        </span>
+      </div>
+      ${lieu ? `<p class="resa-item__ou mut">${esc(lieu)}</p>` : ''}
+      ${spot?.blurb ? `<p class="resa-item__quoi">${esc(spot.blurb)}</p>` : ''}
+      <p>${esc(x.what)}</p>
+      ${x.forDate ? `<p class="mut">Pour la journée du ${formatDate(x.forDate, { weekday: true })}.</p>` : ''}
+      <p class="resa-item__actions">
+        ${x.url ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
+          x.canal === 'téléphone' ? 'Voir le numéro' : x.canal ? 'Réserver' : 'Ouvrir le site officiel'}</a>` : ''}
+        ${x.tel ? `<a class="btn btn--ghost" href="tel:${esc(x.tel.replace(/[^+\d]/g, ''))}">${esc(x.tel)}</a>` : ''}
+        ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
+      </p>
+      ${x.commentReserver ? `
+      <details class="avant__comment">
+        <summary>Comment s'y prendre</summary>
+        <p class="mut">${esc(x.commentReserver)}</p>
+      </details>` : ''}
     </div>
-    <ol class="todo">
-      ${items.map((r) => {
-        const j = daysBetween(now, r.deadline);
-        const passe = j < 0;
-        const urgent = !passe && j <= 14;
-        // La fiche du guide fournit la photo, la description et l'adresse :
-        // « réserver Rurikō-in » ne dit rien si on ne sait pas ce que c'est.
-        const spot = r.spotId ? SPOTS.find((x) => x.id === r.spotId) : null;
-        const hotel = r.hotelId ? HOTELS.find((x) => x.id === r.hotelId) : null;
-        const ville = spot ? CITIES[spot.cityId] : hotel ? CITIES[hotel.cityId] : null;
-        const img = spot?.img || hotel?.images?.[0] || null;
-        const maps = spot?.maps || hotel?.maps || null;
-        // `area` répète tantôt la ville (« Tokyo · tokyo »), tantôt le lieu
-        // lui-même (« Rurikō-in · rurikō-in »). On ne le garde que s'il nomme
-        // vraiment un quartier, et on lui remet sa majuscule.
-        const brut = spot?.area || hotel?.address || null;
-        const plat = (x) => (x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const utile = brut
-          && plat(brut) !== plat(ville?.name)
-          && !plat(spot?.name || hotel?.name).includes(plat(brut));
-        const quartier = utile ? brut.charAt(0).toUpperCase() + brut.slice(1) : null;
-        const lieu = [ville?.name, quartier].filter(Boolean).join(' · ');
-
-        return `
-        <li class="todo__item resa-item${img ? '' : ' resa-item--nue'}${passe ? ' todo__item--past' : ''}">
-          ${img ? `<img class="resa-item__shot" src="${esc(img)}" alt="" loading="lazy" decoding="async">` : ''}
-          <div class="resa-item__body">
-            <div class="todo__head">
-              <h3>${esc(r.title)}</h3>
-              ${r.hard ? '<span class="todo__tag">date limite ferme</span>' : ''}
-              ${r.check ? '<span class="todo__tag todo__tag--soft">à vérifier</span>' : ''}
-              <span class="todo__when${urgent ? ' is-urgent' : ''}">
-                ${passe ? `échéance passée (${formatDate(r.deadline)})`
-                        : `avant le ${formatDate(r.deadline)} · J−${j}`}
-              </span>
-            </div>
-            ${lieu ? `<p class="resa-item__ou mut">${esc(lieu)}</p>` : ''}
-            ${spot?.blurb ? `<p class="resa-item__quoi">${esc(spot.blurb)}</p>` : ''}
-            <p>${esc(r.what)}</p>
-            ${spot ? `<p class="mut resa-item__prat">
-              ${[spot.duration, spot.budget, spot.when].filter((x) => x && x !== '—').map(esc).join(' · ')}
-            </p>` : ''}
-            ${r.forDate ? `<p class="mut">Pour la journée du ${formatDate(r.forDate, { weekday: true })}.</p>` : ''}
-            <p class="resa-item__actions">
-              ${r.url ? `<a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.canal === 'téléphone' ? 'Voir le numéro' : 'Réserver')}</a>` : ''}
-              ${r.tel ? `<a class="btn btn--ghost" href="tel:${esc(r.tel.replace(/[^+\d]/g, ''))}">${esc(r.tel)}</a>` : ''}
-              ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
-            </p>
-            ${r.commentReserver ? `<p class="resa-item__comment mut">${esc(r.commentReserver)}</p>` : ''}
-          </div>
-        </li>`;
-      }).join('')}
-    </ol>
-  </section>`;
+  </li>`;
 }
 
 // Le même bloc sert avant et pendant : c'est sur place qu'il compte le plus.
@@ -209,19 +224,18 @@ function during(d) {
   const c = step ? CITIES[step.cityId] : null;
   const tomorrow = DAYS[DAYS.indexOf(d) + 1];
 
-  // Le trajet à prendre aujourd'hui, s'il y en a un : c'est l'information
-  // qu'on veut voir en premier un jour de transfert.
+  // Le trajet du jour, s'il y en a un : c'est l'information qu'on veut voir en
+  // premier un jour de transfert.
   const leg = SEGMENTS.find((g) => {
     const to = STEPS.find((s) => s.id === g.toStepId);
     return to && to.from === d.date;
   });
-
-  const lastDay = d.date === TRIP.end || d.n === DAYS.length;
-
-  // Le jour du vol, l'heure de décollage est l'information de la journée. Elle
-  // n'était affichée nulle part dans le mode « pendant le voyage ».
   const volDuJour = FLIGHTS.find((f) => f.date === d.date) || null;
 
+  // Le détail de la journée — les arrêts, la carte, le parcours dans Maps — vit
+  // sur jour.html. Le répéter ici obligeait à faire défiler deux fois la même
+  // chose. Cette page ne garde que ce qui a une heure : le train à prendre, le
+  // vol, le rendez-vous payé, le temps qu'il fait, et le lit du soir.
   return `
   <header class="section today" ${c ? `style="--c:${c.color}"` : ''}>
     <p class="eyebrow">${formatDate(d.date, { weekday: true })} · jour ${d.n} sur ${DAYS.length}</p>
@@ -244,10 +258,6 @@ function during(d) {
         à ${esc(hotel.name)}.</p>` : ''}
     </div>
   </section>` : ''}
-
-  <section class="section">
-    <div id="meteo-jour"></div>
-  </section>
 
   ${volDuJour ? `
   <section class="section">
@@ -273,13 +283,29 @@ function during(d) {
   </section>` : ''}
 
   <section class="section">
-    <div class="shead"><h2>Programme</h2></div>
-    ${dayCard(d)}
+    <div id="meteo-jour"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead">
+      <h2>La journée</h2>
+      <span class="shead__meta data">${d.items.length} lignes</span>
+    </div>
+    <div class="card cardlink">
+      <a class="cardlink__in" href="jour.html?d=${d.n}">
+        <span class="cardlink__texte">
+          <b>${esc(d.title)}</b>
+          <span class="mut">Les arrêts dans l'ordre, sur une carte, et tout le parcours
+            en un lien Google Maps.</span>
+        </span>
+        <span class="cardlink__fleche" aria-hidden="true">›</span>
+      </a>
+    </div>
   </section>
 
   ${hotel ? `
   <section class="section">
-    <div class="shead"><h2>${lastDay ? 'Départ' : 'Ce soir'}</h2></div>
+    <div class="shead"><h2>${d.date === TRIP.end || d.n === DAYS.length ? 'Départ' : 'Ce soir'}</h2></div>
     <div class="card tonight">
       <div class="tonight__body">
         <h3>${esc(hotel.name)}</h3>
@@ -289,6 +315,7 @@ function during(d) {
           <div><dt>Départ</dt><dd class="data">${esc(hotel.checkOut)}</dd></div>
           <div><dt>Chambre</dt><dd>${esc(hotel.room)}</dd></div>
         </dl>
+        ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
         <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
       </div>
     </div>
@@ -298,17 +325,18 @@ function during(d) {
   <section class="section">
     <div class="shead"><h2>Demain</h2><span class="shead__meta data">${formatDate(tomorrow.date)}</span></div>
     ${resaStrip(tomorrow.date)}
-    ${dayCard(tomorrow)}
+    <div class="card cardlink">
+      <a class="cardlink__in" href="jour.html?d=${tomorrow.n}">
+        <span class="cardlink__texte">
+          <b>${esc(tomorrow.title)}</b>
+          <span class="mut">${tomorrow.items.length} lignes de programme.</span>
+        </span>
+        <span class="cardlink__fleche" aria-hidden="true">›</span>
+      </a>
+    </div>
   </section>` : ''}
 
-  ${knowBlock()}
-
-  <section class="section">
-    <p class="jour__liens">
-      <a class="btn" href="jour.html?d=${d.n}">La journée sur la carte</a>
-      <a class="btn btn--ghost" href="itineraire.html#jour-${d.n}">Voir tout l'itinéraire</a>
-    </p>
-  </section>`;
+  ${knowBlock()}`;
 }
 
 // --- après le voyage ----------------------------------------------------------
@@ -398,6 +426,11 @@ if (cible && day && day.stepId) {
     });
   }
 }
+
+// La liste des échéances est montée après coup : elle se redessine à chaque
+// case cochée. L'appel vit ici, après les déclarations qu'elle utilise — plus
+// haut, `faits` était encore dans sa zone morte et la liste restait vide.
+renderAvant();
 
 initReveal();
 initCoverParallax();

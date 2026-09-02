@@ -312,6 +312,21 @@ assert('les démarches sans date de visite sont bouclées avant le départ',
   RESERVER.filter((r) => !r.forDate && r.deadline >= TRIP.start).map((r) => r.id).join(', '));
 assert('aucune échéance après la fin du voyage',
   RESERVER.every((r) => r.deadline <= TRIP.end));
+
+// Les deux listes sont affichées comme une seule, triée par échéance : sans
+// date sur chaque démarche, l'ordre n'aurait aucun sens.
+const sansEcheance = AVANT.filter((a) => !a.deadline).map((a) => a.id);
+assert('chaque démarche a une échéance', sansEcheance.length === 0, sansEcheance.join(', '));
+assert('chaque démarche est à faire avant le départ',
+  AVANT.every((a) => a.deadline <= TRIP.start),
+  AVANT.filter((a) => a.deadline > TRIP.start).map((a) => a.id).join(', '));
+
+// « médicaments » et « yakkan » étaient la même démarche, une dans chaque
+// liste. Fusionnées, elles ne doivent pas se remettre à cohabiter.
+const doubles = [...AVANT, ...RESERVER]
+  .filter((x) => /yakkan|médicament/i.test(x.title)).map((x) => x.id);
+assert('le certificat médicaments n\'apparaît qu\'une fois',
+  doubles.length === 1, doubles.join(', '));
 assert('chaque échéance précède la journée concernée',
   RESERVER.every((r) => !r.forDate || r.deadline < r.forDate),
   RESERVER.filter((r) => r.forDate && r.deadline >= r.forDate).map((r) => r.id).join(', '));

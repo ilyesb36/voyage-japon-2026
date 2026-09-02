@@ -15,7 +15,7 @@
 
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
 // le cache sert l'ancienne version et personne ne voit la mise à jour.
-const V = 'v21';
+const V = 'v22';
 const SHELL = `jp-shell-${V}`;
 const MEDIA = `jp-media-${V}`;
 const TILES = `jp-tiles-${V}`;
