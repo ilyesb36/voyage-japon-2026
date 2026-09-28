@@ -2248,3 +2248,50 @@
     box-shadow: inset 0 0 0 1px #2E5B45;
   }
 }
+
+
+/* ==========================================================================
+   v8 — allègement. Onglets de page, modale des journées type, liste « à manger »,
+   accueil compact, guide paginé. Uniquement des tokens de la charte : aucune
+   couleur, taille ou rayon en dur, pour que le mode sombre suive tout seul.
+   ========================================================================== */
+.ptabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 0 var(--s-6); }
+.ptabs::-webkit-scrollbar { display: none; }
+.ptabs__n { margin-left: var(--s-2); font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); }
+
+.tpldlg { position: fixed; inset: 0; margin: auto; height: fit-content; width: min(92vw, 600px); max-height: 85vh;
+  padding: 0; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: var(--ink); box-shadow: var(--sh-3); }
+.tpldlg::backdrop { background: rgb(15 15 15 / 0.45); }
+.tpldlg__in { padding: var(--s-5); overflow: auto; max-height: 85vh; }
+.tpldlg__x { position: absolute; top: var(--s-3); right: var(--s-3); border: 0; background: none; color: var(--mut); font-size: var(--t-lg); line-height: 1; cursor: pointer; }
+.tpldlg__x:hover { color: var(--ink); }
+.tpldlg__img { width: 100%; aspect-ratio: 3 / 1; object-fit: cover; border-radius: var(--r-m); margin-bottom: var(--s-4); }
+.tpldlg__kicker { font-family: var(--f-data); font-size: var(--t-xs); letter-spacing: 0.05em; text-transform: uppercase; color: var(--mut); margin: 0 0 var(--s-1); }
+.tpldlg__head h3 { font-size: var(--t-lg); margin: 0; }
+.tpldlg__steps { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; gap: var(--s-4); }
+.tpldlg__steps li { display: grid; grid-template-columns: 3.5rem 1fr; gap: var(--s-3); align-items: baseline; }
+.tpldlg__steps p { margin: 0; }
+.tpldlg__h { font-family: var(--f-data); font-size: var(--t-sm); color: var(--acc); }
+.tpldlg__note { font-size: var(--t-sm); color: var(--mut); margin-top: var(--s-1) !important; }
+.tpldlg__links { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0 0; }
+
+.eatgrp { margin: var(--s-6) 0 var(--s-2); }
+.eatgrp h3 { font-size: var(--t-md); margin: 0 0 var(--s-2); }
+.eat { display: grid; grid-template-columns: auto auto 1fr; gap: var(--s-3); align-items: baseline; padding: var(--s-3) 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.eat input { accent-color: var(--acc); }
+.eat__jp { margin-left: var(--s-2); font-size: var(--t-sm); color: var(--mut); }
+.eat__d { grid-column: 3; margin: 0; font-size: var(--t-sm); color: var(--mut); }
+.eat.is-done b { text-decoration: line-through; color: var(--mut); }
+
+/* Accueil : les six étapes en grille plutôt qu'en zigzag pleine largeur (9 écrans → 4). */
+.cities { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6) var(--s-5);
+  max-width: var(--wrap); margin: var(--s-7) auto; padding-inline: var(--s-5); }
+.cities .city { display: flex; flex-direction: column; gap: var(--s-3); padding: 0; margin: 0; max-width: none; align-items: stretch; }
+.cities .city:nth-child(even) .city__shot { order: 0; }
+.cities .city__text h3 { font-size: var(--t-xl); }
+@media (max-width: 900px) { .cities { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .cities { grid-template-columns: 1fr; } }
+
+/* Guide : cartes sans photo plus basses, et « voir plus » plutôt que 414 cartes d'un bloc. */
+.spot .thumb.thumb--nue { aspect-ratio: auto; height: 4.5rem; }
+.more { display: flex; justify-content: center; margin: var(--s-6) 0 0; }

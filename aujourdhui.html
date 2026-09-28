@@ -232,8 +232,8 @@ function ligneAvant(x) {
           <span class="mut">${esc(meta)}</span>
         </span>
         <span class="ech__quand">
-          <b class="data">${passe ? 'passée' : `J−${j}`}</b>
-          <span class="mut">${court(x.deadline)}</span>
+          <b class="data">${passe ? 'passée' : `avant le ${court(x.deadline)}`}</b>
+          <span class="mut">${passe ? court(x.deadline) : j === 0 ? "aujourd'hui" : `dans ${j} j`}</span>
         </span>
       </summary>
       <div class="ech__detail${img ? '' : ' ech__detail--nue'}">

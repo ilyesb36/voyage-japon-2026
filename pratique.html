@@ -15,7 +15,7 @@
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
   document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
 </script>
-<style>.ptabs{display:flex;gap:4px;padding:4px;background:var(--accsoft,#EDF2EA);border-radius:12px;width:fit-content;max-width:100%;overflow-x:auto;margin:6px 0 22px;scrollbar-width:none}.ptabs::-webkit-scrollbar{display:none}.ptabs button{border:0;background:transparent;padding:8px 16px;border-radius:9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;color:inherit;opacity:.65;white-space:nowrap;transition:background .15s,opacity .15s}.ptabs button:hover{opacity:.9}.ptabs button[aria-selected="true"]{background:var(--card,#fff);opacity:1;box-shadow:0 1px 3px rgba(0,0,0,.08)}.ptabs__n{font-size:12px;opacity:.55;margin-left:6px;font-weight:400}@media (max-width:680px){.ptabs{width:100%}.ptabs button{flex:1;padding:8px 10px}}</style></head>
+</head>
 <body>
 
 <!-- L'ouverture est une photo de la vraie réservation — le bain extérieur du
@@ -36,15 +36,6 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <header class="section">
     <p class="hero__lede" id="lede"></p>
   </header>
-
-  <section class="section">
-    <div class="shead disc">
-      <h2>À réserver avant de partir</h2>
-      <p>Les créneaux qui partent vite. Les six hôtels sont confirmés, rien à trancher de ce côté-là.</p>
-      <span class="shead__meta" id="todo-meta"></span>
-    </div>
-    <div id="todolist"></div>
-  </section>
 
   <section class="section">
     <div class="shead">
@@ -270,52 +261,20 @@ if ('serviceWorker' in navigator) {
   q('off-state').textContent = 'Indisponible sur ce navigateur';
 }
 </script>
-<style>
-.todo{display:grid;grid-template-columns:auto auto 1fr;gap:12px;align-items:baseline;padding:11px 14px;border:1px solid var(--line,#E9E7E3);border-radius:12px;margin:8px 0;cursor:pointer;background:var(--card,#fff)}
-.todo input{accent-color:var(--acc,#5F7F52)}
-.todo__date{font-weight:600;font-size:13px;background:var(--accsoft,#EDF2EA);border-radius:8px;padding:3px 8px;white-space:nowrap}
-.todo--late .todo__date{background:#FBE4E4;color:#C4554D}
-.todo--soon .todo__date{background:#FAEBDD;color:#C77D48}
-.todo__note{grid-column:3;font-size:13px;opacity:.7;margin:2px 0 0}
-.todo.is-done{opacity:.5}.todo.is-done b{text-decoration:line-through}
-</style>
 <script>
 (function(){
-  var ITEMS=[
-   {id:'teamlab',d:'2026-10-30',t:'Billets teamLab (Planets ou Borderless)',n:'Créneaux datés, souvent complets 1-2 semaines à l’avance sur les bons horaires.'},
-   {id:'ateliers',d:'2026-10-31',t:'Ateliers si tentés : baguettes Mogami (Otonami), teinture indigo, wagashi AN Tokyo',n:'Peu de créneaux par mois — réserver tôt en ligne.'},
-   {id:'restos',d:'2026-11-08',t:'Restos à réserver : VIEW & DINING THE SKY (TableCheck) · Sushi Tokyo Ten · Sushi Koike au dîner · Sushi Tomohiro · Takano (mar 1ᵉʳ déc midi)',n:'Tout sous 100 € par tête. Les créneaux ouvrent ~1 mois avant — mettre un rappel. The Sky facture 100 % si annulation après 17h la veille.'},
-   {id:'shink',d:'2026-11-11',t:'Sièges réservés Tokyo → Kanazawa du samedi 14 nov (Eki-Net)',n:'Le Hokuriku shinkansen se remplit le week-end — réserver quelques jours avant. Et prévenir Center Point si arrivée après 19h.'}
-  ];
-  var KEY='jp2026_todo'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
-  var today=new Date(); today.setHours(0,0,0,0);
-  var el=document.getElementById('todolist'); if(!el)return;
-  function fmt(d){var x=new Date(d+'T12:00:00');return x.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});}
-  el.innerHTML=ITEMS.map(function(x){
-    var dd=new Date(x.d+'T23:59:00'); var diff=Math.ceil((dd-today)/86400000);
-    var cls=done[x.id]?' is-done':(diff<0?' todo--late':(diff<=10?' todo--soon':''));
-    var badge=fmt(x.d)+(diff>=0?' · J−'+diff:' · passé');
-    return '<label class="todo'+cls+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'><span class="todo__date">'+badge+'</span><b>'+x.t+'</b><p class="todo__note">'+x.n+'</p></label>';
-  }).join('');
-  function meta(){var ok=ITEMS.filter(function(x){return done[x.id];}).length;document.getElementById('todo-meta').textContent=ok+' / '+ITEMS.length+' réglés';}
-  el.addEventListener('change',function(e){var cb=e.target.closest('input[data-id]');if(!cb)return;done[cb.dataset.id]=cb.checked;if(!cb.checked)delete done[cb.dataset.id];try{localStorage.setItem(KEY,JSON.stringify(done));}catch(err){}cb.closest('.todo').classList.toggle('is-done',cb.checked);meta();});
-  meta();
-})();
-</script>
-<script>
-(function(){
-  var CFG=[["reserver","À réserver",["À réserver avant de partir"]],["hotels","Hôtels",["Hébergements"]],["infos","Bon à savoir",["Bon à savoir","L'argent","Hors-ligne"]]];
+  var CFG=[["hotels","Hôtels",["Hébergements"]],["argent","L'argent",["L'argent"]],["infos","Bon à savoir",["Bon à savoir","Hors-ligne"]]];
   var secs=[].slice.call(document.querySelectorAll("main > section.section"));
   var h=function(s){var x=s.querySelector("h2");return x?x.textContent.trim():"";};
   var groups=CFG.map(function(c){return {id:c[0],label:c[1],els:secs.filter(function(s){return c[2].indexOf(h(s))>-1;})};}).filter(function(g){return g.els.length;});
   if(groups.length<2)return;
-  var bar=document.createElement("div");bar.className="ptabs";bar.setAttribute("role","tablist");
+  var bar=document.createElement("div");bar.className="chipbar ptabs";
   groups[0].els[0].parentNode.insertBefore(bar,groups[0].els[0]);
   groups.forEach(function(g){g.els.forEach(function(s){s.parentNode.insertBefore(s,null);});});
   bar.parentNode.insertBefore(bar,groups[0].els[0]);
-  bar.innerHTML=groups.map(function(g){return "<button role=\"tab\" data-tab=\""+g.id+"\">"+g.label+"</button>";}).join("");
+  bar.innerHTML=groups.map(function(g){return "<button class=\"chip\" data-tab=\""+g.id+"\">"+g.label+"</button>";}).join("");
   function show(id,push){groups.forEach(function(g){var on=g.id===id;g.els.forEach(function(s){s.hidden=!on;});});
-    [].forEach.call(bar.children,function(b){b.setAttribute("aria-selected",String(b.dataset.tab===id));});
+    [].forEach.call(bar.children,function(b){b.setAttribute("aria-pressed",String(b.dataset.tab===id));});
     if(push){var u=new URL(location.href);u.searchParams.set("onglet",id);history.replaceState(null,"",u.pathname+u.search+u.hash);}
     setTimeout(function(){window.dispatchEvent(new Event("resize"));},30);}
   bar.addEventListener("click",function(e){var b=e.target.closest("button[data-tab]");if(!b)return;show(b.dataset.tab,true);window.scrollTo({top:bar.getBoundingClientRect().top+scrollY-90,behavior:"smooth"});});

@@ -15,7 +15,7 @@
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
   document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
 </script>
-<style>.ptabs{display:flex;gap:4px;padding:4px;background:var(--accsoft,#EDF2EA);border-radius:12px;width:fit-content;max-width:100%;overflow-x:auto;margin:6px 0 22px;scrollbar-width:none}.ptabs::-webkit-scrollbar{display:none}.ptabs button{border:0;background:transparent;padding:8px 16px;border-radius:9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;color:inherit;opacity:.65;white-space:nowrap;transition:background .15s,opacity .15s}.ptabs button:hover{opacity:.9}.ptabs button[aria-selected="true"]{background:var(--card,#fff);opacity:1;box-shadow:0 1px 3px rgba(0,0,0,.08)}.ptabs__n{font-size:12px;opacity:.55;margin-left:6px;font-weight:400}@media (max-width:680px){.ptabs{width:100%}.ptabs button{flex:1;padding:8px 10px}}</style></head>
+</head>
 <body>
 
 <main class="wrap">
@@ -29,7 +29,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
        jamais montrer ce qu'il y avait derrière. La matrice affiche les
        compteurs : on voit d'un coup où sont les 319 adresses, et on atteint
        n'importe quel croisement en un clic. -->
-  <div class="ptabs" id="fam" role="tablist"></div>
+  <div class="chipbar ptabs" id="fam"></div>
 
   <div class="tools">
     <label class="search">
@@ -49,6 +49,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <div class="mat" id="mat"></div>
 
   <div class="spotgrid" id="grid"></div>
+  <div class="more" id="more"></div>
   <p class="empty" id="empty" hidden>Rien ne correspond. Essaie un autre mot ou élargis les filtres.</p>
 </main>
 
@@ -345,7 +346,12 @@ function render() {
   renderMat();
 
   const list = SPOTS.filter(matches);
-  q('grid').innerHTML = list.map(card).join('');
+  // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
+  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.q]);
+  if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
+  q('grid').innerHTML = list.slice(0, window.__lim).map(card).join('');
+  const reste = list.length - window.__lim;
+  q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
   q('empty').hidden = list.length > 0;
 
   const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind', 'fam'].some((k) => state[k] !== 'all');
@@ -361,7 +367,7 @@ function renderFam() {
   const base = { ...state, fam: 'all', kind: 'all' };
   q('fam').innerHTML = FAMS.map((f) => {
     const n = SPOTS.filter(matchesWith({ ...base, fam: f.id })).length;
-    return `<button role="tab" data-fam="${f.id}" aria-selected="${state.fam === f.id}">${esc(f.name)}<span class="ptabs__n">${n}</span></button>`;
+    return `<button class="chip" data-fam="${f.id}" aria-pressed="${state.fam === f.id}">${esc(f.name)}<span class="ptabs__n">${n}</span></button>`;
   }).join('');
 }
 q('fam').addEventListener('click', (e) => {
@@ -371,6 +377,12 @@ q('fam').addEventListener('click', (e) => {
   state.kind = 'all'; q('f-kind').value = 'all';
   render();
 });
+q('more').addEventListener('click', (e) => {
+  if (!e.target.closest('#more-btn')) return;
+  window.__lim += 48;
+  const sig = window.__sig; render(); window.__sig = sig;
+});
+
 q('reset').addEventListener('click', () => {
   Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', q: '' });
   q('f-kind').value = 'all';
