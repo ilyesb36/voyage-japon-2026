@@ -374,7 +374,7 @@ function render() {
   let avant;
   q('grid').innerHTML = montres.map((s, i) => {
     const fin = apercu && (i === montres.length - 1 || montres[i + 1].cityId !== s.cityId) && parVille[s.cityId] > 8
-      ? `<p class="bib__all"><button class="btn btn--ghost" type="button" data-ville="${s.cityId || 'partout'}">Toutes les adresses de ${esc(s.cityId ? CITIES[s.cityId].name : 'partout')} (${parVille[s.cityId]}) →</button></p>` : '';
+      ? `<p class="bib__all"><button class="btn btn--ghost" type="button" data-ville="${s.cityId || 'partout'}">Toutes les adresses ${s.cityId ? (/^[AEIOUHaeiouh]/.test(CITIES[s.cityId].name) ? "d'" : 'de ') + esc(CITIES[s.cityId].name) : 'hors étapes'} (${parVille[s.cityId]}) →</button></p>` : '';
     const tete = state.city === 'all' && s.cityId !== avant
       ? `<h3 class="bib__city"><span class="city-dot" style="--c:${s.cityId ? `var(--c-${s.cityId})` : 'var(--mut)'}">${esc(s.cityId ? CITIES[s.cityId].name : 'Partout au Japon')}</span><span class="mut">${parVille[s.cityId]} adresses</span></h3>` : '';
     avant = s.cityId;
