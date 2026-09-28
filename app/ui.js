@@ -25,6 +25,7 @@ const PAGES_PAR_MOMENT = {
     { href: 'index.html',      label: 'Le voyage' },
     { href: 'aujourdhui.html', label: 'Préparatifs' },
     { href: 'itineraire.html', label: 'Le programme' },
+    { href: 'villes.html',     label: 'Les villes' },
     { href: 'guide.html',      label: 'Le guide' },
     { href: 'pratique.html',   label: 'Budget & pratique' },
   ],
@@ -33,6 +34,7 @@ const PAGES_PAR_MOMENT = {
   // le métro. Le voyage (l'accueil) reste là pour le montrer à quelqu'un.
   pendant: [
     { href: 'jour.html',       label: "Aujourd'hui" },
+    { href: 'villes.html',     label: 'La ville' },
     { href: 'guide.html',      label: 'Le guide' },
     { href: 'itineraire.html', label: 'Le programme' },
     { href: 'pratique.html',   label: 'Pratique' },
