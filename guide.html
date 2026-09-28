@@ -42,6 +42,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
       <select id="f-source" aria-label="Filtrer par provenance"></select>
       <select id="f-kind" aria-label="Filtrer par type de lieu"></select>
     </div>
+    <span class="chipbar" id="mode"></span>
     <output id="count" class="tools__count" aria-live="polite"></output>
     <button class="chip" id="reset" hidden>Réinitialiser</button>
   </div>
@@ -123,6 +124,8 @@ const state = {
   category: valide(entree.get('envie'), FACETS.category),
   priority: valide(entree.get('priorite'), FACETS.priority),
   source: 'all',
+  // L'essentiel par défaut : Obligatoire + À voir. Le reste est à un clic.
+  mode: (entree.has('tout') || entree.get('priorite') || entree.get('q')) ? 'all' : 'ess',
   fam: (FAMS.some((f) => f.id === entree.get('famille')) ? entree.get('famille') : 'all'),
   kind: valide(entree.get('type'), FACETS.kind),
   q: entree.get('q') || '',
@@ -130,7 +133,7 @@ const state = {
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
 q('lede').innerHTML =
-  `${SPOTS.length} adresses. Chaque carte ouvre Google Maps. ` +
+  `L'essentiel d'abord, le reste à un clic. Chaque carte ouvre Google Maps. ` +
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
 // --- filtres secondaires ------------------------------------------------------
@@ -176,6 +179,7 @@ const matchesWith = (st) => (s) =>
   && (st.priority === 'all' || s.priority === st.priority)
   && (st.source === 'all' || s.source === st.source)
   && (st.kind === 'all' || s.kind === st.kind)
+  && (st.mode !== 'ess' || s.priority === 'ob' || s.priority === 'top')
   && (!st.fam || st.fam === 'all' || (FAMS.find((f) => f.id === st.fam).kinds || []).includes(s.kind))
   && (!st.q || hay(s).includes(norm(st.q)));
 
@@ -341,13 +345,14 @@ q('grid').addEventListener('click', (e) => {
 
 function render() {
   renderFam();
+  renderMode();
   // La matrice se redessine avec la grille : ses compteurs dépendent de la
   // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
   renderMat();
 
   const list = SPOTS.filter(matches);
   // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
-  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.q]);
+  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.q]);
   if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
   q('grid').innerHTML = list.slice(0, window.__lim).map(card).join('');
   const reste = list.length - window.__lim;
@@ -355,14 +360,24 @@ function render() {
   q('empty').hidden = list.length > 0;
 
   const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind', 'fam'].some((k) => state[k] !== 'all');
-  q('count').textContent = filtered
-    ? `${list.length} sur ${SPOTS.length}`
-    : `${SPOTS.length} adresses`;
+  q('count').textContent = `${list.length} adresse${list.length > 1 ? 's' : ''}`;
   q('reset').hidden = !filtered;
 }
 
 
 // --- onglets de famille -------------------------------------------------------
+function renderMode() {
+  const n = (m) => SPOTS.filter(matchesWith({ ...state, mode: m })).length;
+  q('mode').innerHTML = [['ess', 'L\'essentiel'], ['all', 'Tout voir']].map(([id, lab]) =>
+    `<button class="chip" data-mode="${id}" aria-pressed="${state.mode === id}">${lab}<span class="ptabs__n">${n(id)}</span></button>`).join('');
+}
+q('mode').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-mode]');
+  if (!b) return;
+  state.mode = b.dataset.mode;
+  render();
+});
+
 function renderFam() {
   const base = { ...state, fam: 'all', kind: 'all' };
   q('fam').innerHTML = FAMS.map((f) => {

@@ -80,6 +80,7 @@ import { SPOTS } from './data/spots.js';
 import { DAYS } from './data/days.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
 import { renderMomijiBand } from './app/momiji.js';
+import { DELICES } from './data/delices.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
 
 mountChrome('index.html');
@@ -126,6 +127,9 @@ q('cities').innerHTML = STEPS.map((step) => {
   const obs = dansLaVille.filter((sp) => sp.priority === 'ob');
   const incontournables = (step.n === 6 ? obs.slice(3, 6) : obs.slice(0, 3));
   const premierJour = DAYS.find((d) => d.stepId === step.id && d.kind !== 'vol');
+  // Trois plats à goûter : Tokyo en fin de séjour pioche dans ses excursions.
+  const plats = (DELICES.find((g) => g.cityId === step.cityId) || { items: [] }).items;
+  const aGouter = step.n === 6 ? plats.filter((x) => ['monja', 'nikuman', 'shirasu'].includes(x.id)) : plats.slice(0, 3);
   return `
   <article class="city" style="--c:var(--c-${c.id})">
     <figure class="city__shot">
@@ -141,6 +145,11 @@ q('cities').innerHTML = STEPS.map((step) => {
       <p class="city__ob">
         <span class="label">À ne pas rater</span>
         ${incontournables.map((sp) => `<a href="guide.html?ville=${esc(step.cityId)}&q=${encodeURIComponent(sp.name)}">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
+      </p>` : ''}
+      ${aGouter.length ? `
+      <p class="city__ob">
+        <span class="label">À goûter absolument</span>
+        ${aGouter.map((x) => `<a href="itineraire.html?onglet=manger&ville=${esc(step.cityId)}">${x.e} ${esc(x.n)}</a>`).join('<span class="mut"> · </span>')}
       </p>` : ''}
       <p class="city__liens">
         <a class="btn btn--ghost" href="jour.html?d=${premierJour ? premierJour.n : 1}">Les journées</a>

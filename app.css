@@ -2295,3 +2295,6 @@
 /* Guide : cartes sans photo plus basses, et « voir plus » plutôt que 414 cartes d'un bloc. */
 .spot .thumb.thumb--nue { aspect-ratio: auto; height: 4.5rem; }
 .more { display: flex; justify-content: center; margin: var(--s-6) 0 0; }
+
+/* Guide : bascule L'essentiel / Tout voir, collée au compteur. */
+#mode { flex: 0 0 auto; gap: var(--s-1); margin-left: auto; }
