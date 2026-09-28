@@ -2321,3 +2321,10 @@
 @media (max-width: 760px) { .sel__list { grid-template-columns: 1fr; } .sel__item { grid-template-columns: 72px 1fr; } .sel__img { width: 72px; height: 56px; } }
 
 .bib__all { grid-column: 1 / -1; margin: 0; }
+
+/* Plats : la photo plutôt que l'emoji. */
+.eat { grid-template-columns: auto 64px 1fr; align-items: center; }
+.eat__img { width: 64px; height: 48px; object-fit: cover; border-radius: var(--r-m); background: var(--paper-3); }
+.eat__d { grid-column: 3; }
+.sel__plat { display: inline-flex; align-items: center; gap: var(--s-2); padding-left: var(--s-1); }
+.sel__plat img { width: 26px; height: 26px; border-radius: var(--r-full); object-fit: cover; }

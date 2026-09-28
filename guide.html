@@ -439,7 +439,7 @@ function renderSelection() {
         </button></li>`;
       }).join('')}</ol>
       ${st.arbitrage ? `<p class="sel__arb"><b>Arbitrage</b> ${esc(st.arbitrage)}</p>` : ''}
-      ${aGouter.length ? `<div class="sel__eat"><span class="label">À goûter</span>${aGouter.map((x) => `<a class="chip" href="itineraire.html?onglet=manger&ville=${st.cityId}">${x.e} ${esc(x.n)}</a>`).join('')}</div>` : ''}
+      ${aGouter.length ? `<div class="sel__eat"><span class="label">À goûter</span>${aGouter.map((x) => `<a class="chip sel__plat" href="itineraire.html?onglet=manger&ville=${st.cityId}">${x.img ? `<img src="${x.img}" alt="" loading="lazy" decoding="async">` : x.e} ${esc(x.n)}</a>`).join('')}</div>` : ''}
     </section>`;
   }).join('');
 }

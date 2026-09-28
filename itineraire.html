@@ -322,7 +322,7 @@ if (location.hash) {
       var c=CITIES[g.cityId];
       h+='<div class="eatgrp"><h3><span class="city-dot" style="--c:var(--c-'+g.cityId+')">'+esc(c?c.name:g.cityId)+'</span></h3>';
       g.items.forEach(function(x){
-        h+='<label class="eat'+(done[x.id]?' is-done':'')+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'><span class="eat__e">'+x.e+'</span><span><b>'+esc(x.n)+'</b><span class="eat__jp">'+esc(x.jp)+'</span></span><p class="eat__d">'+esc(x.d)+'</p></label>';
+        h+='<label class="eat'+(done[x.id]?' is-done':'')+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'>'+(x.img?'<img class="eat__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="eat__e">'+x.e+'</span>')+'<span><b>'+esc(x.n)+'</b><span class="eat__jp">'+esc(x.jp)+'</span></span><p class="eat__d">'+esc(x.d)+'</p></label>';
       });
       h+='</div>';
     });
