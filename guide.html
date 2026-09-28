@@ -15,7 +15,7 @@
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
   document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
 </script>
-</head>
+<style>.ptabs{display:flex;gap:4px;padding:4px;background:var(--accsoft,#EDF2EA);border-radius:12px;width:fit-content;max-width:100%;overflow-x:auto;margin:6px 0 22px;scrollbar-width:none}.ptabs::-webkit-scrollbar{display:none}.ptabs button{border:0;background:transparent;padding:8px 16px;border-radius:9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;color:inherit;opacity:.65;white-space:nowrap;transition:background .15s,opacity .15s}.ptabs button:hover{opacity:.9}.ptabs button[aria-selected="true"]{background:var(--card,#fff);opacity:1;box-shadow:0 1px 3px rgba(0,0,0,.08)}.ptabs__n{font-size:12px;opacity:.55;margin-left:6px;font-weight:400}@media (max-width:680px){.ptabs{width:100%}.ptabs button{flex:1;padding:8px 10px}}</style></head>
 <body>
 
 <main class="wrap">
@@ -29,6 +29,8 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
        jamais montrer ce qu'il y avait derrière. La matrice affiche les
        compteurs : on voit d'un coup où sont les 319 adresses, et on atteint
        n'importe quel croisement en un clic. -->
+  <div class="ptabs" id="fam" role="tablist"></div>
+
   <div class="tools">
     <label class="search">
       <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
@@ -69,6 +71,16 @@ const SOURCES = [
 ];
 
 // Le type de lieu — l'axe « concret » (temple, parc, resto…), complémentaire des envies.
+// Les grandes familles, en onglets : on ne montre qu'un univers à la fois.
+const FAMS = [
+  { id: 'all', name: 'Tout', kinds: null },
+  { id: 'voir', name: 'À voir', kinds: ['temple', 'jardin', 'musee', 'vue', 'quartier', 'nature'] },
+  { id: 'manger', name: 'Manger & boire', kinds: ['resto', 'cafe', 'street', 'bar'] },
+  { id: 'shopping', name: 'Shopping', kinds: ['shopping'] },
+  { id: 'faire', name: 'Expériences', kinds: ['atelier', 'onsen'] },
+  { id: 'events', name: 'Événements', kinds: ['event'] },
+];
+
 const KINDS = [
   { id: 'temple', name: 'Temples & sanctuaires' },
   { id: 'jardin', name: 'Parcs & jardins' },
@@ -110,6 +122,7 @@ const state = {
   category: valide(entree.get('envie'), FACETS.category),
   priority: valide(entree.get('priorite'), FACETS.priority),
   source: 'all',
+  fam: (FAMS.some((f) => f.id === entree.get('famille')) ? entree.get('famille') : 'all'),
   kind: valide(entree.get('type'), FACETS.kind),
   q: entree.get('q') || '',
 };
@@ -162,6 +175,7 @@ const matchesWith = (st) => (s) =>
   && (st.priority === 'all' || s.priority === st.priority)
   && (st.source === 'all' || s.source === st.source)
   && (st.kind === 'all' || s.kind === st.kind)
+  && (!st.fam || st.fam === 'all' || (FAMS.find((f) => f.id === st.fam).kinds || []).includes(s.kind))
   && (!st.q || hay(s).includes(norm(st.q)));
 
 const matches = (s) => matchesWith(state)(s);
@@ -188,7 +202,7 @@ function renderMat() {
   const filtre = state.city !== 'all' || state.category !== 'all';
 
   q('mat').innerHTML = `
-    <details class="mat__pli"${matLarge ? ' open' : ''}>
+    <details class="mat__pli">
       <summary class="mat__resume">
         <span class="mat__resumeQuoi">
           <b>${esc(filtre ? [actuelle?.name, actuelleCat?.id !== 'all' ? actuelleCat?.name : null].filter(Boolean).join(' · ') : 'Toutes les adresses')}</b>
@@ -325,6 +339,7 @@ q('grid').addEventListener('click', (e) => {
 });
 
 function render() {
+  renderFam();
   // La matrice se redessine avec la grille : ses compteurs dépendent de la
   // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
   renderMat();
@@ -333,15 +348,31 @@ function render() {
   q('grid').innerHTML = list.map(card).join('');
   q('empty').hidden = list.length > 0;
 
-  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind'].some((k) => state[k] !== 'all');
+  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind', 'fam'].some((k) => state[k] !== 'all');
   q('count').textContent = filtered
     ? `${list.length} sur ${SPOTS.length}`
     : `${SPOTS.length} adresses`;
   q('reset').hidden = !filtered;
 }
 
+
+// --- onglets de famille -------------------------------------------------------
+function renderFam() {
+  const base = { ...state, fam: 'all', kind: 'all' };
+  q('fam').innerHTML = FAMS.map((f) => {
+    const n = SPOTS.filter(matchesWith({ ...base, fam: f.id })).length;
+    return `<button role="tab" data-fam="${f.id}" aria-selected="${state.fam === f.id}">${esc(f.name)}<span class="ptabs__n">${n}</span></button>`;
+  }).join('');
+}
+q('fam').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-fam]');
+  if (!b) return;
+  state.fam = b.dataset.fam;
+  state.kind = 'all'; q('f-kind').value = 'all';
+  render();
+});
 q('reset').addEventListener('click', () => {
-  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', q: '' });
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', q: '' });
   q('f-kind').value = 'all';
   q('search').value = '';
   q('f-priority').value = 'all';
