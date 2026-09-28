@@ -38,6 +38,15 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </header>
 
   <section class="section">
+    <div class="shead disc">
+      <h2>À réserver avant de partir</h2>
+      <p>Les dates limites qui coûtent de l’argent si on les rate — et le n° Flying Blue à ajouter sur chaque nouveau paiement.</p>
+      <span class="shead__meta" id="todo-meta"></span>
+    </div>
+    <div id="todolist"></div>
+  </section>
+
+  <section class="section">
     <div class="shead">
       <h2>Hébergements</h2>
       <span class="shead__meta" id="hotels-meta"></span>
@@ -260,6 +269,42 @@ if ('serviceWorker' in navigator) {
 } else {
   q('off-state').textContent = 'Indisponible sur ce navigateur';
 }
+</script>
+<style>
+.todo{display:grid;grid-template-columns:auto auto 1fr;gap:12px;align-items:baseline;padding:11px 14px;border:1px solid var(--line,#E9E7E3);border-radius:12px;margin:8px 0;cursor:pointer;background:var(--card,#fff)}
+.todo input{accent-color:var(--acc,#5F7F52)}
+.todo__date{font-weight:600;font-size:13px;background:var(--accsoft,#EDF2EA);border-radius:8px;padding:3px 8px;white-space:nowrap}
+.todo--late .todo__date{background:#FBE4E4;color:#C4554D}
+.todo--soon .todo__date{background:#FAEBDD;color:#C77D48}
+.todo__note{grid-column:3;font-size:13px;opacity:.7;margin:2px 0 0}
+.todo.is-done{opacity:.5}.todo.is-done b{text-decoration:line-through}
+</style>
+<script>
+(function(){
+  var ITEMS=[
+   {id:'lavita',d:'2026-10-27',t:'Décision hôtel Tokyo : annulation gratuite La Vita jusqu’au 27 oct 23:59',n:'Après : ¥47 458 retenus. Garder ou changer — mais décider avant.'},
+   {id:'fukuya',d:'2026-10-28',t:'Décision Hakone : annulation gratuite du Fukuya jusqu’au 28 oct',n:'Après : 100 % dus. C’est la deadline de l’arbitrage Fukuya / Sara / Hanaori.'},
+   {id:'teamlab',d:'2026-10-30',t:'Billets teamLab (Planets ou Borderless)',n:'Créneaux datés, souvent complets 1-2 semaines à l’avance sur les bons horaires.'},
+   {id:'ateliers',d:'2026-10-31',t:'Ateliers si tentés : baguettes Mogami (Otonami), teinture indigo, wagashi AN Tokyo',n:'Peu de créneaux par mois — réserver tôt en ligne.'},
+   {id:'kawa',d:'2026-11-07',t:'Annulation gratuite 川HOUSE (Osaka) jusqu’au 7 nov 23:59',n:'Après : ¥29 426 retenus.'},
+   {id:'restos',d:'2026-11-08',t:'Restos datés : Takano (mardi 1ᵉʳ déc midi, Tabelog) · Sushi Tomohiro (TableCheck) · Tsurutokame',n:'Les créneaux ouvrent ~3-4 semaines avant — mettre un rappel.'},
+   {id:'cp',d:'2026-11-10',t:'Annulation gratuite Center Point (Kanazawa) jusqu’au 10 nov 23:59',n:'Et prévenir l’hôtel si arrivée après 19h le 14 nov.'},
+   {id:'shink',d:'2026-11-11',t:'Sièges réservés Tokyo → Kanazawa du samedi 14 nov (Eki-Net)',n:'Le Hokuriku shinkansen se remplit le week-end — réserver quelques jours avant.'}
+  ];
+  var KEY='jp2026_todo'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
+  var today=new Date(); today.setHours(0,0,0,0);
+  var el=document.getElementById('todolist'); if(!el)return;
+  function fmt(d){var x=new Date(d+'T12:00:00');return x.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});}
+  el.innerHTML=ITEMS.map(function(x){
+    var dd=new Date(x.d+'T23:59:00'); var diff=Math.ceil((dd-today)/86400000);
+    var cls=done[x.id]?' is-done':(diff<0?' todo--late':(diff<=10?' todo--soon':''));
+    var badge=fmt(x.d)+(diff>=0?' · J−'+diff:' · passé');
+    return '<label class="todo'+cls+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'><span class="todo__date">'+badge+'</span><b>'+x.t+'</b><p class="todo__note">'+x.n+'</p></label>';
+  }).join('');
+  function meta(){var ok=ITEMS.filter(function(x){return done[x.id];}).length;document.getElementById('todo-meta').textContent=ok+' / '+ITEMS.length+' réglés';}
+  el.addEventListener('change',function(e){var cb=e.target.closest('input[data-id]');if(!cb)return;done[cb.dataset.id]=cb.checked;if(!cb.checked)delete done[cb.dataset.id];try{localStorage.setItem(KEY,JSON.stringify(done));}catch(err){}cb.closest('.todo').classList.toggle('is-done',cb.checked);meta();});
+  meta();
+})();
 </script>
 </body>
 </html>

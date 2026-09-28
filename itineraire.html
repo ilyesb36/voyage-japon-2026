@@ -15,7 +15,7 @@
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
   document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
 </script>
-<style>.tpldlg{position:fixed;inset:0;margin:auto;height:-moz-fit-content;height:fit-content;border:0;border-radius:16px;padding:0;width:min(92vw,600px);max-height:85vh;background:var(--card,#fff);color:inherit;box-shadow:0 24px 64px rgba(0,0,0,.25)}.tpldlg::backdrop{background:rgba(20,15,10,.45);backdrop-filter:blur(2px)}.tpldlg__in{padding:22px 22px 26px;overflow:auto;max-height:85vh}.tpldlg__x{position:absolute;top:10px;right:12px;border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;color:inherit;opacity:.6}.tpldlg__x:hover{opacity:1}.tpldlg__img{width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:12px}.tpldlg__kicker{font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.65;margin:0 0 4px}.tpldlg__head h3{margin:0 0 2px;font-size:22px}.tpldlg__steps{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}.tpldlg__steps li{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:start}.tpldlg__steps p{margin:0}.tpldlg__h{font-weight:600;font-size:13px;background:var(--accsoft,#EDF2EA);border-radius:8px;padding:3px 6px;text-align:center}.tpldlg__links{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.tpldlg__links .chip{font-size:12.5px;text-decoration:none}.tpldlg__note{font-size:12.5px;opacity:.65;margin-top:2px}</style>
+<style>.tpldlg{position:fixed;inset:0;margin:auto;height:-moz-fit-content;height:fit-content;border:0;border-radius:16px;padding:0;width:min(92vw,600px);max-height:85vh;background:var(--card,#fff);color:inherit;box-shadow:0 24px 64px rgba(0,0,0,.25)}.tpldlg::backdrop{background:rgba(20,15,10,.45);backdrop-filter:blur(2px)}.tpldlg__in{padding:22px 22px 26px;overflow:auto;max-height:85vh}.tpldlg__x{position:absolute;top:10px;right:12px;border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;color:inherit;opacity:.6}.tpldlg__x:hover{opacity:1}.tpldlg__img{width:100%;height:170px;object-fit:cover;border-radius:12px;margin-bottom:12px}.tpldlg__kicker{font-size:12px;letter-spacing:.06em;text-transform:uppercase;opacity:.65;margin:0 0 4px}.tpldlg__head h3{margin:0 0 2px;font-size:22px}.tpldlg__steps{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}.tpldlg__steps li{display:grid;grid-template-columns:58px 1fr;gap:10px;align-items:start}.tpldlg__steps p{margin:0}.tpldlg__h{font-weight:600;font-size:13px;background:var(--accsoft,#EDF2EA);border-radius:8px;padding:3px 6px;text-align:center}.tpldlg__links{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}.tpldlg__links .chip{font-size:12.5px;text-decoration:none}.eatgrp{margin:14px 0 4px}.eatgrp h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}.eat{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:baseline;padding:9px 12px;border:1px solid var(--line,#E9E7E3);border-radius:12px;margin:6px 0;cursor:pointer;background:var(--card,#fff)}.eat input{accent-color:var(--acc,#5F7F52)}.eat__e{font-size:18px}.eat b{font-weight:600}.eat__jp{opacity:.55;font-size:12.5px;margin-left:6px}.eat__d{grid-column:3;font-size:13px;opacity:.7;margin:0}.eat.is-done{opacity:.5}.eat.is-done b{text-decoration:line-through}.tpldlg__note{font-size:12.5px;opacity:.65;margin-top:2px}</style>
 </head>
 <body>
 
@@ -36,6 +36,16 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
 
   <section class="section">
+    <div class="shead disc">
+      <h2>À manger absolument</h2>
+      <p>Les spécialités de chaque étape — à cocher au fil du voyage.</p>
+      <span class="shead__meta" id="eat-meta"></span>
+    </div>
+    <div class="chipbar" id="eat-filter"></div>
+    <div id="eatlist"></div>
+  </section>
+
+  <section class="section">
     <div class="shead disc"><h2 id="jours-titre">Les jours</h2></div>
     <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
     <div id="itin"></div>
@@ -48,6 +58,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 import { CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { LIEUX } from './data/lieux.js';
+import { DELICES } from './data/delices.js';
 import { SPOTS } from './data/spots.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, today } from './app/ui.js';
 import { resaStrip, resasForDate } from './app/resa.js';
@@ -297,6 +308,31 @@ if (location.hash) {
   dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
   dlg.addEventListener('close',function(){history.replaceState(null,'',location.pathname)});
   if(location.hash&&location.hash.indexOf('#tpl-')===0) openTpl(location.hash.slice(1));
+})();
+
+// --- à manger absolument ------------------------------------------------------
+(function(){
+  var KEY='jp2026_eat'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
+  var st='all';
+  var CITYCHIPS=[{id:'all',name:'Toutes'}].concat(DELICES.map(function(g){var c=CITIES[g.cityId];return {id:g.cityId,name:c?c.name:g.cityId,color:c?c.color:null};}));
+  function meta(){var tot=0,ok=0;DELICES.forEach(function(g){g.items.forEach(function(x){tot++;if(done[x.id])ok++;});});q('eat-meta').textContent=ok+' / '+tot+' goûtés';}
+  function paint(){
+    var h='';
+    DELICES.forEach(function(g){
+      if(st!=='all'&&g.cityId!==st)return;
+      var c=CITIES[g.cityId];
+      h+='<div class="eatgrp"><h3><span class="city-dot" style="--c:var(--c-'+g.cityId+')">'+esc(c?c.name:g.cityId)+'</span></h3>';
+      g.items.forEach(function(x){
+        h+='<label class="eat'+(done[x.id]?' is-done':'')+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'><span class="eat__e">'+x.e+'</span><span><b>'+esc(x.n)+'</b><span class="eat__jp">'+esc(x.jp)+'</span></span><p class="eat__d">'+esc(x.d)+'</p></label>';
+      });
+      h+='</div>';
+    });
+    q('eatlist').innerHTML=h; meta();
+  }
+  q('eat-filter').innerHTML=CITYCHIPS.map(function(o){return '<button class="chip" data-city="'+o.id+'" aria-pressed="'+(o.id==='all')+'">'+(o.color?'<span class="chip__dot" style="background:'+o.color+'"></span>':'')+esc(o.name)+'</button>';}).join('');
+  q('eat-filter').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;st=b.dataset.city;q('eat-filter').querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed',String(c===b));});paint();});
+  q('eatlist').addEventListener('change',function(e){var cb=e.target.closest('input[data-id]');if(!cb)return;done[cb.dataset.id]=cb.checked;if(!cb.checked)delete done[cb.dataset.id];try{localStorage.setItem(KEY,JSON.stringify(done));}catch(err){}cb.closest('.eat').classList.toggle('is-done',cb.checked);meta();});
+  paint();
 })();
 initReveal();
 initCoverParallax();
