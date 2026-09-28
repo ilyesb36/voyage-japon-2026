@@ -72,7 +72,8 @@ mountChrome('villes.html');
 var q = function (id) { return document.getElementById(id); };
 var HERO = { tokyo: 'img/hero/tokyo.webp', kanazawa: 'img/hero/kanazawa.webp', kyoto: 'img/hero/kyoto.webp', osaka: 'img/hero/osaka.webp', hakone: 'img/hero/hakone.webp' };
 // Les événements datés, rattachés à l'étape où ils tombent.
-var EV_ETAPE = { 'spot-ev-kenrokuen-lightup': 2, 'spot-ev-shichigosan': 2, 'spot-ev-eikando-night': 3, 'spot-ev-kiyomizu-night': 3, 'spot-ev-kodaiji-night': 3, 'spot-ev-kobosan': 3, 'spot-ev-midosuji': 4, 'spot-ev-tori-no-ichi': 6, 'spot-ev-gaien-icho': 6, 'spot-ev-hasedera-lightup': 6, 'spot-ev-minatomirai': 6 };
+// Seulement ce que la sélection ne couvre pas déjà (le Tō-ji, Eikandō, Midosuji… y sont).
+var EV_ETAPE = { 'spot-ev-shichigosan': 2, 'spot-ev-kodaiji-night': 3, 'spot-ev-hasedera-lightup': 6, 'spot-ev-minatomirai': 6 };
 var byId = new Map(SPOTS.map(function (s) { return [s.id, s]; }));
 
 // Quelle étape ? ?e=3, sinon celle du jour pendant le voyage, sinon la première.
