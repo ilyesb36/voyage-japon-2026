@@ -40,7 +40,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <section class="section">
     <div class="shead disc">
       <h2>À réserver avant de partir</h2>
-      <p>Les dates limites qui coûtent de l’argent si on les rate — et le n° Flying Blue à ajouter sur chaque nouveau paiement.</p>
+      <p>Les créneaux qui partent vite. Les six hôtels sont confirmés, rien à trancher de ce côté-là.</p>
       <span class="shead__meta" id="todo-meta"></span>
     </div>
     <div id="todolist"></div>
@@ -282,14 +282,10 @@ if ('serviceWorker' in navigator) {
 <script>
 (function(){
   var ITEMS=[
-   {id:'lavita',d:'2026-10-27',t:'Décision hôtel Tokyo : annulation gratuite La Vita jusqu’au 27 oct 23:59',n:'Après : ¥47 458 retenus. Garder ou changer — mais décider avant.'},
-   {id:'fukuya',d:'2026-10-28',t:'Décision Hakone : annulation gratuite du Fukuya jusqu’au 28 oct',n:'Après : 100 % dus. C’est la deadline de l’arbitrage Fukuya / Sara / Hanaori.'},
    {id:'teamlab',d:'2026-10-30',t:'Billets teamLab (Planets ou Borderless)',n:'Créneaux datés, souvent complets 1-2 semaines à l’avance sur les bons horaires.'},
    {id:'ateliers',d:'2026-10-31',t:'Ateliers si tentés : baguettes Mogami (Otonami), teinture indigo, wagashi AN Tokyo',n:'Peu de créneaux par mois — réserver tôt en ligne.'},
-   {id:'kawa',d:'2026-11-07',t:'Annulation gratuite 川HOUSE (Osaka) jusqu’au 7 nov 23:59',n:'Après : ¥29 426 retenus.'},
    {id:'restos',d:'2026-11-08',t:'Restos datés : Takano (mardi 1ᵉʳ déc midi, Tabelog) · Sushi Tomohiro (TableCheck) · Tsurutokame',n:'Les créneaux ouvrent ~3-4 semaines avant — mettre un rappel.'},
-   {id:'cp',d:'2026-11-10',t:'Annulation gratuite Center Point (Kanazawa) jusqu’au 10 nov 23:59',n:'Et prévenir l’hôtel si arrivée après 19h le 14 nov.'},
-   {id:'shink',d:'2026-11-11',t:'Sièges réservés Tokyo → Kanazawa du samedi 14 nov (Eki-Net)',n:'Le Hokuriku shinkansen se remplit le week-end — réserver quelques jours avant.'}
+   {id:'shink',d:'2026-11-11',t:'Sièges réservés Tokyo → Kanazawa du samedi 14 nov (Eki-Net)',n:'Le Hokuriku shinkansen se remplit le week-end — réserver quelques jours avant. Et prévenir Center Point si arrivée après 19h.'}
   ];
   var KEY='jp2026_todo'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
   var today=new Date(); today.setHours(0,0,0,0);
