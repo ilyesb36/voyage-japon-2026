@@ -80,6 +80,7 @@ export const AVANT = Object.freeze([
     when: 'Dans la valise',
     tag: null,
   },
+  {"id":"shinkansen-kanazawa","deadline":"2026-11-10","title":"Sièges shinkansen Tokyo → Kanazawa (sam 14 nov)","what":"Le Hokuriku shinkansen se remplit le week-end : réserver les places sur Eki-Net quelques jours avant. Prévenir Center Point si arrivée après 19h.","when":"Quelques jours avant","tag":null,"commentReserver":""},
 ]);
 
 export const SURPLACE = Object.freeze([
@@ -224,4 +225,8 @@ export const RESERVER = Object.freeze([
     forDate: '2026-12-01',
     check: true,
   },
+  {"id":"the-sky","canal":"en ligne","url":"https://www.tablecheck.com/en/newotani-tokyo-restaurant-sky","commentReserver":"Réservation TableCheck. Le déjeuner en semaine (5 500 ¥) est le bon plan. Annulation après 17h la veille facturée à 100 %.","spotId":"spot-view-dining-the-sky","title":"VIEW & DINING THE SKY, déjeuner","what":"Le buffet tournant du 17e étage du New Otani : un tour complet de Tokyo pendant le repas.","deadline":"2026-10-30","forDate":"2026-11-30"},
+  {"id":"tokyo-ten","canal":"en ligne","url":"https://www.google.com/maps/search/?api=1&query=Sushi%20Tokyo%20Ten%20Shinjuku","commentReserver":"Réservation en ligne depuis la fiche de l’établissement ; les créneaux du soir partent vite.","spotId":"spot-sushi-tokyo-ten","title":"Sushi Tokyo Ten, omakase du soir","what":"Une vingtaine de pièces au comptoir pour ~9 000 ¥ : l’omakase fancy du budget.","deadline":"2026-10-30","forDate":"2026-11-30"},
+  {"id":"tomohiro","canal":"en ligne","url":"https://www.tablecheck.com/shops/sushi-tomohiro/reserve","commentReserver":"TableCheck, en ligne et simple.","spotId":"spot-sushi-tomohiro","title":"Sushi Tomohiro, Ikebukuro","what":"L’omakase spectacle à 4 400 ¥, à côté de l’hôtel de fin de séjour.","deadline":"2026-10-27","forDate":"2026-11-27"},
+  {"id":"takano","canal":"en ligne","url":"https://tabelog.com/tokyo/A1313/A131301/13285143/","commentReserver":"Via Tabelog. Le mardi est son seul midi de la semaine.","spotId":"spot-takano","title":"Takano, déjeuner du mardi (Tsukiji)","what":"Deux heures de gastronomie intimiste ; le 1er décembre tombe un mardi.","deadline":"2026-11-03","forDate":"2026-12-01"},
 ]);
