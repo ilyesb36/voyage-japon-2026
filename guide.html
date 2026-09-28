@@ -140,7 +140,7 @@ const state = {
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
 q('lede').innerHTML =
-  `Une sélection triée étape par étape, et toutes les adresses dans la bibliothèque. ` +
+  `Toutes les adresses repérées, rangées par ville. ` +
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
 // --- filtres secondaires ------------------------------------------------------
@@ -447,9 +447,10 @@ q('sel').addEventListener('click', (e) => { const b = e.target.closest('.sel__it
 
 // La sélection d'abord. Un lien filtré (?ville=, ?q=…) ouvre directement la bibliothèque.
 const VUES = [['sel', 'La sélection', SELECTION.reduce((a, s) => a + s.picks.length, 0)], ['biblio', 'La bibliothèque', SPOTS.length]];
-let vue = ['ville', 'envie', 'priorite', 'q', 'type', 'famille', 'tout'].some((k) => entree.has(k)) || entree.get('vue') === 'biblio' ? 'biblio' : 'sel';
+let vue = 'biblio';
 function paintVue() {
-  q('vue').innerHTML = VUES.map(([id, lab, n]) => `<button class="chip" data-vue="${id}" aria-pressed="${vue === id}">${lab}<span class="ptabs__n">${n}</span></button>`).join('');
+  // La sélection étape par étape est dans Les villes : ici, toutes les adresses.
+  q('vue').innerHTML = `<p class="guide__renvoi">Le tri par étape (incontournables, plats, jours) est dans <a href="villes.html">Les villes</a>. Ici, toutes les adresses.</p>`;
   q('sel').hidden = vue !== 'sel';
   q('biblio').hidden = vue !== 'biblio';
 }

@@ -3,23 +3,175 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page déplacée — Japon 2026</title>
-<!-- Cette page a fusionné avec index.html lors de la refonte.
-     On garde une redirection plutôt qu'un 404 : le lien a pu être partagé
-     ou épinglé sur un écran d'accueil. -->
-<meta http-equiv="refresh" content="0; url=index.html">
-<link rel="canonical" href="index.html">
+<title>Les villes — Japon 2026</title>
+<meta name="description" content="Une page par étape : l'hôtel, les incontournables, les plats à goûter, les jours prévus et les événements, au même endroit.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
 </head>
 <body>
-<main class="wrap section">
-  <p class="eyebrow">Page déplacée</p>
-  <h1>Ça a bougé</h1>
-  <p class="hero__lede">
-    Désormais, la carte du voyage se trouve sur <a href="index.html">index.html</a>.
-    Redirection en cours…
-  </p>
-  <p style="margin-top:1.5rem"><a class="btn" href="index.html">Y aller</a></p>
+
+<header class="cover cover--short">
+  <img class="cover__img" id="cover-img" src="img/hero/ouverture.webp" alt="" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1 id="titre">Les villes</h1>
+    <p class="cover__dates" id="cover-sub"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="chipbar ptabs" id="etapes" aria-label="Choisir une étape"></nav>
+  <header class="section">
+    <p class="hero__lede" id="lede"></p>
+    <p class="ville__hotel" id="hotel"></p>
+  </header>
+  <section class="section" id="incontournables">
+    <div class="shead"><h2>À ne pas rater</h2><span class="shead__meta" id="sel-meta"></span></div>
+    <ol class="sel__list" id="sel"></ol>
+    <p class="sel__arb" id="arb" hidden></p>
+  </section>
+  <section class="section" id="gouter">
+    <div class="shead"><h2>À goûter absolument</h2><span class="shead__meta" id="eat-meta"></span></div>
+    <div id="eatlist"></div>
+  </section>
+  <section class="section" id="evenements" hidden>
+    <div class="shead"><h2>Pendant votre séjour</h2><p>Fêtes et illuminations datées.</p></div>
+    <ol class="sel__list" id="events"></ol>
+  </section>
+  <section class="section" id="jours">
+    <div class="shead"><h2>Vos jours</h2><p>Le programme prévu, jour par jour.</p></div>
+    <ol class="vdays" id="days"></ol>
+  </section>
+  <section class="section" id="types">
+    <div class="shead"><h2>Journées type</h2><p>Si le programme tombe à l'eau.</p></div>
+    <div class="vtypes" id="tpls"></div>
+  </section>
+  <p class="more" id="biblio"></p>
 </main>
+
+<dialog class="tpldlg" id="fiche"><div class="tpldlg__in"><button class="tpldlg__x" id="fiche-x" aria-label="Fermer">&times;</button><div id="fiche-body"></div></div></dialog>
+
+<script type="module">
+import { CITIES, STEPS, HOTELS, EXCURSIONS } from './data/trip.js';
+import { DAYS, TEMPLATES } from './data/days.js';
+import { SPOTS } from './data/spots.js';
+import { SELECTION } from './data/selection.js';
+import { DELICES } from './data/delices.js';
+import { mountChrome, esc, today } from './app/ui.js';
+
+// Une page par étape : tout ce qui concerne une ville au même endroit,
+// au lieu de le chercher entre le programme, le guide et la liste des plats.
+mountChrome('villes.html');
+var q = function (id) { return document.getElementById(id); };
+var HERO = { tokyo: 'img/hero/tokyo.webp', kanazawa: 'img/hero/kanazawa.webp', kyoto: 'img/hero/kyoto.webp', osaka: 'img/hero/osaka.webp', hakone: 'img/hero/hakone.webp' };
+// Les événements datés, rattachés à l'étape où ils tombent.
+var EV_ETAPE = { 'spot-ev-kenrokuen-lightup': 2, 'spot-ev-shichigosan': 2, 'spot-ev-eikando-night': 3, 'spot-ev-kiyomizu-night': 3, 'spot-ev-kodaiji-night': 3, 'spot-ev-kobosan': 3, 'spot-ev-midosuji': 4, 'spot-ev-tori-no-ichi': 6, 'spot-ev-gaien-icho': 6, 'spot-ev-hasedera-lightup': 6, 'spot-ev-minatomirai': 6 };
+var byId = new Map(SPOTS.map(function (s) { return [s.id, s]; }));
+
+// Quelle étape ? ?e=3, sinon celle du jour pendant le voyage, sinon la première.
+var par = parseInt(new URLSearchParams(location.search).get('e'), 10);
+var now = today();
+var enCours = STEPS.find(function (s) { return now >= s.from && now < s.to; });
+var step = STEPS.find(function (s) { return s.n === par; }) || enCours || STEPS[0];
+var city = CITIES[step.cityId];
+var sel = SELECTION.find(function (x) { return x.step === step.n; }) || { picks: [] };
+var hotel = HOTELS.find(function (h) { return h.id === step.hotelId; });
+var titre = city.name + (step.cityId === 'tokyo' ? ' · ' + step.area : '');
+document.title = titre + ' — Japon 2026';
+document.documentElement.style.setProperty('--c', 'var(--c-' + city.id + ')');
+
+// --- en-tête ------------------------------------------------------------------
+q('cover-img').src = step.n === 6 ? 'img/hero/tokyo2.webp' : (HERO[step.cityId] || 'img/hero/ouverture.webp');
+q('cover-img').alt = city.name;
+q('titre').textContent = titre;
+q('cover-sub').textContent = step.label + ' · ' + step.nights + ' nuit' + (step.nights > 1 ? 's' : '');
+q('etapes').innerHTML = STEPS.map(function (s) {
+  var c = CITIES[s.cityId];
+  return '<a class="chip" href="villes.html?e=' + s.n + '" aria-pressed="' + (s.n === step.n) + '"><span class="chip__dot" style="background:var(--c-' + c.id + ')"></span>' + esc(c.name + (s.cityId === 'tokyo' ? ' · ' + s.area : '')) + '</a>';
+}).join('');
+q('lede').textContent = sel.intro || '';
+var excs = EXCURSIONS.filter(function (e) { return e.fromStepId === step.id; });
+q('hotel').innerHTML = (hotel ? '<span class="label">Hôtel</span> <a href="' + esc(hotel.maps) + '" target="_blank" rel="noopener">' + esc(hotel.name) + '</a><span class="mut"> · ' + esc(hotel.room || '') + '</span>' : '') +
+  (excs.length ? '<br><span class="label">Excursions</span> ' + excs.map(function (e) { return esc(e.name); }).join(', ') : '');
+
+// --- à ne pas rater (la sélection) --------------------------------------------
+function item(s, why) {
+  return '<li><button class="sel__item" type="button" data-id="' + esc(s.id) + '">' +
+    (s.img ? '<img class="sel__img" src="' + esc(s.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="sel__img sel__img--nue">' + esc(s.name.trim()[0]) + '</span>') +
+    '<span><b>' + esc(s.name) + '</b><span class="sel__why">' + esc(why || s.blurb || '') + '</span>' +
+    '<span class="sel__meta">' + [s.duration, s.budget, why ? null : s.when].filter(Boolean).map(esc).join(' · ') + '</span></span></button></li>';
+}
+var picks = sel.picks.map(function (p) { var s = byId.get(p.id); return s ? item(s, p.why) : ''; });
+q('sel').innerHTML = picks.join('');
+q('sel-meta').textContent = picks.length + ' choix';
+if (sel.arbitrage) { q('arb').hidden = false; q('arb').innerHTML = '<b>Arbitrage</b> ' + esc(sel.arbitrage); }
+
+// --- événements de l'étape, hors ceux déjà dans la sélection --------------------
+var dejaVus = new Set(sel.picks.map(function (p) { return p.id; }));
+var evs = Object.keys(EV_ETAPE).filter(function (id) { return EV_ETAPE[id] === step.n && !dejaVus.has(id) && byId.has(id); }).map(function (id) { return byId.get(id); });
+if (evs.length) { q('evenements').hidden = false; q('events').innerHTML = evs.map(function (s) { return item(s, s.when); }).join(''); }
+
+// --- à goûter : mêmes cases que l'onglet « À manger » (même mémoire) ------------
+var KEY = 'jp2026_eat'; var done = {}; try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+var plats = (DELICES.find(function (g) { return g.cityId === step.cityId; }) || { items: [] }).items;
+function eatMeta() { q('eat-meta').textContent = plats.filter(function (x) { return done[x.id]; }).length + ' / ' + plats.length + ' goûtés'; }
+q('eatlist').innerHTML = plats.map(function (x) {
+  return '<label class="eat' + (done[x.id] ? ' is-done' : '') + '"><input type="checkbox" data-id="' + x.id + '"' + (done[x.id] ? ' checked' : '') + '>' +
+    (x.img ? '<img class="eat__img" src="' + x.img + '" alt="" loading="lazy" decoding="async">' : '<span class="eat__e">' + x.e + '</span>') +
+    '<span><b>' + esc(x.n) + '</b><span class="eat__jp">' + esc(x.jp) + '</span></span><p class="eat__d">' + esc(x.d) + '</p></label>';
+}).join('');
+eatMeta();
+q('eatlist').addEventListener('change', function (e) {
+  var cb = e.target.closest('input[data-id]'); if (!cb) return;
+  if (cb.checked) done[cb.dataset.id] = true; else delete done[cb.dataset.id];
+  try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (err) {}
+  cb.closest('.eat').classList.toggle('is-done', cb.checked); eatMeta();
+});
+
+// --- vos jours -----------------------------------------------------------------
+var jours = DAYS.filter(function (d) { return d.stepId === step.id; });
+q('days').innerHTML = jours.map(function (d) {
+  var j = d.label.split(' ');
+  return '<li><a class="vday" href="jour.html?d=' + d.n + '"><span class="vday__d"><b>' + esc(j[0]) + '</b>' + esc(j[1] || '') + '</span>' +
+    '<span><b>' + esc(d.title) + '</b><span class="mut">' + esc((d.items[0] && d.items[0].text || '').slice(0, 110)) + '</span></span><span class="vday__go" aria-hidden="true">›</span></a></li>';
+}).join('');
+
+// --- journées type de la ville ---------------------------------------------------
+var tpls = TEMPLATES.filter(function (t) { return t.cityId === step.cityId; });
+q('tpls').innerHTML = tpls.map(function (t) {
+  return '<a class="vtype" href="itineraire.html?onglet=types#' + esc(t.id) + '"><b>' + esc(t.title) + '</b><span class="mut">' + esc(t.sub) + ' · ' + t.steps.length + ' étapes</span></a>';
+}).join('');
+if (!tpls.length) q('types').hidden = true;
+var nAdr = SPOTS.filter(function (s) { return s.cityId === step.cityId; }).length;
+q('biblio').innerHTML = '<a class="btn btn--ghost" href="guide.html?ville=' + step.cityId + '">Toutes les adresses ' + (/^[AEIOUH]/.test(city.name) ? "d'" : 'de ') + esc(city.name) + ' dans le guide (' + nAdr + ') →</a>';
+
+// --- la fiche d'une adresse -----------------------------------------------------
+var dlg = q('fiche');
+function ouvrir(id) {
+  var s = byId.get(id); if (!s) return;
+  var why = (sel.picks.find(function (p) { return p.id === id; }) || {}).why;
+  q('fiche-body').innerHTML = (s.img ? '<img class="tpldlg__img" src="' + esc(s.img) + '" alt="">' : '') +
+    '<p class="tpldlg__kicker">' + esc(city.name) + (s.area ? ' · ' + esc(s.area) : '') + '</p><div class="tpldlg__head"><h3>' + esc(s.name) + '</h3><p class="mut">' + esc(s.blurb || '') + '</p></div>' +
+    (why ? '<p class="fiche__why">' + esc(why) + '</p>' : '') + (s.lore ? '<p class="fiche__lore">' + esc(s.lore) + '</p>' : '') +
+    '<dl class="fiche__facts">' + [['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]].filter(function (x) { return x[1]; }).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl>' +
+    '<p class="tpldlg__links"><a class="btn" href="' + esc(s.maps) + '" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>';
+  dlg.showModal();
+}
+document.addEventListener('click', function (e) { var b = e.target.closest('.sel__item'); if (b) ouvrir(b.dataset.id); });
+q('fiche-x').addEventListener('click', function () { dlg.close(); });
+dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+if (location.hash) requestAnimationFrame(function () { var t = document.querySelector(location.hash); if (t) t.scrollIntoView({ block: 'start' }); });
+</script>
+
+<script>
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
 </body>
 </html>

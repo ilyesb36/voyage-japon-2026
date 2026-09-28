@@ -2328,3 +2328,26 @@
 .eat__d { grid-column: 3; }
 .sel__plat { display: inline-flex; align-items: center; gap: var(--s-2); padding-left: var(--s-1); }
 .sel__plat img { width: 26px; height: 26px; border-radius: var(--r-full); object-fit: cover; }
+
+/* Les villes : une page par étape. */
+.ville__hotel { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); line-height: 1.8; }
+.ville__hotel .label { margin-right: var(--s-2); }
+.vdays { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.vday { display: grid; grid-template-columns: 3.5rem 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-3) 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+.vday:hover b { color: var(--acc); }
+.vday__d { display: flex; flex-direction: column; align-items: center; font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); }
+.vday__d b { font-size: var(--t-lg); color: var(--ink); }
+.vday > span:nth-child(2) b { display: block; }
+.vday .mut { font-size: var(--t-sm); }
+.vday__go { color: var(--mut); font-size: var(--t-lg); }
+.vtypes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+.vtype { display: flex; flex-direction: column; gap: var(--s-1); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: inherit; text-decoration: none; }
+.vtype:hover { border-color: var(--line-2); background: var(--paper-3); }
+.vtype .mut { font-size: var(--t-sm); }
+.fiche__why { margin: var(--s-4) 0 0; color: var(--ink); }
+.fiche__lore { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); line-height: 1.55; }
+.fiche__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); margin: var(--s-4) 0; }
+.fiche__facts dt { font-size: var(--t-xs); color: var(--mut); text-transform: uppercase; letter-spacing: 0.05em; }
+.fiche__facts dd { margin: var(--s-1) 0 0; font-size: var(--t-sm); }
+.guide__renvoi { margin: 0; font-size: var(--t-sm); color: var(--mut); }
+@media (max-width: 760px) { .vtypes { grid-template-columns: 1fr; } .fiche__facts { grid-template-columns: 1fr; } }

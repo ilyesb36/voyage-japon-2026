@@ -147,15 +147,15 @@ q('cities').innerHTML = STEPS.map((step) => {
       ${incontournables.length ? `
       <p class="city__ob">
         <span class="label">À ne pas rater</span>
-        ${incontournables.map((sp) => `<a href="guide.html#etape-${step.n}">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
+        ${incontournables.map((sp) => `<a href="villes.html?e=${step.n}#incontournables">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
       </p>` : ''}
       ${aGouter.length ? `
       <p class="city__ob">
         <span class="label">À goûter absolument</span>
-        ${aGouter.map((x) => `<a href="itineraire.html?onglet=manger&ville=${esc(step.cityId)}">${x.e} ${esc(x.n)}</a>`).join('<span class="mut"> · </span>')}
+        ${aGouter.map((x) => `<a href="villes.html?e=${step.n}#gouter">${x.e} ${esc(x.n)}</a>`).join('<span class="mut"> · </span>')}
       </p>` : ''}
       <p class="city__liens">
-        <a class="btn btn--ghost" href="jour.html?d=${premierJour ? premierJour.n : 1}">Les journées</a>
+        <a class="btn" href="villes.html?e=${step.n}">Tout sur ${esc(c.name)}</a>
         <a class="btn btn--ghost" href="guide.html?ville=${esc(step.cityId)}">${nbAdresses} adresses</a>
       </p>
     </div>
