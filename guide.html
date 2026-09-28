@@ -366,14 +366,21 @@ function render() {
   const rang = (s) => { const i = ORDRE.indexOf(s.cityId); return i < 0 ? 9 : i; };
   const trie = state.city === 'all' ? [...list].sort((a, b) => rang(a) - rang(b)) : list;
   const parVille = {}; trie.forEach((s) => { parVille[s.cityId] = (parVille[s.cityId] || 0) + 1; });
+  // Sans ville ni recherche : un aperçu de 8 adresses par ville, et un lien vers la ville entière.
+  // Sinon Tokyo (200+ adresses) occupait à lui seul toutes les pages avant Kanazawa.
+  const apercu = state.city === 'all' && !state.q;
+  const vus = {};
+  const montres = apercu ? trie.filter((s) => { vus[s.cityId] = (vus[s.cityId] || 0) + 1; return vus[s.cityId] <= 8; }) : trie.slice(0, window.__lim);
   let avant;
-  q('grid').innerHTML = trie.slice(0, window.__lim).map((s) => {
+  q('grid').innerHTML = montres.map((s, i) => {
+    const fin = apercu && (i === montres.length - 1 || montres[i + 1].cityId !== s.cityId) && parVille[s.cityId] > 8
+      ? `<p class="bib__all"><button class="btn btn--ghost" type="button" data-ville="${s.cityId || 'partout'}">Toutes les adresses de ${esc(s.cityId ? CITIES[s.cityId].name : 'partout')} (${parVille[s.cityId]}) →</button></p>` : '';
     const tete = state.city === 'all' && s.cityId !== avant
       ? `<h3 class="bib__city"><span class="city-dot" style="--c:${s.cityId ? `var(--c-${s.cityId})` : 'var(--mut)'}">${esc(s.cityId ? CITIES[s.cityId].name : 'Partout au Japon')}</span><span class="mut">${parVille[s.cityId]} adresses</span></h3>` : '';
     avant = s.cityId;
-    return tete + card(s);
+    return tete + card(s) + fin;
   }).join('');
-  const reste = list.length - window.__lim;
+  const reste = apercu ? 0 : list.length - window.__lim;
   q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
   q('empty').hidden = list.length > 0;
 
@@ -454,6 +461,17 @@ q('vue').addEventListener('click', (e) => {
 });
 renderSelection();
 paintVue();
+// Arrivée depuis l'accueil sur une étape : la section est rendue en JS, il faut y descendre soi-même.
+if (/^#etape-\d$/.test(location.hash)) requestAnimationFrame(() => document.querySelector(location.hash)?.scrollIntoView({ block: 'start' }));
+
+q('grid').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-ville]');
+  if (!b) return;
+  e.stopPropagation();
+  state.city = b.dataset.ville;
+  render();
+  q('biblio').scrollIntoView({ block: 'start' });
+});
 
 q('more').addEventListener('click', (e) => {
   if (!e.target.closest('#more-btn')) return;
