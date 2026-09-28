@@ -122,19 +122,12 @@ if (evs.length) { q('evenements').hidden = false; q('events').innerHTML = evs.ma
 // --- à goûter : mêmes cases que l'onglet « À manger » (même mémoire) ------------
 var KEY = 'jp2026_eat'; var done = {}; try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
 var plats = (DELICES.find(function (g) { return g.cityId === step.cityId; }) || { items: [] }).items;
-function eatMeta() { q('eat-meta').textContent = plats.filter(function (x) { return done[x.id]; }).length + ' / ' + plats.length + ' goûtés'; }
-q('eatlist').innerHTML = plats.map(function (x) {
-  return '<label class="eat' + (done[x.id] ? ' is-done' : '') + '"><input type="checkbox" data-id="' + x.id + '"' + (done[x.id] ? ' checked' : '') + '>' +
-    (x.img ? '<img class="eat__img" src="' + x.img + '" alt="" loading="lazy" decoding="async">' : '<span class="eat__e">' + x.e + '</span>') +
-    '<span><b>' + esc(x.n) + '</b><span class="eat__jp">' + esc(x.jp) + '</span></span><p class="eat__d">' + esc(x.d) + '</p></label>';
-}).join('');
+function eatMeta() { q('eat-meta').textContent = plats.length + ' plats'; }
+q('eatlist').innerHTML = '<div class="dishes">' + plats.map(function (x) {
+  return '<article class="dish">'+(x.img?'<img class="dish__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="dish__img dish__img--nue">'+x.e+'</span>')+'<span class="dish__txt"><b>'+esc(x.n)+'</b><span class="dish__jp">'+esc(x.jp)+'</span><span class="dish__d">'+esc(x.d)+'</span></span></article>';
+}).join('') + '</div>';
 eatMeta();
-q('eatlist').addEventListener('change', function (e) {
-  var cb = e.target.closest('input[data-id]'); if (!cb) return;
-  if (cb.checked) done[cb.dataset.id] = true; else delete done[cb.dataset.id];
-  try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (err) {}
-  cb.closest('.eat').classList.toggle('is-done', cb.checked); eatMeta();
-});
+
 
 // --- vos jours -----------------------------------------------------------------
 var jours = DAYS.filter(function (d) { return d.stepId === step.id; });

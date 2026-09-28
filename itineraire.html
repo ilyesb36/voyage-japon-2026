@@ -37,7 +37,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <section class="section">
     <div class="shead disc">
       <h2>À manger absolument</h2>
-      <p>Les spécialités de chaque étape — à cocher au fil du voyage.</p>
+      <p>Les spécialités de chaque étape.</p>
       <span class="shead__meta" id="eat-meta"></span>
     </div>
     <div class="chipbar" id="eat-filter"></div>
@@ -314,23 +314,25 @@ if (location.hash) {
   var KEY='jp2026_eat'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
   var st=(function(){var v=new URLSearchParams(location.search).get('ville');return DELICES.some(function(g){return g.cityId===v;})?v:'all';})();
   var CITYCHIPS=[{id:'all',name:'Toutes'}].concat(DELICES.map(function(g){var c=CITIES[g.cityId];return {id:g.cityId,name:c?c.name:g.cityId,color:c?c.color:null};}));
-  function meta(){var tot=0,ok=0;DELICES.forEach(function(g){g.items.forEach(function(x){tot++;if(done[x.id])ok++;});});q('eat-meta').textContent=ok+' / '+tot+' goûtés';}
+  function meta(){var tot=0,ok=0;DELICES.forEach(function(g){g.items.forEach(function(x){tot++;if(done[x.id])ok++;});});q('eat-meta').textContent=tot+' plats';}
   function paint(){
     var h='';
     DELICES.forEach(function(g){
       if(st!=='all'&&g.cityId!==st)return;
       var c=CITIES[g.cityId];
       h+='<div class="eatgrp"><h3><span class="city-dot" style="--c:var(--c-'+g.cityId+')">'+esc(c?c.name:g.cityId)+'</span></h3>';
+      h+='<div class="dishes">';
       g.items.forEach(function(x){
-        h+='<label class="eat'+(done[x.id]?' is-done':'')+'"><input type="checkbox" data-id="'+x.id+'"'+(done[x.id]?' checked':'')+'>'+(x.img?'<img class="eat__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="eat__e">'+x.e+'</span>')+'<span><b>'+esc(x.n)+'</b><span class="eat__jp">'+esc(x.jp)+'</span></span><p class="eat__d">'+esc(x.d)+'</p></label>';
+        h+='<article class="dish">'+(x.img?'<img class="dish__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="dish__img dish__img--nue">'+x.e+'</span>')+'<span class="dish__txt"><b>'+esc(x.n)+'</b><span class="dish__jp">'+esc(x.jp)+'</span><span class="dish__d">'+esc(x.d)+'</span></span></article>';
       });
+      h+='</div>';
       h+='</div>';
     });
     q('eatlist').innerHTML=h; meta();
   }
   q('eat-filter').innerHTML=CITYCHIPS.map(function(o){return '<button class="chip" data-city="'+o.id+'" aria-pressed="'+(o.id===st)+'">'+(o.color?'<span class="chip__dot" style="background:'+o.color+'"></span>':'')+esc(o.name)+'</button>';}).join('');
   q('eat-filter').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;st=b.dataset.city;q('eat-filter').querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed',String(c===b));});paint();});
-  q('eatlist').addEventListener('change',function(e){var cb=e.target.closest('input[data-id]');if(!cb)return;done[cb.dataset.id]=cb.checked;if(!cb.checked)delete done[cb.dataset.id];try{localStorage.setItem(KEY,JSON.stringify(done));}catch(err){}cb.closest('.eat').classList.toggle('is-done',cb.checked);meta();});
+  
   paint();
 })();
 initReveal();
