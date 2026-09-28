@@ -19,14 +19,14 @@ export function moment() {
 }
 
 const PAGES_PAR_MOMENT = {
+  // Avant : cinq entrées. La journée se rejoint depuis le programme (chaque
+  // ligne y mène), le budget depuis Pratique — ils allument leur parent.
   avant: [
     { href: 'index.html',      label: 'Le voyage' },
     { href: 'aujourdhui.html', label: 'Préparatifs' },
     { href: 'itineraire.html', label: 'Le programme' },
-    { href: 'jour.html',       label: 'La journée' },
     { href: 'guide.html',      label: 'Le guide' },
-    { href: 'budget.html',     label: 'Le budget' },
-    { href: 'pratique.html',   label: 'Pratique' },
+    { href: 'pratique.html',   label: 'Budget & pratique' },
   ],
   // Pendant : « Aujourd'hui » EST la page du jour, qui s'ouvre sur la date du
   // jour. Le compte à rebours et le budget reculent — on ne les cherche pas dans
@@ -126,7 +126,7 @@ export function mountChrome(current) {
         <a class="nav__brand" href="index.html">Japon 2026</a>
         <button class="nav__burger" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
         <div class="nav__links">
-          ${PAGES.map((p) => `<a href="${p.href}"${p.href === current ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
+          ${PAGES.map((p) => `<a href="${p.href}"${p.href === (PAGES.some((x) => x.href === current) ? current : ({ 'jour.html': 'itineraire.html', 'budget.html': 'pratique.html', 'aujourdhui.html': 'jour.html' })[current]) ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
         </div>
         <span class="nav__count">${counter}</span>
         <button class="nav__theme" type="button"></button>
@@ -162,6 +162,9 @@ export function mountChrome(current) {
  */
 export function initReveal(selector = '.section, .city, .fl, .know__item, .todo__item') {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Les apparitions ne servent qu'à l'accueil, qui se lit comme un magazine.
+  // Ailleurs on vient chercher une info : elle doit être là tout de suite.
+  if (!/\/(index\.html)?$/.test(location.pathname)) return;
   const els = [...document.querySelectorAll(selector)];
   if (!els.length || !('IntersectionObserver' in window)) return;
 
