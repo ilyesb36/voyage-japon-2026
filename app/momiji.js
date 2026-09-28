@@ -5,8 +5,8 @@
 // Hakone tôt parce qu'on y est en altitude, Kyoto et Tokyo tard. On superpose
 // les dates du séjour à ces fenêtres pour le voir d'un coup d'œil.
 //
-// Les fenêtres sont des moyennes des dernières années, pas une prévision 2026 :
-// les prévisions japonaises ne sortent qu'en septembre. C'est dit sur la page.
+// Les fenêtres suivent la prévision 2026 du Japan Meteorological Corporation
+// (1re édition du 2 septembre), élargies autour du pic annoncé par ville.
 
 import { CITIES, STEPS, TRIP } from '../data/trip.js';
 import { daysBetween, formatDate } from './ui.js';
@@ -92,9 +92,11 @@ export function renderMomijiBand(el) {
         <span class="momiji__key momiji__key--stay"></span> vos dates sur place
       </p>
       <p class="momiji__note">
-        Moyenne des dernières années, pas une prévision : les prévisions japonaises
-        du <i lang="ja">kōyō</i> ne paraissent qu'en septembre. Hakone rougit tôt — on y est
-        en altitude ; Kyoto et Tokyo tard. La boucle est faite pour finir à Tokyo au bon moment.
+        Calé sur la prévision officielle 2026 du Japan Meteorological Corporation (2 septembre) : l'été chaud retarde un peu les couleurs.
+        Tokyo rougit vers le 29 novembre et ses ginkgos dorent vers le 26 — votre second séjour tombe pile dessus.
+        Kyoto est annoncé tard (pic officiel le 11 décembre) : du 16 au 22 novembre, les érables seront en train de virer, pas au sommet —
+        privilégiez les lieux frais et en hauteur (Takao, Ohara, Kurama, les collines d'Arashiyama) et les illuminations du soir.
+        Hakone, en altitude, arrive en fin de saison au bord du lac. Prévision réactualisée par l'institut chaque mois : à recontrôler début novembre.
       </p>
     </div>`;
 }
