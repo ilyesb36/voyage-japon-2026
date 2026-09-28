@@ -125,6 +125,7 @@ for (const facet of ['priority', 'source', 'kind']) {
   const sel = q(`f-${facet}`);
   sel.innerHTML = FACETS[facet].map((o) =>
     `<option value="${o.id}">${o.id === 'all' ? LABEL[facet] : esc(o.name)}</option>`).join('');
+  sel.value = state[facet];
   sel.addEventListener('change', () => { state[facet] = sel.value; render(); });
 }
 
@@ -330,7 +331,7 @@ function render() {
   q('grid').innerHTML = list.map(card).join('');
   q('empty').hidden = list.length > 0;
 
-  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source'].some((k) => state[k] !== 'all');
+  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind'].some((k) => state[k] !== 'all');
   q('count').textContent = filtered
     ? `${list.length} sur ${SPOTS.length}`
     : `${SPOTS.length} adresses`;
@@ -338,7 +339,8 @@ function render() {
 }
 
 q('reset').addEventListener('click', () => {
-  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', q: '' });
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', q: '' });
+  q('f-kind').value = 'all';
   q('search').value = '';
   q('f-priority').value = 'all';
   q('f-source').value = 'all';
