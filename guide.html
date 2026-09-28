@@ -269,6 +269,7 @@ function openSheet(id) {
   const s = byId.get(id);
   if (!s) return;
   const city = s.cityId ? CITIES[s.cityId] : null;
+  let photoQ = s.name; try { photoQ = decodeURIComponent((s.maps || '').split('query=')[1]) || s.name; } catch (e) {}
 
   const el = document.createElement('div');
   el.className = 'sheet';
@@ -292,8 +293,9 @@ function openSheet(id) {
         </dl>
         ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
         ${s.acces ? `<p class="sheet__acces"><b>Y aller</b> ${esc(s.acces)}</p>` : ''}
-        ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : ''}
+        ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : s.source === 'secrets' ? '<p class="sheet__guide">Tiré des « Secrets de Tokyo » du guide japonais.</p>' : ''}
         <a class="btn" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+        ${s.img ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(photoQ)}" target="_blank" rel="noopener">Voir en photos</a>`}
       </div>
     </div>`;
 
