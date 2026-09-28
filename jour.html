@@ -179,7 +179,10 @@ const points = situees.flatMap((e) => e.lieux);
 const MAX_ETAPES = 11;
 const gardes = points.slice(0, MAX_ETAPES);
 const tronque = points.length - gardes.length;
-const coord = (l) => `${l.lat},${l.lng}`;
+// Les liens passent par le NOM du lieu, pas ses coordonnées : Google Maps ouvre alors
+// la fiche de l'établissement (horaires, avis, photos) au lieu d'une épingle anonyme.
+const nomLieu = (l) => [l.nom, l.quartier && !String(l.nom).toLowerCase().includes(String(l.quartier).toLowerCase()) ? l.quartier : null, (CITIES[l.cityId] && CITIES[l.cityId].name) || 'Japon'].filter(Boolean).join(', ');
+const coord = (l) => (l && l.nom) ? nomLieu(l) : `${l.lat},${l.lng}`;
 
 function lienParcours(mode = 'walking') {
   if (gardes.length < 2) return null;
@@ -191,7 +194,7 @@ function lienParcours(mode = 'walking') {
   if (inter.length) p.set('waypoints', inter.map(coord).join('|'));
   return `https://www.google.com/maps/dir/?${p}`;
 }
-const lienLieu = (l) => `https://www.google.com/maps/search/?api=1&query=${l.lat},${l.lng}`;
+const lienLieu = (l) => l.maps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(l.nom ? nomLieu(l) : l.lat + ',' + l.lng)}`;
 
 // Le bouton vit sous la carte, dans la colonne collante : il reste sous les
 // yeux quelle que soit la position dans la liste.
