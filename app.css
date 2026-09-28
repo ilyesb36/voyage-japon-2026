@@ -2298,3 +2298,24 @@
 
 /* Guide : bascule L'essentiel / Tout voir, collée au compteur. */
 #mode { flex: 0 0 auto; gap: var(--s-1); margin-left: auto; }
+
+/* Guide : la sélection, étape par étape (façon carnet), et la bibliothèque groupée par ville. */
+.sel__nav { margin: 0 0 var(--s-6); }
+.sel__n { font-family: var(--f-data); font-size: var(--t-sm); color: var(--c); margin-right: var(--s-2); vertical-align: middle; }
+.sel__intro { max-width: 68ch; color: var(--ink-2); margin: 0 0 var(--s-5); }
+.sel__list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+.sel__item { display: grid; grid-template-columns: 96px 1fr; gap: var(--s-4); width: 100%; height: 100%; padding: var(--s-3); text-align: left;
+  border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: inherit; font: inherit; cursor: pointer; align-items: start; }
+.sel__item:hover { border-color: var(--line-2); background: var(--paper-3); }
+.sel__img { width: 96px; height: 72px; object-fit: cover; border-radius: var(--r-m); background: var(--paper-3); }
+.sel__img--nue { display: flex; align-items: center; justify-content: center; font-size: var(--t-lg); color: var(--c); }
+.sel__item b { display: block; font-size: var(--t-md); font-weight: 600; }
+.sel__why { display: block; margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); line-height: 1.45; }
+.sel__meta { display: block; margin-top: var(--s-2); font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); }
+.sel__arb { margin: var(--s-4) 0 0; max-width: 68ch; font-size: var(--t-sm); color: var(--mut); }
+.sel__arb b { color: var(--ink); margin-right: var(--s-2); }
+.sel__eat { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; margin-top: var(--s-4); }
+.sel__eat .label { margin-right: var(--s-2); }
+.bib__city { grid-column: 1 / -1; display: flex; align-items: baseline; gap: var(--s-3); margin: var(--s-5) 0 0; font-size: var(--t-md); }
+.bib__city:first-child { margin-top: 0; }
+@media (max-width: 760px) { .sel__list { grid-template-columns: 1fr; } .sel__item { grid-template-columns: 72px 1fr; } .sel__img { width: 72px; height: 56px; } }

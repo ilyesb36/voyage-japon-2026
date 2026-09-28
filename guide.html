@@ -24,6 +24,10 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <p class="hero__lede" id="lede"></p>
   </header>
 
+  <div class="chipbar ptabs" id="vue"></div>
+  <div id="sel"></div>
+  <div id="biblio">
+
   <!-- La recherche, puis une matrice villes × envies. Les pastilles de ville et
        le menu des envies obligeaient à croiser deux commandes à l'aveugle, sans
        jamais montrer ce qu'il y avait derrière. La matrice affiche les
@@ -52,10 +56,13 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <div class="spotgrid" id="grid"></div>
   <div class="more" id="more"></div>
   <p class="empty" id="empty" hidden>Rien ne correspond. Essaie un autre mot ou élargis les filtres.</p>
+</div>
 </main>
 
 <script type="module">
 import { SPOTS, CATEGORIES, PRIORITIES } from './data/spots.js';
+import { SELECTION } from './data/selection.js';
+import { DELICES } from './data/delices.js';
 import { CITIES } from './data/trip.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox } from './app/ui.js';
 
@@ -125,7 +132,7 @@ const state = {
   priority: valide(entree.get('priorite'), FACETS.priority),
   source: 'all',
   // L'essentiel par défaut : Obligatoire + À voir. Le reste est à un clic.
-  mode: (entree.has('tout') || entree.get('priorite') || entree.get('q')) ? 'all' : 'ess',
+  mode: 'all',
   fam: (FAMS.some((f) => f.id === entree.get('famille')) ? entree.get('famille') : 'all'),
   kind: valide(entree.get('type'), FACETS.kind),
   q: entree.get('q') || '',
@@ -133,7 +140,7 @@ const state = {
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
 q('lede').innerHTML =
-  `L'essentiel d'abord, le reste à un clic. Chaque carte ouvre Google Maps. ` +
+  `Une sélection triée étape par étape, et toutes les adresses dans la bibliothèque. ` +
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
 // --- filtres secondaires ------------------------------------------------------
@@ -354,7 +361,18 @@ function render() {
   // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
   const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.q]);
   if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
-  q('grid').innerHTML = list.slice(0, window.__lim).map(card).join('');
+  // Groupée par ville, dans l'ordre du voyage, quand aucune ville n'est choisie.
+  const ORDRE = ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone'];
+  const rang = (s) => { const i = ORDRE.indexOf(s.cityId); return i < 0 ? 9 : i; };
+  const trie = state.city === 'all' ? [...list].sort((a, b) => rang(a) - rang(b)) : list;
+  const parVille = {}; trie.forEach((s) => { parVille[s.cityId] = (parVille[s.cityId] || 0) + 1; });
+  let avant;
+  q('grid').innerHTML = trie.slice(0, window.__lim).map((s) => {
+    const tete = state.city === 'all' && s.cityId !== avant
+      ? `<h3 class="bib__city"><span class="city-dot" style="--c:${s.cityId ? `var(--c-${s.cityId})` : 'var(--mut)'}">${esc(s.cityId ? CITIES[s.cityId].name : 'Partout au Japon')}</span><span class="mut">${parVille[s.cityId]} adresses</span></h3>` : '';
+    avant = s.cityId;
+    return tete + card(s);
+  }).join('');
   const reste = list.length - window.__lim;
   q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
   q('empty').hidden = list.length > 0;
@@ -392,6 +410,51 @@ q('fam').addEventListener('click', (e) => {
   state.kind = 'all'; q('f-kind').value = 'all';
   render();
 });
+
+// --- la sélection, étape par étape -------------------------------------------
+function renderSelection() {
+  const nav = SELECTION.map((st) => `<a class="chip" href="#etape-${st.step}"><span class="chip__dot" style="background:var(--c-${st.cityId})"></span>${esc(st.title)}</a>`).join('');
+  q('sel').innerHTML = `<nav class="chipbar sel__nav">${nav}</nav>` + SELECTION.map((st) => {
+    const plats = (DELICES.find((d) => d.cityId === st.cityId) || { items: [] }).items;
+    const aGouter = st.step === 6 ? plats.filter((x) => ['monja', 'nikuman', 'shirasu', 'dorayaki'].includes(x.id))
+                  : st.step === 1 ? plats.filter((x) => ['sushi-tsukiji', 'tsukemen', 'melonpan', 'yuba'].includes(x.id))
+                  : plats.slice(0, 4);
+    return `
+    <section class="section sel__step" id="etape-${st.step}" style="--c:var(--c-${st.cityId})">
+      <div class="shead"><h2><span class="sel__n">${String(st.step).padStart(2, '0')}</span> ${esc(st.title)}</h2><span class="shead__meta">${esc(st.dates)}</span></div>
+      <p class="sel__intro">${esc(st.intro)}</p>
+      <ol class="sel__list">${st.picks.map((p) => {
+        const s = byId.get(p.id); if (!s) return '';
+        return `<li><button class="sel__item" type="button" data-id="${esc(s.id)}">
+          ${s.img ? `<img class="sel__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : `<span class="sel__img sel__img--nue">${esc(s.name.trim()[0])}</span>`}
+          <span><b>${esc(s.name)}</b><span class="sel__why">${esc(p.why)}</span>
+          <span class="sel__meta">${[s.duration, s.budget].filter(Boolean).map(esc).join(' · ')}</span></span>
+        </button></li>`;
+      }).join('')}</ol>
+      ${st.arbitrage ? `<p class="sel__arb"><b>Arbitrage</b> ${esc(st.arbitrage)}</p>` : ''}
+      ${aGouter.length ? `<div class="sel__eat"><span class="label">À goûter</span>${aGouter.map((x) => `<a class="chip" href="itineraire.html?onglet=manger&ville=${st.cityId}">${x.e} ${esc(x.n)}</a>`).join('')}</div>` : ''}
+    </section>`;
+  }).join('');
+}
+q('sel').addEventListener('click', (e) => { const b = e.target.closest('.sel__item'); if (b) openSheet(b.dataset.id); });
+
+// La sélection d'abord. Un lien filtré (?ville=, ?q=…) ouvre directement la bibliothèque.
+const VUES = [['sel', 'La sélection', SELECTION.reduce((a, s) => a + s.picks.length, 0)], ['biblio', 'La bibliothèque', SPOTS.length]];
+let vue = ['ville', 'envie', 'priorite', 'q', 'type', 'famille', 'tout'].some((k) => entree.has(k)) || entree.get('vue') === 'biblio' ? 'biblio' : 'sel';
+function paintVue() {
+  q('vue').innerHTML = VUES.map(([id, lab, n]) => `<button class="chip" data-vue="${id}" aria-pressed="${vue === id}">${lab}<span class="ptabs__n">${n}</span></button>`).join('');
+  q('sel').hidden = vue !== 'sel';
+  q('biblio').hidden = vue !== 'biblio';
+}
+q('vue').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-vue]'); if (!b) return;
+  vue = b.dataset.vue; paintVue();
+  const u = new URL(location.href); if (vue === 'biblio') u.searchParams.set('vue', 'biblio'); else u.searchParams.delete('vue');
+  history.replaceState(null, '', u.pathname + u.search);
+});
+renderSelection();
+paintVue();
+
 q('more').addEventListener('click', (e) => {
   if (!e.target.closest('#more-btn')) return;
   window.__lim += 48;
