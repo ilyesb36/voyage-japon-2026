@@ -38,6 +38,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <div class="tools__selects">
       <select id="f-priority" aria-label="Filtrer par priorité"></select>
       <select id="f-source" aria-label="Filtrer par provenance"></select>
+      <select id="f-kind" aria-label="Filtrer par type de lieu"></select>
     </div>
     <output id="count" class="tools__count" aria-live="polite"></output>
     <button class="chip" id="reset" hidden>Réinitialiser</button>
@@ -67,6 +68,24 @@ const SOURCES = [
   { id: 'claude', name: 'Ajouts' },
 ];
 
+// Le type de lieu — l'axe « concret » (temple, parc, resto…), complémentaire des envies.
+const KINDS = [
+  { id: 'temple', name: 'Temples & sanctuaires' },
+  { id: 'jardin', name: 'Parcs & jardins' },
+  { id: 'musee', name: 'Musées & galeries' },
+  { id: 'vue', name: 'Points de vue' },
+  { id: 'quartier', name: 'Quartiers & balades' },
+  { id: 'nature', name: 'Nature & excursions' },
+  { id: 'cafe', name: 'Cafés & salons de thé' },
+  { id: 'resto', name: 'Restaurants' },
+  { id: 'street', name: 'Marchés & street food' },
+  { id: 'bar', name: 'Bars & nuit' },
+  { id: 'shopping', name: 'Boutiques & shopping' },
+  { id: 'atelier', name: 'Expériences & ateliers' },
+  { id: 'onsen', name: 'Onsen & sento' },
+  { id: 'event', name: 'Événements datés' },
+];
+
 // Les facettes se croisent : on peut demander « Kyoto × Food × Obligatoire ».
 // C'est ce que le champ cityId a débloqué — avant, la ville n'était qu'un
 // intertitre dans le HTML, pas une donnée.
@@ -77,6 +96,7 @@ const FACETS = {
   category: [{ id: 'all', name: 'Tout' }, ...CATEGORIES],
   priority: [{ id: 'all', name: 'Toutes' }, ...PRIORITIES],
   source:   [{ id: 'all', name: 'Peu importe' }, ...SOURCES],
+  kind:     [{ id: 'all', name: 'Tous les types' }, ...KINDS],
 };
 
 // On peut arriver ici déjà filtré : ?ville=kyoto&envie=t6 depuis la page du
@@ -90,6 +110,7 @@ const state = {
   category: valide(entree.get('envie'), FACETS.category),
   priority: valide(entree.get('priorite'), FACETS.priority),
   source: 'all',
+  kind: valide(entree.get('type'), FACETS.kind),
   q: entree.get('q') || '',
 };
 
@@ -99,8 +120,8 @@ q('lede').innerHTML =
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
 // --- filtres secondaires ------------------------------------------------------
-const LABEL = { category: 'Toutes les envies', priority: 'Toutes priorités', source: 'Toutes provenances' };
-for (const facet of ['priority', 'source']) {
+const LABEL = { category: 'Toutes les envies', priority: 'Toutes priorités', source: 'Toutes provenances', kind: 'Tous les types' };
+for (const facet of ['priority', 'source', 'kind']) {
   const sel = q(`f-${facet}`);
   sel.innerHTML = FACETS[facet].map((o) =>
     `<option value="${o.id}">${o.id === 'all' ? LABEL[facet] : esc(o.name)}</option>`).join('');
@@ -139,6 +160,7 @@ const matchesWith = (st) => (s) =>
   && (st.category === 'all' || s.category === st.category)
   && (st.priority === 'all' || s.priority === st.priority)
   && (st.source === 'all' || s.source === st.source)
+  && (st.kind === 'all' || s.kind === st.kind)
   && (!st.q || hay(s).includes(norm(st.q)));
 
 const matches = (s) => matchesWith(state)(s);
