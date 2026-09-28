@@ -2351,3 +2351,5 @@
 .fiche__facts dd { margin: var(--s-1) 0 0; font-size: var(--t-sm); }
 .guide__renvoi { margin: 0; font-size: var(--t-sm); color: var(--mut); }
 @media (max-width: 760px) { .vtypes { grid-template-columns: 1fr; } .fiche__facts { grid-template-columns: 1fr; } }
+
+#etapes { margin-top: var(--s-5); }
