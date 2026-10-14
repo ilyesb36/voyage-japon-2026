@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Japon — novembre 2026</title>
 <meta name="description" content="Vingt-trois nuits au Japon en novembre 2026, de Tokyo à Kyoto au rythme des érables.">
 <link rel="manifest" href="manifest.webmanifest">
@@ -10,6 +10,9 @@
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
 <script>
 /* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
@@ -83,6 +86,7 @@ import { renderMomijiBand } from './app/momiji.js';
 import { DELICES } from './data/delices.js';
 import { SELECTION } from './data/selection.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
+import { montePerdu } from './app/quartiers.js';
 
 mountChrome('index.html');
 
@@ -92,13 +96,19 @@ mountChrome('index.html');
 {
   const jourEnCours = DAYS.find((d) => d.date === today());
   if (jourEnCours) {
-    const c = CITIES[STEPS.find((s) => s.id === jourEnCours.stepId)?.cityId];
+    const step = STEPS.find((s) => s.id === jourEnCours.stepId);
+    const c = CITIES[step?.cityId];
+    const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
     document.querySelector('.cover')?.insertAdjacentHTML('beforebegin', `
-      <a class="ojd" href="jour.html?d=${jourEnCours.n}" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
-        <span class="ojd__quand">Aujourd'hui · jour ${jourEnCours.n} sur ${DAYS.length}</span>
-        <b class="ojd__quoi">${esc(jourEnCours.title)}</b>
-        <span class="ojd__aller">La journée sur la carte ›</span>
-      </a>`);
+      <div class="ojd-wrap">
+        <a class="ojd" href="jour.html?d=${jourEnCours.n}" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
+          <span class="ojd__quand">Aujourd'hui · jour ${jourEnCours.n} sur ${DAYS.length}</span>
+          <b class="ojd__quoi">${esc(jourEnCours.title)}</b>
+          <span class="ojd__aller">La journée sur la carte ›</span>
+        </a>
+        <button class="btn ojd__pres" type="button">Près de moi</button>
+      </div>`);
+    document.querySelector('.ojd__pres')?.addEventListener('click', () => montePerdu({ step, hotel }));
   }
 }
 

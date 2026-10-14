@@ -2,13 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Préparatifs — Japon 2026</title>
 <meta name="description" content="Le programme du jour, l'hôtel du soir et le prochain train.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
 <script>
 /* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
@@ -144,21 +148,38 @@ function renderAvant() {
   const faites = tout.filter((x) => x.fait);
   const pct = Math.round((faites.length / tout.length) * 100);
 
-  // Les échéances se lisent par mois : un séparateur quand le mois change,
-  // comme sur un calendrier, plutôt que treize dates à comparer de tête.
-  let mois = '';
-  const lignes = restants.map((x) => {
-    const m = MOIS[+x.deadline.slice(5, 7) - 1];
-    const sep = m !== mois ? `<li class="ech__mois" aria-hidden="true">${m}</li>` : '';
-    mois = m;
-    return sep + ligneAvant(x);
-  }).join('');
+  let lignes;
+  if (vue === 'categorie') {
+    // Par catégorie : ce qui se règle d'un même geste est ensemble (tout ce qui
+    // touche au téléphone, tous les billets). Dans chaque catégorie, l'ordre
+    // reste celui des échéances, et l'urgence se voit ligne par ligne.
+    lignes = CATS.map((c) => {
+      const lot = restants.filter((x) => categorie(x) === c.id);
+      if (!lot.length) return '';
+      return `<li class="ech__mois" aria-hidden="true">${esc(c.nom)} <span class="ech__compte">${lot.length}</span></li>`
+        + lot.map((x) => ligneAvant(x)).join('');
+    }).join('');
+  } else {
+    // Par échéance : un séparateur quand le mois change, comme sur un
+    // calendrier, plutôt que vingt dates à comparer de tête.
+    let mois = '';
+    lignes = restants.map((x) => {
+      const m = MOIS[+x.deadline.slice(5, 7) - 1];
+      const sep = m !== mois ? `<li class="ech__mois" aria-hidden="true">${m}</li>` : '';
+      mois = m;
+      return sep + ligneAvant(x);
+    }).join('');
+  }
 
   cible.innerHTML = `
     <div class="shead">
       <h2>Avant de partir</h2>
-      <p>Démarches et réservations, dans l'ordre des échéances. Une ligne s'ouvre sur son détail.</p>
+      <p>Démarches et réservations, ${vue === 'categorie' ? 'rangées par catégorie' : "dans l'ordre des échéances"}. Une ligne s'ouvre sur son détail.</p>
       <span class="shead__meta data">${faites.length} sur ${tout.length}</span>
+    </div>
+    <div class="chipbar ech__vues" role="group" aria-label="Ranger les démarches">
+      <button class="chip" type="button" data-vue="categorie" aria-pressed="${vue === 'categorie'}">Par catégorie</button>
+      <button class="chip" type="button" data-vue="date" aria-pressed="${vue === 'date'}">Par échéance</button>
     </div>
     <div class="prog__bar"><span style="width:${pct}%"></span></div>
     <ol class="ech">
@@ -167,6 +188,13 @@ function renderAvant() {
       ${faites.map((x) => ligneAvant(x)).join('')}
     </ol>`;
 
+  cible.querySelectorAll('button[data-vue]').forEach((b) => {
+    b.addEventListener('click', () => {
+      vue = b.dataset.vue;
+      try { localStorage.setItem('jp2026_ech_vue', vue); } catch { /* navigation privée */ }
+      renderAvant();
+    });
+  });
   cible.querySelectorAll('input[data-fait]').forEach((cb) => {
     cb.addEventListener('change', () => {
       faits[cb.dataset.fait] = cb.checked;
@@ -181,6 +209,37 @@ function renderAvant() {
     });
   });
 }
+
+// Les catégories, dans l'ordre où on les traite : les papiers d'abord (les délais
+// administratifs ne se rattrapent pas), la valise en dernier. Une entrée peut
+// porter `cat` dans data/pratique.js ; sinon elle se range d'elle-même.
+const CATS = [
+  { id: 'papiers', nom: 'Santé et papiers' },
+  { id: 'hebergements', nom: 'Hébergements' },
+  { id: 'transports', nom: 'Transports' },
+  { id: 'telephone', nom: 'Téléphone et cartes' },
+  { id: 'billets', nom: 'Visites et billets' },
+  { id: 'tables', nom: 'À table' },
+  { id: 'valise', nom: 'Dans la valise' },
+  { id: 'autres', nom: 'Le reste' },
+];
+const CAT_DEMARCHE = {
+  medicaments: 'papiers', assurance: 'papiers', vjw: 'papiers',
+  'hakone-paiement': 'hebergements', 'precheckin-osaka': 'hebergements',
+  suica: 'transports', pass: 'transports', 'shinkansen-kanazawa': 'transports',
+  esim: 'telephone', cartes: 'telephone',
+  prise: 'valise',
+};
+function categorie(x) {
+  if (x.cat) return x.cat;
+  if (x.genre === 'démarche') return CAT_DEMARCHE[x.id] || 'autres';
+  if (x.hotelId) return 'hebergements';
+  const spot = x.spotId ? SPOTS.find((s) => s.id === x.spotId) : null;
+  return spot && (spot.category === 't1' || ['resto', 'cafe', 'bar'].includes(spot.kind)) ? 'tables' : 'billets';
+}
+let vue = (() => {
+  try { return localStorage.getItem('jp2026_ech_vue') || 'categorie'; } catch { return 'categorie'; }
+})();
 
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
   'septembre', 'octobre', 'novembre', 'décembre'];

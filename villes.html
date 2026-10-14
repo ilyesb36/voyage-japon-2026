@@ -2,14 +2,19 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les villes — Japon 2026</title>
 <meta name="description" content="Une page par étape : l'hôtel, les incontournables, les plats à goûter, les jours prévus et les événements, au même endroit.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
+<script src="vendor/leaflet.js"></script>
 <script>
 /* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
@@ -30,16 +35,27 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <nav class="chipbar ptabs" id="etapes" aria-label="Choisir une étape"></nav>
   <header class="section">
     <p class="hero__lede" id="lede"></p>
-    <p class="ville__hotel" id="hotel"></p>
+    <div class="vhotel" id="hotel"></div>
   </header>
+  <section class="section" id="pres">
+    <div class="shead"><h2>Près de moi</h2><p>Perdu ? Où vous êtes, ce qu'il y a autour, comment rentrer.</p></div>
+    <div id="presdemoi"></div>
+  </section>
   <section class="section" id="incontournables">
     <div class="shead"><h2>À ne pas rater</h2><span class="shead__meta" id="sel-meta"></span></div>
     <ol class="sel__list" id="sel"></ol>
     <p class="sel__arb" id="arb" hidden></p>
   </section>
-  <section class="section" id="gouter">
-    <div class="shead"><h2>À goûter absolument</h2><span class="shead__meta" id="eat-meta"></span></div>
+  <section class="section" id="quartiers" hidden>
+    <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé.</p></div>
+    <div id="qmap" class="qmap map"></div>
+    <div id="autour"></div>
+    <div class="qcards" id="qcards"></div>
+  </section>
+  <section class="section" id="table">
+    <div class="shead"><h2>À table</h2><span class="shead__meta" id="eat-meta"></span></div>
     <div id="eatlist"></div>
+    <div class="tables" id="tables" hidden></div>
   </section>
   <section class="section" id="evenements" hidden>
     <div class="shead"><h2>Pendant votre séjour</h2><p>Fêtes et illuminations datées.</p></div>
@@ -65,6 +81,8 @@ import { SPOTS } from './data/spots.js';
 import { SELECTION } from './data/selection.js';
 import { DELICES } from './data/delices.js';
 import { mountChrome, esc, today } from './app/ui.js';
+import { createMap } from './app/map.js';
+import { quartiersOrdonnes, carteQuartierHTML, autourHotelHTML, montePresDeMoi, boutonChauffeur, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
 
 // Une page par étape : tout ce qui concerne une ville au même endroit,
 // au lieu de le chercher entre le programme, le guide et la liste des plats.
@@ -99,15 +117,42 @@ q('etapes').innerHTML = STEPS.map(function (s) {
 }).join('');
 q('lede').textContent = sel.intro || '';
 var excs = EXCURSIONS.filter(function (e) { return e.fromStepId === step.id; });
-q('hotel').innerHTML = (hotel ? '<span class="label">Hôtel</span> <a href="' + esc(hotel.maps) + '" target="_blank" rel="noopener">' + esc(hotel.name) + '</a><span class="mut"> · ' + esc(hotel.room || '') + '</span>' : '') +
-  (excs.length ? '<br><span class="label">Excursions</span> ' + excs.map(function (e) { return esc(e.name); }).join(', ') : '');
+
+// En-tête hôtel : y aller, appeler, montrer au chauffeur, et l'adresse (en
+// japonais pour la plupart) — ce qu'il faut quand on cherche sa chambre ou un taxi.
+var hEl = q('hotel');
+if (hotel) {
+  hEl.innerHTML =
+    '<div class="vhotel__main">' +
+      '<span class="label">Hôtel</span>' +
+      '<p class="vhotel__nom">' + esc(hotel.name) + '</p>' +
+      '<p class="vhotel__adr mut">' + esc(hotel.address || '') + (hotel.room ? ' · ' + esc(hotel.room) : '') + '</p>' +
+      ((hotel.checkIn || hotel.checkOut) ? '<p class="vhotel__quand"><span class="label">Arrivée</span> <span class="data">' + esc(hotel.checkIn || '—') + '</span> · <span class="label">Départ</span> <span class="data">' + esc(hotel.checkOut || '—') + '</span></p>' : '') +
+      (hotel.arrivee ? '<details class="vhotel__consignes"><summary>Consignes d\'arrivée</summary><p>' + esc(hotel.arrivee) + '</p></details>' : '') +
+    '</div>' +
+    '<div class="vhotel__actions">' +
+      '<a class="btn" href="' + esc(hotel.maps) + '" target="_blank" rel="noopener">M\'y emmener</a>' +
+      (hotel.tel ? '<a class="btn btn--ghost" href="tel:' + esc(hotel.tel.replace(/[^+\d]/g, '')) + '">Appeler</a>' : '') +
+    '</div>' +
+    (excs.length ? '<p class="vhotel__exc"><span class="label">Excursions</span> ' + excs.map(function (e) { return esc(e.name); }).join(', ') + '</p>' : '');
+  var chBtn = boutonChauffeur(hotel);
+  if (chBtn) hEl.querySelector('.vhotel__actions').appendChild(chBtn);
+} else {
+  hEl.hidden = true;
+}
+
+// « Près de moi » : GPS du téléphone, tout calculé en local, rien n'en sort.
+montePresDeMoi(q('presdemoi'), { step: step, hotel: hotel, onSpot: ouvrir });
 
 // --- à ne pas rater (la sélection) --------------------------------------------
 function item(s, why) {
+  var nomQ = quartierNomDeSpot(s);
   return '<li><button class="sel__item" type="button" data-id="' + esc(s.id) + '">' +
     (s.img ? '<img class="sel__img" src="' + esc(s.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="sel__img sel__img--nue">' + esc(s.name.trim()[0]) + '</span>') +
     '<span><b>' + esc(s.name) + '</b><span class="sel__why">' + esc(why || s.blurb || '') + '</span>' +
-    '<span class="sel__meta">' + [s.duration, s.budget, why ? null : s.when].filter(Boolean).map(esc).join(' · ') + '</span></span></button></li>';
+    '<span class="sel__meta">' + [s.duration, s.budget, why ? null : s.when].filter(Boolean).map(esc).join(' · ') + '</span>' +
+    (nomQ ? '<span class="sel__q">' + esc(nomQ) + '</span>' : '') +
+    '</span></button></li>';
 }
 var picks = sel.picks.map(function (p) { var s = byId.get(p.id); return s ? item(s, p.why) : ''; });
 q('sel').innerHTML = picks.join('');
@@ -115,18 +160,86 @@ q('sel-meta').textContent = picks.length + ' choix';
 if (sel.arbitrage) { q('arb').hidden = false; q('arb').innerHTML = '<b>Arbitrage</b> ' + esc(sel.arbitrage); }
 
 // --- événements de l'étape, hors ceux déjà dans la sélection --------------------
+// Rangé par le champ `etape` d'un événement quand il existe, sinon par la table
+// de repli EV_ETAPE (les plus anciens). « à confirmer » si confirme === false.
 var dejaVus = new Set(sel.picks.map(function (p) { return p.id; }));
-var evs = Object.keys(EV_ETAPE).filter(function (id) { return EV_ETAPE[id] === step.n && !dejaVus.has(id) && byId.has(id); }).map(function (id) { return byId.get(id); });
-if (evs.length) { q('evenements').hidden = false; q('events').innerHTML = evs.map(function (s) { return item(s, s.when); }).join(''); }
+function etapeDe(s) { return (typeof s.etape === 'number') ? s.etape : EV_ETAPE[s.id]; }
+var evs = SPOTS.filter(function (s) {
+  return (s.kind === 'event' || EV_ETAPE[s.id] != null) && etapeDe(s) === step.n && !dejaVus.has(s.id);
+});
+if (evs.length) {
+  q('evenements').hidden = false;
+  q('events').innerHTML = evs.map(function (s) {
+    var why = s.when || s.blurb || '';
+    if (s.confirme === false) why += (why ? ' · ' : '') + 'à confirmer';
+    return item(s, why);
+  }).join('');
+}
 
-// --- à goûter : mêmes cases que l'onglet « À manger » (même mémoire) ------------
-var KEY = 'jp2026_eat'; var done = {}; try { done = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+// --- à table : les plats à goûter, puis les tables recommandées -----------------
 var plats = (DELICES.find(function (g) { return g.cityId === step.cityId; }) || { items: [] }).items;
-function eatMeta() { q('eat-meta').textContent = plats.length + ' plats'; }
+q('eat-meta').textContent = plats.length + ' à goûter';
 q('eatlist').innerHTML = '<div class="dishes">' + plats.map(function (x) {
   return '<article class="dish">'+(x.img?'<img class="dish__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="dish__img dish__img--nue">'+x.e+'</span>')+'<span class="dish__txt"><b>'+esc(x.n)+'</b><span class="dish__jp">'+esc(x.jp)+'</span><span class="dish__d">'+esc(x.d)+'</span></span></article>';
 }).join('') + '</div>';
-eatMeta();
+
+// Tables recommandées : adresses ayant un champ `table`. Aucune encore — le bloc
+// reste caché tant qu'il n'y en a pas. La fiche (data-fiche) montre résa et note.
+var TABLE_BADGE = { belle: 'Belle table', tradi: 'Tradition', viral: 'Vu sur les réseaux', tabelog: 'Tabelog' };
+function tableCard(s) {
+  var tab = s.tabelog ? '<span class="table__tabelog">Tabelog ' + esc(s.tabelog) + '</span>' : '';
+  var badge = (s.table && s.table !== 'tabelog') ? '<span class="table__badge">' + esc(TABLE_BADGE[s.table] || 'Table') + '</span>' : '';
+  var prixMoment = [s.budget, s.when].filter(Boolean).map(esc).join(' · ');
+  return '<button class="table" type="button" data-fiche="' + esc(s.id) + '">' +
+    '<span class="table__top">' + badge + tab + '</span>' +
+    '<span class="table__nom">' + esc(s.name) + (s.jp ? ' <span class="mut">' + esc(s.jp) + '</span>' : '') + '</span>' +
+    (s.blurb ? '<span class="table__meta">' + esc(s.blurb) + '</span>' : '') +
+    (prixMoment ? '<span class="table__meta">' + prixMoment + '</span>' : '') +
+    (s.resa ? '<span class="table__resa">Réservation : ' + esc(s.resa.canal || 'voir la fiche') + '</span>' : '') +
+    '</button>';
+}
+var tables = SPOTS.filter(function (s) { return s.cityId === step.cityId && s.table; });
+if (tables.length) {
+  q('tables').hidden = false;
+  q('tables').innerHTML = '<p class="label">Tables recommandées</p>' + tables.map(tableCard).join('');
+}
+
+// --- les quartiers : la carte, « Autour de l'hôtel » par distance, puis les cartes
+var ord = quartiersOrdonnes(step);
+if (ord.length) {
+  q('quartiers').hidden = false;
+  q('autour').innerHTML = autourHotelHTML(hotel, { onSpot: true });
+  q('qcards').innerHTML = ord.map(carteQuartierHTML).join('');
+
+  // La carte ne montre que les vrais quartiers à pied : on écarte les excursions
+  // (Uji, Ohara…) et les regroupements larges (rayon > 3 km, comme Tama) qui
+  // dézoomeraient toute la ville. Le rayon dessiné est plafonné, pour que chaque
+  // cercle se lise comme une zone de marche.
+  var surCarte = ord.filter(function (e) { return !e.q.excursion && e.q.rayon <= 3000; });
+  var cercles = [];
+  if (surCarte.length) {
+    var qmap = createMap('qmap', { scrollWheelZoom: false });
+    surCarte.forEach(function (e) {
+      var cc = CITIES[e.q.cityId].color;
+      var cercle = L.circle(e.q.ll, { radius: Math.min(e.q.rayon, 1500), color: cc, weight: 2, fillColor: cc, fillOpacity: 0.12 }).addTo(qmap);
+      cercle.bindTooltip(e.q.nom, { direction: 'top', className: 'qmap-lbl' });
+      cercle.on('click', function () { var t = document.getElementById('q-' + e.q.id); if (t) t.scrollIntoView({ block: 'start' }); });
+      cercles.push(cercle);
+    });
+    // Cadrage : même parade que les autres cartes (le conteneur peut valoir 0 au départ).
+    var qel = q('qmap');
+    var bornes = L.featureGroup(cercles).getBounds();
+    qmap.setView(bornes.getCenter(), 13);
+    var cadrerQ = function () { qmap.invalidateSize(true); qmap.fitBounds(bornes, { padding: [36, 36], animate: false }); };
+    var restantQ = 12;
+    var tenterQ = function () { if (qel.clientWidth > 0) { cadrerQ(); return; } if (restantQ-- > 0) requestAnimationFrame(tenterQ); };
+    tenterQ();
+    if ('ResizeObserver' in window) new ResizeObserver(function () { if (qel.clientWidth > 0) cadrerQ(); }).observe(qel);
+    addEventListener('load', tenterQ);
+  } else {
+    q('qmap').remove();
+  }
+}
 
 
 // --- vos jours -----------------------------------------------------------------
@@ -155,10 +268,11 @@ function ouvrir(id) {
     '<p class="tpldlg__kicker">' + esc(city.name) + (s.area ? ' · ' + esc(s.area) : '') + '</p><div class="tpldlg__head"><h3>' + esc(s.name) + '</h3><p class="mut">' + esc(s.blurb || '') + '</p></div>' +
     (why ? '<p class="fiche__why">' + esc(why) + '</p>' : '') + (s.lore ? '<p class="fiche__lore">' + esc(s.lore) + '</p>' : '') +
     '<dl class="fiche__facts">' + [['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]].filter(function (x) { return x[1]; }).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl>' +
-    '<p class="tpldlg__links"><a class="btn" href="' + esc(s.maps) + '" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>';
+    ficheExtra(s, hotel) +
+    (s.maps ? '<p class="tpldlg__links"><a class="btn" href="' + esc(s.maps) + '" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>' : '');
   dlg.showModal();
 }
-document.addEventListener('click', function (e) { var b = e.target.closest('.sel__item'); if (b) ouvrir(b.dataset.id); });
+document.addEventListener('click', function (e) { var b = e.target.closest('.sel__item, [data-fiche]'); if (b) ouvrir(b.dataset.id || b.dataset.fiche); });
 q('fiche-x').addEventListener('click', function () { dlg.close(); });
 dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
 if (location.hash) requestAnimationFrame(function () { var t = document.querySelector(location.hash); if (t) t.scrollIntoView({ block: 'start' }); });

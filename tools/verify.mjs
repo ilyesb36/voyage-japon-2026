@@ -47,13 +47,16 @@ console.log('\nTotaux de référence');
 // être masquée par un gain dans l'autre.
 const originaux = SPOTS.filter((s) => s.source !== 'claude');
 const ajouts = SPOTS.filter((s) => s.source === 'claude');
-// 236 à l'origine, moins 16 retirés volontairement (voir guide-removals.mjs).
-ok('220 spots d\'origine (236 − 16 retirés)', originaux.length, 220);
+// 236 à l'origine, moins 16 retirés volontairement (voir guide-removals.mjs),
+// plus les 94 « Secrets de Tokyo » saisis à la main le 28 septembre (source 'secrets').
+ok('314 spots d\'origine (236 − 16 retirés + 94 Secrets de Tokyo)', originaux.length, 314);
 // Les conseils de l'amie guide sont intouchables : ce compte ne doit jamais bouger.
 ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
 // 57 au premier lot, 16 au second (cafés, bars, disquaires, ouvertures
-// 2025-2026), 13 au troisième (les lieux insolites, catégorie t6).
-ok('99 idées ajoutées', ajouts.length, 99);
+// 2025-2026), 13 au troisième (les lieux insolites, catégorie t6) = 99 ;
+// le 28 septembre, 13 retirées et 14 ajoutées à la main ; le 14 octobre,
+// 31 tables (tools/lib/spots-tables.json) et 11 événements datés.
+ok('143 idées ajoutées (99 − 13 + 14 + 31 tables + 11 événements + 1 à Uji)', ajouts.length, 143);
 // Le premier lot venait de Commons, qui couvre bien les temples et les jardins.
 // Le second lot est fait de cafés de spécialité, de bars et de disquaires : ils
 // ne sont pas sur Commons, et un garde-fou anti-homonyme refuse d'illustrer
@@ -62,12 +65,15 @@ ok('99 idées ajoutées', ajouts.length, 99);
 const sansPhoto = ajouts.filter((s) => !s.img);
 assert(`au moins 55 ajouts illustrés (${ajouts.length - sansPhoto.length} sur ${ajouts.length})`,
   ajouts.length - sansPhoto.length >= 55, sansPhoto.map((s) => s.name).join(', '));
-assert('les ajouts sans photo sont tous des lots récents',
-  sansPhoto.every((s) => NOUVEAUX_NOMS.has(s.name)),
-  sansPhoto.filter((s) => !NOUVEAUX_NOMS.has(s.name)).map((s) => s.name).join(', '));
+// Les restaurants, cafés, bars et événements datés ne sont pas sur Commons non plus.
+const sansPhotoOk = (s) => NOUVEAUX_NOMS.has(s.name) || ['resto', 'cafe', 'bar', 'event'].includes(s.kind);
+assert('les ajouts sans photo sont tous des lots récents, des tables ou des événements',
+  sansPhoto.every(sansPhotoOk),
+  sansPhoto.filter((s) => !sansPhotoOk(s)).map((s) => s.name).join(', '));
 
 ok('25 jours', DAYS.length, 25);
-ok('30 journées type', TEMPLATES.length, 30);
+// 30, plus les journées type ajoutées le 28 septembre (Kyoto la nuit, Osaka gourmande…).
+ok('34 journées type', TEMPLATES.length, 34);
 ok('6 hôtels', HOTELS.length, 6);
 ok('6 étapes', STEPS.length, 6);
 ok('4 excursions', EXCURSIONS.length, 4);
@@ -206,9 +212,12 @@ assert('chaque ville a des notices',
     .every((c) => SPOTS.some((s) => s.cityId === c && s.lore)),
   ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone']
     .filter((c) => !SPOTS.some((s) => s.cityId === c && s.lore)).join(', '));
-assert('chaque notice fait entre 120 et 500 signes',
-  avecLore.every((s) => s.lore.length >= 120 && s.lore.length <= 500),
-  avecLore.filter((s) => s.lore.length < 120 || s.lore.length > 500).map((s) => `${s.name} (${s.lore.length})`).join(', '));
+// Les « Secrets de Tokyo » reprennent les mots du carnet d'origine, plus courts :
+// on ne les allonge pas pour tenir un gabarit.
+const minLore = (s) => (s.source === 'secrets' ? 60 : 120);
+assert('chaque notice fait entre 120 et 500 signes (60 pour les Secrets de Tokyo)',
+  avecLore.every((s) => s.lore.length >= minLore(s) && s.lore.length <= 500),
+  avecLore.filter((s) => s.lore.length < minLore(s) || s.lore.length > 500).map((s) => `${s.name} (${s.lore.length})`).join(', '));
 assert('les incontournables de Kyoto ont une notice',
   ['Fushimi Inari', 'Kinkaku-ji', 'Kiyomizu-dera', 'Tofuku-ji'].every((n) => SPOTS.find((s) => s.name === n)?.lore));
 
@@ -530,7 +539,9 @@ const ajoute = (u) => { if (u && u.startsWith('img/')) referencees.add(u); };
 SPOTS.forEach((s) => ajoute(s.img));
 HOTELS.forEach((h) => h.images.forEach(ajoute));
 TEMPLATES.forEach((t) => { ajoute(t.img); t.steps.forEach((e) => ajoute(e.img)); });
-for (const page of pages) {
+// Les fichiers tenus à la main depuis le 28 septembre (plats, sélection) citent
+// leurs photos entre guillemets simples : on les lit comme les pages.
+for (const page of [...pages, 'data/delices.js', 'data/selection.js']) {
   const src = fs.readFileSync(new URL(`../${page}`, import.meta.url), 'utf8');
   for (const m of src.matchAll(/img\/[^"')]+\.(?:webp|png|jpg)/g)) referencees.add(m[0]);
 }

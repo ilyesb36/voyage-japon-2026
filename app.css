@@ -24,7 +24,8 @@
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { -webkit-text-size-adjust: 100%; }
+  /* iPhone : pas de reflow du texte en paysage, pas d'éclair gris au toucher. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; }
   img, picture, svg, video { display: block; max-width: 100%; }
   input, button, textarea, select { font: inherit; color: inherit; }
   button { background: none; border: 0; cursor: pointer; }
@@ -154,6 +155,8 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* noms japonais longs, URL : on casse plutôt que de déborder. */
+    overflow-wrap: break-word;
   }
 
   h1, h2, h3, h4 { font-weight: 600; line-height: 1.25; letter-spacing: -0.011em; }
@@ -185,8 +188,9 @@
 /* --- layout --------------------------------------------------------------- */
 
 @layer layout {
-  .wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: var(--s-5); }
-  @media (max-width: 640px) { .wrap { padding-inline: var(--s-4); } }
+  .wrap { max-width: var(--wrap); margin-inline: auto;
+          padding-inline: max(var(--s-5), env(safe-area-inset-left)) max(var(--s-5), env(safe-area-inset-right)); }
+  @media (max-width: 640px) { .wrap { padding-inline: max(var(--s-4), env(safe-area-inset-left)) max(var(--s-4), env(safe-area-inset-right)); } }
 
   .section { padding-block: var(--s-8); }
   .section:first-child { padding-top: var(--s-7); }
@@ -204,12 +208,15 @@
   /* nav ------------------------------------------------------------------- */
   .nav {
     position: sticky; top: 0; z-index: 900;
+    /* en PWA plein écran (status bar translucide), la coque ne passe pas sous l'heure. */
+    padding-top: env(safe-area-inset-top);
     background: color-mix(in srgb, var(--paper) 88%, transparent);
     backdrop-filter: blur(14px) saturate(1.4);
     border-bottom: 1px solid var(--line);
   }
   .nav__in {
-    max-width: var(--wrap); margin-inline: auto; padding-inline: var(--s-5);
+    max-width: var(--wrap); margin-inline: auto;
+    padding-inline: max(var(--s-5), env(safe-area-inset-left)) max(var(--s-5), env(safe-area-inset-right));
     height: var(--nav-h); display: flex; align-items: center; gap: var(--s-2);
   }
   .nav__brand {
@@ -234,7 +241,7 @@
   .nav__burger { display: none; margin-left: auto; padding: var(--s-2); color: var(--mut); }
 
   @media (max-width: 780px) {
-    .nav__in { padding-inline: var(--s-4); }
+    .nav__in { padding-inline: max(var(--s-4), env(safe-area-inset-left)) max(var(--s-4), env(safe-area-inset-right)); }
     .nav__burger { display: block; }
     .nav__count { margin-left: 0; }
     .nav__links {
@@ -535,6 +542,8 @@
     .tools .chipbar::-webkit-scrollbar { display: none; }
     .tools__selects { flex: 1; }
     .tools__selects select { flex: 1; min-width: 0; }
+    /* 16px : en deçà, iOS zoome la page au focus du champ ou du menu. */
+    .search input, .tools select { font-size: 16px; }
     .tools__count { margin-left: 0; flex-basis: 100%; }
   }
 
@@ -837,7 +846,8 @@
   /* pied de page ----------------------------------------------------------- */
   .foot { margin-top: var(--s-9); border-top: 1px solid var(--line); }
   .foot__in {
-    max-width: var(--wrap); margin-inline: auto; padding: var(--s-6) var(--s-5) var(--s-7);
+    max-width: var(--wrap); margin-inline: auto;
+    padding: var(--s-6) max(var(--s-5), env(safe-area-inset-right)) max(var(--s-7), env(safe-area-inset-bottom)) max(var(--s-5), env(safe-area-inset-left));
     display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-6); align-items: baseline;
     font-size: var(--t-sm); color: var(--mut);
   }
@@ -853,14 +863,16 @@
   .lightbox {
     position: fixed; inset: 0; z-index: 1000;
     background: rgb(10 10 8 / .96);
-    display: grid; place-items: center; padding: var(--s-5);
+    display: grid; place-items: center;
+    padding: max(var(--s-5), env(safe-area-inset-top)) max(var(--s-5), env(safe-area-inset-right)) max(var(--s-5), env(safe-area-inset-bottom)) max(var(--s-5), env(safe-area-inset-left));
   }
-  .lightbox img { max-width: min(1100px, 94vw); max-height: 86vh; object-fit: contain;
+  .lightbox img { max-width: min(1100px, 94vw); max-height: 86vh; max-height: 86dvh; object-fit: contain;
                   border-radius: var(--r-s); }
   .lightbox figcaption { color: #E8E6DD; font-size: var(--t-sm); text-align: center;
                          margin-top: var(--s-4); }
-  .lightbox__close { position: absolute; top: var(--s-5); right: var(--s-5);
-                     color: #E8E6DD; font-size: 28px; line-height: 1; padding: var(--s-2); }
+  .lightbox__close { position: absolute; top: max(var(--s-5), env(safe-area-inset-top)); right: max(var(--s-5), env(safe-area-inset-right));
+                     color: #E8E6DD; font-size: 28px; line-height: 1; padding: var(--s-2);
+                     min-width: 44px; min-height: 44px; display: grid; place-items: center; }
   .lightbox__nav { position: absolute; top: 50%; transform: translateY(-50%);
                    color: #E8E6DD; font-size: 34px; line-height: 1; padding: var(--s-4); }
   .lightbox__nav--prev { left: var(--s-2); } .lightbox__nav--next { right: var(--s-2); }
@@ -1140,15 +1152,15 @@
     animation: sheet-in .18s ease;
   }
   .sheet__panel {
-    position: relative; width: min(520px, 100%); max-height: 88vh; overflow: auto;
+    position: relative; width: min(520px, 100%); max-height: 88vh; max-height: 88dvh; overflow: auto;
     background: var(--paper-2); border: 1px solid var(--line);
     border-radius: var(--r-l); box-shadow: var(--sh-3);
     animation: sheet-up .22s cubic-bezier(.2, .7, .3, 1);
   }
   .sheet__close {
     position: absolute; top: var(--s-3); right: var(--s-3); z-index: 1;
-    width: 30px; height: 30px; border-radius: var(--r-full);
-    background: rgb(20 15 12 / .5); color: #fff; font-size: 13px;
+    width: 44px; height: 44px; border-radius: var(--r-full);
+    background: rgb(20 15 12 / .5); color: #fff; font-size: 16px;
     display: grid; place-items: center; backdrop-filter: blur(4px);
   }
   .sheet__img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
@@ -1171,7 +1183,8 @@
   .sheet .btn { width: 100%; justify-content: center; }
   @media (max-width: 460px) {
     .sheet { padding: 0; place-items: end stretch; }
-    .sheet__panel { max-height: 92vh; border-radius: var(--r-l) var(--r-l) 0 0; }
+    .sheet__panel { max-height: 92vh; max-height: 92dvh; border-radius: var(--r-l) var(--r-l) 0 0;
+                    padding-bottom: env(safe-area-inset-bottom); }
     .sheet__facts { grid-template-columns: 1fr; gap: var(--s-2); }
   }
 
@@ -1511,17 +1524,21 @@
     content: ''; position: absolute; inset: -10px -4px;
   }
 
-  .tools .chip { height: 40px; }
-  .tools__selects select, .tools select { min-height: 40px; }
-  .tools .search, .tools label.search { min-height: 40px; }
+  .tools .chip { height: 44px; }
+  .tools__selects select, .tools select { min-height: 44px; }
+  .tools .search, .tools label.search { min-height: 44px; }
 
-  .chip { min-height: 40px; }
+  .chip { min-height: 44px; }
 
-  .nav__theme { width: 40px; height: 40px; }
-  .nav__burger { min-width: 40px; min-height: 40px; }
+  .nav__theme { width: 44px; height: 44px; }
+  .nav__burger { min-width: 44px; min-height: 44px; }
   /* Le sélecteur du site est `.nav a:not(.nav__brand)`, pas `.nav__links a` :
      viser le mauvais laissait les liens à 21 px de haut. */
-  .nav a { min-height: 40px; display: inline-flex; align-items: center; }
+  .nav a { min-height: 44px; display: inline-flex; align-items: center; }
+
+  /* Le « × » des modales (journées type, fiche d'une ville) ne faisait que la
+     taille du glyphe : on étend la zone tapable sans toucher au dessin. */
+  .tpldlg__x::after { content: ''; position: absolute; inset: -15px; }
 
   /* La case reste petite, mais toute la ligne est tapable — c'est un label. */
   .pay__row { min-height: 44px; }
@@ -1831,8 +1848,8 @@
   /* Leaflet vit dans la couche `vendor`, la plus basse : une règle ici gagne
      sans `!important`. C'est tout l'intérêt d'avoir importé sa feuille dans
      une couche. */
-  .leaflet-control-zoom a { width: 40px; height: 40px; line-height: 40px; }
-  .foot nav a { min-height: 40px; display: inline-flex; align-items: center; }
+  .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; }
+  .foot nav a { min-height: 44px; display: inline-flex; align-items: center; }
 }
 
 /* --- la météo d'une journée -------------------------------------------------
@@ -2069,8 +2086,9 @@
 
   .dep__forfait { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: 2px; }
   .dep__forfait input {
-    width: 58px; padding: 2px var(--s-2); text-align: right;
-    font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: var(--t-sm);
+    width: 64px; padding: var(--s-1) var(--s-2); text-align: right;
+    /* 16px : en deçà, iOS zoome la page quand on tape dans le champ. */
+    font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 16px;
     background: var(--paper-2); border: 1px solid var(--line-2);
     border-radius: var(--r-s); color: var(--ink);
   }
@@ -2079,7 +2097,7 @@
   /* qui a payé : trois boutons, un seul allumé, re-cliquer éteint */
   .qui { display: inline-flex; justify-self: end; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
   .qui button {
-    width: 40px; height: 36px; border: 0; border-left: 1px solid var(--line-2);
+    width: 40px; height: 44px; border: 0; border-left: 1px solid var(--line-2);
     background: var(--paper-2); color: var(--mut);
     font-weight: 600; font-size: var(--t-sm); cursor: pointer;
   }
@@ -2122,6 +2140,9 @@
     border-bottom: 1px solid var(--line-2);
   }
   .ech__mois:first-child { padding-top: 0; }
+  /* le nombre de démarches d'une catégorie, discret à côté de son nom */
+  .ech__compte { margin-left: var(--s-1); font-family: var(--f-data); color: var(--mut); font-weight: 500; }
+  .ech__vues { margin-top: var(--s-3); }
 
   .ech__item {
     display: grid; grid-template-columns: 28px minmax(0, 1fr);
@@ -2370,3 +2391,266 @@
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .eatgrp .dishes { margin-top: var(--s-2); }
 @media (max-width: 600px) { .dishes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dish__d { -webkit-line-clamp: 2; } }
+
+/* ==========================================================================
+   Les quartiers — « où suis-je, qu'y a-t-il autour, comment rentrer ? »
+   (chantier du 14 octobre 2026). Composants « Près de moi » et « Montrer au
+   chauffeur », cartes de quartier, « Dans le coin ». Uniquement des tokens de
+   la charte, pour que le sombre suive — sauf « Montrer au chauffeur », clair
+   et à contraste maximal par parti pris (couleurs figées en dur).
+   ========================================================================== */
+@layer components {
+
+  /* --- en-tête hôtel enrichi (villes.html) -------------------------------- */
+  .vhotel {
+    display: flex; flex-wrap: wrap; gap: var(--s-4);
+    align-items: flex-start; justify-content: space-between;
+    margin-top: var(--s-4); padding: var(--s-4);
+    border: 1px solid var(--line); border-radius: var(--r-l);
+    background: var(--paper-2);
+  }
+  .vhotel__main { flex: 1 1 15rem; min-width: 0; }
+  .vhotel__nom { font-size: var(--t-md); font-weight: 600; margin: 2px 0 0; }
+  .vhotel__adr { font-size: var(--t-sm); margin-top: var(--s-1); line-height: 1.5; }
+  .vhotel__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+  .vhotel__actions .btn { min-height: 44px; }
+  .vhotel__exc { flex-basis: 100%; margin: 0; font-size: var(--t-sm); color: var(--mut); }
+  .vhotel__exc .label { margin-right: var(--s-2); }
+
+  /* --- « Près de moi » (réutilisable) ------------------------------------- */
+  .proche__btn { width: 100%; justify-content: center; min-height: 48px; font-size: var(--t-base); }
+  .proche__panel {
+    margin-top: var(--s-3); padding: var(--s-4);
+    border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2);
+  }
+  .proche__ou { margin: 0 0 var(--s-3); font-size: var(--t-md); line-height: 1.4; }
+  .proche__ou b { font-weight: 700; }
+  .proche__jp { color: var(--mut); font-size: var(--t-sm); margin-left: var(--s-1); }
+  .proche__liste { display: grid; gap: var(--s-2); margin: 0 0 var(--s-4); }
+  .proche__spot {
+    display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left;
+    min-height: 44px; padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper);
+  }
+  .proche__spot:hover { border-color: var(--line-2); background: var(--paper-3); }
+  .proche__nom { font-weight: 600; font-size: var(--t-sm); }
+  .proche__meta { font-size: var(--t-xs); color: var(--mut); }
+  .proche__rentrer { width: 100%; justify-content: center; min-height: 48px; }
+
+  /* --- cartes de quartier (villes.html) ----------------------------------- */
+  .qmap { height: 300px; border-radius: var(--r-m); border: 1px solid var(--line); margin-bottom: var(--s-5); }
+  @media (max-width: 640px) { .qmap { height: 240px; } }
+  .qmap-lbl.leaflet-tooltip {
+    background: var(--paper-2); color: var(--ink);
+    border: 1px solid var(--line-2); border-radius: var(--r-s);
+    font-family: var(--f-body); font-size: var(--t-xs); font-weight: 600;
+    box-shadow: var(--sh-2);
+  }
+  .qmap-lbl.leaflet-tooltip::before { display: none; }
+
+  .qcards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  @media (max-width: 760px) { .qcards { grid-template-columns: 1fr; } }
+  .qcard {
+    padding: var(--s-4); background: var(--paper-2);
+    border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line-2));
+    border-radius: var(--r-l);
+  }
+  .qcard__nom { font-size: var(--t-md); font-weight: 600; }
+  .qcard__jp { font-weight: 400; color: var(--mut); font-size: var(--t-sm); margin-left: var(--s-1); }
+  .qcard__sous { font-size: var(--t-sm); margin-top: 2px; }
+  .qcard__acces { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .qcard__resume { margin: var(--s-2) 0 0; font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5; }
+  .qcard__moment { margin: var(--s-2) 0 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .qcard__jours { margin: var(--s-3) 0 0; font-size: var(--t-sm); }
+  .qcard__jour { color: var(--c, var(--acc)); font-weight: 600; text-decoration: none; }
+  .qcard__jour:hover { text-decoration: underline; }
+  .qcard__ess { margin-top: var(--s-4); display: grid; gap: var(--s-2); }
+  .qcard__ligne { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: baseline; margin: 0; }
+  .qcard__fam { flex: none; font-size: var(--t-xs); font-weight: 600; color: var(--mut); }
+  .qcard__spots { display: flex; flex-wrap: wrap; gap: var(--s-1); }
+  .qspot {
+    display: inline-flex; align-items: center; gap: var(--s-1);
+    min-height: 40px; padding: var(--s-1) var(--s-3);
+    border: 1px solid var(--line); border-radius: var(--r-s);
+    background: var(--paper); font-size: var(--t-sm); color: var(--ink);
+  }
+  .qspot:hover { border-color: var(--acc); background: var(--acc-soft); }
+  .qspot .prio { margin-left: var(--s-1); }
+  .qcard__all { margin-top: var(--s-4); border-top: 1px solid var(--line); padding-top: var(--s-3); }
+  .qcard__all summary { min-height: 40px; display: inline-flex; align-items: center; font-size: var(--t-sm); font-weight: 600; color: var(--ink); }
+  .qcard__all summary:hover { color: var(--acc); }
+  .qall { margin-top: var(--s-2); display: grid; gap: var(--s-3); }
+  .qall__fam { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: baseline; }
+
+  /* --- « À table » : tables recommandées (caché tant qu'il n'y en a pas) --- */
+  .tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
+  @media (max-width: 760px) { .tables { grid-template-columns: 1fr; } }
+  .table { display: grid; gap: var(--s-2); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); }
+  .table__top { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+  .table__badge { font-size: var(--t-xs); font-weight: 600; padding: 2px var(--s-2); border-radius: var(--r-full); background: var(--acc-soft); color: var(--acc); }
+  .table__tabelog { font-family: var(--f-data); font-size: var(--t-xs); color: var(--gold); }
+  .table__nom { font-size: var(--t-md); font-weight: 600; }
+  .table__meta { font-size: var(--t-sm); color: var(--mut); }
+  .table__resa { font-size: var(--t-sm); }
+
+  /* --- fiche enrichie : quartier, distance, réservation, Tabelog ---------- */
+  .fiche__q { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin: var(--s-4) 0 0; }
+  .fiche__q dt { font-size: var(--t-xs); color: var(--mut); text-transform: uppercase; letter-spacing: 0.05em; }
+  .fiche__q dd { margin: var(--s-1) 0 0; font-size: var(--t-sm); }
+  .fiche__resa { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .fiche__resa b { color: var(--ink); margin-right: var(--s-2); }
+
+  /* --- « Dans le coin » (jour.html) --------------------------------------- */
+  .coin { display: grid; gap: var(--s-4); }
+  .coin__items { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2); }
+  .coin__item {
+    display: inline-flex; flex-direction: column; gap: 1px;
+    min-height: 44px; padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--line); border-radius: var(--r-s);
+    background: var(--paper-2); color: var(--ink); text-decoration: none;
+  }
+  .coin__item:hover { border-color: var(--acc); background: var(--acc-soft); }
+  .coin__nom { font-weight: 600; font-size: var(--t-sm); }
+  .coin__q { font-size: var(--t-xs); }
+
+  /* --- l'heure sur une ligne de journée (jour.html) ----------------------- */
+  .etape__h { font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); margin: 0 0 var(--s-1); }
+
+  /* --- le quartier d'un choix dans « À ne pas rater » (villes.html) ------- */
+  .sel__q { display: block; margin-top: var(--s-2); font-size: var(--t-xs); font-weight: 600; color: var(--c, var(--acc)); }
+
+  /* --- « Montrer au chauffeur » : plein écran, clair, contraste maximal ----
+     Couleurs figées EN DUR, pas des tokens : ça doit rester parfaitement
+     lisible même en thème sombre, pour un chauffeur ou un passant. Aucune
+     ressource externe : marche hors-ligne. */
+  .chauffeur {
+    position: fixed; inset: 0; z-index: 1100;
+    display: grid; place-items: center; padding: var(--s-5);
+    background: rgb(0 0 0 / 0.55);
+  }
+  .chauffeur__in {
+    position: relative; width: min(100%, 560px); max-height: 92vh; overflow: auto;
+    padding: clamp(1.5rem, 6vw, 2.5rem);
+    background: #ffffff; color: #111111; text-align: center;
+    border-radius: var(--r-l); box-shadow: 0 10px 44px rgb(0 0 0 / 0.5);
+  }
+  .chauffeur__x {
+    position: absolute; top: var(--s-2); right: var(--s-2);
+    width: 48px; height: 48px; font-size: 2rem; line-height: 1; color: #666; background: none;
+  }
+  .chauffeur__phrase { margin: var(--s-3) 0 var(--s-1); font-size: clamp(1.5rem, 7vw, 2.25rem); font-weight: 700; color: #111; line-height: 1.3; }
+  .chauffeur__sub { margin: 0 0 var(--s-6); font-size: var(--t-sm); color: #666; }
+  .chauffeur__adresse { margin: 0; font-size: clamp(2rem, 9vw, 2.5rem); font-weight: 700; line-height: 1.3; color: #000; word-break: break-word; }
+  .chauffeur__adresse2 { margin: var(--s-3) 0 0; font-size: clamp(1.25rem, 5vw, 1.5rem); color: #222; }
+  .chauffeur__hotel { margin: var(--s-5) 0 0; font-size: var(--t-md); color: #444; }
+  .chauffeur__tel {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-height: 54px; margin-top: var(--s-5); padding: 0 var(--s-6);
+    background: #111; color: #fff; font-weight: 600; font-size: var(--t-md);
+    border-radius: var(--r-m); text-decoration: none;
+  }
+}
+
+/* ==========================================================================
+   Les quartiers — compléments (14 octobre 2026) : « Autour de l'hôtel » par
+   distance, l'étiquette d'excursion, le quartier et la distance sur les cartes
+   du guide. Mêmes tokens, le sombre suit.
+   ========================================================================== */
+@layer components {
+  .autour { margin-bottom: var(--s-5); }
+  .autour__items { display: grid; gap: var(--s-2); margin-top: var(--s-2); }
+  .autour__item {
+    display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left;
+    min-height: 44px; padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper-2);
+    color: var(--ink); text-decoration: none;
+  }
+  .autour__item:hover { border-color: var(--line-2); background: var(--paper-3); }
+  .autour__nom { font-weight: 600; font-size: var(--t-sm); }
+  .autour__meta { font-size: var(--t-xs); color: var(--mut); }
+
+  .qcard__exc {
+    font-family: var(--f-body); font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+    border: 1px solid var(--line-2); border-radius: var(--r-full);
+    padding: 1px var(--s-2); vertical-align: middle;
+  }
+
+  .spot__q {
+    font-size: var(--t-xs); font-weight: 600; color: var(--ink-2);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+  }
+  .spot__dist { color: var(--acc); }
+}
+
+/* ==========================================================================
+   « Perdu ? » et compléments terrain (14 octobre 2026) : bouton d'urgence dans
+   la barre + panneau, badges de fermeture, filtres d'envie de « Près de moi »,
+   ligne konbini, fenêtre d'arrivée de l'hôtel, « depuis l'hôtel » du jour.
+   Tokens de la charte, le sombre suit.
+   ========================================================================== */
+@layer components {
+  /* le bouton « Perdu ? » de la barre, pendant le voyage */
+  .nav__perdu {
+    flex: none; min-height: 40px; padding: 0 var(--s-3); margin-left: var(--s-1);
+    border-radius: var(--r-full); background: var(--acc); color: var(--paper);
+    font-size: var(--t-sm); font-weight: 700; white-space: nowrap;
+  }
+  .nav__perdu:hover { opacity: .9; }
+  @media (max-width: 780px) { .nav__perdu { min-height: 44px; } }
+
+  /* le panneau « Perdu ? » */
+  .perdu {
+    position: fixed; inset: 0; margin: auto; width: min(94vw, 520px);
+    height: fit-content; max-height: 88vh; padding: 0;
+    border: 1px solid var(--line); border-radius: var(--r-l);
+    background: var(--paper-2); color: var(--ink); box-shadow: var(--sh-3);
+  }
+  .perdu::backdrop { background: rgb(15 15 15 / 0.5); }
+  .perdu__in { padding: var(--s-5); overflow: auto; max-height: 88vh; }
+  .perdu__x { position: absolute; top: var(--s-2); right: var(--s-3); width: 44px; height: 44px; font-size: var(--t-lg); line-height: 1; color: var(--mut); background: none; }
+  .perdu__x:hover { color: var(--ink); }
+  .perdu__titre { font-size: var(--t-xl); margin: 0 0 var(--s-4); }
+  .perdu__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-4); }
+  .perdu__actions .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
+  .perdu__urgences { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
+  .perdu__urgences .label { flex-basis: 100%; margin-bottom: var(--s-1); }
+  .perdu__urgences .btn { min-height: 44px; }
+
+  /* badges de fermeture (même palette que les priorités) */
+  .badge-ferme { font-size: var(--t-xs); font-weight: 700; padding: 1px var(--s-2); border-radius: var(--r-full); color: #9B2C1A; background: #FAE7E3; white-space: nowrap; }
+  :root[data-theme="dark"] .badge-ferme { color: #F0A08E; background: #3B1B14; }
+  .badge-verif { font-size: var(--t-xs); font-weight: 600; padding: 1px var(--s-2); border-radius: var(--r-full); color: var(--mut); border: 1px solid var(--line-2); white-space: nowrap; }
+  .fiche__ferme { margin: var(--s-4) 0 0; }
+
+  /* « Près de moi » : filtres d'envie, ligne `when`, ligne konbini */
+  .proche__fams { margin: 0 0 var(--s-3); }
+  .proche__when { display: block; margin-top: 1px; font-size: var(--t-xs); color: var(--mut); }
+  .proche__konbini { margin: var(--s-3) 0; padding: var(--s-3); font-size: var(--t-xs); line-height: 1.5; color: var(--ink-2); background: var(--paper-3); border-radius: var(--r-s); }
+
+  /* en-tête hôtel : fenêtre d'arrivée + consignes repliées (villes.html) */
+  .vhotel__quand { margin-top: var(--s-2); font-size: var(--t-sm); }
+  .vhotel__consignes { margin-top: var(--s-2); font-size: var(--t-sm); }
+  .vhotel__consignes summary { min-height: 32px; display: inline-flex; align-items: center; font-weight: 600; color: var(--ink); }
+  .vhotel__consignes summary:hover { color: var(--acc); }
+  .vhotel__consignes p { margin-top: var(--s-2); color: var(--ink-2); line-height: 1.55; }
+
+  /* accueil : « Près de moi » accolé au bandeau « Aujourd'hui » */
+  .ojd-wrap { display: flex; align-items: stretch; }
+  .ojd-wrap .ojd { flex: 1 1 auto; }
+  .ojd__pres { flex: none; min-height: 52px; padding-inline: var(--s-5); background: var(--paper); color: var(--ink); font-weight: 700; justify-content: center; box-shadow: inset 1px 0 0 rgb(0 0 0 / 0.15); }
+  .ojd__pres:hover { background: var(--paper-2); opacity: 1; }
+  @media (max-width: 460px) { .ojd__pres { padding-inline: var(--s-4); } }
+
+  /* jour.html : départ de transfert + « depuis l'hôtel » */
+  .jour__depart { margin-bottom: var(--s-4); }
+  .jour__depuis { margin: 0 0 var(--s-4); font-size: var(--t-sm); color: var(--ink-2); }
+  .jour__depuis .label { margin-right: var(--s-2); }
+}
+
+@layer components {
+  /* Sur un petit écran, le bouton « Perdu ? » prime : le compteur « En voyage »
+     (redondant une fois sur place) s'efface pour que la barre tienne. */
+  @media (max-width: 440px) {
+    .nav__in:has(.nav__perdu) .nav__count { display: none; }
+  }
+}

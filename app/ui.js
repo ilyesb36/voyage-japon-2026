@@ -1,5 +1,7 @@
 // Chrome de page et petits composants partagés par les cinq pages.
-import { TRIP } from '../data/trip.js';
+import { TRIP, STEPS, HOTELS } from '../data/trip.js';
+import { DAYS as JOURS_VOYAGE } from '../data/days.js';
+import { montePerdu } from './quartiers.js';
 
 /**
  * Le moment du voyage : avant, pendant, après.
@@ -122,6 +124,11 @@ export function mountChrome(current) {
                 : daysBetween(today(), TRIP.end) >= 0 ? 'En voyage'
                 : 'Souvenirs';
 
+  // Pendant le voyage, un bouton « Perdu ? » sur toutes les pages : où je suis,
+  // les adresses autour, rentrer à l'hôtel, le chauffeur, les urgences.
+  const perduActif = moment() === 'pendant';
+  const perduBtn = perduActif ? '<button class="nav__perdu" type="button" aria-haspopup="dialog">Perdu&nbsp;?</button>' : '';
+
   document.body.insertAdjacentHTML('afterbegin', `
     <nav class="nav">
       <div class="nav__in">
@@ -131,6 +138,7 @@ export function mountChrome(current) {
           ${PAGES.map((p) => `<a href="${p.href}"${p.href === (PAGES.some((x) => x.href === current) ? current : ({ 'jour.html': 'itineraire.html', 'budget.html': 'pratique.html', 'aujourdhui.html': 'jour.html' })[current]) ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
         </div>
         <span class="nav__count">${counter}</span>
+        ${perduBtn}
         <button class="nav__theme" type="button"></button>
       </div>
     </nav>`);
@@ -156,6 +164,13 @@ export function mountChrome(current) {
     burger.setAttribute('aria-expanded', String(!open));
     burger.textContent = open ? '☰' : '✕';
   });
+
+  if (perduActif) {
+    const jour = JOURS_VOYAGE.find((d) => d.date === today());
+    const step = jour ? STEPS.find((s) => s.id === jour.stepId) : null;
+    const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
+    document.querySelector('.nav__perdu')?.addEventListener('click', () => montePerdu({ step, hotel }));
+  }
 }
 
 /**

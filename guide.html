@@ -2,13 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le guide — Japon 2026</title>
 <meta name="description" content="Les idées repérées pour le voyage : monuments, tables, quartiers, boutiques — filtrables par ville, par envie et par priorité.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
 <script>
 /* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
@@ -34,6 +38,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
        compteurs : on voit d'un coup où sont les 319 adresses, et on atteint
        n'importe quel croisement en un clic. -->
   <div class="chipbar ptabs" id="fam"></div>
+  <div class="chipbar ptabs" id="quartiers"></div>
 
   <div class="tools">
     <label class="search">
@@ -65,6 +70,7 @@ import { SELECTION } from './data/selection.js';
 import { DELICES } from './data/delices.js';
 import { CITIES } from './data/trip.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox } from './app/ui.js';
+import { quartiersDe, ouEst, metres, maPosition, familleDe, quartierNomDeSpot, distanceTexte, KONBINI_LIGNE, fermeBadgeHTML } from './app/quartiers.js';
 
 mountChrome('guide.html');
 
@@ -79,15 +85,15 @@ const SOURCES = [
   { id: 'claude', name: 'Ajouts' },
 ];
 
-// Le type de lieu — l'axe « concret » (temple, parc, resto…), complémentaire des envies.
-// Les grandes familles, en onglets : on ne montre qu'un univers à la fois.
+// Le chemin unique, le même partout : Ville → Quartier → À voir / À faire /
+// À manger. La famille (voir/faire/manger) vient de familleDe() — la vraie
+// valeur du quartier si l'adresse est placée, sinon déduite du kind. C'est le
+// filtre principal ; le « type de lieu » (temple, resto…) n'est qu'un affinage.
 const FAMS = [
-  { id: 'all', name: 'Tout', kinds: null },
-  { id: 'voir', name: 'À voir', kinds: ['temple', 'jardin', 'musee', 'vue', 'quartier', 'nature'] },
-  { id: 'manger', name: 'Manger & boire', kinds: ['resto', 'cafe', 'street', 'bar'] },
-  { id: 'shopping', name: 'Shopping', kinds: ['shopping'] },
-  { id: 'faire', name: 'Expériences', kinds: ['atelier', 'onsen'] },
-  { id: 'events', name: 'Événements', kinds: ['event'] },
+  { id: 'all', name: 'Tout' },
+  { id: 'voir', name: 'À voir' },
+  { id: 'faire', name: 'À faire' },
+  { id: 'manger', name: 'À manger' },
 ];
 
 const KINDS = [
@@ -128,13 +134,19 @@ const valide = (v, liste) => (v && liste.some((x) => x.id === v) ? v : 'all');
 
 const state = {
   city: valide(entree.get('ville'), FACETS.city),
-  category: valide(entree.get('envie'), FACETS.category),
+  // Les catégories t0–t6 ne sont plus un filtre principal : on garde le champ
+  // (le prédicat le tolère) mais plus d'entrée d'UI — la famille l'a remplacé.
+  category: 'all',
   priority: valide(entree.get('priorite'), FACETS.priority),
   source: 'all',
   // L'essentiel par défaut : Obligatoire + À voir. Le reste est à un clic.
   mode: 'all',
   fam: (FAMS.some((f) => f.id === entree.get('famille')) ? entree.get('famille') : 'all'),
   kind: valide(entree.get('type'), FACETS.kind),
+  // Le quartier (dans la ville choisie) et le tri « Près de moi ». `pos` porte
+  // la position du téléphone quand le tri par distance est actif, rien sinon.
+  quartier: entree.get('quartier') || 'all',
+  pos: null,
   q: entree.get('q') || '',
 };
 
@@ -161,15 +173,59 @@ q('search').addEventListener('input', (e) => {
 // --- rendu -------------------------------------------------------------------
 // La recherche porte sur le nom, la description et le quartier : c'est ce
 // qu'on tape de tête (« ramen », « Asakusa », « couteaux »).
+const norm = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 const haystack = new WeakMap();
+// On cherche par nom, nom japonais, description, histoire ET quartier : tout ce
+// qu'on tape de t\u00eate (\u00ab ramen \u00bb, \u00ab Gion \u00bb, \u00ab momiji \u00bb, \u00ab \u7947\u5712 \u00bb).
 const hay = (s) => {
   if (!haystack.has(s)) {
-    haystack.set(s, `${s.name} ${s.blurb} ${s.area || ''}`
-      .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+    haystack.set(s, norm(`${s.name} ${s.jp || ''} ${s.blurb || ''} ${s.lore || ''} ${s.area || ''} ${quartierNomDeSpot(s) || ''}`));
   }
   return haystack.get(s);
 };
-const norm = (t) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+// Synonymes courants \u2192 types de lieu, pour que \u00ab temple \u00bb, \u00ab caf\u00e9 \u00bb ou
+// \u00ab pluie \u00bb (ce qu'on fait \u00e0 couvert) ram\u00e8nent les bonnes adresses.
+const SYNO = {
+  ramen: ['resto'], sushi: ['resto'], izakaya: ['resto', 'bar'], restaurant: ['resto'],
+  cafe: ['cafe'], the: ['cafe'], onsen: ['onsen'], sento: ['onsen'], bain: ['onsen'],
+  temple: ['temple'], sanctuaire: ['temple'], jardin: ['jardin'], parc: ['jardin'],
+  marche: ['street'], streetfood: ['street'], bar: ['bar'], musee: ['musee'],
+  atelier: ['atelier'], boutique: ['shopping'], shopping: ['shopping'],
+  cadeau: ['shopping'], souvenir: ['shopping'], omiyage: ['shopping'],
+  vue: ['vue'], panorama: ['vue'],
+  pluie: ['musee', 'cafe', 'atelier', 'shopping', 'event', 'onsen'],
+  couvert: ['musee', 'cafe', 'atelier', 'shopping', 'event', 'onsen'],
+};
+let _synQ = null; let _synSet = new Set();
+const synKinds = (nq) => {
+  if (nq === _synQ) return _synSet;
+  _synQ = nq; _synSet = new Set();
+  for (const k in SYNO) if (nq.includes(k)) SYNO[k].forEach((x) => _synSet.add(x));
+  return _synSet;
+};
+// Une adresse correspond si le texte contient la requ\u00eate, ou si un synonyme
+// pointe vers son type de lieu.
+const qMatch = (s, qraw) => {
+  const nq = norm(qraw);
+  if (!nq) return true;
+  if (hay(s).includes(nq)) return true;
+  const kinds = synKinds(nq);
+  return kinds.size > 0 && kinds.has(s.kind);
+};
+// Score de pertinence : le nom d'abord, puis le japonais, la description, le
+// reste, enfin le synonyme. Sert \u00e0 ranger les r\u00e9sultats de recherche.
+const score = (s, qraw) => {
+  const nq = norm(qraw); if (!nq) return 0;
+  const n = norm(s.name); let sc = 0;
+  if (n.startsWith(nq)) sc += 100; else if (n.includes(nq)) sc += 60;
+  if (norm(s.jp).includes(nq)) sc += 30;
+  if (norm(quartierNomDeSpot(s) || '').includes(nq)) sc += 15;
+  if (norm(s.blurb).includes(nq)) sc += 12;
+  if (norm(s.lore || '').includes(nq)) sc += 4;   // le lore est long : il pèse moins
+  if (synKinds(nq).has(s.kind)) sc += 5;
+  return sc;
+};
 
 /**
  * Le prédicat de filtrage, paramétrable par un état.
@@ -187,8 +243,9 @@ const matchesWith = (st) => (s) =>
   && (st.source === 'all' || s.source === st.source)
   && (st.kind === 'all' || s.kind === st.kind)
   && (st.mode !== 'ess' || s.priority === 'ob' || s.priority === 'top')
-  && (!st.fam || st.fam === 'all' || (FAMS.find((f) => f.id === st.fam).kinds || []).includes(s.kind))
-  && (!st.q || hay(s).includes(norm(st.q)));
+  && (!st.fam || st.fam === 'all' || familleDe(s) === st.fam)
+  && (!st.quartier || st.quartier === 'all' || (ouEst(s)?.quartierId === st.quartier))
+  && (!st.q || qMatch(s, st.q));
 
 const matches = (s) => matchesWith(state)(s);
 
@@ -202,37 +259,39 @@ const matLarge = matchMedia('(min-width: 760px)').matches;
 
 // Le même prédicat que la grille, avec la ville et l'envie de la case : le
 // compteur ne peut donc pas diverger du résultat.
-const compte = (city, category) =>
-  SPOTS.filter(matchesWith({ ...state, city, category })).length;
+// On ignore le quartier (propre à une ville) pour que la matrice reste une vue
+// d'ensemble ville × famille, et non un filtre qui se vide d'une ville à l'autre.
+const compte = (city, fam) =>
+  SPOTS.filter(matchesWith({ ...state, city, fam, quartier: 'all' })).length;
 
-const COLS = [{ id: 'all', name: 'Tout' }, ...CATEGORIES];
+const COLS = FAMS;                 // Tout · À voir · À faire · À manger
 const ROWS = FACETS.city;
 
 function renderMat() {
   const actuelle = ROWS.find((r) => r.id === state.city);
-  const actuelleCat = COLS.find((c) => c.id === state.category);
-  const filtre = state.city !== 'all' || state.category !== 'all';
+  const actuelleFam = COLS.find((c) => c.id === state.fam);
+  const filtre = state.city !== 'all' || state.fam !== 'all';
 
   q('mat').innerHTML = `
     <details class="mat__pli">
       <summary class="mat__resume">
         <span class="mat__resumeQuoi">
-          <b>${esc(filtre ? [actuelle?.name, actuelleCat?.id !== 'all' ? actuelleCat?.name : null].filter(Boolean).join(' · ') : 'Toutes les adresses')}</b>
+          <b>${esc(filtre ? [actuelle?.name, actuelleFam?.id !== 'all' ? actuelleFam?.name : null].filter(Boolean).join(' · ') : 'Toutes les adresses')}</b>
         </span>
         <span class="mat__resumeAction">Choisir</span>
       </summary>
       <div class="mat__grille" style="--cols:${COLS.length}">
         <span class="mat__coin" aria-hidden="true"></span>
         ${COLS.map((c) => `
-          <button class="mat__tete${state.category === c.id ? ' is-actif' : ''}"
+          <button class="mat__tete${state.fam === c.id ? ' is-actif' : ''}"
                   data-col="${c.id}" title="${esc(c.name)} — toutes villes">${esc(c.name)}</button>`).join('')}
         ${ROWS.map((r) => `
           <button class="mat__tete mat__tete--ligne${state.city === r.id ? ' is-actif' : ''}"
                   data-row="${r.id}" ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
-                  title="${esc(r.name)} — toutes envies">${esc(r.name)}</button>
+                  title="${esc(r.name)} — tout">${esc(r.name)}</button>
           ${COLS.map((c) => {
             const n = compte(r.id, c.id);
-            const actif = state.city === r.id && state.category === c.id;
+            const actif = state.city === r.id && state.fam === c.id;
             return `
             <button class="mat__case${actif ? ' is-actif' : ''}${n === 0 ? ' is-vide' : ''}"
                     data-row="${r.id}" data-col="${c.id}" ${n === 0 ? 'disabled' : ''}
@@ -248,11 +307,11 @@ q('mat').addEventListener('click', (e) => {
   if (!b || b.disabled) return;
   // Une en-tête ne touche qu'à son axe ; une case fixe les deux.
   if (b.dataset.row !== undefined && b.dataset.col !== undefined) {
-    state.city = b.dataset.row; state.category = b.dataset.col;
+    state.city = b.dataset.row; state.fam = b.dataset.col;
   } else if (b.dataset.row !== undefined) {
     state.city = state.city === b.dataset.row ? 'all' : b.dataset.row;
   } else {
-    state.category = state.category === b.dataset.col ? 'all' : b.dataset.col;
+    state.fam = state.fam === b.dataset.col ? 'all' : b.dataset.col;
   }
   render();
 });
@@ -263,6 +322,12 @@ const prioName = Object.fromEntries(PRIORITIES.map((p) => [p.id, p.name]));
 
 function card(s) {
   const city = s.cityId ? CITIES[s.cityId] : null;
+  // Chaque résultat dit son quartier, et sa distance quand « Près de moi » est
+  // actif (sauf coordonnée de remplissage : 'quartier' → pas de distance).
+  const nomQ = quartierNomDeSpot(s);
+  const o = state.pos ? ouEst(s) : null;
+  const dist = (o && o.confiance !== 'quartier')
+    ? (o.confiance === 'approx' ? '~' : '') + distanceTexte(metres(state.pos, o.ll)) : null;
   return `
   <button class="card card--link spot" type="button" data-id="${esc(s.id)}">
     <div class="thumb thumb--wide${s.img ? '' : ' thumb--nue'}"${city ? ` style="--c:var(--c-${city.id})"` : ''}>
@@ -277,7 +342,9 @@ function card(s) {
       <p>${esc(s.blurb)}</p>
       <p class="spot__meta">
         <span class="city-dot" style="--c:${city ? `var(--c-${city.id})` : 'var(--mut)'}">${city ? esc(city.name) : 'Partout'}</span>
+        ${nomQ ? `<span class="spot__q">${esc(nomQ)}</span>` : ''}
         <span class="spot__facts">
+          ${dist ? `<span class="spot__dist data">${esc(dist)}</span>` : ''}
           <span>${esc(s.duration)}</span>
           <span>${esc(s.budget)}</span>
         </span>
@@ -308,6 +375,7 @@ function openSheet(id) {
           <span class="city-dot" style="--c:${city ? `var(--c-${city.id})` : 'var(--mut)'}">${city ? esc(city.name) : 'Partout au Japon'}</span>
           <span class="mut">· ${catName[s.category]}</span>
           <span class="prio prio--${s.priority}">${prioName[s.priority]}</span>
+          ${fermeBadgeHTML(s)}
         </p>
         <h2>${esc(s.name)}</h2>
         <p class="sheet__blurb">${esc(s.blurb)}</p>
@@ -316,11 +384,12 @@ function openSheet(id) {
           <div><dt>Durée</dt><dd>${esc(s.duration)}</dd></div>
           <div><dt>Budget</dt><dd>${esc(s.budget)}</dd></div>
           <div><dt>Le bon moment</dt><dd>${esc(s.when)}</dd></div>
+          ${s.fermeture && !/aucun|tous les jours/i.test(s.fermeture) ? `<div><dt>Fermeture</dt><dd>${esc(s.fermeture)}</dd></div>` : ''}
         </dl>
         ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
         ${s.acces ? `<p class="sheet__acces"><b>Y aller</b> ${esc(s.acces)}</p>` : ''}
         ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : s.source === 'secrets' ? '<p class="sheet__guide">Tiré des « Secrets de Tokyo » du guide japonais.</p>' : ''}
-        <a class="btn" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+        ${s.maps ? `<a class="btn" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>` : ''}
         ${s.img ? '' : `<a class="btn" href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(photoQ)}" target="_blank" rel="noopener">Voir en photos</a>`}
       </div>
     </div>`;
@@ -351,42 +420,91 @@ q('grid').addEventListener('click', (e) => {
 });
 
 function render() {
+  // Un quartier n'a de sens que dans sa ville : si la ville change, on l'oublie.
+  if (state.quartier !== 'all' && !quartiersDe(state.city).some((x) => x.id === state.quartier)) state.quartier = 'all';
+
   renderFam();
   renderMode();
+  renderQuartiers();
   // La matrice se redessine avec la grille : ses compteurs dépendent de la
   // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
   renderMat();
 
   const list = SPOTS.filter(matches);
   // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
-  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.q]);
+  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.quartier, !!state.pos, state.q]);
   if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
+
+  // « Près de moi » : les adresses situées d'abord, de la plus proche à la plus
+  // loin — à plat, sans regroupement par ville. Les remplissages ('quartier')
+  // n'ont pas de coordonnée fiable → rejetés en fin de liste.
+  const distOf = (s) => { const o = ouEst(s); return (o && o.confiance !== 'quartier') ? metres(state.pos, o.ll) : Infinity; };
+  const parDistance = (a, b) => distOf(a) - distOf(b);
+
   // Groupée par ville, dans l'ordre du voyage, quand aucune ville n'est choisie.
   const ORDRE = ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone'];
   const rang = (s) => { const i = ORDRE.indexOf(s.cityId); return i < 0 ? 9 : i; };
-  const trie = state.city === 'all' ? [...list].sort((a, b) => rang(a) - rang(b)) : list;
+  // Recherche : par pertinence, puis par distance si « Près de moi » est actif.
+  const trie = state.q
+      ? [...list].sort((a, b) => (score(b, state.q) - score(a, state.q)) || (state.pos ? parDistance(a, b) : 0))
+    : state.pos ? [...list].sort(parDistance)
+    : state.city === 'all' ? [...list].sort((a, b) => rang(a) - rang(b)) : list;
   const parVille = {}; trie.forEach((s) => { parVille[s.cityId] = (parVille[s.cityId] || 0) + 1; });
-  // Sans ville ni recherche : un aperçu de 8 adresses par ville, et un lien vers la ville entière.
+  // Sans ville ni recherche (et hors tri par distance) : un aperçu de 8 par ville.
   // Sinon Tokyo (200+ adresses) occupait à lui seul toutes les pages avant Kanazawa.
-  const apercu = state.city === 'all' && !state.q;
+  const apercu = !state.pos && state.city === 'all' && !state.q;
   const vus = {};
   const montres = apercu ? trie.filter((s) => { vus[s.cityId] = (vus[s.cityId] || 0) + 1; return vus[s.cityId] <= 8; }) : trie.slice(0, window.__lim);
   let avant;
   q('grid').innerHTML = montres.map((s, i) => {
     const fin = apercu && (i === montres.length - 1 || montres[i + 1].cityId !== s.cityId) && parVille[s.cityId] > 8
       ? `<p class="bib__all"><button class="btn btn--ghost" type="button" data-ville="${s.cityId || 'partout'}">Toutes les adresses ${s.cityId ? (/^[AEIOUHaeiouh]/.test(CITIES[s.cityId].name) ? "d'" : 'de ') + esc(CITIES[s.cityId].name) : 'hors étapes'} (${parVille[s.cityId]}) →</button></p>` : '';
-    const tete = state.city === 'all' && s.cityId !== avant
+    const tete = !state.pos && !state.q && state.city === 'all' && s.cityId !== avant
       ? `<h3 class="bib__city"><span class="city-dot" style="--c:${s.cityId ? `var(--c-${s.cityId})` : 'var(--mut)'}">${esc(s.cityId ? CITIES[s.cityId].name : 'Partout au Japon')}</span><span class="mut">${parVille[s.cityId]} adresses</span></h3>` : '';
     avant = s.cityId;
     return tete + card(s) + fin;
   }).join('');
   const reste = apercu ? 0 : list.length - window.__lim;
   q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
-  q('empty').hidden = list.length > 0;
+  // « konbini » : la bonne réponse n'est pas une adresse du guide, c'est la phrase.
+  const estKonbini = /konbini|conbini|superette|convenience/.test(norm(state.q));
+  if (estKonbini) { q('empty').textContent = KONBINI_LIGNE; q('empty').hidden = false; }
+  else { q('empty').textContent = 'Rien ne correspond. Essaie un autre mot ou élargis les filtres.'; q('empty').hidden = list.length > 0; }
 
-  const filtered = state.q !== '' || ['city', 'category', 'priority', 'source', 'kind', 'fam'].some((k) => state[k] !== 'all');
-  q('count').textContent = `${list.length} adresse${list.length > 1 ? 's' : ''}`;
+  const filtered = state.q !== '' || !!state.pos || ['city', 'category', 'priority', 'source', 'kind', 'fam', 'quartier'].some((k) => state[k] !== 'all');
+  q('count').textContent = `${list.length} adresse${list.length > 1 ? 's' : ''}${state.pos ? ' · au plus près' : ''}`;
   q('reset').hidden = !filtered;
+
+  // URL : le quartier est partageable, comme ?ville= et ?envie=.
+  const u = new URL(location.href);
+  if (state.quartier !== 'all') u.searchParams.set('quartier', state.quartier); else u.searchParams.delete('quartier');
+  history.replaceState(null, '', u.pathname + u.search + u.hash);
+}
+
+// --- quartiers de la ville choisie + tri « Près de moi » ----------------------
+// N'apparaît qu'une ville choisie, et seulement si elle a des quartiers (donc
+// des adresses situées) : sinon le tri par distance n'aurait rien à trier.
+function renderQuartiers() {
+  const qs = (state.city !== 'all' && state.city !== 'partout') ? quartiersDe(state.city) : [];
+  if (!qs.length) { q('quartiers').innerHTML = ''; return; }
+  const puces = [{ id: 'all', nom: 'Tous les quartiers' }].concat(qs.map((x) => ({ id: x.id, nom: x.nom })))
+    .map((x) => `<button class="chip" data-quartier="${esc(x.id)}" aria-pressed="${state.quartier === x.id}">${esc(x.nom)}</button>`).join('');
+  q('quartiers').innerHTML = `<button class="chip" data-proche aria-pressed="${!!state.pos}">Près de moi</button>` + puces;
+}
+q('quartiers').addEventListener('click', (e) => {
+  const qb = e.target.closest('button[data-quartier]');
+  if (qb) { state.quartier = qb.dataset.quartier; render(); return; }
+  const pb = e.target.closest('button[data-proche]');
+  if (pb) toggleProche(pb);
+});
+
+// GPS du téléphone : tri par distance, rien n'en sort. Échec/refus : on revient
+// à l'ordre normal, avec un mot discret.
+function toggleProche(btn) {
+  if (state.pos) { state.pos = null; render(); return; }
+  btn.textContent = 'Localisation…'; btn.disabled = true;
+  maPosition().then((pos) => { state.pos = pos; render(); })
+    .catch(() => { state.pos = null; render(); q('count').textContent = 'Localisation indisponible'; });
 }
 
 
@@ -481,7 +599,7 @@ q('more').addEventListener('click', (e) => {
 });
 
 q('reset').addEventListener('click', () => {
-  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', q: '' });
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', quartier: 'all', pos: null, q: '' });
   q('f-kind').value = 'all';
   q('search').value = '';
   q('f-priority').value = 'all';

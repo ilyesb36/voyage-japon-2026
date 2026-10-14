@@ -1,5 +1,7 @@
 // Données relevées sur les confirmations Booking, le 27 août 2026, et revues
 // le 14 octobre 2026 avec les messages des hôtels et l'échéancier des paiements.
+// Les adresses sont en japonais complet, telles que les hôtels les donnent :
+// c'est ce qu'on montre à un chauffeur de taxi.
 // Fichier tenu à la main : extract.mjs les fusionne dans HOTELS.
 //
 // NE JAMAIS AJOUTER ICI : numéro de réservation, code confidentiel, e-mail,
@@ -16,7 +18,7 @@ export const BOOKINGS = {
     room: 'Chambre Double',
     size: null,                     // non communiquée par l'établissement
     capacity: '2 adultes',
-    address: '台東区花川戸 1-7-8, Tokyo',
+    address: '〒111-0033 東京都台東区花川戸1-7-8',
     checkIn: '15:00 – 00:00',
     checkOut: "jusqu'à 11:00",
     price: 483,
@@ -35,7 +37,7 @@ export const BOOKINGS = {
     room: 'Appartement entier',
     size: 32,
     capacity: '2 adultes',
-    address: '幸町 3-36, Kanazawa, Ishikawa',
+    address: '石川県金沢市幸町3-36',
     // Booking affiche 20:00, mais l'hôtel a écrit : personne après 19:00.
     checkIn: '15:00 – 19:00',
     checkOut: '06:00 – 11:00',
@@ -55,7 +57,7 @@ export const BOOKINGS = {
     room: 'Appartement entier',
     size: 15,
     capacity: '2 adultes',
-    address: '中京区西ノ京池ノ内町 16-8, Kyoto',
+    address: '〒604-8375 京都府京都市中京区西ノ京池ノ内町16-8',
     checkIn: '16:00 – 00:00',
     checkOut: "00:00 – 10:00",
     price: 678,
@@ -76,7 +78,7 @@ export const BOOKINGS = {
     room: 'Appartement entier',
     size: null,                     // non communiquée par l'établissement
     capacity: '2 adultes',
-    address: '大阪市浪速区日本橋東 1-1-1, Osaka',
+    address: '〒556-0006 大阪府大阪市浪速区日本橋東1丁目1-1',
     checkIn: '16:00 – 00:00',
     checkOut: '00:00 – 10:00',
     price: 159,
@@ -96,7 +98,7 @@ export const BOOKINGS = {
     room: "Chambre attribuée à l'arrivée, avec baignoire en plein air",
     size: 42,
     capacity: '2 adultes',
-    address: 'Hakone 571-18, Kanagawa',
+    address: '〒250-0521 神奈川県足柄下郡箱根町箱根571-18',
     checkIn: '15:00 – 18:00',       // ⚠ le plus contraignant du voyage
     checkOut: "jusqu'à 11:00",
     price: 1231,
@@ -121,7 +123,7 @@ export const BOOKINGS = {
     room: 'Appartement entier',
     size: 24,
     capacity: '2 adultes',
-    address: '東京都豊島区千早一丁目 22-3, Tokyo',
+    address: '〒171-0044 東京都豊島区千早1丁目22-3',
     checkIn: 'à partir de 16:00',
     checkOut: "jusqu'à 10:00",
     price: 544,

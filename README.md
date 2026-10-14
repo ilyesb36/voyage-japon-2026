@@ -25,26 +25,57 @@ calendriers et aux matrices sans qu'une seule règle ne le sache.
 
 | Page | Ce qu'elle fait |
 |---|---|
-| `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte |
-| `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 30 journées type — une seule fois |
-| `guide.html` | 319 adresses, filtrables, avec notice historique |
+| `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte, la bande des momiji |
+| `villes.html` | **une page par étape** (`?e=1` à `6`) : l'hôtel (adresse en japonais, « M'y emmener », « Appeler », « Montrer au chauffeur »), « Près de moi », « À ne pas rater », **les quartiers** (carte, « Autour de l'hôtel », puis une carte par quartier : à voir / à faire / à manger, les jours où le programme y passe, tout le quartier), « À table » (les plats, puis les tables recommandées), les événements datés, les jours, les journées type |
+| `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 34 journées type |
+| `guide.html` | 456 adresses. Un seul chemin, le même partout : **ville → quartier → à voir / à faire / à manger**, le type de lieu en affinage. Recherche sans accents, avec synonymes (ramen, onsen, pluie…), tri « Près de moi » |
+| `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, avec leur heure, situés sur une carte, tout le parcours en un lien Google Maps, « Dans le coin » (manger, et quoi faire s'il reste du temps), « Près de moi », et « Ce soir » (l'hôtel, le chauffeur). `?d=14` ou `?date=2026-11-21` |
 | `budget.html` | « Entre vous » en tête, puis deux onglets : *Le compte*, un tableau par poste (reste à payer, et pour chacun ce qu'il a payé et ce qu'il lui reste) ; *Les dépenses*, une ligne par dépense avec son payeur (Ilyès, Mathilde, moitié) |
-| `pratique.html` | les six hébergements, les réflexes de terrain, le mode hors-ligne |
-| `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, situés, sur une carte, et tout le parcours en un lien Google Maps. `?d=14` ou `?date=2026-11-21` |
-| `aujourdhui.html` | **Préparatifs** : le compte à rebours et un échéancier par mois, une ligne par démarche, cochable, le détail replié. Pendant le voyage, elle renvoie à la journée en cours |
+| `pratique.html` | les six hébergements (consignes d'arrivée, téléphone, prélèvements), les urgences à un geste, les réflexes de terrain, le mode hors-ligne |
+| `aujourdhui.html` | **Préparatifs** : le compte à rebours et l'échéancier, rangé **par catégorie** (santé et papiers, hébergements, transports, téléphone, billets, à table, valise) ou par échéance, cochable, le détail replié. Pendant le voyage, elle renvoie à la journée en cours |
+
+Pendant le voyage, un bouton **« Perdu ? »** est dans la barre de toutes les
+pages : montrer l'adresse de l'hôtel du soir au chauffeur, l'appeler, « Près de
+moi » (le quartier où l'on est et les adresses à quelques minutes, à voir / à
+faire / à manger, avec leurs jours de fermeture), rentrer à l'hôtel en
+transports, et les urgences.
+
+« Près de moi » se sert du GPS du téléphone : il marche hors-ligne, et rien ne
+quitte le téléphone (le lien « Rentrer » ne porte que la destination).
 
 `aujourdhui.html?date=2026-11-18` permet de voir n'importe quel jour du voyage
 sans attendre novembre.
 
 ## Les données
 
-Aucune donnée n'est écrite dans le HTML. Tout vit dans `data/*.js`, qui est
-**généré** — ne jamais l'éditer à la main, la prochaine extraction écraserait
-la correction.
+Aucune donnée n'est écrite dans le HTML. Tout vit dans `data/*.js`.
 
-La source de vérité est `legacy/*.html` (le site d'origine) plus les fichiers
-de correction de `tools/lib/`. Pour changer un contenu, on modifie le fichier
-de `tools/lib/` correspondant :
+**Depuis le 28 septembre 2026, `data/*.js` est tenu à la main** et fait foi.
+Ce jour-là, une centaine d'adresses (les Secrets de Tokyo), la sélection, les
+plats et les journées adaptées y ont été saisis directement ; le 14 octobre
+s'y sont ajoutés les quartiers, 31 tables et 11 événements. L'extraction ne
+les connaît pas : **ne plus lancer `tools/extract.mjs` ni `fetch-images.mjs`**,
+ils effaceraient tout cela sans prévenir.
+
+| Fichier | Ce qu'il tient |
+|---|---|
+| `data/trip.js` | le voyage, les villes (couleur, fenêtre des momiji), les étapes, les hôtels (adresse en japonais, téléphone, consignes d'arrivée, prélèvement), les trajets, les vols, le budget, les billets datés |
+| `data/days.js` | les 25 journées (chaque ligne : `text`, `h` l'heure, `evening`, `lieux`) et les 34 journées type |
+| `data/lieux.js` | les lieux cités par les journées, géolocalisés |
+| `data/spots.js` | les 456 adresses du guide, une par ligne ; les tables portent `table`, `tabelog`, `resa`, `fermeture` ; les événements `du`, `au`, `etape`, `confirme` |
+| `data/quartiers.js` | les 56 quartiers, et `OU` : la position de chaque adresse `[lat, lng, quartier, confiance, famille]` — confiance `sure`, `approx` ou `quartier` (seul le quartier est sûr : pas de distance affichée) |
+| `data/selection.js` | « À ne pas rater », étape par étape, avec le pourquoi |
+| `data/delices.js` | les plats à goûter, par ville |
+| `data/pratique.js` | les démarches (`AVANT`), le sur-place (`SURPLACE`), les normales de saison, les réservations à faire (`RESERVER`) |
+
+On garde la forme : un objet par ligne, les mêmes champs, les mêmes mots.
+**Jamais** de numéro de réservation, de code de porte ou de boîte à clés, ni de
+lien de pré-enregistrement : le site est public.
+
+`tools/lib/` reste l'archive des sources : les confirmations Booking
+(`bookings.mjs`, tenu en phase avec `data/trip.js`), les tables
+(`spots-tables.json`), les notes de réservation (`reserver-liens.json`), et
+tout ce qui alimentait l'extraction :
 
 | Fichier | Ce qu'il tient |
 |---|---|
@@ -62,30 +93,36 @@ de `tools/lib/` correspondant :
 | `additions.mjs` | les adresses ajoutées au guide d'origine |
 | `flights.mjs`, `gazetteer.mjs`, `heroes.json` | vols, villes, images d'ouverture |
 
-## La chaîne, dans cet ordre
+## Après une modification de données
 
 ```bash
-node tools/extract.mjs        # legacy/ + tools/lib/ → data/*.js
-node tools/fetch-images.mjs   # OBLIGATOIRE : réécrit les photos vers img/
-node tools/verify.mjs         # 126 assertions
+node tools/verify.mjs        # 125 assertions : totaux, argent, notices, images, hors-ligne
+node tools/coherence.mjs     # références croisées, heures des journées, quartiers, hôtels, liens
+node tools/rapatrier-photos.mjs data/spots.js   # si une fiche a reçu une photo Wikimedia
 ```
 
-**`fetch-images.mjs` n'est pas optionnel.** L'extraction repart des pages
-d'origine, où les photos sont encore des URL Wikimedia : elle annule la
-relocalisation dans `img/`. Sauter cette étape casse le mode hors-ligne sans
-que rien ne le signale — c'est le piège numéro un du dépôt.
-
-`verify.mjs` est le filet. Ses nombres viennent du site d'avant la refonte :
-une divergence est une perte de données, pas un ajustement. Il verrouille
+`verify.mjs` est le filet. Ses totaux sont verrouillés : une divergence est une
+perte de données, pas un ajustement — sauf ajout volontaire, qu'on reporte
+alors dans le compte avec sa raison (c'est ce qui a été fait le 14 octobre
+pour les 94 Secrets de Tokyo, les tables et les événements). Il verrouille
 notamment les 22 conseils de l'amie guide, les totaux d'argent, la date et
 l'heure du billet Nintendo, et le fait qu'aucun monument ne soit sans notice.
+
+`coherence.mjs` vérifie que les fichiers tenus à la main se tiennent entre eux :
+chaque choix de la sélection, chaque réservation et chaque lieu d'une journée
+existe ; les heures avancent ; les lignes du soir finissent la journée ; chaque
+adresse est rangée dans un quartier de sa ville ; aucune consigne d'hôtel ne
+contient de code.
+
+Un site hors-ligne doit avoir ses photos dans `img/` : une photo laissée en
+URL Wikimedia disparaît sans bruit dès qu'il n'y a plus de réseau.
 
 ## Après chaque changement de CSS, de JS ou de données
 
 Monter le numéro de version dans `sw.js` :
 
 ```js
-const V = 'v24';
+const V = 'v33';
 ```
 
 Sans ça, le service worker continue de servir l'ancienne version et personne
@@ -94,8 +131,9 @@ ne voit la mise à jour. C'est déjà arrivé.
 ## Hors-ligne
 
 Le hors-ligne est une **action explicite** : un bouton sur `pratique.html`,
-avec une vraie barre de progression et un décompte. Il met en cache 38
-fichiers de coque et 351 photos. Il ne se déclenche pas tout seul à
+avec une vraie barre de progression et un décompte. Il met en cache la coque
+(pages, modules, données, quartiers) et toutes les photos citées par les
+données et les pages, plats compris. Il ne se déclenche pas tout seul à
 l'installation : une mise en cache silencieuse s'était déjà déclarée prête
 alors qu'elle n'avait rien mis en cache.
 
@@ -122,6 +160,20 @@ le site servi n'a aucune dépendance.
 - **Les captures d'écran du navigateur sortent parfois blanches** après un
   défilement programmatique. C'est un artefact de l'outil : vérifier par le DOM
   (`img.complete`, `naturalWidth`) plutôt que de croire l'image.
+- **Le serveur de test (`python3 -m http.server`) ne pose aucun en-tête de
+  cache** : le navigateur garde des versions périmées des modules. Pour tester,
+  ajouter `&nc=<n>` aux URL, vider `caches` et désinscrire le service worker.
+- **Les blogs recopient les dates de l'an passé.** Eikan-dō : des sites
+  annonçaient une ouverture « mi-novembre », le temple dit 20 novembre 2026.
+  La source officielle tranche.
+- **Musée Ghibli : fermé le mardi**, billets en vente le 10 du mois précédent
+  à 10:00 heure du Japon (2:00 à Paris), partis en quelques minutes.
+- **Tori-no-ichi** : les foires suivent les jours du coq de novembre ; en 2026,
+  le 7 et le 19 seulement, pas de troisième.
+- **Le Kagayaki n'a que des places réservées** ; la vente ouvre un mois avant.
+- **Les messages des hôtels contiennent des codes** (portail, boîte à clés) et
+  des liens de pré-enregistrement nominatifs : on en tire les consignes, jamais
+  les codes.
 - **Une carte Leaflet sans vue ne s'affiche pas du tout**, et lire ses bornes
   lève « Set map center and zoom first ». Or `fitBounds` ne peut rien calculer
   tant que le conteneur a une largeur de 0, ce qui arrive quand la carte est

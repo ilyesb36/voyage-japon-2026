@@ -99,7 +99,7 @@ export const AVANT = Object.freeze([
     when: 'Dans la valise',
     tag: null,
   },
-  {"id":"shinkansen-kanazawa","deadline":"2026-11-10","title":"Sièges shinkansen Tokyo → Kanazawa (sam 14 nov)","what":"Le Hokuriku shinkansen se remplit le week-end : réserver les places sur Eki-Net quelques jours avant. Prévenir Center Point si arrivée après 19h.","when":"Quelques jours avant","tag":null,"commentReserver":""},
+  {"id":"shinkansen-kanazawa","deadline":"2026-11-07","title":"Sièges shinkansen Tokyo → Kanazawa (sam 14 nov)","what":"Le Kagayaki du samedi 14 novembre n'a que des places réservées, et le Hokuriku shinkansen se remplit le week-end. La vente ouvre un mois avant sur Eki-Net (le 14 octobre pour le 14 novembre) : réserver avant de partir, billets à retirer à la gare de Tokyo. Prévenir Center Point si l'arrivée à Kanazawa passe 19h.","when":"Avant de partir — la vente est ouverte","tag":null,"commentReserver":""},
 ]);
 
 export const SURPLACE = Object.freeze([
@@ -129,7 +129,7 @@ export const SURPLACE = Object.freeze([
   },
   {
     title: 'Faire suivre les valises',
-    what: "Le takkyubin envoie les bagages d'un hôtel au suivant pour ~2 000 ¥ la pièce, livrés le lendemain. Utile avant Hakone : le ryokan se rejoint en bus et en bateau.",
+    what: "Le takkyubin envoie les bagages d'un hôtel au suivant pour ~2 000 ¥ la pièce, livrés le lendemain. Pour Hakone, la consigne de la gare de Hakone-Yumoto livre le jour même (dépôt avant 12:00, 1 500 ¥ la valise), mais seulement aux hébergements partenaires ; sinon, on garde ses valises : le ryokan vient vous chercher en voiture au port.",
   },
   {
     title: 'Espèces',
@@ -206,7 +206,7 @@ export const RESERVER = Object.freeze([
     check: true,
     spotId: 'spot-teamlab-planets',
     title: 'teamLab Planets, Toyosu',
-    what: "Entrée par créneau horaire, aucun guichet sur place : sans billet, on ne rentre pas.",
+    what: "Entrée par créneau horaire, aucun guichet sur place : sans billet, on ne rentre pas. Viser un créneau vers 18h30, après le coucher du soleil à Yanaka.",
     deadline: '2026-10-20',
     forDate: '2026-11-13',
   },
@@ -251,16 +251,22 @@ export const RESERVER = Object.freeze([
   {"id":"tokyo-ten","canal":"en ligne","url":"https://www.google.com/maps/search/?api=1&query=Sushi%20Tokyo%20Ten%20Shinjuku","commentReserver":"Réservation en ligne depuis la fiche de l’établissement ; les créneaux du soir partent vite.","spotId":"spot-sushi-tokyo-ten","title":"Sushi Tokyo Ten, omakase du soir","what":"Une vingtaine de pièces au comptoir pour ~9 000 ¥ : l’omakase fancy du budget.","deadline":"2026-10-30","forDate":"2026-11-30"},
   {"id":"tomohiro","canal":"en ligne","url":"https://www.tablecheck.com/shops/sushi-tomohiro/reserve","commentReserver":"TableCheck, en ligne et simple.","spotId":"spot-sushi-tomohiro","title":"Sushi Tomohiro, Ikebukuro","what":"L’omakase spectacle à 4 400 ¥, à côté de l’hôtel de fin de séjour.","deadline":"2026-10-27","forDate":"2026-11-27"},
   {"id":"takano","canal":"en ligne","url":"https://tabelog.com/tokyo/A1313/A131301/13285143/","commentReserver":"Via Tabelog. Le mardi est son seul midi de la semaine.","spotId":"spot-takano","title":"Takano, déjeuner du mardi (Tsukiji)","what":"Deux heures de gastronomie intimiste ; le 1er décembre tombe un mardi.","deadline":"2026-11-03","forDate":"2026-12-01"},
+  {"id":"junsei","canal":"en ligne","url":"https://www.klook.com/activity/5198-nanzenji-junsei-restaurant-kyoto/","commentReserver":"En ligne via Klook (anglais), confirmation sous 24 h, ou par téléphone. Demander la salle côté jardin. Menu du midi ~4 500 ¥.","spotId":"spot-nanzenji-junsei","title":"Nanzenji Junsei, déjeuner du 20 nov","what":"Le tofu des temples dans un jardin de Nanzen-ji. En pleine saison des érables, pas de table sans réservation.","deadline":"2026-10-21","forDate":"2026-11-20","tel":"+81-75-761-2311"},
+  {"id":"mitsukawa","canal":"en ligne","url":"https://www.tablecheck.com/en/sushi-mitsukawa-kanazawa","commentReserver":"TableCheck, interface en anglais. Demander le menu nigiri à 8 800 ¥ (l'omakase monte à 16 500 ¥). Ōtomorō se réserve par téléphone au 076-221-0305 (menu Kaga du midi dès 8 580 ¥, fermé le mercredi et parfois sans prévenir).","spotId":"spot-mitsukawa","title":"Sushi Mitsukawa, déjeuner du 15 nov (Kanazawa)","what":"Huit places au comptoir à Higashi Chaya, les poissons de la mer du Japon. À la place, ou en plus : Ōtomorō, ryotei de 1830, pour le jibu-ni.","deadline":"2026-10-21","forDate":"2026-11-15","tel":"+81-76-253-5005"},
+  {"id":"yoshikawa","canal":"en ligne","url":"https://www.kyoto-yoshikawa.co.jp/en/contact-en/","commentReserver":"Formulaire en anglais sur le site, ou téléphone. Préciser le comptoir. Déjeuner ~6 000 ¥.","spotId":"spot-tempura-yoshikawa","title":"Tempura Yoshikawa, comptoir du 16 nov","what":"La tempura frite devant vous, au comptoir d'une maison de ryokan, le midi de l'arrivée à Kyoto.","deadline":"2026-11-02","forDate":"2026-11-16","tel":"+81-75-221-5544"},
+  {"id":"tategami","canal":"en ligne","url":"https://savorjapan.com/0006022979/","commentReserver":"Formulaire web en anglais, ou téléphone. Annulation gratuite jusqu'à J-7. Dîner ~8 000 ¥.","spotId":"spot-kyoryori-tategami","title":"Tategami, dîner kaiseki du 18 nov","what":"Un kaiseki près de l'appartement, le soir de Nintendo : la belle table sans traverser la ville.","deadline":"2026-11-04","forDate":"2026-11-18","tel":"+81-75-256-8733"},
+  {"id":"sublime","canal":"en ligne","url":"https://japan-food.guide/restaurants/1882","commentReserver":"Gurunavi, Tableall, ou par téléphone (anglais possible via byFood). Carte bancaire uniquement ; plus de 15 min de retard = table annulée.","spotId":"spot-sublime","title":"Teppanyaki Sublime, déjeuner A5 à Namba","what":"Le bœuf A5 grillé devant vous pour ~5 200 ¥ le midi, à dix minutes de l'appartement d'Osaka.","deadline":"2026-11-08","forDate":"2026-11-22","tel":"+81-6-6556-6896"},
+  {"id":"saiko-shinkan","canal":"téléphone","url":"https://r.gnavi.co.jp/g370002/","commentReserver":"Par téléphone (050-3196-2794) ou via la page Gurunavi. Déjeuner ~3 800 ¥.","spotId":"spot-saiko-shinkan","title":"Saikō Shinkan, dim sum du 28 nov (Yokohama)","what":"Le dim sum de Chinatown un samedi midi : sans réservation, on attend ou on repart.","deadline":"2026-11-14","forDate":"2026-11-28","tel":"+81-50-3196-2794"},
   {
     id: 'ghibli',
     canal: 'en ligne',
     url: 'https://www.ghibli-museum.jp/en/tickets/',
-    commentReserver: "Billets uniquement à l'avance, nominatifs, par Lawson Ticket. Les dates de décembre sont mises en vente le 10 novembre à 10:00 heure du Japon, soit 2:00 du matin à Paris — et partent en quelques minutes. Fermeture du 4 au 18 novembre à reconfirmer sur le site officiel.",
+    commentReserver: "Billets uniquement à l'avance, nominatifs, par Lawson Ticket. Les dates de décembre sont mises en vente le 10 novembre à 10:00 heure du Japon, soit 2:00 du matin à Paris — et partent en quelques minutes. Fermeture du 4 au 18 novembre à reconfirmer sur le site officiel. Le musée ferme le mardi : le 1er décembre est donc exclu — viser le mercredi 2 décembre, un créneau du matin avant le vol du soir.",
     check: true,
     spotId: 'spot-musee-ghibli',
-    title: 'Musée Ghibli, le 1er décembre',
+    title: 'Musée Ghibli, le 2 décembre',
     what: "Pas de billet sur place. La vente ouvre une seule fois, au début du mois précédent, et se joue en quelques minutes.",
     deadline: '2026-11-10',
-    forDate: '2026-12-01',
+    forDate: '2026-12-02',
   },
 ]);

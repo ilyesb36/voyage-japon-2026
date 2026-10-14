@@ -32,7 +32,7 @@ export const SELECTION = Object.freeze([
    },
    {
     "id": "spot-teamlab-planets",
-    "why": "L'expérience immersive les pieds dans l'eau. Créneau horodaté, réservé à l'avance pour le 13 novembre."
+    "why": "L'expérience immersive les pieds dans l'eau. Créneau horodaté à réserver pour le soir du 13 novembre, vers 18h30, après le coucher du soleil à Yanaka."
    },
    {
     "id": "spot-sushi-a-tsukiji",
@@ -100,7 +100,7 @@ export const SELECTION = Object.freeze([
    },
    {
     "id": "spot-kiyomizu-dera",
-    "why": "La terrasse sur pilotis au-dessus des érables. En journée pour la vue, et de nuit à partir du 21 pour l'illumination."
+    "why": "La terrasse sur pilotis au-dessus des érables, à voir en journée. L'illumination de nuit (21–30 nov) coïncide avec le soir d'Arashiyama : on garde Hōgon-in, côté ouest."
    },
    {
     "id": "spot-eikan-do",
@@ -239,10 +239,6 @@ export const SELECTION = Object.freeze([
    {
     "id": "spot-yokohama",
     "why": "Le 28 : Chinatown, les entrepôts de brique et le port qui s'illumine au crépuscule."
-   },
-   {
-    "id": "spot-ev-tori-no-ichi",
-    "why": "La troisième foire aux râteaux porte-bonheur devrait tomber le mardi 1er décembre à Asakusa, jusqu'à tard le soir."
    },
    {
     "id": "spot-view-dining-the-sky",
