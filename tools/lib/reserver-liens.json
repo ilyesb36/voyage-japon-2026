@@ -2,7 +2,7 @@
   "shibuya-sky": {
     "canal": "en ligne",
     "url": "https://www.shibuya-scramble-square.com/sky/en/ticket/",
-    "detail": "Billetterie officielle en ligne, date et créneau horodatés. Tarifs 2026 en ligne : 2 700 ¥ avant 15:00, 3 400 ¥ à partir de 15:00 — le couchant est donc au tarif haut (guichet : 3 000 / 3 700 ¥). La vente ouvre environ deux semaines avant, à minuit heure du Japon (17:00 à Paris) : pour le 11 novembre, vers le 28 octobre. Regarder dès maintenant au cas où ce serait plus tôt. Le créneau du couchant (vers 16:00) part en quelques minutes. Revérifié le 14 octobre 2026.",
+    "detail": "Billetterie officielle en ligne, date et créneau horodatés. Tarifs 2026 en ligne : 2 700 ¥ avant 15:00, 3 400 ¥ à partir de 15:00 — le couchant est donc au tarif haut (guichet : 3 000 / 3 700 ¥). La vente ouvre environ deux semaines avant, à minuit heure du Japon — 16:00 à Paris, l'heure d'hiver arrivant le 25 octobre : pour le 11 novembre, vers le 28 octobre. Regarder dès maintenant au cas où ce serait plus tôt. Le créneau du couchant (vers 16:00) part en quelques minutes. Revérifié le 14 octobre 2026.",
     "tel": null,
     "verifie": "2026-10-14",
     "confiance": "approx"
@@ -18,18 +18,10 @@
   "ninja": {
     "canal": "téléphone",
     "url": "https://visitkanazawa.jp/en/spot/detail_50022.html",
-    "detail": "Réservation obligatoire et uniquement par téléphone, en anglais : 076-241-0888, de 8:30 à 17:00 heure du Japon (1:30 – 10:00 à Paris). Visite guidée en japonais, ~40 min, livret de traduction fourni. 1 200 ¥ par adulte, en espèces uniquement. Appeler quelques jours avant. Revérifié le 14 octobre 2026.",
+    "detail": "Réservation obligatoire et uniquement par téléphone, en anglais : 076-241-0888, de 8:30 à 17:00 heure du Japon (0:30 – 9:00 à Paris à partir du 25 octobre, 1:30 – 10:00 avant). Visite guidée en japonais, ~40 min, livret de traduction fourni. 1 200 ¥ par adulte, en espèces uniquement. Appeler quelques jours avant. Revérifié le 14 octobre 2026.",
     "tel": "+81-76-241-0888",
     "verifie": "2026-10-14",
     "confiance": "sure"
-  },
-  "rurikoin": {
-    "canal": "en ligne",
-    "url": "https://rurikoin.komyoji.com/",
-    "detail": "Ouverture d'automne du 1er octobre au 13 décembre 2026 (confirmé). En 2025, la pleine saison (8 nov – 7 déc) passait par un tirage au sort par carte postale clos vers le 1er septembre, puis une réservation en ligne rouverte pour les dates de décembre. Le dispositif 2026 n'est pas lisible (site officiel inaccessible le 14 octobre) : si c'est le même, le 20 novembre est peut-être déjà perdu. À vérifier aujourd'hui sur le site officiel ; sinon, garder Eikan-do et le chemin de la philosophie, qui se suffisent. 2 000 ¥ par adulte, montant de 2025.",
-    "tel": null,
-    "verifie": "2026-10-14",
-    "confiance": "approx"
   },
   "eikando": {
     "canal": "sur place",
