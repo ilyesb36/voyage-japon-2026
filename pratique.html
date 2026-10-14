@@ -126,7 +126,7 @@ q('hotels').innerHTML = HOTELS.map((h) => {
         <div><dt>Repas</dt><dd>${h.meals ? esc(h.meals) : '<span class="mut">non compris</span>'}</dd></div>
         <div><dt>Paiement</dt><dd>${h.paid
           ? '<span class="ok">réglé</span>'
-          : `<span class="todo">à régler — ${eur(h.price)}</span>`}</dd></div>
+          : `<span class="todo">à régler — ${eur(h.price)}${h.debit ? `, prélevé le ${formatDate(h.debit)}` : ''}</span>`}</dd></div>
       </dl>
 
       <ul class="hotel__amenities">
@@ -153,7 +153,8 @@ q('hotels').innerHTML = HOTELS.map((h) => {
         <p>${esc(h.route ? h.route.text : seg.label)}</p>
       </details>` : ''}
 
-      <p><a class="btn btn--ghost" href="${esc(h.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>
+      <p><a class="btn btn--ghost" href="${esc(h.maps)}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a>
+        ${h.tel ? `<a class="btn btn--ghost" href="tel:${esc(h.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(h.tel)}</a>` : ''}</p>
     </div>
   </article>`;
 }).join('');
@@ -165,6 +166,7 @@ q('know').innerHTML = SURPLACE.map((k) => `
     <h3>${esc(k.title)}</h3>
     <p>${esc(k.what)}</p>
     ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
+    ${k.tels ? `<p class="know__tels">${k.tels.map((t) => `<a class="btn btn--ghost" href="tel:${esc(t.n.replace(/[^+\d]/g, ''))}">${esc(t.label)} <span class="data">${esc(t.n)}</span></a>`).join(' ')}</p>` : ''}
   </div>`).join('');
 
 // --- l'argent vit sur sa propre page -----------------------------------------

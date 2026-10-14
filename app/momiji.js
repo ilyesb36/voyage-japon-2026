@@ -92,7 +92,7 @@ export function renderMomijiBand(el) {
         <span class="momiji__key momiji__key--stay"></span> vos dates sur place
       </p>
       <p class="momiji__note">
-        Calé sur la prévision officielle 2026 du Japan Meteorological Corporation (2 septembre) : l'été chaud retarde un peu les couleurs.
+        Calé sur la prévision officielle 2026 du Japan Meteorological Corporation (2 septembre), confirmée par Weathernews le 8 octobre : l'été chaud retarde les couleurs, partout.
         Tokyo rougit vers le 29 novembre et ses ginkgos dorent vers le 26 — votre second séjour tombe pile dessus.
         Kyoto est annoncé tard (pic officiel le 11 décembre) : du 16 au 22 novembre, les érables seront en train de virer, pas au sommet —
         privilégiez les lieux frais et en hauteur (Takao, Ohara, Kurama, les collines d'Arashiyama) et les illuminations du soir.

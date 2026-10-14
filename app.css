@@ -1091,6 +1091,9 @@
     border-top: 1px solid var(--line);
     font-size: var(--t-xs) !important; color: var(--acc) !important;
   }
+  /* des numéros qu'on touche pour appeler, plutôt que de les recopier */
+  .know__tels { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .know__tels .btn { font-size: var(--t-xs); }
 }
 
 @layer components {

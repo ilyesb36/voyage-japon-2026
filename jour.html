@@ -60,9 +60,12 @@ const parNum = DAYS.find((d) => String(d.n) === url.get('d'));
 const parDate = DAYS.find((d) => d.date === url.get('date'));
 const duJour = DAYS.find((d) => d.date === today());
 // Sans paramètre et hors voyage, on ouvre la première journée qui a des arrêts
-// situés — pas le vol Paris → Shanghai, qui ne montre qu'une ligne.
+// situés — pas le vol Paris → Shanghai, qui ne montre qu'une ligne. Une fois
+// le voyage fini (le 3 décembre, on atterrit), c'est la dernière journée.
 const premiereSituee = DAYS.find((d) => d.items.some((i) => i.lieux)) || DAYS[0];
-const jour = parNum || parDate || duJour || premiereSituee;
+const demande = url.get('date') || today();
+const apres = demande > DAYS[DAYS.length - 1].date ? DAYS[DAYS.length - 1] : null;
+const jour = parNum || parDate || duJour || apres || premiereSituee;
 
 const step = STEPS.find((s) => s.id === jour.stepId);
 const ville = step ? CITIES[step.cityId] : null;
@@ -351,7 +354,8 @@ q('soir').innerHTML = `
         ${hotel.meals ? `<div><dt>Repas</dt><dd>${esc(hotel.meals)}</dd></div>` : ''}
       </dl>
       ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
-      <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
+      <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a>
+        ${hotel.tel ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(hotel.tel)}</a>` : ''}</p>
     </div>
   </div>` : ''}
 

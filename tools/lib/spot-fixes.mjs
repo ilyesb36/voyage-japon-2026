@@ -159,7 +159,7 @@ export const SPOT_FIXES = {
   },
   'Natadera': {
     category: 't6',
-    budget: '600 ¥',
+    budget: '1 000 ¥',              // tarif relevé le 1er novembre 2023 ; 600 ¥ était l'ancien
     when: 'bus toutes les 2 h environ — vérifier les horaires avant de partir',
     note: 'Depuis Kanazawa : express jusqu’à Kaga-Onsen (~25 min) puis bus CAN (~35 à 50 min), peu fréquent. Le pavillon principal s’adosse à une cavité que l’on traverse dans le noir : le passage figure un retour au ventre maternel, dont on ressort purifié.',
   },

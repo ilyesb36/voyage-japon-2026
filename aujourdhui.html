@@ -267,6 +267,7 @@ function knowBlock() {
           <h3>${esc(k.title)}</h3>
           <p>${esc(k.what)}</p>
           ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
+          ${k.tels ? `<p class="know__tels">${k.tels.map((t) => `<a class="btn btn--ghost" href="tel:${esc(t.n.replace(/[^+\d]/g, ''))}">${esc(t.label)} <span class="data">${esc(t.n)}</span></a>`).join(' ')}</p>` : ''}
         </div>`).join('')}
     </div>
   </section>`;
@@ -371,7 +372,8 @@ function during(d) {
           <div><dt>Chambre</dt><dd>${esc(hotel.room)}</dd></div>
         </dl>
         ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
-        <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a></p>
+        <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a>
+        ${hotel.tel ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(hotel.tel)}</a>` : ''}</p>
       </div>
     </div>
   </section>` : ''}

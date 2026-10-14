@@ -15,16 +15,18 @@
 
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
 // le cache sert l'ancienne version et personne ne voit la mise à jour.
-const V = 'v30';
+const V = 'v32';
 const SHELL = `jp-shell-${V}`;
 const MEDIA = `jp-media-${V}`;
 const TILES = `jp-tiles-${V}`;
 
 const PAGES = [
   './', 'index.html', 'aujourdhui.html', 'jour.html', 'itineraire.html', 'guide.html', 'budget.html', 'pratique.html',
+  'villes.html',
   'manifest.webmanifest', 'app.css',
   'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js', 'app/resa.js',
   'data/trip.js', 'data/days.js', 'data/spots.js', 'data/pratique.js', 'data/lieux.js',
+  'data/selection.js', 'data/delices.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/fonts.css',
   'icon-192.png', 'icon-512.png',
 ];
@@ -116,6 +118,7 @@ async function mediaList() {
   // d'ouverture écrite en dur dans le HTML avait déjà échappé au cache une
   // fois, et ça ne se voit qu'une fois hors-ligne, trop tard.
   const sources = ['data/spots.js', 'data/trip.js', 'data/days.js',
+                   'data/selection.js', 'data/delices.js', 'villes.html',
                    'index.html', 'itineraire.html', 'guide.html',
                    'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html'];
   for (const file of sources) {

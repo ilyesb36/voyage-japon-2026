@@ -49,16 +49,17 @@ function evalArray(source, varName) {
 // Tokyo, la feuille d'or de Kanazawa, le vermillon des torii de Fushimi,
 // l'orange des néons de Dotonbori, le vert-bleu du lac Ashi.
 //
-// `momiji` : la fenêtre habituelle du pic des érables, en moyenne des dernières
-// années. Ce n'est PAS une prévision 2026 — elles ne sortent qu'en septembre.
+// `momiji` : la fenêtre du pic, calée sur la prévision 2026 de Japan
+// Meteorological Corp (2 sept.), confirmée par Weathernews (8 oct.) : année
+// tardive partout. Mêmes valeurs que data/trip.js, saisies là le 28 septembre.
 // Sert à répondre à la seule question que pose ce voyage : tombe-t-on au bon
 // moment dans chaque ville ?
 const CITIES = {
-  tokyo:    { name: 'Tokyo',    color: '#0369A1', pref: 'Kantō',    momiji: ['2026-11-20', '2026-12-07'] },
-  kanazawa: { name: 'Kanazawa', color: '#A16207', pref: 'Ishikawa', momiji: ['2026-11-15', '2026-11-30'] },
-  kyoto:    { name: 'Kyoto',    color: '#B91C1C', pref: 'Kansai',   momiji: ['2026-11-18', '2026-12-05'] },
-  osaka:    { name: 'Osaka',    color: '#C2410C', pref: 'Kansai',   momiji: ['2026-11-20', '2026-12-05'] },
-  hakone:   { name: 'Hakone',   color: '#0F766E', pref: 'Kanagawa', momiji: ['2026-11-03', '2026-11-20'] },
+  tokyo:    { name: 'Tokyo',    color: '#0369A1', pref: 'Kantō',    momiji: ['2026-11-20', '2026-12-08'] },
+  kanazawa: { name: 'Kanazawa', color: '#A16207', pref: 'Ishikawa', momiji: ['2026-11-18', '2026-12-05'] },
+  kyoto:    { name: 'Kyoto',    color: '#B91C1C', pref: 'Kansai',   momiji: ['2026-11-22', '2026-12-10'] },
+  osaka:    { name: 'Osaka',    color: '#C2410C', pref: 'Kansai',   momiji: ['2026-11-24', '2026-12-10'] },
+  hakone:   { name: 'Hakone',   color: '#0F766E', pref: 'Kanagawa', momiji: ['2026-11-08', '2026-11-27'] },
 };
 
 // --- étapes, excursions, segments (villes.html) ------------------------------
@@ -198,6 +199,8 @@ function parseHotels(STEPS) {
       priceYen: bk.priceYen,
       perNight: Math.round(bk.price / step.nights),
       paid: bk.paid,
+      debit: bk.debit || null,       // date du prélèvement programmé, si pas encore payé
+      tel: bk.tel || null,
       refundable: bk.refundable,
       cancelBefore: bk.cancelBefore,
       status,
