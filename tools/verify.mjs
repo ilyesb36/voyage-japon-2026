@@ -114,9 +114,11 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 
 // 7 321 € avant l'achat du billet Nintendo, 7 359 € après.
 // 7 359 € jusqu'au 14 octobre, plus les 10 tables à réserver (691 €) et trois
-// billets datés (teamLab, Shibuya Sky, Rikugi-en : 94 €), ajoutés ce jour-là.
-ok('total du voyage = 8 144 €', total, 8144);
-ok('par personne = 4 072 €', total / 2, 4072);
+// billets datés (teamLab, Shibuya Sky, Rikugi-en : 94 €), ajoutés ce jour-là ;
+// le 15 octobre, les passes Hakone (3 jours) et Nikko à leur prix réel, avec l'express
+// Tobu prévu au programme (+62 €).
+ok('total du voyage = 8 206 €', total, 8206);
+ok('par personne = 4 103 €', total / 2, 4103);
 
 assert(
   'le poste hébergement est calculé, pas saisi',
