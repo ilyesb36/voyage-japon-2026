@@ -73,15 +73,6 @@ export const AVANT = Object.freeze([
     tag: null,
   },
   {
-    id: 'hakone-paiement',
-    deadline: '2026-10-25',
-    title: 'Ryokan de Hakone : 228 000 ¥ prélevés le 25 octobre',
-    what: "Booking débite le ryokan le 25 octobre via Revolut Pay : le compte doit être approvisionné d'environ 1 290 €. L'annulation reste gratuite jusqu'au 27 octobre à 23:59, remboursement intégral ; ensuite, plus rien n'est remboursé.",
-    when: 'Avant le 25 octobre',
-    hard: true,
-    tag: 'Prélèvement automatique',
-  },
-  {
     id: 'precheckin-osaka',
     deadline: '2026-11-06',
     title: 'Pré-enregistrement de l’appartement d’Osaka',

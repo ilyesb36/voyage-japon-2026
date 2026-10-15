@@ -139,15 +139,16 @@ assert('les 6 hôtels déclarent les mêmes équipements',
   'un équipement est indéfini quelque part — il doit valoir true ou false, jamais manquer');
 
 const paid = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
-ok('déjà réglé = 1 705 € (Hop Inn + Matatabi + La Vita)', paid, 1705);
-ok('reste à régler sur l\'hébergement = 1 554 €', hebergement - paid, 1554);
+// Les six hôtels sont réglés depuis le 15 octobre 2026.
+ok('déjà réglé = 3 259 € (les six hôtels)', paid, 3259);
+ok('reste à régler sur l\'hébergement = 0 €', hebergement - paid, 0);
 
 // Ce que la page Paiements coche d'office : hôtels prépayés + billets datés
 // déjà payés. C'est un fait, pas une case à cocher par l'utilisateur.
 const regle = BUDGET.categories.flatMap((c) => c.items)
   .filter((i) => i.settled || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 1 743 € (3 hôtels + Nintendo)', regle, 1743);
+ok('déjà réglé au total = 3 297 € (6 hôtels + Nintendo)', regle, 3297);
 
 assert('la date limite d\'annulation du ryokan est connue',
   HOTELS.find((h) => h.id.includes('fukuya')).cancelBefore === '2026-10-27');

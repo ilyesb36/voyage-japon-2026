@@ -42,8 +42,7 @@ export const BOOKINGS = {
     checkIn: '15:00 – 19:00',
     checkOut: '06:00 – 11:00',
     price: 164,
-    paid: false,
-    debit: '2026-11-08',            // prélèvement automatique programmé par Booking
+    paid: true,                     // réglé le 15 octobre 2026 (Revolut Pay), à deux
     priceYen: 30400,
     refundable: true,
     cancelBefore: null,
@@ -82,8 +81,7 @@ export const BOOKINGS = {
     checkIn: '16:00 – 00:00',
     checkOut: '00:00 – 10:00',
     price: 159,
-    paid: false,
-    debit: '2026-11-05',
+    paid: true,                     // réglé le 15 octobre 2026 (Revolut Pay), à deux
     priceYen: 29426,
     tel: '+81-70-8927-5779',        // 9:00 – 12:00, heure du Japon
     refundable: true,
@@ -102,8 +100,7 @@ export const BOOKINGS = {
     checkIn: '15:00 – 18:00',       // ⚠ le plus contraignant du voyage
     checkOut: "jusqu'à 11:00",
     price: 1231,
-    paid: false,
-    debit: '2026-10-25',            // Revolut Pay, programmé par Booking
+    paid: true,                     // réglé le 15 octobre 2026 (Revolut Pay), à deux
     priceYen: 228000,
     tel: '+81-460-86-2121',         // 9:00 – 18:00, heure du Japon
     refundable: true,

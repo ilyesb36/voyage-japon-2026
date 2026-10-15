@@ -91,6 +91,10 @@ const prepaye = new Set([
 // Qui a payé : 'I', 'M', 'D' (moitié chacun) ou rien. L'ancienne case « payé »
 // sans payeur est reprise comme payé par on-ne-sait-qui.
 const payeur = lire('jp2026_payeur', {});
+// Un payeur écrit dans les données (BUDGET, champ `qui`) est un fait connu de
+// tous — les hôtels réglés à deux : il s'applique sur chaque téléphone, sauf si
+// quelqu'un a choisi autre chose sur le sien.
+BUDGET.categories.flatMap((c) => c.items).forEach((i) => { if (i.qui && !(i.key in payeur)) payeur[i.key] = i.qui; });
 const ancien = lire('jp2026_paid', lire('bdg_paid', {}));
 const savePayeur = () => localStorage.setItem('jp2026_payeur', JSON.stringify(payeur));
 
