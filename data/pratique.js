@@ -130,7 +130,9 @@ export const SURPLACE = Object.freeze([
   },
   {
     title: 'Faire suivre les valises',
-    what: "Le takkyubin envoie les bagages d'un hôtel au suivant pour ~2 000 ¥ la pièce, livrés le lendemain. Pour Hakone, la consigne de la gare de Hakone-Yumoto livre le jour même (dépôt avant 12:00, 1 500 ¥ la valise), mais seulement aux hébergements partenaires ; sinon, on garde ses valises : le ryokan vient vous chercher en voiture au port.",
+    what: "Le takkyubin (宅急便) fait suivre les deux valises d'un logement au suivant, livrées le lendemain — précieux quand un appartement n'ouvre que l'après-midi. Mais deux logements ne reçoivent aucun colis (Matatabi à Kyoto, La Vita à Tokyo), Hakone a sa propre consigne, et les courtes étapes se font plus simplement valises en main. Chaque changement de ville a ses règles, son option conseillée et son coût.",
+    page: 'valises.html',
+    pageLabel: 'Les valises, trajet par trajet',
   },
   {
     title: 'Espèces',

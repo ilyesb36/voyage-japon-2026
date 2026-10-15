@@ -2788,3 +2788,146 @@
     a { color: #000 !important; text-decoration: none !important; }
   }
 }
+
+/* --- valises : faire suivre (ou pas) les bagages ---------------------------- */
+/* Une page de logistique : un tableau en tête, une carte par changement de
+   ville, puis le bordereau et les trains. On réutilise les jetons et les
+   composants existants (.card, .shead, .alert, .data) ; ce bloc n'ajoute que
+   la mise en page propre aux valises. Mobile d'abord, cibles à 44 px. */
+@layer components {
+  .valises__lede { max-width: 64ch; color: var(--ink-2); font-size: var(--t-md); }
+
+  /* le tableau récapitulatif — un vrai <table> qui se replie en blocs sur
+     téléphone : chaque cellule reprend son en-tête via data-label. */
+  .valises__recap { width: 100%; border-collapse: collapse; }
+  .valises__recap th, .valises__recap td {
+    text-align: left; padding: var(--s-3) var(--s-3);
+    border-bottom: 1px solid var(--line); vertical-align: top;
+    font-size: var(--t-sm);
+  }
+  .valises__recap thead th {
+    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+    letter-spacing: .04em; text-transform: uppercase;
+    border-bottom: 1px solid var(--line-2);
+  }
+  .valises__recap tbody tr:hover { background: var(--paper-2); }
+  .valises__recap .valises__recap-trajet { font-weight: 600; color: var(--ink); }
+  .valises__recap .valises__recap-trajet:hover { color: var(--acc); }
+  .valises__recap .valises__recap-when { display: block; color: var(--mut); font-weight: 400; }
+  .valises__recap .valises__recap-cout { font-family: var(--f-data); font-size: 0.92em; white-space: nowrap; }
+
+  @media (max-width: 640px) {
+    .valises__recap, .valises__recap tbody, .valises__recap tr, .valises__recap td { display: block; }
+    .valises__recap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .valises__recap tr {
+      border: 1px solid var(--line); border-radius: var(--r-m);
+      background: var(--paper-2); margin-bottom: var(--s-3); padding: var(--s-3) var(--s-4);
+    }
+    .valises__recap td { border: 0; padding: var(--s-1) 0; display: flex; gap: var(--s-3); }
+    .valises__recap td::before {
+      content: attr(data-label); flex: 0 0 7.5em;
+      font-size: var(--t-xs); font-weight: 600; color: var(--mut);
+      text-transform: uppercase; letter-spacing: .03em; padding-top: 2px;
+    }
+  }
+
+  /* une carte par trajet */
+  .valises__trajet { padding: var(--s-5); scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+  .valises__trajet + .valises__trajet { margin-top: var(--s-5); }
+  .valises__th { display: flex; align-items: flex-start; gap: var(--s-3); flex-wrap: wrap; }
+  .valises__th .step-num { margin-top: 2px; }
+  .valises__th-main { flex: 1; min-width: 0; }
+  .valises__th-route { font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.016em; }
+  .valises__th-sub { margin-top: 2px; font-size: var(--t-sm); color: var(--mut); }
+  .valises__th-sub .data { color: var(--ink-2); }
+  .valises__th-train { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+  .valises__th-train .label { display: inline; }
+
+  /* les options d'un trajet ; la recommandée se détache en vert sapin */
+  .valises__opts { margin-top: var(--s-4); display: flex; flex-direction: column; gap: var(--s-3); }
+  .valises__opt {
+    padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
+    background: var(--paper);
+  }
+  .valises__opt--reco {
+    border-color: color-mix(in srgb, var(--pine) 45%, var(--line));
+    background: color-mix(in srgb, var(--pine) 7%, var(--paper-2));
+  }
+  .valises__opt-head { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+  .valises__opt-head h4 { font-size: var(--t-base); font-weight: 600; }
+  .valises__badge {
+    flex: none; font-size: var(--t-xs); font-weight: 700; letter-spacing: .02em;
+    color: var(--pine); border: 1px solid color-mix(in srgb, var(--pine) 45%, transparent);
+    border-radius: var(--r-s); padding: 1px var(--s-2);
+  }
+  .valises__opt-cout { margin-left: auto; font-family: var(--f-data); font-size: var(--t-sm);
+                       font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .valises__opt p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); max-width: 70ch; }
+  .valises__opt .valises__opt-when { color: var(--ink); font-weight: 500; }
+  .valises__opt .valises__opt-contre { color: var(--mut); }
+  .valises__opt .valises__opt-contre b { color: var(--ink-2); font-weight: 600; }
+
+  /* ce qu'il faut demander au logement */
+  .valises__ask {
+    margin-top: var(--s-4); padding: var(--s-3) var(--s-4);
+    background: var(--acc-soft); border-left: 3px solid var(--acc);
+    border-radius: 0 var(--r-s) var(--r-s) 0;
+  }
+  .valises__ask h4 { font-size: var(--t-sm); font-weight: 600; }
+  .valises__ask p { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); }
+  .valises__ask .valises__ask-q { font-style: italic; color: var(--ink); }
+
+  /* sources datées, discrètes */
+  .valises__src { margin-top: var(--s-4); font-size: var(--t-xs); color: var(--mut);
+                  padding-top: var(--s-3); border-top: 1px solid var(--line); }
+  .valises__src b { font-weight: 600; color: var(--ink-2); }
+  .valises__src a { color: var(--mut); text-decoration: underline; text-underline-offset: 2px;
+                    text-decoration-color: var(--line-2); }
+  .valises__src a:hover { color: var(--acc); text-decoration-color: var(--acc); }
+  .valises__src .valises__src-sep { margin: 0 var(--s-2); color: var(--line-2); }
+
+  /* comment remplir le bordereau */
+  .valises__slip { margin: var(--s-4) 0; border: 1px solid var(--line); border-radius: var(--r-m);
+                   overflow: hidden; }
+  .valises__slip > div {
+    display: flex; gap: var(--s-4); padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line); font-size: var(--t-sm);
+  }
+  .valises__slip > div:first-child { border-top: 0; }
+  .valises__slip dt { flex: 0 0 11em; font-weight: 600; }
+  .valises__slip dd { flex: 1; min-width: 0; color: var(--ink-2); }
+  .valises__slip dd .mut { display: block; font-size: var(--t-xs); margin-top: 1px; }
+  @media (max-width: 560px) {
+    .valises__slip > div { flex-direction: column; gap: var(--s-1); }
+    .valises__slip dt { flex: none; }
+  }
+
+  /* les adresses des logements, à recopier sur le bordereau */
+  .valises__addr { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .valises__addr-card { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
+                        background: var(--paper-2); }
+  .valises__addr-card h4 { font-size: var(--t-sm); font-weight: 600; display: flex; gap: var(--s-2);
+                           align-items: center; flex-wrap: wrap; }
+  .valises__addr-jp { margin-top: var(--s-2); font-size: var(--t-md); line-height: 1.4; }
+  .valises__addr-note { margin-top: var(--s-2); font-size: var(--t-xs); color: var(--mut); }
+  .valises__addr-note--no { color: var(--acc); }
+  .valises__tag {
+    flex: none; font-size: var(--t-xs); font-weight: 600; padding: 1px var(--s-2);
+    border-radius: var(--r-s); border: 1px solid var(--line-2); color: var(--mut);
+  }
+  .valises__tag--no { color: var(--acc); border-color: color-mix(in srgb, var(--acc) 40%, transparent);
+                      background: var(--acc-soft); }
+  .valises__tag--ok { color: var(--pine); border-color: color-mix(in srgb, var(--pine) 45%, transparent); }
+
+  /* dans les trains */
+  .valises__trains { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .valises__train { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
+                    background: var(--paper-2); }
+  .valises__train h3 { font-size: var(--t-sm); font-weight: 600; }
+  .valises__train p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+
+  @media (max-width: 640px) {
+    .valises__trajet { padding: var(--s-4); }
+    .valises__opt-cout { margin-left: 0; flex-basis: 100%; white-space: normal; }
+  }
+}

@@ -15,18 +15,18 @@
 
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : sinon
 // le cache sert l'ancienne version et personne ne voit la mise à jour.
-const V = 'v38';
+const V = 'v39';
 const SHELL = `jp-shell-${V}`;
 const MEDIA = `jp-media-${V}`;
 const TILES = `jp-tiles-${V}`;
 
 const PAGES = [
   './', 'index.html', 'aujourdhui.html', 'jour.html', 'itineraire.html', 'guide.html', 'budget.html', 'pratique.html',
-  'villes.html', 'secours.html',
+  'villes.html', 'secours.html', 'valises.html',
   'manifest.webmanifest', 'app.css',
   'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js', 'app/resa.js', 'app/quartiers.js',
   'data/trip.js', 'data/days.js', 'data/spots.js', 'data/pratique.js', 'data/lieux.js',
-  'data/selection.js', 'data/delices.js', 'data/quartiers.js',
+  'data/selection.js', 'data/delices.js', 'data/quartiers.js', 'data/valises.js',
   'vendor/leaflet.js', 'vendor/leaflet.css', 'vendor/fonts.css',
   'icon-192.png', 'icon-512.png',
 ];

@@ -52,6 +52,7 @@
 <script type="module">
 import { CITIES, STEPS, HOTELS, SEGMENTS } from './data/trip.js';
 import { DAYS } from './data/days.js';
+import { TRAJETS as VALISES } from './data/valises.js';
 import { LIEUX } from './data/lieux.js';
 import { mountChrome, esc, formatDate, today } from './app/ui.js';
 import { resaStrip } from './app/resa.js';
@@ -281,6 +282,14 @@ const departBlock = (transfert && hotelMatin) ? `<div class="alert jour__depart"
     ${hotel && hotel.route && hotel.route.text ? `<p class="mut">${esc(hotel.route.text)}</p>` : ''}
   </div>` : '';
 
+// Les jours où l'on change de ville avec les valises (les six trajets de la
+// page Valises, y compris le départ pour Haneda, un jour « vol » sans
+// departBlock) : un renvoi discret vers la fiche du trajet.
+const trajetValises = VALISES.find((t) => t.date === jour.date);
+const valisesLigne = trajetValises
+  ? `<p class="day__free"><a href="valises.html#t${trajetValises.n}">Les valises : voir la page</a></p>`
+  : '';
+
 // Jour normal : « Depuis l'hôtel : X km — itinéraire en transports » vers le
 // premier arrêt. Origine = l'hôtel (ses coordonnées), jamais celles du voyageur.
 const premier = points[0];
@@ -298,6 +307,7 @@ q('parcours').innerHTML = `
     <p>${situees.length} arrêt${situees.length > 1 ? 's' : ''} situé${situees.length > 1 ? 's' : ''} sur ${etapes.length} ligne${etapes.length > 1 ? 's' : ''}.</p>
   </div>
   ${departBlock}
+  ${valisesLigne}
   ${depuisLigne}
   <ol class="etapes">${lignes}</ol>
   ${jour.tip ? `<p class="day__tip">${esc(jour.tip.replace(/^💡\s*/, ''))}</p>` : ''}`;

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Valises — Japon 2026</title>
+<meta name="description" content="Faire suivre les deux valises (ou s'en passer) à chaque changement de ville : l'option conseillée, le coût pour deux valises, quand et où déposer, et ce que chaque logement accepte.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- L'ouverture : la gare de Tokyo, d'où part le premier trajet et la plupart
+     des takkyubin. Photo déjà au catalogue (data/spots.js), donc déjà hors-ligne. -->
+<header class="cover cover--short">
+  <img class="cover__img" src="img/gare-de-tokyo-marunouchi-9a26e211.webp"
+       alt="La façade Marunouchi de la gare de Tokyo" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>Valises</h1>
+    <p class="cover__dates" id="cover-sub"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <header class="section">
+    <p class="valises__lede" id="lede"></p>
+  </header>
+
+  <section class="section">
+    <div class="shead">
+      <h2>En un coup d'œil</h2>
+      <span class="shead__meta" id="recap-meta"></span>
+    </div>
+    <table class="valises__recap">
+      <thead>
+        <tr>
+          <th scope="col">Trajet</th>
+          <th scope="col">Option conseillée</th>
+          <th scope="col">Coût · 2 valises</th>
+        </tr>
+      </thead>
+      <tbody id="recap"></tbody>
+    </table>
+    <p class="mut" id="recap-note" style="margin-top:var(--s-3);font-size:var(--t-xs)"></p>
+  </section>
+
+  <section class="section">
+    <div class="shead disc">
+      <h2>Trajet par trajet</h2>
+      <p>Pour chaque changement de ville : l'option conseillée, les autres pistes, quand et où déposer, et ce qu'il reste à demander au logement.</p>
+    </div>
+    <div id="trajets"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead">
+      <h2>Comment remplir le bordereau</h2>
+    </div>
+    <div id="envoyer"></div>
+    <div class="shead" style="margin-top:var(--s-6)"><h3 style="font-weight:600">Les adresses à recopier</h3></div>
+    <div class="valises__addr" id="adresses"></div>
+  </section>
+
+  <section class="section">
+    <div class="shead">
+      <h2>Dans le train, et en gare</h2>
+    </div>
+    <div class="valises__trains" id="trains"></div>
+  </section>
+</main>
+
+<script type="module">
+import { TRIP, CITIES, STEPS, HOTELS } from './data/trip.js';
+import { TRAJETS, ENVOYER, TRAINS } from './data/valises.js';
+import { mountChrome, esc, formatDate } from './app/ui.js';
+
+mountChrome('valises.html');
+const q = (id) => document.getElementById(id);
+const H = (id) => HOTELS.find((h) => h.id === id);
+const cityOf = (hid) => { const h = H(hid); return h ? CITIES[h.cityId] : null; };
+
+// Le nom d'un bout de trajet : l'hôtel, ou l'aéroport pour le dernier.
+const boutNom = (t, which) => {
+  if (which === 'to' && t.toAirport) return 'Aéroport de Haneda';
+  const h = H(which === 'to' ? t.toHotelId : t.fromHotelId);
+  return h ? h.name : '—';
+};
+const boutDot = (t, which) => {
+  if (which === 'to' && t.toAirport) return `<span class="city-dot" style="--c:var(--c-tokyo)">Haneda · T3</span>`;
+  const h = H(which === 'to' ? t.toHotelId : t.fromHotelId);
+  const c = h ? CITIES[h.cityId] : null;
+  return c ? `<span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>` : '';
+};
+
+// --- en-tête ------------------------------------------------------------------
+q('cover-sub').textContent = 'Deux grosses valises, six changements de ville';
+q('lede').innerHTML = esc(ENVOYER.intro);
+
+// --- le tableau récapitulatif -------------------------------------------------
+q('recap-meta').textContent = `${TRAJETS.length} trajets · 2 valises`;
+q('recap').innerHTML = TRAJETS.map((t) => `
+  <tr>
+    <td data-label="Trajet">
+      <a class="valises__recap-trajet" href="#t${t.n}">${esc(boutNom(t, 'from'))} → ${esc(boutNom(t, 'to'))}</a>
+      <span class="valises__recap-when">${esc(formatDate(t.date))}</span>
+    </td>
+    <td data-label="Conseillé">${esc(t.recoTitre)}</td>
+    <td data-label="Coût · 2 valises"><span class="valises__recap-cout">${esc(t.cout2)}</span></td>
+  </tr>`).join('');
+if (ENVOYER.recapNote) q('recap-note').textContent = ENVOYER.recapNote;
+
+// --- une carte par trajet -----------------------------------------------------
+const sourceLine = (sources) => !sources || !sources.length ? '' : `
+  <p class="valises__src"><b>Sources</b> ${sources.map((s) => `
+    ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.quoi)}</a>` : esc(s.quoi)}${s.date ? ` <span class="mut">(${esc(formatDate(s.date, { year: true }))})</span>` : ''}`).join('<span class="valises__src-sep">·</span>')}</p>`;
+
+q('trajets').innerHTML = TRAJETS.map((t) => `
+  <section class="valises__trajet card" id="t${t.n}">
+    <div class="valises__th">
+      <span class="step-num" style="--c:var(--c-${(cityOf(t.fromHotelId) || CITIES.tokyo).id})">${t.n}</span>
+      <div class="valises__th-main">
+        <p class="valises__th-route">${esc(boutNom(t, 'from'))} → ${esc(boutNom(t, 'to'))}</p>
+        <p class="valises__th-sub">
+          ${boutDot(t, 'from')} → ${boutDot(t, 'to')}
+          <span class="data">· ${esc(formatDate(t.date, { weekday: true }))}</span>
+          · ${esc(t.region)}
+        </p>
+        ${t.train ? `<p class="valises__th-train"><span class="label">Le train du jour —</span> ${esc(t.train)}</p>` : ''}
+      </div>
+    </div>
+
+    <div class="valises__opts">
+      ${t.options.map((o) => `
+        <div class="valises__opt${o.reco ? ' valises__opt--reco' : ''}">
+          <div class="valises__opt-head">
+            ${o.reco ? '<span class="valises__badge">Conseillé</span>' : ''}
+            <h4>${esc(o.titre)}</h4>
+            ${o.cout ? `<span class="valises__opt-cout">${esc(o.cout)}</span>` : ''}
+          </div>
+          ${o.delai ? `<p class="valises__opt-when">${esc(o.delai)}</p>` : ''}
+          ${o.quand ? `<p class="valises__opt-when">${esc(o.quand)}</p>` : ''}
+          ${o.pour ? `<p>${esc(o.pour)}</p>` : ''}
+          ${o.contre ? `<p class="valises__opt-contre"><b>Attention —</b> ${esc(o.contre)}</p>` : ''}
+        </div>`).join('')}
+    </div>
+
+    ${t.demander ? `
+      <div class="valises__ask">
+        <h4>À demander ${t.demander.hotelId ? `à ${esc((H(t.demander.hotelId) || {}).name || 'au logement')}` : 'au logement'}</h4>
+        <p class="valises__ask-q">« ${esc(t.demander.texte)} »</p>
+        ${t.demander.pourquoi ? `<p>${esc(t.demander.pourquoi)}</p>` : ''}
+      </div>` : ''}
+
+    ${sourceLine(t.sources)}
+  </section>`).join('');
+
+// --- comment remplir le bordereau ---------------------------------------------
+q('envoyer').innerHTML = `
+  ${ENVOYER.envoi.map((p) => `<p class="valises__lede" style="font-size:var(--t-sm);margin-bottom:var(--s-3)">${esc(p)}</p>`).join('')}
+
+  <dl class="valises__slip">
+    ${ENVOYER.bordereau.map((b) => `
+      <div>
+        <dt>${esc(b.champ)}</dt>
+        <dd>${esc(b.valeur)}${b.aide ? `<span class="mut">${esc(b.aide)}</span>` : ''}</dd>
+      </div>`).join('')}
+  </dl>
+
+  <div class="valises__ask" style="background:var(--paper-3);border-left-color:var(--gold)">
+    <h4>${esc(ENVOYER.ejusho.titre)}</h4>
+    <p>${esc(ENVOYER.ejusho.texte)}</p>
+  </div>`;
+
+// Les adresses : rendues depuis HOTELS (jamais recopiées ici), plus le centre
+// Yamato où La Vita fait retirer les colis.
+const TAG = { non: ['Ne reçoit pas', 'valises__tag--no'], inconnu: ['À confirmer', ''],
+              oui: ['Reçoit les colis', 'valises__tag--ok'] };
+q('adresses').innerHTML = ENVOYER.logements.map((l) => {
+  const h = H(l.hotelId);
+  if (!h) return '';
+  const c = CITIES[h.cityId];
+  const tag = TAG[l.recoit] || TAG.inconnu;
+  return `
+  <div class="valises__addr-card">
+    <h4>
+      <span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>
+      ${esc(h.name)}
+      <span class="valises__tag ${tag[1]}">${tag[0]}</span>
+    </h4>
+    <p class="valises__addr-jp" lang="ja">${esc(h.address)}</p>
+    ${h.tel ? `<p class="valises__addr-note">Tél. ${esc(h.tel)}</p>` : ''}
+    ${l.note ? `<p class="valises__addr-note${l.recoit === 'non' ? ' valises__addr-note--no' : ''}">${esc(l.note)}</p>` : ''}
+  </div>`;
+}).join('') + (ENVOYER.yamato ? `
+  <div class="valises__addr-card">
+    <h4>
+      <span class="city-dot" style="--c:var(--c-tokyo)">Tokyo</span>
+      ${esc(ENVOYER.yamato.nom)}
+      <span class="valises__tag valises__tag--ok">Retrait sur place</span>
+    </h4>
+    <p class="valises__addr-jp" lang="ja">${esc(ENVOYER.yamato.adresseJp)}</p>
+    <p class="valises__addr-note">${esc(ENVOYER.yamato.note)}</p>
+  </div>` : '');
+
+// --- dans le train ------------------------------------------------------------
+q('trains').innerHTML = TRAINS.map((t) => `
+  <div class="valises__train">
+    <h3>${esc(t.titre)}</h3>
+    <p>${esc(t.texte)}</p>
+  </div>`).join('');
+
+// Les ancres #t1…#t6 : si on arrive par un lien du tableau, on cadre sous la barre.
+if (location.hash && /^#t\d+$/.test(location.hash)) {
+  const el = document.getElementById(location.hash.slice(1));
+  if (el) requestAnimationFrame(() => el.scrollIntoView());
+}
+</script>
+</body>
+</html>
