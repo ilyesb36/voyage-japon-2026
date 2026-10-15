@@ -170,7 +170,8 @@ q('know').innerHTML = SURPLACE.map((k) => `
     <h3>${esc(k.title)}</h3>
     <p>${esc(k.what)}</p>
     ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
-    ${k.tels ? `<p class="know__tels">${k.tels.map((t) => `<a class="btn btn--ghost" href="tel:${esc(t.n.replace(/[^+\d]/g, ''))}">${esc(t.label)} <span class="data">${esc(t.n)}</span></a>`).join(' ')}</p>` : ''}
+    ${k.tels ? `<p class="know__tels">${k.tels.map((t) => `<a class="btn btn--ghost" href="tel:${esc(t.n.replace(/[^+\d]/g, ''))}">${esc(t.label)} <span class="data">${esc(t.n)}</span></a>`).join(' ')}</p>
+    <p><a href="secours.html">Fiche de secours</a> — à imprimer ou à garder en capture d'écran.</p>` : ''}
   </div>`).join('');
 
 // --- l'argent vit sur sa propre page -----------------------------------------

@@ -26,7 +26,7 @@ calendriers et aux matrices sans qu'une seule règle ne le sache.
 | Page | Ce qu'elle fait |
 |---|---|
 | `index.html` | l'ouverture, les six villes, la ligne, les vols, la carte, la bande des momiji |
-| `villes.html` | **une page par étape** (`?e=1` à `6`) : l'hôtel (adresse en japonais, « M'y emmener », « Appeler », « Montrer au chauffeur »), « Près de moi », « À ne pas rater », **les quartiers** (carte, « Autour de l'hôtel », puis une carte par quartier : à voir / à faire / à manger, les jours où le programme y passe, tout le quartier), « À table » (les plats, puis les tables recommandées), les événements datés, les jours, les journées type |
+| `villes.html` | **une page par étape** (`?e=1` à `6`) : l'hôtel (adresse en japonais, « M'y emmener », « Appeler », « Montrer au chauffeur »), « Près de moi », « À ne pas rater », **les quartiers** (une carte par quartier, dans l'ordre du programme : à voir / à faire / à manger, les jours où le programme y passe, tout le quartier), « À table » (les plats, puis les tables recommandées), les événements datés, les jours, les journées type |
 | `itineraire.html` | la vue d'ensemble : 25 lignes de jours menant chacune à sa page, et les 34 journées type |
 | `guide.html` | 456 adresses. Un seul chemin, le même partout : **ville → quartier → à voir / à faire / à manger**, le type de lieu en affinage. Recherche sans accents, avec synonymes (ramen, onsen, pluie…), tri « Près de moi » |
 | `jour.html` | **une journée à la fois** : les arrêts dans l'ordre, avec leur heure, situés sur une carte, tout le parcours en un lien Google Maps, « Dans le coin » (manger, et quoi faire s'il reste du temps), « Près de moi », et « Ce soir » (l'hôtel, le chauffeur). `?d=14` ou `?date=2026-11-21` |

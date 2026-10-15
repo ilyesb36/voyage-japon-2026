@@ -68,9 +68,10 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 import { SPOTS, CATEGORIES, PRIORITIES } from './data/spots.js';
 import { SELECTION } from './data/selection.js';
 import { DELICES } from './data/delices.js';
-import { CITIES } from './data/trip.js';
-import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox } from './app/ui.js';
-import { quartiersDe, ouEst, metres, maPosition, familleDe, quartierNomDeSpot, distanceTexte, KONBINI_LIGNE, fermeBadgeHTML } from './app/quartiers.js';
+import { CITIES, STEPS } from './data/trip.js';
+import { DAYS } from './data/days.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox, today, moment } from './app/ui.js';
+import { quartiersDe, ouEst, metres, maPosition, familleDe, quartierNomDeSpot, distanceTexte, KONBINI_LIGNE, ficheExtra } from './app/quartiers.js';
 
 mountChrome('guide.html');
 
@@ -132,8 +133,15 @@ const FACETS = {
 const entree = new URLSearchParams(location.search);
 const valide = (v, liste) => (v && liste.some((x) => x.id === v) ? v : 'all');
 
+// Pendant le voyage, sans ?ville= : on ouvre sur la ville de l'étape courante
+// (ce qui expose aussi les quartiers et « Près de moi »). La matrice « Toutes »
+// reste le geste pour revenir à toutes les villes.
+const jourCourant = DAYS.find((d) => d.date === today());
+const villeEtape = (moment() === 'pendant' && jourCourant)
+  ? (STEPS.find((s) => s.id === jourCourant.stepId)?.cityId || null) : null;
+
 const state = {
-  city: valide(entree.get('ville'), FACETS.city),
+  city: valide(entree.get('ville') || villeEtape, FACETS.city),
   // Les catégories t0–t6 ne sont plus un filtre principal : on garde le champ
   // (le prédicat le tolère) mais plus d'entrée d'UI — la famille l'a remplacé.
   category: 'all',
@@ -147,6 +155,8 @@ const state = {
   // la position du téléphone quand le tri par distance est actif, rien sinon.
   quartier: entree.get('quartier') || 'all',
   pos: null,
+  // `elargi` : la recherche a été étendue aux synonymes (via « Voir aussi »).
+  elargi: false,
   q: entree.get('q') || '',
 };
 
@@ -167,13 +177,17 @@ for (const facet of ['priority', 'source', 'kind']) {
 
 q('search').addEventListener('input', (e) => {
   state.q = e.target.value.trim().toLowerCase();
+  state.elargi = false;   // nouvelle recherche : on repart des correspondances directes
   render();
 });
 
 // --- rendu -------------------------------------------------------------------
 // La recherche porte sur le nom, la description et le quartier : c'est ce
 // qu'on tape de tête (« ramen », « Asakusa », « couteaux »).
-const norm = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+// Insensible aux accents, \u00e0 la casse, aux traits d'union et points m\u00e9dians, et
+// aux espaces multiples : \u00ab kodaiji \u00bb trouve \u00ab K\u014ddai-ji \u00bb.
+const norm = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[-\u2010\u2013\u2014\u30fb\u00b7]/g, '').replace(/\s+/g, ' ').trim();
 const haystack = new WeakMap();
 // On cherche par nom, nom japonais, description, histoire ET quartier : tout ce
 // qu'on tape de t\u00eate (\u00ab ramen \u00bb, \u00ab Gion \u00bb, \u00ab momiji \u00bb, \u00ab \u7947\u5712 \u00bb).
@@ -245,7 +259,7 @@ const matchesWith = (st) => (s) =>
   && (st.mode !== 'ess' || s.priority === 'ob' || s.priority === 'top')
   && (!st.fam || st.fam === 'all' || familleDe(s) === st.fam)
   && (!st.quartier || st.quartier === 'all' || (ouEst(s)?.quartierId === st.quartier))
-  && (!st.q || qMatch(s, st.q));
+  && (!st.q || hay(s).includes(norm(st.q)));
 
 const matches = (s) => matchesWith(state)(s);
 
@@ -375,7 +389,6 @@ function openSheet(id) {
           <span class="city-dot" style="--c:${city ? `var(--c-${city.id})` : 'var(--mut)'}">${city ? esc(city.name) : 'Partout au Japon'}</span>
           <span class="mut">· ${catName[s.category]}</span>
           <span class="prio prio--${s.priority}">${prioName[s.priority]}</span>
-          ${fermeBadgeHTML(s)}
         </p>
         <h2>${esc(s.name)}</h2>
         <p class="sheet__blurb">${esc(s.blurb)}</p>
@@ -384,8 +397,8 @@ function openSheet(id) {
           <div><dt>Durée</dt><dd>${esc(s.duration)}</dd></div>
           <div><dt>Budget</dt><dd>${esc(s.budget)}</dd></div>
           <div><dt>Le bon moment</dt><dd>${esc(s.when)}</dd></div>
-          ${s.fermeture && !/aucun|tous les jours/i.test(s.fermeture) ? `<div><dt>Fermeture</dt><dd>${esc(s.fermeture)}</dd></div>` : ''}
         </dl>
+        ${ficheExtra(s)}
         ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
         ${s.acces ? `<p class="sheet__acces"><b>Y aller</b> ${esc(s.acces)}</p>` : ''}
         ${s.source === 'guide' ? '<p class="sheet__guide">Conseillé par l\'amie guide de Mathilde.</p>' : s.source === 'secrets' ? '<p class="sheet__guide">Tiré des « Secrets de Tokyo » du guide japonais.</p>' : ''}
@@ -430,9 +443,25 @@ function render() {
   // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
   renderMat();
 
-  const list = SPOTS.filter(matches);
+  // Recherche : on montre d'abord les correspondances DIRECTES (nom, quartier,
+  // description…). Les synonymes (ramen → restaurants) n'élargissent qu'à la
+  // demande (« Voir aussi »), ou d'office s'il n'y a aucun résultat direct —
+  // ainsi les compteurs ne gonflent pas par surprise.
+  const directs = SPOTS.filter(matches);
+  let list = directs;
+  let voirAussi = 0;
+  if (state.q) {
+    const kinds = synKinds(norm(state.q));
+    if (kinds.size) {
+      const dset = new Set(directs);
+      const synos = SPOTS.filter(matchesWith({ ...state, q: '' })).filter((s) => !dset.has(s) && kinds.has(s.kind));
+      if (directs.length === 0) list = synos;
+      else if (state.elargi) list = directs.concat(synos);
+      else voirAussi = synos.length;
+    }
+  }
   // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
-  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.quartier, !!state.pos, state.q]);
+  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.quartier, !!state.pos, state.elargi, state.q]);
   if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
 
   // « Près de moi » : les adresses situées d'abord, de la plus proche à la plus
@@ -465,7 +494,9 @@ function render() {
     return tete + card(s) + fin;
   }).join('');
   const reste = apercu ? 0 : list.length - window.__lim;
-  q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
+  const moreBtn = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
+  const aussiBtn = voirAussi > 0 ? `<button class="btn btn--ghost" type="button" id="voir-aussi">Voir aussi tout ce qui s'en rapproche (${voirAussi})</button>` : '';
+  q('more').innerHTML = moreBtn + aussiBtn;
   // « konbini » : la bonne réponse n'est pas une adresse du guide, c'est la phrase.
   const estKonbini = /konbini|conbini|superette|convenience/.test(norm(state.q));
   if (estKonbini) { q('empty').textContent = KONBINI_LIGNE; q('empty').hidden = false; }
@@ -593,13 +624,14 @@ q('grid').addEventListener('click', (e) => {
 });
 
 q('more').addEventListener('click', (e) => {
+  if (e.target.closest('#voir-aussi')) { state.elargi = true; render(); return; }
   if (!e.target.closest('#more-btn')) return;
   window.__lim += 48;
   const sig = window.__sig; render(); window.__sig = sig;
 });
 
 q('reset').addEventListener('click', () => {
-  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', quartier: 'all', pos: null, q: '' });
+  Object.assign(state, { city: 'all', category: 'all', priority: 'all', source: 'all', kind: 'all', fam: 'all', quartier: 'all', pos: null, elargi: false, q: '' });
   q('f-kind').value = 'all';
   q('search').value = '';
   q('f-priority').value = 'all';

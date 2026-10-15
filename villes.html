@@ -14,7 +14,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
-<script src="vendor/leaflet.js"></script>
 <script>
 /* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
 try { if (localStorage.getItem('jp2026_theme') === 'dark')
@@ -48,8 +47,6 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
   <section class="section" id="quartiers" hidden>
     <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé.</p></div>
-    <div id="qmap" class="qmap map"></div>
-    <div id="autour"></div>
     <div class="qcards" id="qcards"></div>
   </section>
   <section class="section" id="table">
@@ -81,8 +78,7 @@ import { SPOTS } from './data/spots.js';
 import { SELECTION } from './data/selection.js';
 import { DELICES } from './data/delices.js';
 import { mountChrome, esc, today } from './app/ui.js';
-import { createMap } from './app/map.js';
-import { quartiersOrdonnes, carteQuartierHTML, autourHotelHTML, montePresDeMoi, boutonChauffeur, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
+import { quartiersOrdonnes, carteQuartierHTML, montePresDeMoi, boutonChauffeur, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
 
 // Une page par étape : tout ce qui concerne une ville au même endroit,
 // au lieu de le chercher entre le programme, le guide et la liste des plats.
@@ -204,41 +200,11 @@ if (tables.length) {
   q('tables').innerHTML = '<p class="label">Tables recommandées</p>' + tables.map(tableCard).join('');
 }
 
-// --- les quartiers : la carte, « Autour de l'hôtel » par distance, puis les cartes
+// --- les quartiers, dans l'ordre du programme ------------------------------------
 var ord = quartiersOrdonnes(step);
 if (ord.length) {
   q('quartiers').hidden = false;
-  q('autour').innerHTML = autourHotelHTML(hotel, { onSpot: true });
   q('qcards').innerHTML = ord.map(carteQuartierHTML).join('');
-
-  // La carte ne montre que les vrais quartiers à pied : on écarte les excursions
-  // (Uji, Ohara…) et les regroupements larges (rayon > 3 km, comme Tama) qui
-  // dézoomeraient toute la ville. Le rayon dessiné est plafonné, pour que chaque
-  // cercle se lise comme une zone de marche.
-  var surCarte = ord.filter(function (e) { return !e.q.excursion && e.q.rayon <= 3000; });
-  var cercles = [];
-  if (surCarte.length) {
-    var qmap = createMap('qmap', { scrollWheelZoom: false });
-    surCarte.forEach(function (e) {
-      var cc = CITIES[e.q.cityId].color;
-      var cercle = L.circle(e.q.ll, { radius: Math.min(e.q.rayon, 1500), color: cc, weight: 2, fillColor: cc, fillOpacity: 0.12 }).addTo(qmap);
-      cercle.bindTooltip(e.q.nom, { direction: 'top', className: 'qmap-lbl' });
-      cercle.on('click', function () { var t = document.getElementById('q-' + e.q.id); if (t) t.scrollIntoView({ block: 'start' }); });
-      cercles.push(cercle);
-    });
-    // Cadrage : même parade que les autres cartes (le conteneur peut valoir 0 au départ).
-    var qel = q('qmap');
-    var bornes = L.featureGroup(cercles).getBounds();
-    qmap.setView(bornes.getCenter(), 13);
-    var cadrerQ = function () { qmap.invalidateSize(true); qmap.fitBounds(bornes, { padding: [36, 36], animate: false }); };
-    var restantQ = 12;
-    var tenterQ = function () { if (qel.clientWidth > 0) { cadrerQ(); return; } if (restantQ-- > 0) requestAnimationFrame(tenterQ); };
-    tenterQ();
-    if ('ResizeObserver' in window) new ResizeObserver(function () { if (qel.clientWidth > 0) cadrerQ(); }).observe(qel);
-    addEventListener('load', tenterQ);
-  } else {
-    q('qmap').remove();
-  }
 }
 
 

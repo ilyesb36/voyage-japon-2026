@@ -79,10 +79,6 @@ export const SELECTION = Object.freeze([
    {
     "id": "spot-kaisendon-d-omicho",
     "why": "Le déjeuner au marché d'Ōmichō : bol de poisson cru et crabe des neiges, dont la saison vient d'ouvrir le 6 novembre."
-   },
-   {
-    "id": "spot-temple-ninja-myoryu-ji",
-    "why": "Trappes, escaliers cachés, faux plafonds. Visite guidée sur réservation par téléphone uniquement, à faire avant le 15 octobre."
    }
   ]
  },

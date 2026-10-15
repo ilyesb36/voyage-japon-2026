@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fiche de secours — Japon 2026</title>
+<meta name="description" content="Une page à imprimer ou à garder en capture : les logements (adresse en japonais), les vols, les urgences et les phrases à montrer. Sert même téléphone éteint.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<main class="wrap">
+  <div class="secours__sheet">
+    <!-- La barre d'outils disparaît à l'impression : elle ne sert qu'à l'écran. -->
+    <div class="secours__tools">
+      <button class="btn" type="button" id="print">Imprimer</button>
+      <p>À imprimer en A4 ou à garder en capture d'écran — elle sert même téléphone éteint.</p>
+    </div>
+
+    <header class="secours__head">
+      <h1>Japon 2026 — fiche de secours</h1>
+      <p id="dates"></p>
+    </header>
+
+    <!-- Le gros du contenu coule en deux colonnes à l'impression ; l'en-tête
+         ci-dessus les enjambe. Logements, vols et rendez-vous viennent des
+         données ; seules les urgences et les phrases sont écrites ici. -->
+    <div class="secours__flow">
+      <section class="secours__sec">
+        <h2>Logements</h2>
+        <div class="secours__lieux" id="hotels"></div>
+      </section>
+
+      <section class="secours__sec">
+        <h2>Vols &amp; rendez-vous</h2>
+        <div id="flights"></div>
+        <div id="rdv"></div>
+      </section>
+
+      <section class="secours__sec">
+        <h2>Urgences</h2>
+        <div class="secours__urg">
+          <div class="secours__urg-row"><b>Police</b><span class="secours__urg-num"><a href="tel:110">110</a></span></div>
+          <div class="secours__urg-row"><b>Pompiers &amp; ambulance</b><span class="secours__urg-num"><a href="tel:119">119</a></span></div>
+          <div class="secours__urg-row"><b>Japan Visitor Hotline <span class="mut">anglais, 24h/24</span></b><span class="secours__urg-num"><a href="tel:05038162787">050-3816-2787</a></span></div>
+          <div class="secours__amba">
+            <b>Ambassade de France à Tokyo</b>
+            <p class="secours__adr" lang="ja">〒106-8514 東京都港区南麻布4-11-44</p>
+            <p class="mut">4-11-44 Minami-Azabu, Minato-ku, Tokyo 106-8514</p>
+            <div class="secours__urg-row"><b>Standard</b><span class="secours__urg-num"><a href="tel:+81357986000">+81 3-5798-6000</a></span></div>
+            <div class="secours__urg-row"><b>Urgence consulaire <span class="mut">urgence humaine avérée, hors visa</span></b><span class="secours__urg-num"><a href="tel:+818095393970">+81 80-9539-3970</a></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="secours__sec">
+        <h2>Phrases à montrer</h2>
+        <div class="secours__phrases">
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">この住所までお願いします</p>
+            <p class="secours__romaji">Kono jūsho made onegai shimasu</p>
+            <p class="secours__fr">À cette adresse, s'il vous plaît</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">道に迷いました</p>
+            <p class="secours__romaji">Michi ni mayoimashita</p>
+            <p class="secours__fr">Je suis perdu(e)</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">この番号に電話してもらえますか</p>
+            <p class="secours__romaji">Kono bangō ni denwa shite moraemasu ka</p>
+            <p class="secours__fr">Pouvez-vous appeler ce numéro ?</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">トイレはどこですか</p>
+            <p class="secours__romaji">Toire wa doko desu ka</p>
+            <p class="secours__fr">Où sont les toilettes ?</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">お会計お願いします</p>
+            <p class="secours__romaji">O-kaikei onegai shimasu</p>
+            <p class="secours__fr">L'addition, s'il vous plaît</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">二人です</p>
+            <p class="secours__romaji">Futari desu</p>
+            <p class="secours__fr">Deux personnes</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">予約なしで大丈夫ですか</p>
+            <p class="secours__romaji">Yoyaku nashi de daijōbu desu ka</p>
+            <p class="secours__fr">Sans réservation, c'est possible ?</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">カードは使えますか</p>
+            <p class="secours__romaji">Kādo wa tsukaemasu ka</p>
+            <p class="secours__fr">La carte bancaire, c'est possible ?</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">日本語が話せません</p>
+            <p class="secours__romaji">Nihongo ga hanasemasen</p>
+            <p class="secours__fr">Je ne parle pas japonais</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">病院に行きたいです</p>
+            <p class="secours__romaji">Byōin ni ikitai desu</p>
+            <p class="secours__fr">Un hôpital, s'il vous plaît</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">ありがとうございます</p>
+            <p class="secours__romaji">Arigatō gozaimasu</p>
+            <p class="secours__fr">Merci beaucoup</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">すみません</p>
+            <p class="secours__romaji">Sumimasen</p>
+            <p class="secours__fr">Excusez-moi</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import { TRIP, STEPS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
+import { mountChrome, esc, formatDate } from './app/ui.js';
+
+// Même coque que les autres pages (barre, pied) ; masquée à l'impression.
+mountChrome('secours.html');
+const q = (id) => document.getElementById(id);
+const telHref = (t) => t.replace(/[^+\d]/g, '');
+
+q('dates').textContent =
+  formatDate(TRIP.start) + ' → ' + formatDate(TRIP.end, { year: true })
+  + ' · ' + TRIP.nights + ' nuits · ' + TRIP.travellers + ' voyageurs';
+
+// Les six logements, dans l'ordre du voyage. L'adresse japonaise est en grand :
+// c'est ce qu'on montre au chauffeur. Rien de sensible (ni code, ni n° de résa).
+q('hotels').innerHTML = HOTELS.map((h) => {
+  const s = STEPS.find((x) => x.id === h.stepId);
+  return `
+  <article class="secours__lieu">
+    <p class="secours__quand"><span class="secours__num">${s.n}</span>
+      <span>du <span class="data">${formatDate(s.from)}</span> au <span class="data">${formatDate(s.to)}</span></span></p>
+    <p class="secours__nom">${esc(h.name)}</p>
+    <p class="secours__adr" lang="ja">${esc(h.address)}</p>
+    <p class="secours__tel">${h.tel
+      ? `Tél. <a href="tel:${esc(telHref(h.tel))}">${esc(h.tel)}</a>`
+      : '<span class="mut">Téléphone non communiqué</span>'}</p>
+    <p class="secours__io"><span class="mut">Arrivée</span> <span class="data">${esc(h.checkIn)}</span>
+      · <span class="mut">Départ</span> <span class="data">${esc(h.checkOut)}</span></p>
+  </article>`;
+}).join('');
+
+// Les vols : date, horaires, numéro, aéroports. « +1 » = le lendemain.
+q('flights').innerHTML = FLIGHTS.map((f) => `
+  <article class="secours__vol">
+    <p class="secours__vol-h">${esc(f.label)} · <span class="data">${formatDate(f.date, { year: true })}</span> · ${esc(f.airline)}</p>
+    ${f.legs.map((l) => `<p class="secours__leg"><span class="data">${esc(l.from)} ${esc(l.depart)}</span> → <span class="data">${esc(l.to)} ${esc(l.arrive)}${l.dayShift ? ' +' + l.dayShift : ''}</span> · <span class="data">${esc(l.flight)}</span></p>`).join('')}
+  </article>`).join('');
+
+// Le rendez-vous fixe : Nintendo Museum, créneau horodaté.
+q('rdv').innerHTML = RESERVATIONS.map((r) => `
+  <p class="secours__rdv"><b>${esc(r.title)}</b> · <span class="data">${formatDate(r.date)} ${esc(r.slot)}</span> · ${esc(r.where)}</p>`).join('');
+
+q('print').addEventListener('click', () => window.print());
+</script>
+
+<script>
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
+</body>
+</html>

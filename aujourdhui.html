@@ -303,7 +303,8 @@ function ligneAvant(x) {
           ${x.tag ? `<p class="mut">${esc(x.tag)}.</p>` : ''}
           ${x.commentReserver ? `<p class="mut"><b>Comment</b> ${esc(x.commentReserver)}</p>` : ''}
           <p class="resa-item__actions">
-            ${x.url ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
+            ${x.url && !/^https?:/.test(x.url) ? `<a class="btn" href="${esc(x.url)}">Ouvrir</a>` : ''}
+            ${x.url && /^https?:/.test(x.url) ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
               x.canal === 'téléphone' ? 'Voir le numéro' : x.canal ? 'Réserver' : 'Ouvrir le site officiel'}</a>` : ''}
             ${x.tel ? `<a class="btn btn--ghost" href="tel:${esc(x.tel.replace(/[^+\d]/g, ''))}">${esc(x.tel)}</a>` : ''}
             ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}

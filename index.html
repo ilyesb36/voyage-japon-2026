@@ -87,6 +87,24 @@ import { DELICES } from './data/delices.js';
 import { SELECTION } from './data/selection.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
 import { montePerdu } from './app/quartiers.js';
+import { moment } from './app/ui.js';
+
+// Pendant le voyage, l'appli s'ouvre sur la journée du jour : c'est ce qu'on
+// vient y chercher neuf fois sur dix. Une seule fois par session — l'accueil
+// reste joignable depuis le menu — et jamais si l'adresse le demande
+// (?accueil). La date de test (?date=) suit.
+{
+  const params = new URLSearchParams(location.search);
+  let dejaOuvert = true;
+  try {
+    dejaOuvert = sessionStorage.getItem('jp2026_accueil') === '1';
+    sessionStorage.setItem('jp2026_accueil', '1');
+  } catch { /* navigation privée : on reste sur l'accueil */ }
+  if (!dejaOuvert && !params.has('accueil') && moment() === 'pendant') {
+    const date = params.get('date');
+    location.replace('jour.html' + (date ? `?date=${encodeURIComponent(date)}` : ''));
+  }
+}
 
 mountChrome('index.html');
 

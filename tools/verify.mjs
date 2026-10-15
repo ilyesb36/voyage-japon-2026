@@ -113,8 +113,10 @@ assert('chaque ligne dynamique a un multiplicateur connu',
   sansMultiplicateur.length === 0, sansMultiplicateur.join(', '));
 
 // 7 321 € avant l'achat du billet Nintendo, 7 359 € après.
-ok('total du voyage = 7 359 €', total, 7359);
-ok('par personne = 3 679,50 €', total / 2, 3679.5);
+// 7 359 € jusqu'au 14 octobre, plus les 10 tables à réserver (691 €) et trois
+// billets datés (teamLab, Shibuya Sky, Rikugi-en : 94 €), ajoutés ce jour-là.
+ok('total du voyage = 8 144 €', total, 8144);
+ok('par personne = 4 072 €', total / 2, 4072);
 
 assert(
   'le poste hébergement est calculé, pas saisi',
@@ -359,9 +361,11 @@ assert('aucun identifiant partagé entre « à faire » et « à réserver »',
   collisions.length === 0, collisions.join(', '));
 
 // Un lien mort est pire que pas de lien : on cliquerait en croyant réserver.
+// Un lien sort en https, ou mène à une page du site qui existe (la fiche de secours).
+const pageDuSite = (u) => /^[a-z-]+\.html$/.test(u) && fs.existsSync(new URL(`../${u}`, import.meta.url));
 const liensDouteux = [...AVANT, ...RESERVER]
-  .filter((x) => x.url && !/^https:\/\//.test(x.url)).map((x) => x.id);
-assert('chaque lien est en https', liensDouteux.length === 0, liensDouteux.join(', '));
+  .filter((x) => x.url && !/^https:\/\//.test(x.url) && !pageDuSite(x.url)).map((x) => x.id);
+assert('chaque lien est en https ou mène à une page du site', liensDouteux.length === 0, liensDouteux.join(', '));
 
 // Ce qui ne se réserve pas n'a rien à faire dans une liste « à réserver » :
 // Eikan-do et Kodai-ji vendent leur billet de nuit sur place, ils en sont

@@ -57,7 +57,7 @@ import { mountChrome, esc, formatDate, today } from './app/ui.js';
 import { resaStrip } from './app/resa.js';
 import { createMap } from './app/map.js';
 import { meteoDuJour } from './app/meteo.js';
-import { dansLeCoinHTML, montePresDeMoi, montreChauffeur, autourHotelHTML, positionConnue, ouvrirFiche } from './app/quartiers.js';
+import { dansLeCoinHTML, montePresDeMoi, montreChauffeur, positionConnue, ouvrirFiche } from './app/quartiers.js';
 
 mountChrome('jour.html');
 const q = (id) => document.getElementById(id);
@@ -407,7 +407,6 @@ q('soir').innerHTML = `
       <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a>
         ${hotel.tel ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(hotel.tel)}</a>` : ''}
         <button class="btn btn--ghost" id="chauffeur-btn">Montrer au chauffeur</button></p>
-      ${autourHotelHTML(hotel, { onSpot: true })}
     </div>
   </div>` : ''}
 

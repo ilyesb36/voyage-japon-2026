@@ -2523,16 +2523,18 @@
      Couleurs figées EN DUR, pas des tokens : ça doit rester parfaitement
      lisible même en thème sombre, pour un chauffeur ou un passant. Aucune
      ressource externe : marche hors-ligne. */
+  /* <dialog> ouvert par showModal() : centré, dans le top layer (au-dessus de
+     « Perdu ? »). Fond blanc / texte noir figés, lisibles même en thème sombre. */
   .chauffeur {
-    position: fixed; inset: 0; z-index: 1100;
-    display: grid; place-items: center; padding: var(--s-5);
-    background: rgb(0 0 0 / 0.55);
-  }
-  .chauffeur__in {
-    position: relative; width: min(100%, 560px); max-height: 92vh; overflow: auto;
-    padding: clamp(1.5rem, 6vw, 2.5rem);
-    background: #ffffff; color: #111111; text-align: center;
+    position: fixed; inset: 0; margin: auto; width: min(94vw, 560px);
+    height: fit-content; max-height: 92vh; padding: 0; border: none;
+    background: #ffffff; color: #111111;
     border-radius: var(--r-l); box-shadow: 0 10px 44px rgb(0 0 0 / 0.5);
+  }
+  .chauffeur::backdrop { background: rgb(0 0 0 / 0.55); }
+  .chauffeur__in {
+    position: relative; overflow: auto; max-height: 92vh;
+    padding: clamp(1.5rem, 6vw, 2.5rem); text-align: center;
   }
   .chauffeur__x {
     position: absolute; top: var(--s-2); right: var(--s-2);
@@ -2652,5 +2654,137 @@
      (redondant une fois sur place) s'efface pour que la barre tienne. */
   @media (max-width: 440px) {
     .nav__in:has(.nav__perdu) .nav__count { display: none; }
+  }
+}
+
+@layer components {
+  /* fiche de secours ----------------------------------------------------------
+     Une page à imprimer (A4, une seule feuille) ou à garder en capture :
+     logements avec l'adresse en japonais (pour le chauffeur), vols, urgences et
+     phrases. Pensée pour servir téléphone éteint. À l'écran elle se lit comme
+     une feuille ; à l'impression, elle tient sur une page, en deux colonnes. */
+  .secours__sheet { max-width: 880px; margin-inline: auto; padding-block: var(--s-6); }
+
+  .secours__tools {
+    display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap;
+    margin-bottom: var(--s-5);
+  }
+  .secours__tools p { margin: 0; font-size: var(--t-sm); color: var(--mut); }
+
+  .secours__head { margin-bottom: var(--s-5); }
+  .secours__head h1 { font-size: var(--t-xl); }
+  .secours__head p { margin-top: 2px; font-size: var(--t-sm); color: var(--mut); }
+
+  .secours__sec { margin-top: var(--s-6); }
+  .secours__sec > h2 {
+    font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em;
+    padding-bottom: var(--s-2); margin-bottom: var(--s-3);
+    border-bottom: 2px solid var(--line-2); break-after: avoid;
+  }
+
+  /* logements : une tuile par étape, l'adresse japonaise en grand */
+  .secours__lieux {
+    display: grid; gap: var(--s-3);
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  .secours__lieu {
+    border: 1px solid var(--line); border-radius: var(--r-m);
+    background: var(--paper-2); padding: var(--s-3) var(--s-4); break-inside: avoid;
+  }
+  .secours__quand { display: flex; align-items: center; gap: var(--s-2);
+                    font-size: var(--t-xs); color: var(--mut); }
+  .secours__num {
+    flex: none; width: 20px; height: 20px; border-radius: var(--r-s);
+    background: var(--ink); color: var(--paper); display: grid; place-items: center;
+    font-family: var(--f-data); font-size: 11px; font-weight: 700;
+  }
+  .secours__nom { margin-top: 2px; font-weight: 600; font-size: var(--t-sm); }
+  .secours__adr { margin-top: var(--s-2); font-size: var(--t-md); font-weight: 600;
+                  line-height: 1.35; letter-spacing: 0; }
+  .secours__tel { margin-top: var(--s-2); font-size: var(--t-sm); }
+  .secours__tel a { font-family: var(--f-data); font-weight: 600; color: var(--ink); }
+  .secours__io { margin-top: 2px; font-size: var(--t-xs); }
+  .secours__io .data { color: var(--ink-2); }
+
+  /* vols & rendez-vous */
+  .secours__vol { margin-bottom: var(--s-3); break-inside: avoid; }
+  .secours__vol-h { font-weight: 600; font-size: var(--t-sm); }
+  .secours__leg { font-size: var(--t-sm); color: var(--ink-2); }
+  .secours__rdv {
+    margin-top: var(--s-2); padding-top: var(--s-2);
+    border-top: 1px solid var(--line); font-size: var(--t-sm); break-inside: avoid;
+  }
+
+  /* urgences : encadré, les numéros en évidence */
+  .secours__urg {
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, var(--line));
+    border-radius: var(--r-m); background: var(--acc-soft);
+    padding: var(--s-3) var(--s-4); break-inside: avoid;
+  }
+  .secours__urg-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    gap: var(--s-4); padding: var(--s-1) 0; font-size: var(--t-sm);
+  }
+  .secours__urg-row + .secours__urg-row {
+    border-top: 1px solid color-mix(in srgb, var(--acc) 16%, var(--line));
+  }
+  .secours__urg-num { font-family: var(--f-data); font-weight: 700; white-space: nowrap; }
+  .secours__urg-num a { color: var(--ink); }
+  .secours__amba {
+    margin-top: var(--s-3); padding-top: var(--s-3);
+    border-top: 1px solid color-mix(in srgb, var(--acc) 16%, var(--line)); font-size: var(--t-sm);
+  }
+  .secours__amba .secours__adr { font-size: var(--t-base); margin-top: var(--s-1); }
+  .secours__amba .mut { font-size: var(--t-xs); }
+
+  /* phrases : japonais en grand, rōmaji, puis le sens */
+  .secours__phrases {
+    display: grid; gap: var(--s-2) var(--s-5);
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .secours__phrase { padding: var(--s-2) 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+  .secours__jp { font-size: var(--t-md); font-weight: 600; line-height: 1.3; }
+  .secours__romaji { font-size: var(--t-xs); color: var(--mut); font-style: italic; }
+  .secours__fr { font-size: var(--t-sm); color: var(--ink-2); }
+
+  @media (max-width: 640px) {
+    .secours__lieux, .secours__phrases { grid-template-columns: 1fr; }
+  }
+
+  /* impression : une seule feuille A4, noir sur blanc, deux colonnes ---------- */
+  @media print {
+    .nav, .foot, #progress-bar, .secours__tools { display: none !important; }
+    :root, :root[data-theme="dark"] {
+      --paper: #fff; --paper-2: #fff; --paper-3: #fff;
+      --ink: #000; --ink-2: #000; --mut: #333;
+      --line: #c4c4c4; --line-2: #8a8a8a;
+      --acc: #000; --acc-soft: #fff;
+    }
+    @page { size: A4; margin: 9mm; }
+    html, body { background: #fff; color: #000; font-size: 9pt; line-height: 1.28; }
+    .wrap { max-width: none; padding-inline: 0; }
+    .secours__sheet { max-width: none; margin: 0; padding: 0; }
+
+    .secours__head { margin-bottom: 3mm; break-after: avoid; }
+    .secours__head h1 { font-size: 15pt; }
+    .secours__head p { font-size: 9pt; }
+
+    /* le gros du contenu coule en deux colonnes ; l'en-tête les enjambe */
+    .secours__flow { columns: 2; column-gap: 9mm; }
+    .secours__sec { margin-top: 3.5mm; }
+    .secours__sec > h2 { font-size: 10.5pt; border-bottom-width: 1px; margin-bottom: 1.5mm; padding-bottom: 1mm; }
+
+    .secours__lieux, .secours__phrases { display: block; }
+    .secours__lieu { padding: 1.4mm 2mm; margin-bottom: 1.6mm; border-color: #c4c4c4; }
+    .secours__adr { margin-top: 1mm; font-size: 11pt; }
+    .secours__tel, .secours__io { margin-top: 0.6mm; }
+
+    .secours__urg { border: 1.4px solid #000; background: #fff; padding: 2mm; }
+    .secours__vol { margin-bottom: 1.8mm; }
+
+    .secours__phrase { padding: 0.9mm 0; }
+    .secours__jp { font-size: 11pt; }
+
+    a { color: #000 !important; text-decoration: none !important; }
   }
 }

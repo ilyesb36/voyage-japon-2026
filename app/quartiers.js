@@ -286,6 +286,15 @@ export function familleDe(spot) {
 /** Nom lisible d'une famille. Les mêmes mots partout. */
 export const FAMILLE_LABEL = { voir: 'À voir', faire: 'À faire', manger: 'À manger' };
 
+/** Type de lieu lisible — mêmes libellés que le guide. Pour « Près de moi ». */
+export const KIND_LABEL = {
+  temple: 'Temples & sanctuaires', jardin: 'Parcs & jardins', musee: 'Musées & galeries',
+  vue: 'Points de vue', quartier: 'Quartiers & balades', nature: 'Nature & excursions',
+  cafe: 'Cafés & salons de thé', resto: 'Restaurants', street: 'Marchés & street food',
+  bar: 'Bars & nuit', shopping: 'Boutiques & shopping', atelier: 'Expériences & ateliers',
+  onsen: 'Onsen & sento', event: 'Événements datés',
+};
+
 /** L'hôtel d'une ville (la première étape qui y séjourne). */
 function hotelDeVille(cityId) {
   const step = STEPS.find((s) => s.cityId === cityId);
@@ -378,7 +387,7 @@ export function autourHotelHTML(hotel, { onSpot = false } = {}) {
 // Fragments HTML partagés (chaînes — la page les insère)
 // ---------------------------------------------------------------------------
 
-const PRIO_NOM = { ob: 'Obligatoire', top: 'À voir', symp: 'Sympa', niche: 'Niche' };
+const PRIO_NOM = { ob: 'Obligatoire', top: 'Recommandé', symp: 'Sympa', niche: 'Niche' };
 const PRIO_ORDRE = ['ob', 'top', 'symp', 'niche'];
 const FAMILLE_NOM = { voir: 'À voir', faire: 'À faire', manger: 'À manger' };
 
@@ -450,6 +459,7 @@ export function ficheExtra(spot, hotel) {
   const dist = distanceHotelTexte(spot, hotel);
   const badge = fermeBadgeHTML(spot);
   const faits = [];
+  if (spot?.jp) faits.push(`<div><dt>En japonais</dt><dd lang="ja">${esc(spot.jp)}</dd></div>`);
   if (nomQ) faits.push(`<div><dt>Quartier</dt><dd>${esc(nomQ)}</dd></div>`);
   if (dist) faits.push(`<div><dt>Depuis l'hôtel</dt><dd>${esc(dist)}</dd></div>`);
   if (spot?.tabelog) faits.push(`<div><dt>Tabelog</dt><dd class="data">${esc(spot.tabelog)}</dd></div>`);
@@ -483,12 +493,13 @@ export function montreChauffeur(hotel) {
   const sousAdresse = adresseJp ? '' : (hotel.address || '');
   const tel = hotel.tel ? hotel.tel.replace(/[^+\d]/g, '') : '';
 
-  const box = document.createElement('div');
-  box.className = 'chauffeur';
-  box.setAttribute('role', 'dialog');
-  box.setAttribute('aria-modal', 'true');
-  box.setAttribute('aria-label', 'Adresse de l’hôtel à montrer');
-  box.innerHTML = `
+  // Un vrai <dialog> ouvert par showModal() : il passe dans le « top layer »,
+  // donc AU-DESSUS du panneau « Perdu ? » (lui aussi un dialog modal), et y
+  // revient à la fermeture. Plus de gestion manuelle d'inert/focus.
+  const dlg = document.createElement('dialog');
+  dlg.className = 'chauffeur';
+  dlg.setAttribute('aria-label', 'Adresse du logement à montrer');
+  dlg.innerHTML = `
     <div class="chauffeur__in">
       <button class="chauffeur__x" type="button" aria-label="Fermer">&times;</button>
       <p class="chauffeur__phrase" lang="ja">この住所までお願いします</p>
@@ -498,22 +509,12 @@ export function montreChauffeur(hotel) {
       <p class="chauffeur__hotel">${esc(hotel.name)}</p>
       ${tel ? `<a class="chauffeur__tel" href="tel:${esc(tel)}">Appeler ${esc(hotel.tel)}</a>` : ''}
     </div>`;
-
-  const veniat = document.activeElement;
-  const fond = [...document.body.children];
-  const close = () => {
-    box.remove();
-    document.removeEventListener('keydown', onKey);
-    fond.forEach((n) => n.removeAttribute('inert'));
-    veniat?.focus?.();
-  };
-  const onKey = (e) => { if (e.key === 'Escape') close(); };
-  box.addEventListener('click', (e) => { if (e.target === box) close(); });
-  box.querySelector('.chauffeur__x').addEventListener('click', close);
-  document.addEventListener('keydown', onKey);
-  fond.forEach((n) => n.setAttribute('inert', ''));
-  document.body.appendChild(box);
-  box.querySelector('.chauffeur__x').focus();
+  document.body.appendChild(dlg);
+  const close = () => dlg.close();
+  dlg.querySelector('.chauffeur__x').addEventListener('click', close);
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
+  dlg.addEventListener('close', () => dlg.remove());
+  dlg.showModal();
 }
 
 /** Un bouton « Montrer au chauffeur » déjà câblé, à insérer dans un en-tête. */
@@ -611,10 +612,14 @@ export function montePresDeMoi(el, { step, hotel, onSpot, onPos } = {}) {
     const liste = sel.map((x) => {
       const nomQ = quartier(x.quartierId)?.nom;
       const badge = fermeBadgeHTML(x.spot);
+      // Type de lieu (comme le guide) + prix court en tête : « Restaurants ·
+      // ~1 000 ¥ » se lit d'un coup. Repli sur la famille si le kind manque.
+      const type = KIND_LABEL[x.spot.kind] || FAMILLE_LABEL[familleDe(x.spot)] || '';
+      const prix = x.spot.budget ? ` · ${esc(x.spot.budget)}` : '';
       return `<li>
         <button class="proche__spot" type="button" data-id="${esc(x.spot.id)}">
           <span class="proche__nom">${esc(x.spot.name)}${badge ? ` ${badge}` : ''}</span>
-          <span class="proche__meta">${esc(FAMILLE_LABEL[familleDe(x.spot)] || '')} · ${nomQ ? `${esc(nomQ)} · ` : ''}${metaDistance(x.d, x.confiance)}</span>
+          <span class="proche__meta">${esc(type)}${prix} · ${nomQ ? `${esc(nomQ)} · ` : ''}${metaDistance(x.d, x.confiance)}</span>
           ${x.spot.when ? `<span class="proche__when">${esc(x.spot.when)}</span>` : ''}
         </button></li>`;
     }).join('');
@@ -749,8 +754,9 @@ export function dansLeCoinHTML(jour, { pos } = {}) {
  * « Rentrer à l'hôtel » (via Près de moi), « Montrer au chauffeur », appeler
  * l'hôtel, et les numéros d'urgence. `step`/`hotel` = ceux du jour en cours.
  */
-export function montePerdu({ step, hotel } = {}) {
+export function montePerdu({ step, hotel, autoPres } = {}) {
   const tel = hotel && hotel.tel ? hotel.tel.replace(/[^+\d]/g, '') : '';
+  const rentrer = lienRentrer(hotel);
   const dlg = document.createElement('dialog');
   dlg.className = 'perdu';
   dlg.setAttribute('aria-label', 'Perdu ?');
@@ -759,8 +765,9 @@ export function montePerdu({ step, hotel } = {}) {
       <button class="perdu__x" aria-label="Fermer">&times;</button>
       <h2 class="perdu__titre">Perdu ?</h2>
       <div class="perdu__actions">
-        ${hotel ? '<button class="btn" type="button" data-chauffeur>Montrer au chauffeur</button>' : ''}
-        ${tel ? `<a class="btn btn--ghost" href="tel:${esc(tel)}">Appeler l'hôtel</a>` : ''}
+        ${rentrer ? `<a class="btn" href="${esc(rentrer)}" target="_blank" rel="noopener">Rentrer à l'hôtel</a>` : ''}
+        ${hotel ? '<button class="btn btn--ghost" type="button" data-chauffeur>Montrer au chauffeur</button>' : ''}
+        ${tel ? `<a class="btn btn--ghost" href="tel:${esc(tel)}">Appeler le logement</a>` : ''}
       </div>
       <div class="perdu__pres" id="perdu-pres"></div>
       <div class="perdu__urgences">
@@ -771,12 +778,19 @@ export function montePerdu({ step, hotel } = {}) {
       </div>
     </div>`;
   document.body.appendChild(dlg);
-  if (step) montePresDeMoi(dlg.querySelector('#perdu-pres'), { step, hotel, onSpot: (id) => ouvrirFiche(id, { hotel }) });
-  else dlg.querySelector('#perdu-pres').innerHTML = `<p class="mut">Journée hors étape — pas de quartier à proximité.</p><p class="proche__konbini">${esc(KONBINI_LIGNE)}</p>`;
+  let presBtn = null;
+  if (step) {
+    montePresDeMoi(dlg.querySelector('#perdu-pres'), { step, hotel, onSpot: (id) => ouvrirFiche(id, { hotel }) });
+    presBtn = dlg.querySelector('#perdu-pres .proche__btn');
+  } else {
+    dlg.querySelector('#perdu-pres').innerHTML = `<p class="mut">Journée hors étape — pas de quartier à proximité.</p><p class="proche__konbini">${esc(KONBINI_LIGNE)}</p>`;
+  }
   dlg.querySelector('[data-chauffeur]')?.addEventListener('click', () => montreChauffeur(hotel));
   const close = () => { dlg.close(); };
   dlg.querySelector('.perdu__x').addEventListener('click', close);
   dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
   dlg.addEventListener('close', () => dlg.remove());
   dlg.showModal();
+  // Depuis l'accueil : on déclenche directement « Près de moi ».
+  if (autoPres && presBtn) presBtn.click();
 }
