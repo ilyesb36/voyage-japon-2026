@@ -187,13 +187,14 @@ assert('le Nintendo Museum a été payé par Ilyès', lignesBudget.find((i) => i
 // Ce que la page Budget compte comme payé : une ligne qui a un payeur dans les données,
 // ou un hôtel réglé. C'est un fait, pas une case à cocher sur un téléphone.
 // 5 197 € le 15 octobre 2026 : les six hôtels (3 259 €), les vols (1 900 €) et Nintendo (38 €) ;
-// 5 339 € le 19 octobre, avec Junsei (82 €) et teamLab (60 €), payés par Ilyès sur Klook.
+// 5 339 € le 19 octobre, avec Junsei (82 €) et teamLab (60 €), payés par Ilyès sur Klook ;
+// 5 729 € le même jour, avec les trois tables TableCheck (356 €) et le Nikko Pass (34 €), payés par Ilyès.
 const regle = lignesBudget
   .filter((i) => i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 5 339 € (6 hôtels, vols, Nintendo, Junsei, teamLab)', regle, 5339);
-// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
-ok('reste à payer = 2 683 €', total - regle, 2683);
+ok('déjà réglé au total = 5 729 € (6 hôtels, vols, Nintendo, Klook, TableCheck)', regle, 5729);
+// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 293 € le 19 octobre.
+ok('reste à payer = 2 293 €', total - regle, 2293);
 
 // Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
 // réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
@@ -201,10 +202,11 @@ const catDe = new Map(BUDGET.categories.flatMap((c) => c.items.map((i) => [i.key
 const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid)));
 const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
-// 785 € le 16 octobre ; 406 € le 19 octobre, teamLab et Junsei réglés, trois tables réservées.
-ok('à réserver avant le départ = 406 € (2 billets datés : 50 €, 3 tables : 356 €)', avantLeDepart, 406);
-// 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises.
-ok('sur place = 2 277 € (2 passes, trains, valises, repas et sorties)', surPlace, 2277);
+// 785 € le 16 octobre ; 50 € le 19 octobre, toutes les tables et teamLab réglés.
+ok('à réserver avant le départ = 50 € (Shibuya Sky et Rikugi-en)', avantLeDepart, 50);
+// 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises ;
+// 2 243 € le 19 octobre, le Nikko Pass payé sur Klook (l'express Tobu reste sur place).
+ok('sur place = 2 243 € (Freepass, express Tobu, trains, valises, repas et sorties)', surPlace, 2243);
 ok('payé + à réserver + sur place = le total', regle + avantLeDepart + surPlace, total);
 
 assert('la date limite d\'annulation du ryokan est connue',
