@@ -24,7 +24,7 @@
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : l'ancienne
 // coque est supprimée, et la page À faire propose alors de retélécharger les
 // pages. Les photos et les tuiles ne dépendent pas de ce numéro : elles restent.
-const V = 'v45';
+const V = 'v46';
 const SHELL = `jp-shell-${V}`;
 // Les photos et les tuiles ne dépendent pas de la version : une mise à jour du
 // site pendant le voyage ne doit pas effacer ce qu'on a téléchargé à l'hôtel.

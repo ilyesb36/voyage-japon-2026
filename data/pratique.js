@@ -183,7 +183,7 @@ export const SURPLACE = Object.freeze([
     id: 'couches',
     place: 'avant',
     title: 'S’habiller par couches',
-    what: "Le vrai enjeu de novembre n'est pas le froid mais l'écart : les trains, les magasins et les restaurants surchauffent, et on ressort dans 8 °C. Trois couches qu'on enlève et remet valent mieux qu'un gros manteau. Pour Ōwakudani (1 040 m, en téléphérique), ajouter coupe-vent et gants.",
+    what: "Le vrai enjeu de novembre n'est pas le froid mais l'écart : les trains, les magasins et les restaurants surchauffent, et on ressort dans 8 °C. Trois couches qu'on enlève et remet valent mieux qu'un gros manteau. Pour Ōwakudani (1 040 m, en téléphérique), ajouter coupe-vent et gants. Prévision à un mois de l'agence météo japonaise (15 oct. 2026, jusqu'au 16 nov.) : plus doux que la normale, et plus de pluie que d'habitude de Tokyo à Kyoto — un parapluie pliant chacun, et des chaussures qui supportent l'eau.",
   },
   {
     id: 'nuit',
@@ -194,7 +194,9 @@ export const SURPLACE = Object.freeze([
 ]);
 
 // Normales de saison, en °C. Sert à savoir quoi mettre dans la valise,
-// pas à prévoir le temps qu'il fera.
+// pas à prévoir le temps qu'il fera. Revu le 19 oct. 2026 : la prévision à un mois de l'agence
+// météo japonaise (15 oct.) annonce un automne plus doux et plus pluvieux que la normale
+// (Kanto à Kinki) ; les normales restent le plancher, le conseil est dans « couches ».
 export const METEO = Object.freeze({
   tokyo:    { max: 17, min: 9,  note: 'doux en journée, frais le soir' },
   kanazawa: { max: 15, min: 8,  note: 'la côte de la mer du Japon : prévoir la pluie' },
@@ -228,7 +230,7 @@ export const RESERVER = Object.freeze([
     type: 'billet',
     canal: 'en ligne',
     url: 'https://www.shibuya-scramble-square.com/sky/en/ticket/',
-    commentReserver: "Billetterie officielle en ligne, date et créneau horodatés. Tarifs 2026 en ligne : 2 700 ¥ avant 15:00, 3 400 ¥ à partir de 15:00 — le couchant est donc au tarif haut (guichet : 3 000 / 3 700 ¥). La vente ouvre environ deux semaines avant, à minuit heure du Japon — 16:00 à Paris, l'heure d'hiver arrivant le 25 octobre : pour le 11 novembre, vers le 28 octobre. Regarder dès maintenant au cas où ce serait plus tôt. Le créneau du couchant (vers 16:00) part en quelques minutes. Revérifié le 14 octobre 2026.",
+    commentReserver: "Sur Klook (dès 16,85 €) ou la billetterie officielle, date et créneau horodatés, nom du passeport sur le billet (contrôles au hasard). La vente ouvre deux semaines avant, à minuit heure du Japon : pour le 11 novembre, le mardi 27 octobre à 16:00 heure de Paris. Viser 15:40 ou 16:00 (coucher vers 16:35) ; les créneaux du couchant partent en quelques minutes — être connecté avant 16:00. Sinon 17:00–17:20 : la ville qui s'allume vaut le couchant. Revérifié le 19 octobre 2026.",
     check: true,
     spotId: 'spot-shibuya-sky',
     title: 'Shibuya Sky, créneau coucher de soleil',
