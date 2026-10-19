@@ -128,9 +128,13 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 // Tobu prévu au programme (+62 €) ;
 // le 16 octobre, une ligne pour les valises — Yamato le 27 novembre (≈ 6 040 ¥) et les casiers
 // des trajets 2 et 3 (≈ 3 200 ¥, 1 600 ¥ chacun, comme la page Valises), soit 53 € au taux du
-// budget (+53 €). Le total est impair : chacun doit 4 129,5 €, la page écrit « ≈ 4 130 € ».
-ok('total du voyage = 8 259 €', total, 8259);
-ok('par personne = 4 129,5 €', total / 2, 4129.5);
+// budget (+53 €) ;
+// le 19 octobre, Junsei (82 €, déplacé au 19 nov.) et teamLab (60 €) réservés sur Klook, à leur
+// prix payé au lieu de l'estimation (+30 € et +16 €) ;
+// le 19 octobre aussi, les tables ramenées à trois (Mitsukawa, The Sky le 10 nov. au soir, Tokyo Ten
+// le 30 nov. à midi), à leur prix réservé : −372 € de tables retirées, +129 € et −40 € (−283 €).
+ok('total du voyage = 8 022 €', total, 8022);
+ok('par personne = 4 011 €', total / 2, 4011);
 
 // Le budget donne son taux : les équivalents en yens de la page, et les montants `fix` en yens
 // arrondis en euros, s'y règlent. La ligne des valises suit la page Valises (une seule version de
@@ -182,13 +186,14 @@ assert('le Nintendo Museum a été payé par Ilyès', lignesBudget.find((i) => i
 
 // Ce que la page Budget compte comme payé : une ligne qui a un payeur dans les données,
 // ou un hôtel réglé. C'est un fait, pas une case à cocher sur un téléphone.
-// 5 197 € le 15 octobre 2026 : les six hôtels (3 259 €), les vols (1 900 €) et Nintendo (38 €).
+// 5 197 € le 15 octobre 2026 : les six hôtels (3 259 €), les vols (1 900 €) et Nintendo (38 €) ;
+// 5 339 € le 19 octobre, avec Junsei (82 €) et teamLab (60 €), payés par Ilyès sur Klook.
 const regle = lignesBudget
   .filter((i) => i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 5 197 € (6 hôtels, vols, Nintendo)', regle, 5197);
-// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €).
-ok('reste à payer = 3 062 €', total - regle, 3062);
+ok('déjà réglé au total = 5 339 € (6 hôtels, vols, Nintendo, Junsei, teamLab)', regle, 5339);
+// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
+ok('reste à payer = 2 683 €', total - regle, 2683);
 
 // Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
 // réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
@@ -196,7 +201,8 @@ const catDe = new Map(BUDGET.categories.flatMap((c) => c.items.map((i) => [i.key
 const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid)));
 const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
-ok('à réserver avant le départ = 785 € (3 billets datés : 94 €, 10 tables : 691 €)', avantLeDepart, 785);
+// 785 € le 16 octobre ; 406 € le 19 octobre, teamLab et Junsei réglés, trois tables réservées.
+ok('à réserver avant le départ = 406 € (2 billets datés : 50 €, 3 tables : 356 €)', avantLeDepart, 406);
 // 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises.
 ok('sur place = 2 277 € (2 passes, trains, valises, repas et sorties)', surPlace, 2277);
 ok('payé + à réserver + sur place = le total', regle + avantLeDepart + surPlace, total);
