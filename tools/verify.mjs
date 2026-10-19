@@ -188,13 +188,13 @@ assert('le Nintendo Museum a été payé par Ilyès', lignesBudget.find((i) => i
 // ou un hôtel réglé. C'est un fait, pas une case à cocher sur un téléphone.
 // 5 197 € le 15 octobre 2026 : les six hôtels (3 259 €), les vols (1 900 €) et Nintendo (38 €) ;
 // 5 339 € le 19 octobre, avec Junsei (82 €) et teamLab (60 €), payés par Ilyès sur Klook ;
-// 5 695 € le même jour, avec les trois tables TableCheck (356 €), payées par Ilyès.
+// (les trois tables TableCheck ne sont que garanties par la carte : elles se paient au restaurant).
 const regle = lignesBudget
   .filter((i) => i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 5 695 € (6 hôtels, vols, Nintendo, Klook, TableCheck)', regle, 5695);
-// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 327 € le 19 octobre.
-ok('reste à payer = 2 327 €', total - regle, 2327);
+ok('déjà réglé au total = 5 339 € (6 hôtels, vols, Nintendo, Junsei, teamLab)', regle, 5339);
+// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
+ok('reste à payer = 2 683 €', total - regle, 2683);
 
 // Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
 // réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
@@ -202,8 +202,9 @@ const catDe = new Map(BUDGET.categories.flatMap((c) => c.items.map((i) => [i.key
 const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid)));
 const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
-// 785 € le 16 octobre ; 50 € le 19 octobre, toutes les tables et teamLab réglés.
-ok('à réserver avant le départ = 50 € (Shibuya Sky et Rikugi-en)', avantLeDepart, 50);
+// 785 € le 16 octobre ; 406 € le 19 octobre : Shibuya Sky et Rikugi-en (50 €), et les trois tables
+// réservées, payées au restaurant (356 €).
+ok('à réserver avant le départ = 406 € (2 billets : 50 €, 3 tables : 356 €)', avantLeDepart, 406);
 // 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises ;
 // 2 277 € le 19 octobre : le Nikko Pass (34 €) et l'express Tobu (42 €) sont des lignes à part.
 ok('sur place = 2 277 € (2 passes, express Tobu, trains, valises, repas et sorties)', surPlace, 2277);
