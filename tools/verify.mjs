@@ -7,6 +7,9 @@ import { DAYS, TEMPLATES } from '../data/days.js';
 import { SPOTS, CATEGORIES, PRIORITIES } from '../data/spots.js';
 import { AVANT, SURPLACE, RESERVER, METEO } from '../data/pratique.js';
 import { LIEUX } from '../data/lieux.js';
+import { DELICES } from '../data/delices.js';
+import { TRAJETS } from '../data/valises.js';
+import { fermetureInfo } from '../app/quartiers.js';
 import fs from 'node:fs';
 
 // Les lots ajoutés après le site d'origine : ce sont les seuls qui ont le
@@ -48,10 +51,16 @@ console.log('\nTotaux de référence');
 const originaux = SPOTS.filter((s) => s.source !== 'claude');
 const ajouts = SPOTS.filter((s) => s.source === 'claude');
 // 236 à l'origine, moins 16 retirés volontairement (voir guide-removals.mjs),
-// plus les 94 « Secrets de Tokyo » saisis à la main le 28 septembre (source 'secrets').
-ok('314 spots d\'origine (236 − 16 retirés + 94 Secrets de Tokyo)', originaux.length, 314);
-// Les conseils de l'amie guide sont intouchables : ce compte ne doit jamais bouger.
-ok('22 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 22);
+// plus les 94 « Secrets de Tokyo » saisis à la main le 28 septembre (source 'secrets') ;
+// le 15 octobre 2026, 24 fausses adresses retirées : 23 plats ou produits génériques
+// rangés comme des adresses (leur plat vit dans data/delices.js) et « Faire suivre les
+// valises », qui donnait un faux prix.
+ok('290 spots d\'origine (236 − 16 retirés + 94 Secrets de Tokyo − 24 fausses adresses)', originaux.length, 290);
+// Les conseils de l'amie guide sont intouchables : ce compte ne bouge que par un
+// retrait volontaire, daté.
+// 20 depuis le 15 octobre 2026 : deux fiches en sont sorties, « Faire suivre les valises »
+// (faux prix) et « Yuba de Nikko » (un plat, désormais dans data/delices.js).
+ok('20 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 20);
 // 57 au premier lot, 16 au second (cafés, bars, disquaires, ouvertures
 // 2025-2026), 13 au troisième (les lieux insolites, catégorie t6) = 99 ;
 // le 28 septembre, 13 retirées et 14 ajoutées à la main ; le 14 octobre,
@@ -116,9 +125,28 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 // 7 359 € jusqu'au 14 octobre, plus les 10 tables à réserver (691 €) et trois
 // billets datés (teamLab, Shibuya Sky, Rikugi-en : 94 €), ajoutés ce jour-là ;
 // le 15 octobre, les passes Hakone (3 jours) et Nikko à leur prix réel, avec l'express
-// Tobu prévu au programme (+62 €).
-ok('total du voyage = 8 206 €', total, 8206);
-ok('par personne = 4 103 €', total / 2, 4103);
+// Tobu prévu au programme (+62 €) ;
+// le 16 octobre, une ligne pour les valises — Yamato le 27 novembre (≈ 6 040 ¥) et les casiers
+// des trajets 2 et 3 (≈ 3 200 ¥, 1 600 ¥ chacun, comme la page Valises), soit 53 € au taux du
+// budget (+53 €). Le total est impair : chacun doit 4 129,5 €, la page écrit « ≈ 4 130 € ».
+ok('total du voyage = 8 259 €', total, 8259);
+ok('par personne = 4 129,5 €', total / 2, 4129.5);
+
+// Le budget donne son taux : les équivalents en yens de la page, et les montants `fix` en yens
+// arrondis en euros, s'y règlent. La ligne des valises suit la page Valises (une seule version de
+// chaque information) : le centre Yamato (le `cout2` du trajet qui s'y fait) plus les casiers (le
+// `cout2` des autres trajets qui ont un coût en yens), convertis au taux du budget. « ≈ 1 600 ¥ » → 1600.
+assert('le budget donne son taux de change (¥ pour 1 €)', Number.isInteger(BUDGET.yenParEuro) && BUDGET.yenParEuro > 100, BUDGET.yenParEuro);
+const yens = (cout) => Number(((/(\d[\d\s]*)¥/.exec(cout) || [])[1] || '0').replace(/\s/g, ''));
+const parMilliers = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+const yamato = TRAJETS.filter((t) => t.decision === 'Au centre Yamato').reduce((somme, t) => somme + yens(t.cout2), 0);
+const casiers = TRAJETS.filter((t) => t.decision !== 'Au centre Yamato').reduce((somme, t) => somme + yens(t.cout2), 0);
+const ligneValises = BUDGET.categories.flatMap((c) => c.items).find((i) => i.key === 'valises');
+ok(`la ligne valises = Yamato (${yamato} ¥) + casiers (${casiers} ¥) de la page Valises, au taux du budget`,
+  ligneValises?.fix, Math.round((yamato + casiers) / BUDGET.yenParEuro));
+assert('la ligne valises écrit les mêmes yens que la page Valises (Yamato et casiers)',
+  !!ligneValises && ligneValises.sub.includes(`(≈ ${parMilliers(yamato)} ¥)`) && ligneValises.sub.includes(`casiers (≈ ${parMilliers(casiers)} ¥)`),
+  `${ligneValises?.sub} ≠ Yamato ${parMilliers(yamato)} ¥, casiers ${parMilliers(casiers)} ¥`);
 
 assert(
   'le poste hébergement est calculé, pas saisi',
@@ -129,7 +157,7 @@ assert(
 // --- réservations -------------------------------------------------------------
 
 console.log('\nRéservations');
-const HOTEL_FIELDS = ['room', 'capacity', 'address', 'checkIn', 'checkOut', 'bath', 'amenities', 'price', 'perNight'];
+const HOTEL_FIELDS = ['room', 'capacity', 'address', 'checkIn', 'checkOut', 'bath', 'amenities', 'price', 'perNight', 'gare'];
 for (const f of HOTEL_FIELDS) {
   const missing = HOTELS.filter((h) => h[f] == null).map((h) => h.name);
   assert(`les 6 hôtels ont « ${f} »`, missing.length === 0, missing.join(', '));
@@ -145,12 +173,33 @@ const paid = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
 ok('déjà réglé = 3 259 € (les six hôtels)', paid, 3259);
 ok('reste à régler sur l\'hébergement = 0 €', hebergement - paid, 0);
 
-// Ce que la page Paiements coche d'office : hôtels prépayés + billets datés
-// déjà payés. C'est un fait, pas une case à cocher par l'utilisateur.
-const regle = BUDGET.categories.flatMap((c) => c.items)
-  .filter((i) => i.settled || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
+// Qui a payé quoi vit dans les données (BUDGET[].qui : 'I', 'M' ou 'D' à deux), pareil sur les deux téléphones.
+const lignesBudget = BUDGET.categories.flatMap((c) => c.items);
+const quiInvalides = lignesBudget.filter((i) => i.qui !== undefined && !['I', 'M', 'D'].includes(i.qui)).map((i) => i.key);
+assert('chaque payeur vaut I, M ou D', quiInvalides.length === 0, quiInvalides.join(', '));
+assert('les vols sont payés à deux', lignesBudget.find((i) => i.key === 'vol')?.qui === 'D');
+assert('le Nintendo Museum a été payé par Ilyès', lignesBudget.find((i) => i.key === 'resa-nintendo')?.qui === 'I');
+
+// Ce que la page Budget compte comme payé : une ligne qui a un payeur dans les données,
+// ou un hôtel réglé. C'est un fait, pas une case à cocher sur un téléphone.
+// 5 197 € le 15 octobre 2026 : les six hôtels (3 259 €), les vols (1 900 €) et Nintendo (38 €).
+const regle = lignesBudget
+  .filter((i) => i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 3 297 € (6 hôtels + Nintendo)', regle, 3297);
+ok('déjà réglé au total = 5 197 € (6 hôtels, vols, Nintendo)', regle, 5197);
+// 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €).
+ok('reste à payer = 3 062 €', total - regle, 3062);
+
+// Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
+// réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
+const catDe = new Map(BUDGET.categories.flatMap((c) => c.items.map((i) => [i.key, c.id])));
+const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid)));
+const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
+const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
+ok('à réserver avant le départ = 785 € (3 billets datés : 94 €, 10 tables : 691 €)', avantLeDepart, 785);
+// 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises.
+ok('sur place = 2 277 € (2 passes, trains, valises, repas et sorties)', surPlace, 2277);
+ok('payé + à réserver + sur place = le total', regle + avantLeDepart + surPlace, total);
 
 assert('la date limite d\'annulation du ryokan est connue',
   HOTELS.find((h) => h.id.includes('fukuya')).cancelBefore === '2026-10-27');
@@ -287,6 +336,24 @@ assert('les apostrophes typographiques ont survécu',
 assert('aucune entité HTML résiduelle',
   ![...SPOTS, ...HOTELS].some((x) => /&(amp|lt|gt|quot|#39|nbsp);/.test(JSON.stringify(x))));
 
+// --- fermetures ---------------------------------------------------------------
+// Le champ `fermeture` est du texte libre. Iki Iki Tei « fermé » le dimanche parce que sa fiche dit
+// « ouvert le dimanche » : un jour cité après « ouvert », dans une parenthèse ou une condition n'est
+// pas un jour de fermeture. On interroge la fonction sur une semaine entière (du dimanche 15 au
+// samedi 21 novembre 2026) et on liste les jours où elle répond « fermé ».
+
+console.log('\nFermetures');
+const SEMAINE = ['2026-11-15', '2026-11-16', '2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-21'];
+const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+const joursFermes = (fiche) => SEMAINE.filter((d) => fermetureInfo(fiche, d)?.ferme === true).map((d) => JOURS[SEMAINE.indexOf(d)]);
+const iki = SPOTS.find((x) => x.id === 'spot-ikiikitei');
+ok('Iki Iki Tei (« mardi… ouvert le dimanche ») : fermé le mardi seulement', joursFermes(iki), ['mardi']);
+assert("Iki Iki Tei n'est pas fermé le dimanche 15 novembre, jour de sa visite", fermetureInfo(iki, '2026-11-15').ferme !== true);
+ok('« mercredi (et mardi soir) » : seul le mercredi est fermé', joursFermes({ fermeture: 'mercredi (et mardi soir)' }), ['mercredi']);
+// Un filet pour toutes les fiches : un texte mal lu fermerait vite plus de deux jours sur sept.
+const tropFermees = SPOTS.filter((x) => x.fermeture && joursFermes(x).length > 2).map((x) => `${x.name} (${joursFermes(x).join(', ')})`);
+assert('aucune fiche n\'est « fermée » plus de deux jours par semaine', tropFermees.length === 0, tropFermees.join(' | '));
+
 // --- réservations datées ------------------------------------------------------
 // Un billet daté est la seule chose du voyage qu'on ne peut pas rattraper :
 // ces valeurs sont recopiées du billet, elles ne doivent jamais dériver.
@@ -377,6 +444,19 @@ const sansCanal = RESERVER.filter((r) => !r.canal).map((r) => r.id);
 assert('chaque réservation dit par quel canal on la fait',
   sansCanal.length === 0, sansCanal.join(', '));
 
+// L'état d'une réservation vit dans les données, pareil sur les deux téléphones :
+// « à réserver » par défaut, « réservé » avec son heure. Une table ou un billet.
+const etatsInvalides = RESERVER.filter((r) => r.etat !== undefined && !['a-reserver', 'reserve'].includes(r.etat)).map((r) => r.id);
+assert('chaque état de réservation vaut a-reserver ou reserve', etatsInvalides.length === 0, etatsInvalides.join(', '));
+const reservesSansHeure = RESERVER.filter((r) => r.etat === 'reserve' && !/^\d{2}:\d{2}$/.test(r.heure || '')).map((r) => r.id);
+assert('une réservation faite a son heure (HH:MM)', reservesSansHeure.length === 0, reservesSansHeure.join(', '));
+const sansType = RESERVER.filter((r) => !['table', 'billet'].includes(r.type)).map((r) => r.id);
+assert("chaque réservation dit si c'est une table ou un billet", sansType.length === 0, sansType.join(', '));
+// Chaque conseil « sur place » a une seule page : Secours, Transports, ou À faire (« avant »).
+const sansPlace = SURPLACE.filter((s) => !s.id || !['secours', 'transports', 'avant'].includes(s.place)).map((s) => s.title);
+assert('chaque conseil sur place a un identifiant et sa page', sansPlace.length === 0, sansPlace.join(', '));
+assert('les bornes du séjour au Japon', TRIP.japon && TRIP.japon.du === '2026-11-09' && TRIP.japon.au === '2026-12-02');
+
 assert('identifiants uniques — à réserver',
   new Set(RESERVER.map((r) => r.id)).size === RESERVER.length);
 
@@ -385,6 +465,77 @@ assert('identifiants uniques — à réserver',
 const resaBruit = SPOTS.filter((s) => s.when === 'résa conseillée').map((s) => s.name);
 assert('« résa conseillée » n\'est plus un défaut de catégorie',
   resaBruit.length === 0, resaBruit.join(', '));
+
+// --- une seule version de chaque information ----------------------------------
+// Une information qui s'écrit à deux endroits finit par s'y contredire : le 27
+// novembre disait shinkansen d'un côté et Odakyu de l'autre, Sushi Tomohiro était
+// « réservé » sur la journée et « à réserver » dans le budget. Chaque fait vit
+// à un seul endroit, les autres le lisent.
+
+console.log('\nUne seule version');
+// Le texte d'une journée n'affirme jamais l'état d'une réservation : il vit dans RESERVER.
+// Les lookarounds remplacent \b, qui ne tient pas « é » pour une lettre : « réservé »
+// suivi d'un blanc ou d'une virgule lui échappait. Le conseil du jour (tip) s'affiche
+// avec les lignes, il est contrôlé comme elles.
+const RESERVE = /(?<![\p{L}])réservée?s?(?![\p{L}])/iu;
+const affirme = DAYS.flatMap((d) => [...d.items.map((i) => i.text), d.tip || '']
+  .filter((t) => RESERVE.test(t)).map((t) => `${d.date} : ${t.slice(0, 50)}`));
+assert("aucune journée n'affirme un état de réservation", affirme.length === 0, affirme.join(' | '));
+// Le 27 novembre, un seul trajet : le shinkansen, partout.
+const seg56 = SEGMENTS.find((g) => g.fromStepId === 'step-5' && g.toStepId === 'step-6');
+const laVita = HOTELS.find((h) => h.id === 'hotel-la-vita-ikebukuro-residence');
+const t5 = TRAJETS.find((t) => t.n === 5);
+const trajets27 = [seg56.label, laVita.route.text, t5.train];
+assert('Hakone → Tokyo : le train Tozan puis le shinkansen dans SEGMENTS, la fiche de La Vita et la page Valises',
+  trajets27.every((t) => /tozan/i.test(t) && /shinkansen/i.test(t) && !/odakyu/i.test(t) && !/^bus/i.test(t)), trajets27.join(' | '));
+// Les valises envoyées au centre Yamato le 27 arrivent le 28 : les deux jours le disent.
+const j27 = DAYS.find((d) => d.date === '2026-11-27'); const j28 = DAYS.find((d) => d.date === '2026-11-28');
+assert('le 27 prévient (petit sac), le 28 prévoit le retrait au centre Yamato',
+  j27.items.some((i) => /petit sac/i.test(i.text)) && j28.items.some((i) => /centre Yamato/i.test(i.text)));
+// Les fausses adresses (un plat, un lien de simple recherche) ont quitté SPOTS, et leur plat vit dans DELICES.
+const FAUSSES = {
+  'spot-faire-suivre-les-valises': null, 'spot-sushi-a-tsukiji': 'sushi-tsukiji', 'spot-monjayaki': 'monja',
+  'spot-taiyaki': 'taiyaki', 'spot-melonpan': 'melonpan', 'spot-ichigo-daifuku': 'ichigo-daifuku',
+  'spot-crabe-des-neiges': 'kobako', 'spot-nodoguro': 'nodoguro', 'spot-jibuni': 'jibuni',
+  'spot-oden-de-kanazawa': 'oden-kanazawa', 'spot-glace-feuille-d-or': 'kinpaku', 'spot-kaiseki': 'kaiseki-midi',
+  'spot-obanzai': 'obanzai', 'spot-yudofu': 'yudofu', 'spot-nishin-soba': 'nishin-soba', 'spot-yatsuhashi': 'yatsuhashi',
+  'spot-tsukemono': 'tsukemono-kyoto', 'spot-kushikatsu': 'kushikatsu', 'spot-horumon': 'horumon',
+  'spot-yuba-de-nikko': 'yuba', 'spot-kamaboko-d-odawara': 'kamaboko', 'spot-soba-de-montagne': 'soba-hakone',
+  'spot-kakinoha-zushi': 'kakinoha', 'spot-kaisendon-d-omicho': 'kaisendon',
+};
+const plats = new Set(DELICES.flatMap((c) => c.items.map((i) => i.id)));
+const restees = Object.keys(FAUSSES).filter((id) => SPOTS.some((s) => s.id === id));
+const platsManquants = Object.values(FAUSSES).filter((p) => p && !plats.has(p));
+assert('les fausses adresses ont quitté SPOTS', restees.length === 0, restees.join(', '));
+assert('chaque plat retiré des adresses vit dans DELICES', platsManquants.length === 0, platsManquants.join(', '));
+// L'état d'une table ou d'un billet ne s'écrit qu'une fois, dans RESERVER : le budget le lit.
+const ventilees = BUDGET.categories.filter((c) => ['tables', 'billets'].includes(c.id)).flatMap((c) => c.items);
+const sousEnDur = ventilees.filter((i) => /réserv/i.test(i.sub || '')).map((i) => i.key);
+const sansResa = ventilees.filter((i) => /^(table|billet)-/.test(i.key) && !RESERVER.some((r) => r.id === i.key.replace(/^(table|billet)-/, ''))).map((i) => i.key);
+assert("le budget n'écrit aucun état de réservation en dur", sousEnDur.length === 0, sousEnDur.join(', '));
+assert('chaque table ou billet du budget renvoie à RESERVER', sansResa.length === 0, sansResa.join(', '));
+// Les numéros d'urgence s'écrivent deux fois : dans SURPLACE (ce que la page affiche) et,
+// en repli, dans secours.html (ce qu'elle donne si les données ou le script manquent).
+// Le repli ne doit jamais diverger : un numéro faux, c'est un appel perdu.
+const secoursSrc = fs.readFileSync(new URL('../secours.html', import.meta.url), 'utf8');
+const debutRepli = secoursSrc.indexOf('id="urg-tels"');
+// Les numéros de l'ambassade, juste après, ne sont écrits qu'ici : on s'arrête avant.
+const finRepli = secoursSrc.indexOf('secours__amba', debutRepli);
+const repli = debutRepli < 0 || finRepli < 0 ? []
+  : [...secoursSrc.slice(debutRepli, finRepli).matchAll(/<a href="tel:([^"]*)">([^<]*)<\/a>/g)]
+    .map((m) => ({ href: m[1], n: m[2].trim() }));
+const telsUrgences = SURPLACE.find((k) => k.id === 'urgences')?.tels?.map((t) => t.n) ?? [];
+// Le lien d'appel se déduit du numéro affiché, comme le fait le script de la page (telHref).
+const repliFaux = repli
+  .filter((t) => !telsUrgences.includes(t.n) || t.href !== t.n.replace(/[^+\d]/g, ''))
+  .map((t) => `${t.n} (tel:${t.href})`);
+// Et rien d'oublié : un numéro de plus dans SURPLACE doit avoir son repli, sinon la page
+// qui sert quand tout le reste manque en sait moins que les données.
+const repliOublies = telsUrgences.filter((n) => !repli.some((t) => t.n === n));
+assert('les numéros de repli de secours.html (110, 119, la hotline) sont ceux de SURPLACE',
+  repli.length > 0 && repli.length === telsUrgences.length && repliFaux.length === 0 && repliOublies.length === 0,
+  `repli : ${repli.map((t) => t.n).join(', ') || 'aucun trouvé (bloc #urg-tels)'} ; SURPLACE : ${telsUrgences.join(', ')}`
+  + (repliFaux.length ? ` ; au lien faux ou absents de SURPLACE : ${repliFaux.join(', ')}` : ''));
 
 // --- la catégorie Insolite ----------------------------------------------------
 // Un lieu n'entre ici que pour son histoire : sans notice, il n'a rien à y
@@ -466,7 +617,8 @@ assert('chaque journée de visite a au moins un lieu situé', joursVides.length 
 // mais toute la moitié basse de la page prenait un rembourrage double et se
 // retrouvait plus étroite que le haut. Personne ne voit ça sans mesurer.
 
-const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html'];
+const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html',
+  'table.html', 'transports.html', 'passes.html', 'valises.html', 'secours.html', 'villes.html'];
 
 console.log('\nStructure');
 for (const page of pages) {

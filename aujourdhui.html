@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Préparatifs — Japon 2026</title>
-<meta name="description" content="Le programme du jour, l'hôtel du soir et le prochain train.">
+<title>À faire — Japon 2026</title>
+<meta name="description" content="Les démarches et les réservations à faire avant et pendant le voyage, le mode hors-ligne et les conseils à lire avant de partir.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -25,32 +25,27 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <main class="wrap" id="app"></main>
 
 <script type="module">
-import { TRIP, CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS, FLIGHTS } from './data/trip.js';
+import { TRIP, CITIES, STEPS, HOTELS, EXCURSIONS, FLIGHTS, RESERVATIONS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
-import { DAYS, TEMPLATES } from './data/days.js';
+import { DAYS } from './data/days.js';
 import { AVANT, SURPLACE, METEO, RESERVER } from './data/pratique.js';
-import { fetchMeteo, meteoCities, heureJapon, meteoDuJour } from './app/meteo.js';
-import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
-import { RESERVATIONS } from './data/trip.js';
-import { resaStrip, resasForDate, resaCard } from './app/resa.js';
+import { fetchMeteo, meteoCities, heureJapon } from './app/meteo.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, daysBetween, today, moment } from './app/ui.js';
+import { lireFaits } from './app/resa.js';
 
 mountChrome('aujourdhui.html');
 
 const now = today();
 const app = document.getElementById('app');
 
-const day = DAYS.find((d) => d.date === now);
 const away = daysBetween(now, TRIP.start);
 
-// La page a deux vies : un compte à rebours avant le départ, un compagnon de
-// route pendant. Le paramètre ?date=2026-11-18 permet de voir la seconde
-// sans attendre novembre.
-// Pendant le voyage, cette page n'a plus de raison d'être : la journée en cours
-// vit sur jour.html, avec la carte et le parcours. Elle y renvoie sans rien
-// afficher entre-temps. Avant, c'est la page des préparatifs ; après, le mot de
-// la fin.
-if (day) location.replace(`jour.html?d=${day.n}`);
-app.innerHTML = day ? '' : (away > 0 ? before() : after());
+// La page montre ce qu'il reste à faire, avant le départ ET pendant le voyage :
+// deux échéances tombent là-bas (Saikō Shinkan le 14, Rikugi-en le 15). Elle ne
+// renvoie plus vers la journée en cours, qui vit sur jour.html. Après le
+// voyage, c'est le mot de la fin. Le paramètre ?date=2026-11-18 permet de voir
+// chaque état sans attendre novembre.
+app.innerHTML = moment() === 'apres' ? after() : before();
 
 // La météo arrive après le rendu : elle ne doit jamais retarder la page.
 if (document.getElementById('meteo')) paintMeteo();
@@ -62,10 +57,16 @@ if (document.getElementById('meteo')) paintMeteo();
 // la même démarche écrite deux fois. Tout tient désormais dans UNE liste
 // d'échéances, triée, cochable, avec son avancement.
 function before() {
+  // Le compte à rebours n'a de sens que jusqu'au départ ; ensuite, on dit où l'on en est.
+  const quand = away > 0 ? `Départ le ${formatDate(TRIP.start, { weekday: true })} · <span class="data">J−${away}</span>`
+    : away === 0 ? "Départ aujourd'hui" : 'En voyage';
+  // Sous les échéances viennent le hors-ligne (son script est plus bas) et les
+  // réflexes de terrain de l'ancienne page Pratique, chacun replié : on lit la
+  // ligne, on ouvre celui qu'on cherche.
   return `
   <header class="section countdown">
-    <p class="eyebrow">Départ le ${formatDate(TRIP.start, { weekday: true })}</p>
-    <h1><span class="countdown__n data">J−${away}</span></h1>
+    <p class="eyebrow">${quand}</p>
+    <h1>À faire</h1>
     <p class="hero__lede">
       ${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes, ${EXCURSIONS.length} excursions.
       Les ${HOTELS.length} hébergements et les ${FLIGHTS.length} vols sont pris.
@@ -74,6 +75,37 @@ function before() {
 
   <section class="section">
     <div id="avant"></div>
+  </section>
+
+  <section class="section" id="hors-ligne">
+    <div class="shead"><h2>Hors-ligne</h2></div>
+    <div class="offline card">
+      <p><b id="off-state">Vérification…</b></p>
+      <p class="mut">
+        Tout le site — les pages, toutes les photos, les cartes déjà
+        consultées — peut tenir sur le téléphone et fonctionner sans réseau.
+        Environ 30 Mo. À faire avant de partir, en wifi.
+      </p>
+      <div class="offline__bar" id="off-bar" hidden><span></span></div>
+      <p><button class="btn" id="off-go" disabled>Préparer le hors-ligne</button></p>
+    </div>
+  </section>
+
+  <section class="section" id="a-lire">
+    <div class="shead">
+      <h2>À lire avant de partir</h2>
+      <p>Ce qui surprend un Français au Japon, et ce qui coûte cher à ignorer.</p>
+    </div>
+    <div class="lire">
+      ${SURPLACE.filter((k) => k.place === 'avant').map((k) => `
+      <details class="lire__item">
+        <summary>${esc(k.title)}</summary>
+        <div class="lire__corps">
+          <p>${esc(k.what)}</p>
+          ${k.warn ? `<p class="lire__warn">${esc(k.warn)}</p>` : ''}
+        </div>
+      </details>`).join('')}
+    </div>
   </section>
 
   ${RESERVATIONS.length ? `
@@ -107,6 +139,7 @@ function before() {
     <div class="meteo" id="meteo">${meteoSkeleton()}</div>
   </section>
 
+  ${moment() === 'avant' ? `
   <section class="section">
     <div class="shead"><h2>Le premier jour</h2><span class="shead__meta data">${formatDate(DAYS[0].date)}</span></div>
     <div class="card cardlink">
@@ -118,20 +151,17 @@ function before() {
         <span class="cardlink__fleche" aria-hidden="true">›</span>
       </a>
     </div>
-    <p class="jour__liens">
-      <a class="btn btn--ghost" href="pratique.html">Ce qu'il faut savoir sur place</a>
-    </p>
-  </section>`;
+  </section>` : ''}`;
 }
 
 // --- la liste des échéances ---------------------------------------------------
 // Démarches et réservations sont la même chose : quelque chose à faire avant une
 // date. Les séparer obligeait à lire deux listes pour savoir ce qui presse.
 // Ce qui est coché descend en bas, replié : on ne relit pas ce qui est fait.
-const faits = (() => {
-  try { return JSON.parse(localStorage.getItem('jp2026_faits') || '{}'); } catch { return {}; }
-})();
-const noteFait = () => localStorage.setItem('jp2026_faits', JSON.stringify(faits));
+// La lecture est celle de app/resa.js, qui sert aussi l'accueil et la page du
+// jour ; l'écriture garde le même format (une table { id: true | false }).
+const faits = lireFaits();
+const noteFait = () => { try { localStorage.setItem('jp2026_faits', JSON.stringify(faits)); } catch { /* stockage plein ou refusé */ } };
 
 function renderAvant() {
   const cible = document.getElementById('avant');
@@ -204,8 +234,11 @@ function renderAvant() {
   });
   cible.querySelectorAll('details[data-id]').forEach((d) => {
     d.addEventListener('toggle', () => {
-      d.open ? ouverts.add(d.dataset.id) : ouverts.delete(d.dataset.id);
-      localStorage.setItem('jp2026_ech_ouverts', JSON.stringify([...ouverts]));
+      const id = d.dataset.id;
+      // Ouverte par l'ancre : on ne la note pas. Refermée au toucher, elle redevient une ligne comme les autres.
+      if (id === idAncre) { if (d.open) return; idAncre = null; }
+      d.open ? ouverts.add(id) : ouverts.delete(id);
+      try { localStorage.setItem('jp2026_ech_ouverts', JSON.stringify([...ouverts])); } catch { /* navigation privée */ }
     });
   });
 }
@@ -248,10 +281,16 @@ const court = (iso) => `${+iso.slice(8, 10)} ${MOIS_COURT[+iso.slice(5, 7) - 1]}
 const ouverts = new Set((() => {
   try { return JSON.parse(localStorage.getItem('jp2026_ech_ouverts') || '[]'); } catch { return []; }
 })());
+// La ligne qu'une ancre (#e-<démarche>) vise s'ouvre à l'arrivée et reste ouverte le temps de la page,
+// mais elle n'entre pas dans `ouverts` : seul un toucher enregistre une ligne ouverte (voir « toggle »).
+let idAncre = (/^#e-(.+)$/.exec(location.hash) || [])[1] || null;
 
 // Une ligne : la case, le titre et où ça se passe, l'échéance à droite. Tout le
 // reste — photo, ce que c'est, où réserver, comment — est replié dessous. On
 // balaie treize lignes d'un regard ; on n'ouvre que celle qu'on traite.
+// Chaque ligne porte une ancre, #e-<id de la démarche> : l'accueil et la page du jour
+// y renvoient, et la ligne s'ouvre à l'arrivée (voir « l'ancre » plus bas). La case est
+// dans un label : sa zone tapable fait 44 px, la case garde sa taille.
 function ligneAvant(x) {
   const j = daysBetween(now, x.deadline);
   const passe = j < 0;
@@ -265,8 +304,8 @@ function ligneAvant(x) {
 
   if (x.fait) {
     return `
-    <li class="ech__item ech__item--fait">
-      <input type="checkbox" data-fait="${esc(x.id)}" checked aria-label="${esc(x.title)} — fait">
+    <li class="ech__item ech__item--fait" id="e-${esc(x.id)}">
+      <label class="ech__case"><input type="checkbox" data-fait="${esc(x.id)}" checked aria-label="${esc(x.title)} — fait"></label>
       <span class="ech__quoi"><s>${esc(x.title)}</s></span>
     </li>`;
   }
@@ -282,9 +321,9 @@ function ligneAvant(x) {
   ].filter(Boolean).join(' · ');
 
   return `
-  <li class="ech__item${urgent ? ' is-urgent' : ''}${passe ? ' is-passe' : ''}">
-    <input type="checkbox" data-fait="${esc(x.id)}" aria-label="Marquer « ${esc(x.title)} » comme fait">
-    <details class="ech__pli" data-id="${esc(x.id)}" ${ouverts.has(x.id) ? 'open' : ''}>
+  <li class="ech__item${urgent ? ' is-urgent' : ''}${passe ? ' is-passe' : ''}" id="e-${esc(x.id)}">
+    <label class="ech__case"><input type="checkbox" data-fait="${esc(x.id)}" aria-label="Marquer « ${esc(x.title)} » comme fait"></label>
+    <details class="ech__pli" data-id="${esc(x.id)}" ${ouverts.has(x.id) || x.id === idAncre ? 'open' : ''}>
       <summary>
         <span class="ech__quoi">
           <b>${esc(x.title)}</b>
@@ -306,6 +345,7 @@ function ligneAvant(x) {
             ${x.url && !/^https?:/.test(x.url) ? `<a class="btn" href="${esc(x.url)}">Ouvrir</a>` : ''}
             ${x.url && /^https?:/.test(x.url) ? `<a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">${
               x.canal === 'téléphone' ? 'Voir le numéro' : x.canal ? 'Réserver' : 'Ouvrir le site officiel'}</a>` : ''}
+            ${x.page ? `<a class="btn btn--ghost" href="${esc(x.page)}">${esc(x.pageLabel || 'Voir la page')}</a>` : ''}
             ${x.tel ? `<a class="btn btn--ghost" href="tel:${esc(x.tel.replace(/[^+\d]/g, ''))}">${esc(x.tel)}</a>` : ''}
             ${maps ? `<a class="btn btn--ghost" href="${esc(maps)}" target="_blank" rel="noopener">Où c'est</a>` : ''}
             ${x.forDate ? `<a class="btn btn--ghost" href="jour.html?date=${x.forDate}">La journée</a>` : ''}
@@ -314,146 +354,6 @@ function ligneAvant(x) {
       </div>
     </details>
   </li>`;
-}
-
-// Le même bloc sert avant et pendant : c'est sur place qu'il compte le plus.
-function knowBlock() {
-  return `
-  <section class="section">
-    <div class="shead disc"><h2>Bon à savoir</h2></div>
-    <div class="know">
-      ${SURPLACE.map((k) => `
-        <div class="know__item${k.check ? ' know__item--check' : ''}">
-          <h3>${esc(k.title)}</h3>
-          <p>${esc(k.what)}</p>
-          ${k.warn ? `<p class="know__warn">${esc(k.warn)}</p>` : ''}
-          ${k.tels ? `<p class="know__tels">${k.tels.map((t) => `<a class="btn btn--ghost" href="tel:${esc(t.n.replace(/[^+\d]/g, ''))}">${esc(t.label)} <span class="data">${esc(t.n)}</span></a>`).join(' ')}</p>` : ''}
-        </div>`).join('')}
-    </div>
-  </section>`;
-}
-
-// --- pendant le voyage --------------------------------------------------------
-function during(d) {
-  const step = STEPS.find((s) => s.id === d.stepId);
-  const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
-  const c = step ? CITIES[step.cityId] : null;
-  const tomorrow = DAYS[DAYS.indexOf(d) + 1];
-
-  // Le trajet du jour, s'il y en a un : c'est l'information qu'on veut voir en
-  // premier un jour de transfert.
-  const leg = SEGMENTS.find((g) => {
-    const to = STEPS.find((s) => s.id === g.toStepId);
-    return to && to.from === d.date;
-  });
-  const volDuJour = FLIGHTS.find((f) => f.date === d.date) || null;
-
-  // Le détail de la journée — les arrêts, la carte, le parcours dans Maps — vit
-  // sur jour.html. Le répéter ici obligeait à faire défiler deux fois la même
-  // chose. Cette page ne garde que ce qui a une heure : le train à prendre, le
-  // vol, le rendez-vous payé, le temps qu'il fait, et le lit du soir.
-  return `
-  <header class="section today" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
-    <p class="eyebrow">${formatDate(d.date, { weekday: true })} · jour ${d.n} sur ${DAYS.length}</p>
-    <h1>${esc(d.title)}</h1>
-    ${c ? `<p class="today__where"><span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>
-      ${step.area ? `<span class="mut">· ${esc(step.area)}</span>` : ''}</p>` : ''}
-  </header>
-
-  ${leg ? `
-  <section class="section">
-    <div class="alert">
-      <p class="label">Aujourd'hui, on change de ville</p>
-      <p class="alert__main">
-        ${esc(CITIES[STEPS.find((s) => s.id === leg.fromStepId).cityId].name)}
-        → ${esc(CITIES[STEPS.find((s) => s.id === leg.toStepId).cityId].name)}
-      </p>
-      <p class="mut">${esc(leg.label)} · <span class="data">${esc(leg.duration)}</span>
-         · <span class="data">${esc(leg.pricePerPerson)}</span></p>
-      ${hotel ? `<p class="alert__note">Arrivée possible <span class="data">${esc(hotel.checkIn)}</span>
-        à ${esc(hotel.name)}.</p>` : ''}
-    </div>
-  </section>` : ''}
-
-  ${volDuJour ? `
-  <section class="section">
-    <div class="shead"><h2>Le vol</h2><span class="shead__meta">${esc(volDuJour.airline)}</span></div>
-    <div class="alert">
-      <p class="alert__main">${esc(volDuJour.total)}</p>
-      ${volDuJour.legs.map((l) => `
-      <p class="mut">
-        <span class="data">${esc(l.flight)}</span> ·
-        ${esc(l.fromCity)} <span class="data">${esc(l.depart)}</span>
-        → ${esc(l.toCity)} <span class="data">${esc(l.arrive)}</span>
-        ${l.dayShift ? '<span class="mut">+1</span>' : ''}
-        · ${esc(l.duration)}
-      </p>`).join('')}
-      ${volDuJour.layover ? `<p class="alert__note">Escale de ${esc(volDuJour.layover.duration)} à ${esc(volDuJour.layover.at)}.</p>` : ''}
-    </div>
-  </section>` : ''}
-
-  ${resasForDate(d.date).length ? `
-  <section class="section">
-    <div class="shead"><h2>Le rendez-vous du jour</h2></div>
-    ${resaStrip(d.date)}
-  </section>` : ''}
-
-  <section class="section">
-    <div id="meteo-jour"></div>
-  </section>
-
-  <section class="section">
-    <div class="shead">
-      <h2>La journée</h2>
-      <span class="shead__meta data">${d.items.length} lignes</span>
-    </div>
-    <div class="card cardlink">
-      <a class="cardlink__in" href="jour.html?d=${d.n}">
-        <span class="cardlink__texte">
-          <b>${esc(d.title)}</b>
-          <span class="mut">Les arrêts dans l'ordre, sur une carte, et tout le parcours
-            en un lien Google Maps.</span>
-        </span>
-        <span class="cardlink__fleche" aria-hidden="true">›</span>
-      </a>
-    </div>
-  </section>
-
-  ${hotel ? `
-  <section class="section">
-    <div class="shead"><h2>${d.date === TRIP.end || d.n === DAYS.length ? 'Départ' : 'Ce soir'}</h2></div>
-    <div class="card tonight">
-      <div class="tonight__body">
-        <h3>${esc(hotel.name)}</h3>
-        <p class="mut">${esc(hotel.address)}</p>
-        <dl class="tonight__facts">
-          <div><dt>Arrivée</dt><dd class="data">${esc(hotel.checkIn)}</dd></div>
-          <div><dt>Départ</dt><dd class="data">${esc(hotel.checkOut)}</dd></div>
-          <div><dt>Chambre</dt><dd>${esc(hotel.room)}</dd></div>
-        </dl>
-        ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
-        <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a>
-        ${hotel.tel ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(hotel.tel)}</a>` : ''}</p>
-      </div>
-    </div>
-  </section>` : ''}
-
-  ${tomorrow ? `
-  <section class="section">
-    <div class="shead"><h2>Demain</h2><span class="shead__meta data">${formatDate(tomorrow.date)}</span></div>
-    ${resaStrip(tomorrow.date)}
-    <div class="card cardlink">
-      <a class="cardlink__in" href="jour.html?d=${tomorrow.n}">
-        <span class="cardlink__texte">
-          <b>${esc(tomorrow.title)}</b>
-          <span class="mut">${tomorrow.items.length} lignes de programme.</span>
-        </span>
-        <span class="cardlink__fleche" aria-hidden="true">›</span>
-      </a>
-    </div>
-  </section>` : ''}
-
-  ${knowBlock()}`;
 }
 
 // --- après le voyage ----------------------------------------------------------
@@ -466,7 +366,7 @@ function after() {
       ${TRIP.nights} nuits, ${new Set(STEPS.map((s) => s.cityId)).size} villes. Tout est encore là :
       <a href="itineraire.html">les journées</a>,
       <a href="guide.html">les adresses</a>,
-      <a href="pratique.html">les chambres</a>.
+      <a href="secours.html#logements">les chambres</a>.
     </p>
   </header>`;
 }
@@ -507,57 +407,122 @@ async function paintMeteo() {
   }
 }
 
-// --- une journée --------------------------------------------------------------
-function dayCard(d) {
-  const c = d.cityId ? CITIES[d.cityId] : null;
-  return `
-  <div class="card daycard" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
-    <ul class="day__items">
-      ${d.items.map((i) => `<li${i.evening ? ' class="day__evening"' : ''}>${esc(i.text)}</li>`).join('')}
-    </ul>
-    ${d.tip ? `<p class="day__tip">${esc(d.tip.replace(/^💡\s*/, ''))}</p>` : ''}
-  </div>`;
+// --- l'ancre ------------------------------------------------------------------
+// Une ancre (#a-lire, #hors-ligne, #e-<démarche>) vise une section ou une ligne que ce
+// script vient de dessiner : le navigateur n'a pas trouvé sa cible au chargement. On y va
+// à la main, d'un coup — le défilement en douceur de la page partirait du haut et serait
+// coupé —, sous la barre collante (scroll-margin). Une ligne d'échéance (#e-…) est déjà
+// ouverte par le dessin de la liste (idAncre : on vient la traiter), sans que ce soit
+// noté. Le service worker répond après coup, et la carte du hors-ligne, au-dessus de
+// « À lire », change alors de hauteur : tant qu'on n'a pas défilé soi-même, on recadre
+// (Safari ne le fait pas tout seul).
+let yAncre = null;   // où l'ancre nous a posés ; null sans ancre
+function allerALAncre() {
+  const cible = document.getElementById(location.hash.slice(1));
+  if (!cible) return;
+  cible.scrollIntoView({ behavior: 'instant' });
+  yAncre = scrollY;
+}
+function recadrerAncre() {
+  if (yAncre !== null && Math.abs(scrollY - yAncre) < 2) allerALAncre();
 }
 
-// La météo de la journée en cours, dans le mode « pendant le voyage ». Le bloc
-// météo n'existait que dans le compte à rebours, où il ne sert à rien.
-const cible = document.getElementById('meteo-jour');
-if (cible && day && day.stepId) {
-  const s = STEPS.find((x) => x.id === day.stepId);
-  if (s) {
-    meteoDuJour(s.cityId, jour.date).then((m) => {
-      if (!m || !Number.isFinite(m.max)) return;
-      const prev = m.source === 'prevision';
-      cible.innerHTML = `
-        <div class="shead"><h2>Le temps aujourd'hui</h2></div>
-        <div class="mjour${prev ? ' mjour--prev' : ''}">
-          <span class="mjour__icone" aria-hidden="true">${m.icon}</span>
-          <span class="mjour__temp data"><b>${m.max}°</b> / ${m.min}°</span>
-          <span class="mjour__quoi">${esc(m.label || '')}</span>
-          ${m.pluie != null ? `<span class="mjour__pluie data">${m.pluie} % de pluie</span>` : ''}
-          ${m.coucher ? `<span class="mjour__nuit mut">nuit à ${esc(m.coucher)}</span>` : ''}
-          <span class="mjour__source mut">${prev
-            ? (m.fresh ? 'prévision' : 'dernière prévision connue')
-            : 'normales de novembre'}</span>
-        </div>`;
-    });
+// --- le hors-ligne ------------------------------------------------------------
+// Une action explicite, avec une progression réelle : le pré-chargement
+// silencieux à l'installation échouait sans que personne ne le sache.
+// Le service worker répond { shell, shellTotal, media, mediaTotal }. Les photos
+// restent en mémoire d'une version du site à l'autre ; les pages, non : chaque
+// mise à jour vide la coque. L'état se lit donc sur les deux.
+// Le bouton est là, grisé, dès le rendu : sa place est réservée, il ne surgit pas
+// sous les yeux quand le service worker répond. Ce qui change de hauteur malgré tout
+// (la phrase d'état, le bouton qui s'efface une fois prêt) recadre l'ancre.
+function monteHorsLigne() {
+  if (!document.getElementById('hors-ligne')) return;
+  const q = (id) => document.getElementById(id);
+  const state = q('off-state');
+  const bar = q('off-bar');
+  const go = q('off-go');
+  // Sans service worker, il n'y a rien à préparer : on le dit, et le bouton s'en va.
+  const indisponible = () => {
+    state.textContent = 'Indisponible sur ce navigateur';
+    go.hidden = true;
+    recadrerAncre();
+  };
+  if (!('serviceWorker' in navigator)) { indisponible(); return; }
+  // Là où il est interdit (iframe en bac à sable, cookies bloqués), c'est LIRE
+  // navigator.serviceWorker qui lève, tout de suite : on le traite comme un navigateur
+  // sans service worker, au lieu de laisser l'erreur arrêter le reste de la page.
+  try { navigator.serviceWorker; } catch { indisponible(); return; }
+
+  // « Incomplet » et « Reprendre » ne se disent que d'un téléchargement lancé sur ce téléphone :
+  // les photos qu'on voit en naviguant s'ajoutent au cache toutes seules, et « 1 photo sur 447 »
+  // n'est pas un téléchargement raté. Tant que rien n'est lancé, le bouton s'appelle « Préparer
+  // le hors-ligne », comme le dit la démarche « Cartes hors-ligne ».
+  const lance = () => { try { return localStorage.getItem('jp2026_hl_lance') === '1'; } catch { return false; } };
+  const photos = (n) => `${n} photo${n > 1 ? 's' : ''}`;
+
+  // Le verdict. « status » (au chargement) et « done » (à la fin du téléchargement)
+  // portent les mêmes quatre compteurs : la même règle les lit, pour qu'un
+  // téléchargement qui n'a pas tout mis en mémoire ne se dise jamais « prêt ».
+  function montre(d) {
+    const photosLa = d.mediaTotal > 0 && d.media >= d.mediaTotal;
+    const pret = d.shell >= d.shellTotal && photosLa;
+    // « Incomplet » ne se dit que des photos : des pages à refaire sur des photos
+    // toutes là, c'est une mise à jour du site, pas un téléchargement raté.
+    const incomplet = lance() && d.media < d.mediaTotal;
+
+    state.textContent = pret ? `Prêt pour le hors-ligne — ${photos(d.media)} en mémoire`
+      : photosLa ? 'Le site a été mis à jour : les pages sont à retélécharger, les photos sont déjà là.'
+      : incomplet ? `Téléchargement incomplet — ${photos(d.media)} sur ${d.mediaTotal}`
+      : 'Pas encore téléchargé';
+
+    bar.hidden = true;
+    go.hidden = pret;
+    go.disabled = false;
+    go.textContent = incomplet ? 'Reprendre le téléchargement' : 'Préparer le hors-ligne';
+    recadrerAncre();
   }
+
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === 'status' || d.type === 'done') montre(d);
+    if (d.type === 'progress') {
+      bar.hidden = false;
+      bar.firstElementChild.style.width = `${Math.round((d.done / d.total) * 100)}%`;
+      state.textContent = d.phase === 'pages'
+        ? `Pages — ${d.done} / ${d.total}`
+        : `Photos — ${d.done} / ${d.total}`;
+      go.disabled = true;
+    }
+  });
+
+  navigator.serviceWorker.register('sw.js').then(async (reg) => {
+    await navigator.serviceWorker.ready;
+    const sw = () => navigator.serviceWorker.controller || reg.active;
+    sw()?.postMessage({ type: 'cache-status' });
+    go.addEventListener('click', () => {
+      state.textContent = 'Démarrage…';
+      try { localStorage.setItem('jp2026_hl_lance', '1'); } catch { /* navigation privée : le bouton garde son nom d'origine */ }
+      sw()?.postMessage({ type: 'cache-all' });
+    });
+  }).catch(indisponible);
 }
 
 // La liste des échéances est montée après coup : elle se redessine à chaque
 // case cochée. L'appel vit ici, après les déclarations qu'elle utilise — plus
 // haut, `faits` était encore dans sa zone morte et la liste restait vide.
 renderAvant();
+monteHorsLigne();
+
+if (location.hash) {
+  history.scrollRestoration = 'manual';   // le navigateur ne rend pas la main à l'ancien défilement
+  allerALAncre();
+  addEventListener('load', recadrerAncre);   // une police qui se pose peut décaler la page
+}
 
 initReveal();
 initCoverParallax();
 initProgressBar();
-</script>
-
-<script>
-/* Enregistrement du service worker : c'est lui qui rend le site utilisable
-   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>

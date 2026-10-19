@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Valises — Japon 2026</title>
-<meta name="description" content="Faire suivre les deux valises (ou s'en passer) à chaque changement de ville : l'option conseillée, le coût pour deux valises, quand et où déposer, et ce que chaque logement accepte.">
+<meta name="description" content="Faire suivre les deux valises (ou s'en passer) à chaque changement de ville : le système en trois étapes, la décision trajet par trajet, les phrases à montrer au comptoir, et ce que chaque logement accepte.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -38,51 +38,54 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <p class="valises__lede" id="lede"></p>
   </header>
 
+  <!-- 1 — Le système, trois cases numérotées plutôt qu'un paragraphe. -->
   <section class="section">
     <div class="shead">
-      <h2>En un coup d'œil</h2>
-      <span class="shead__meta" id="recap-meta"></span>
+      <h2>Le système, en 3 étapes</h2>
     </div>
-    <table class="valises__recap">
-      <thead>
-        <tr>
-          <th scope="col">Trajet</th>
-          <th scope="col">Option conseillée</th>
-          <th scope="col">Coût · 2 valises</th>
-        </tr>
-      </thead>
-      <tbody id="recap"></tbody>
-    </table>
-    <p class="mut" id="recap-note" style="margin-top:var(--s-3);font-size:var(--t-xs)"></p>
+    <p class="valises__lede valises__syslead" id="systeme-lead"></p>
+    <div class="valises__systeme" id="systeme"></div>
   </section>
 
+  <!-- 2 — Le plan : une ligne par trajet, qui se déplie au toucher. Les ancres
+       #t1…#t6 vivent ici ; jour.html y renvoie (valises.html#t${n}). -->
   <section class="section">
     <div class="shead disc">
-      <h2>Trajet par trajet</h2>
-      <p>Pour chaque changement de ville : l'option conseillée, les autres pistes, quand et où déposer, et ce qu'il reste à demander au logement.</p>
+      <h2>Votre plan, trajet par trajet</h2>
+      <p>Touchez une ligne pour le détail : les options, quand et où déposer, ce qu'il reste à demander, les sources.</p>
+      <span class="shead__meta" id="plan-meta"></span>
     </div>
-    <div id="trajets"></div>
+    <div class="valises__plan" id="trajets"></div>
+    <p class="mut valises__note" id="recap-note"></p>
   </section>
 
+  <!-- 3 — Au comptoir : les phrases à montrer, puis le bordereau. -->
   <section class="section">
     <div class="shead">
-      <h2>Comment remplir le bordereau</h2>
+      <h2>Au comptoir</h2>
+      <p>Les phrases à montrer à l'employé, en gros caractères, puis le bordereau champ par champ.</p>
     </div>
-    <div id="envoyer"></div>
-    <div class="shead" style="margin-top:var(--s-6)"><h3 style="font-weight:600">Les adresses à recopier</h3></div>
-    <div class="valises__addr" id="adresses"></div>
+    <div class="valises__comptoir" id="comptoir"></div>
+    <div class="shead valises__subhead"><h3>Le bordereau (送り状), champ par champ</h3></div>
+    <div id="bordereau"></div>
   </section>
 
+  <!-- 4 — Ce que chaque logement accepte : un petit tableau ✓ / ✗ / ?. -->
   <section class="section">
     <div class="shead">
-      <h2>Dans le train, et en gare</h2>
+      <h2>Ce que chaque logement accepte</h2>
     </div>
-    <div class="valises__trains" id="trains"></div>
+    <div class="valises__accept" id="accept"></div>
+  </section>
+
+  <!-- 5 — Le reste, replié : trains, adresses, centre Yamato, sources. -->
+  <section class="section">
+    <div class="valises__folds" id="folds"></div>
   </section>
 </main>
 
 <script type="module">
-import { TRIP, CITIES, STEPS, HOTELS } from './data/trip.js';
+import { CITIES, HOTELS } from './data/trip.js';
 import { TRAJETS, ENVOYER, TRAINS } from './data/valises.js';
 import { mountChrome, esc, formatDate } from './app/ui.js';
 
@@ -91,141 +94,205 @@ const q = (id) => document.getElementById(id);
 const H = (id) => HOTELS.find((h) => h.id === id);
 const cityOf = (hid) => { const h = H(hid); return h ? CITIES[h.cityId] : null; };
 
-// Le nom d'un bout de trajet : l'hôtel, ou l'aéroport pour le dernier.
-const boutNom = (t, which) => {
-  if (which === 'to' && t.toAirport) return 'Aéroport de Haneda';
-  const h = H(which === 'to' ? t.toHotelId : t.fromHotelId);
-  return h ? h.name : '—';
+// Le nom d'une ville de trajet : la ville de l'hôtel, ou Haneda pour le dernier.
+const villeNom = (t, which) => {
+  if (which === 'to' && t.toAirport) return 'Haneda';
+  const c = cityOf(which === 'to' ? t.toHotelId : t.fromHotelId);
+  return c ? c.name : '—';
 };
-const boutDot = (t, which) => {
-  if (which === 'to' && t.toAirport) return `<span class="city-dot" style="--c:var(--c-tokyo)">Haneda · T3</span>`;
-  const h = H(which === 'to' ? t.toHotelId : t.fromHotelId);
-  const c = h ? CITIES[h.cityId] : null;
-  return c ? `<span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>` : '';
+const villeId = (t, which) => {
+  if (which === 'to' && t.toAirport) return 'tokyo';
+  const c = cityOf(which === 'to' ? t.toHotelId : t.fromHotelId);
+  return c ? c.id : 'tokyo';
+};
+// La pastille colorée d'une ville (détail du trajet) ; Haneda garde le bleu Tokyo.
+const villeDot = (t, which) => {
+  const nom = which === 'to' && t.toAirport ? 'Haneda · T3' : villeNom(t, which);
+  return `<span class="city-dot" style="--c:var(--c-${villeId(t, which)})">${esc(nom)}</span>`;
 };
 
 // --- en-tête ------------------------------------------------------------------
 q('cover-sub').textContent = 'Deux grosses valises, six changements de ville';
 q('lede').innerHTML = esc(ENVOYER.intro);
 
-// --- le tableau récapitulatif -------------------------------------------------
-q('recap-meta').textContent = `${TRAJETS.length} trajets · 2 valises`;
-q('recap').innerHTML = TRAJETS.map((t) => `
-  <tr>
-    <td data-label="Trajet">
-      <a class="valises__recap-trajet" href="#t${t.n}">${esc(boutNom(t, 'from'))} → ${esc(boutNom(t, 'to'))}</a>
-      <span class="valises__recap-when">${esc(formatDate(t.date))}</span>
-    </td>
-    <td data-label="Conseillé">${esc(t.recoTitre)}</td>
-    <td data-label="Coût · 2 valises"><span class="valises__recap-cout">${esc(t.cout2)}</span></td>
-  </tr>`).join('');
-if (ENVOYER.recapNote) q('recap-note').textContent = ENVOYER.recapNote;
+// --- 1 · le système en 3 étapes -----------------------------------------------
+q('systeme-lead').innerHTML = esc(ENVOYER.systemeLead);
+q('systeme').innerHTML = ENVOYER.systeme.map((s) => `
+  <div class="valises__etape">
+    <span class="step-num" style="--c:var(--ink-2)">${s.n}</span>
+    <div class="valises__etape-body">
+      <h3>${esc(s.titre)}</h3>
+      <p>${esc(s.texte)}</p>
+      ${s.note ? `<p class="valises__etape-note">${esc(s.note)}</p>` : ''}
+    </div>
+  </div>`).join('');
 
-// --- une carte par trajet -----------------------------------------------------
+// --- 2 · le plan, une ligne dépliable par trajet ------------------------------
+q('plan-meta').textContent = `${TRAJETS.length} trajets · 2 valises`;
+
 const sourceLine = (sources) => !sources || !sources.length ? '' : `
   <p class="valises__src"><b>Sources</b> ${sources.map((s) => `
     ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.quoi)}</a>` : esc(s.quoi)}${s.date ? ` <span class="mut">(${esc(formatDate(s.date, { year: true }))})</span>` : ''}`).join('<span class="valises__src-sep">·</span>')}</p>`;
 
 q('trajets').innerHTML = TRAJETS.map((t) => `
-  <section class="valises__trajet card" id="t${t.n}">
-    <div class="valises__th">
-      <span class="step-num" style="--c:var(--c-${(cityOf(t.fromHotelId) || CITIES.tokyo).id})">${t.n}</span>
-      <div class="valises__th-main">
-        <p class="valises__th-route">${esc(boutNom(t, 'from'))} → ${esc(boutNom(t, 'to'))}</p>
-        <p class="valises__th-sub">
-          ${boutDot(t, 'from')} → ${boutDot(t, 'to')}
-          <span class="data">· ${esc(formatDate(t.date, { weekday: true }))}</span>
-          · ${esc(t.region)}
-        </p>
-        ${t.train ? `<p class="valises__th-train"><span class="label">Le train du jour —</span> ${esc(t.train)}</p>` : ''}
+  <details class="valises__trajet card" id="t${t.n}">
+    <summary class="valises__row">
+      <span class="step-num" style="--c:var(--c-${villeId(t, 'from')})">${t.n}</span>
+      <span class="valises__row-main">
+        <span class="valises__row-route">${esc(villeNom(t, 'from'))} <span class="valises__row-arrow">→</span> ${esc(villeNom(t, 'to'))}</span>
+        <span class="valises__row-meta">${esc(formatDate(t.date))} · ${esc(t.decision)}</span>
+      </span>
+      <span class="valises__row-cout">${esc(t.cout2)}</span>
+    </summary>
+
+    <div class="valises__detail">
+      <p class="valises__detail-meta">
+        ${villeDot(t, 'from')} <span class="valises__row-arrow">→</span> ${villeDot(t, 'to')}
+        <span class="data">· ${esc(formatDate(t.date, { weekday: true }))}</span>
+        · ${esc(t.region)}
+      </p>
+      ${t.train ? `<p class="valises__th-train"><span class="label">Le train du jour —</span> ${esc(t.train)}</p>` : ''}
+
+      <div class="valises__opts">
+        ${t.options.map((o) => `
+          <div class="valises__opt${o.reco ? ' valises__opt--reco' : ''}">
+            <div class="valises__opt-head">
+              ${o.reco ? '<span class="valises__badge">Conseillé</span>' : ''}
+              <h4>${esc(o.titre)}</h4>
+              ${o.cout ? `<span class="valises__opt-cout">${esc(o.cout)}</span>` : ''}
+            </div>
+            ${o.delai ? `<p class="valises__opt-when">${esc(o.delai)}</p>` : ''}
+            ${o.quand ? `<p class="valises__opt-when">${esc(o.quand)}</p>` : ''}
+            ${o.pour ? `<p>${esc(o.pour)}</p>` : ''}
+            ${o.contre ? `<p class="valises__opt-contre"><b>Attention —</b> ${esc(o.contre)}</p>` : ''}
+          </div>`).join('')}
       </div>
+
+      ${t.demander ? `
+        <div class="valises__ask">
+          <h4>À demander ${t.demander.hotelId ? `à ${esc((H(t.demander.hotelId) || {}).name || 'au logement')}` : 'au logement'}</h4>
+          <p class="valises__ask-q">« ${esc(t.demander.texte)} »</p>
+          ${t.demander.pourquoi ? `<p>${esc(t.demander.pourquoi)}</p>` : ''}
+        </div>` : ''}
+
+      ${sourceLine(t.sources)}
     </div>
+  </details>`).join('');
 
-    <div class="valises__opts">
-      ${t.options.map((o) => `
-        <div class="valises__opt${o.reco ? ' valises__opt--reco' : ''}">
-          <div class="valises__opt-head">
-            ${o.reco ? '<span class="valises__badge">Conseillé</span>' : ''}
-            <h4>${esc(o.titre)}</h4>
-            ${o.cout ? `<span class="valises__opt-cout">${esc(o.cout)}</span>` : ''}
-          </div>
-          ${o.delai ? `<p class="valises__opt-when">${esc(o.delai)}</p>` : ''}
-          ${o.quand ? `<p class="valises__opt-when">${esc(o.quand)}</p>` : ''}
-          ${o.pour ? `<p>${esc(o.pour)}</p>` : ''}
-          ${o.contre ? `<p class="valises__opt-contre"><b>Attention —</b> ${esc(o.contre)}</p>` : ''}
-        </div>`).join('')}
-    </div>
+if (ENVOYER.recapNote) q('recap-note').textContent = ENVOYER.recapNote;
 
-    ${t.demander ? `
-      <div class="valises__ask">
-        <h4>À demander ${t.demander.hotelId ? `à ${esc((H(t.demander.hotelId) || {}).name || 'au logement')}` : 'au logement'}</h4>
-        <p class="valises__ask-q">« ${esc(t.demander.texte)} »</p>
-        ${t.demander.pourquoi ? `<p>${esc(t.demander.pourquoi)}</p>` : ''}
-      </div>` : ''}
+// --- 3 · au comptoir : phrases en gros, puis le bordereau ---------------------
+q('comptoir').innerHTML = ENVOYER.comptoir.map((c) => `
+  <div class="valises__phrase">
+    <p class="valises__phrase-jp" lang="ja">${esc(c.jp)}</p>
+    <p class="valises__phrase-fr">${esc(c.fr)}</p>
+  </div>`).join('');
 
-    ${sourceLine(t.sources)}
-  </section>`).join('');
-
-// --- comment remplir le bordereau ---------------------------------------------
-q('envoyer').innerHTML = `
-  ${ENVOYER.envoi.map((p) => `<p class="valises__lede" style="font-size:var(--t-sm);margin-bottom:var(--s-3)">${esc(p)}</p>`).join('')}
-
+q('bordereau').innerHTML = `
   <dl class="valises__slip">
     ${ENVOYER.bordereau.map((b) => `
       <div>
         <dt>${esc(b.champ)}</dt>
         <dd>${esc(b.valeur)}${b.aide ? `<span class="mut">${esc(b.aide)}</span>` : ''}</dd>
       </div>`).join('')}
-  </dl>
+  </dl>`;
 
-  <div class="valises__ask" style="background:var(--paper-3);border-left-color:var(--gold)">
-    <h4>${esc(ENVOYER.ejusho.titre)}</h4>
-    <p>${esc(ENVOYER.ejusho.texte)}</p>
-  </div>`;
-
-// Les adresses : rendues depuis HOTELS (jamais recopiées ici), plus le centre
-// Yamato où La Vita fait retirer les colis.
-const TAG = { non: ['Ne reçoit pas', 'valises__tag--no'], inconnu: ['À confirmer', ''],
-              oui: ['Reçoit les colis', 'valises__tag--ok'] };
-q('adresses').innerHTML = ENVOYER.logements.map((l) => {
+// --- 4 · ce que chaque logement accepte (✓ / ✗ / ?) ---------------------------
+const ACC = {
+  oui:     ['✓', 'valises__acc--ok',  'Reçoit les colis'],
+  non:     ['✗', 'valises__acc--no',  'Ne reçoit pas'],
+  inconnu: ['?', 'valises__acc--ask', 'À confirmer'],
+};
+q('accept').innerHTML = ENVOYER.logements.map((l) => {
   const h = H(l.hotelId);
   if (!h) return '';
   const c = CITIES[h.cityId];
-  const tag = TAG[l.recoit] || TAG.inconnu;
+  const a = ACC[l.recoit] || ACC.inconnu;
+  return `
+  <div class="valises__acc-row">
+    <span class="valises__acc-mark ${a[1]}" title="${esc(a[2])}" aria-label="${esc(a[2])}">${a[0]}</span>
+    <span class="valises__acc-body">
+      <span class="valises__acc-name"><span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span> ${esc(h.name)}</span>
+      <span class="valises__acc-note">${esc(l.note)}</span>
+    </span>
+  </div>`;
+}).join('');
+
+// --- 5 · le reste, replié -----------------------------------------------------
+// Les adresses sont lues dans HOTELS (jamais recopiées dans valises.js).
+const fold = (titre, inner) => `
+  <details class="valises__fold">
+    <summary>${esc(titre)}</summary>
+    <div class="valises__fold-body">${inner}</div>
+  </details>`;
+
+const trainsHtml = `<div class="valises__trains">${TRAINS.map((t) => `
+  <div class="valises__train">
+    <h4>${esc(t.titre)}</h4>
+    <p>${esc(t.texte)}</p>
+  </div>`).join('')}</div>`;
+
+const adressesHtml = `<div class="valises__addr">${ENVOYER.logements.map((l) => {
+  const h = H(l.hotelId);
+  if (!h) return '';
+  const c = CITIES[h.cityId];
   return `
   <div class="valises__addr-card">
-    <h4>
-      <span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span>
-      ${esc(h.name)}
-      <span class="valises__tag ${tag[1]}">${tag[0]}</span>
-    </h4>
+    <h4><span class="city-dot" style="--c:var(--c-${c.id})">${esc(c.name)}</span> ${esc(h.name)}</h4>
     <p class="valises__addr-jp" lang="ja">${esc(h.address)}</p>
     ${h.tel ? `<p class="valises__addr-note">Tél. ${esc(h.tel)}</p>` : ''}
-    ${l.note ? `<p class="valises__addr-note${l.recoit === 'non' ? ' valises__addr-note--no' : ''}">${esc(l.note)}</p>` : ''}
   </div>`;
-}).join('') + (ENVOYER.yamato ? `
-  <div class="valises__addr-card">
-    <h4>
-      <span class="city-dot" style="--c:var(--c-tokyo)">Tokyo</span>
-      ${esc(ENVOYER.yamato.nom)}
-      <span class="valises__tag valises__tag--ok">Retrait sur place</span>
-    </h4>
-    <p class="valises__addr-jp" lang="ja">${esc(ENVOYER.yamato.adresseJp)}</p>
-    <p class="valises__addr-note">${esc(ENVOYER.yamato.note)}</p>
-  </div>` : '');
+}).join('')}</div>`;
 
-// --- dans le train ------------------------------------------------------------
-q('trains').innerHTML = TRAINS.map((t) => `
-  <div class="valises__train">
-    <h3>${esc(t.titre)}</h3>
-    <p>${esc(t.texte)}</p>
-  </div>`).join('');
+const yamatoHtml = ENVOYER.yamato ? `
+  <div class="valises__addr">
+    <div class="valises__addr-card">
+      <h4><span class="city-dot" style="--c:var(--c-tokyo)">Tokyo</span> ${esc(ENVOYER.yamato.nom)}</h4>
+      <p class="valises__addr-jp" lang="ja">${esc(ENVOYER.yamato.adresseJp)}</p>
+      <p class="valises__addr-note">${esc(ENVOYER.yamato.note)}</p>
+    </div>
+  </div>
+  <div class="valises__ask valises__ask--gold">
+    <h4>${esc(ENVOYER.ejusho.titre)}</h4>
+    <p>${esc(ENVOYER.ejusho.texte)}</p>
+  </div>` : '';
 
-// Les ancres #t1…#t6 : si on arrive par un lien du tableau, on cadre sous la barre.
-if (location.hash && /^#t\d+$/.test(location.hash)) {
-  const el = document.getElementById(location.hash.slice(1));
-  if (el) requestAnimationFrame(() => el.scrollIntoView());
+// Les sources de tous les trajets, dédoublonnées : une bibliographie unique.
+const vues = new Set();
+const sources = [];
+for (const t of TRAJETS) for (const s of (t.sources || [])) {
+  const cle = `${s.url || ''}|${s.quoi}`;
+  if (vues.has(cle)) continue;
+  vues.add(cle);
+  sources.push(s);
 }
+const sourcesHtml = `<ul class="valises__srclist">${sources.map((s) => `
+  <li>${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.quoi)}</a>` : esc(s.quoi)}${s.date ? ` <span class="mut">(${esc(formatDate(s.date, { year: true }))})</span>` : ''}</li>`).join('')}</ul>`;
+
+q('folds').innerHTML =
+  fold('Dans le train, et en gare', trainsHtml) +
+  fold('Les adresses à recopier', adressesHtml) +
+  fold("Le centre Yamato d'Ikebukuro", yamatoHtml) +
+  fold('Les sources', sourcesHtml);
+
+// Les ancres #t1…#t6 : si on arrive par un lien (jour.html y renvoie), on ouvre
+// le trajet visé et on défile jusqu'à lui ; on réagit aussi au changement de hash.
+// La page défile en douceur (scroll-behavior), et « auto » s'y plie : au chargement
+// cette animation part du haut et se fait couper par la navigation, donc ici on cale
+// d'un coup (behavior instant). On garde aussi la main sur la restauration du scroll.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+function ouvrirTrajetVise() {
+  if (!/^#t\d+$/.test(location.hash)) return;
+  const el = document.getElementById(location.hash.slice(1));
+  if (!el) return;
+  if (el.tagName === 'DETAILS') el.open = true;
+  el.scrollIntoView({ behavior: 'instant' });
+}
+ouvrirTrajetVise();
+addEventListener('hashchange', ouvrirTrajetVise);
+// La grande image de couverture se pose tard : une fois tout chargé, on recadre
+// le trajet visé pour que l'ancre tombe juste même au tout premier chargement.
+addEventListener('load', ouvrirTrajetVise);
 </script>
 </body>
 </html>

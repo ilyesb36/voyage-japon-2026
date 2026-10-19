@@ -211,6 +211,28 @@ console.log('\n== Pages et hors-ligne ==');
   }
   const horsCoque = [...importes].filter((f) => !coque.includes(f));
   check(!horsCoque.length, 'chaque module chargé est dans la coque du service worker', horsCoque);
+  // Chaque page des menus existe et part dans la coque : sinon un menu mène hors-ligne à une erreur.
+  const ui = fs.readFileSync(path.join(ROOT, 'app/ui.js'), 'utf8');
+  const duMenu = [...new Set([...ui.matchAll(/href: '([a-z-]+\.html)'/g)].map((m) => m[1]))];
+  const menuHors = duMenu.filter((f) => !fs.existsSync(path.join(ROOT, f)) || !coque.includes(f));
+  check(!menuHors.length, 'chaque page des menus existe et est dans la coque', menuHors);
+  // Une ancre écrite en clair (page.html#ancre) doit exister dans la page visée : villes.html#gouter visait une section disparue.
+  // Une page qui fabrique ses ids au rendu (id="t${t.n}", id="${p.id}") ne les écrit pas en clair : on accepte alors
+  // l'ancre qui commence par le préfixe fixe d'un tel id — « id="${…}" », sans préfixe, les accepte toutes.
+  // La frontière avant « id » écarte data-id="…" (et tout attribut en -id) : ce n'est pas une ancre, et un
+  // data-id="${…}" sans préfixe ferait passer n'importe quelle ancre.
+  const ancreExiste = (html, ancre) => new RegExp(`(?<![\\w-])id="${ancre}"`).test(html)
+    || [...html.matchAll(/(?<![\w-])id="([^"$]*)\$\{/g)].some((g) => ancre.startsWith(g[1]));
+  const ancresMortes = [];
+  for (const p of pages) {
+    const src = fs.readFileSync(path.join(ROOT, p), 'utf8');
+    for (const m of src.matchAll(/([a-z-]+\.html)(?:\?[^"'#`\s]*)?#([a-z][a-z0-9-]*)(?=["'`])/g)) {
+      const cible = path.join(ROOT, m[1]);
+      if (!fs.existsSync(cible)) continue;   // déjà compté dans les liens morts
+      if (!ancreExiste(fs.readFileSync(cible, 'utf8'), m[2])) ancresMortes.push(`${p} → ${m[1]}#${m[2]}`);
+    }
+  }
+  check(!ancresMortes.length, 'aucune ancre interne absente', ancresMortes);
   const liensMorts = [];
   for (const p of pages) {
     const src = fs.readFileSync(path.join(ROOT, p), 'utf8');

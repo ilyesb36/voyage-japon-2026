@@ -15,6 +15,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
 <script src="vendor/leaflet.js"></script>
 </head>
 <body>
@@ -26,10 +31,20 @@
 
   <header class="jour__tete" id="tete"></header>
 
-  <!-- La carte est AVANT le parcours dans le document : sur téléphone elle
-       apparaît donc tout de suite, et sur grand écran la grille l'envoie dans
-       la colonne de droite, où elle reste collée pendant qu'on lit la liste. -->
+  <!-- Dans l'ordre où l'on en a besoin : la barre « Ce soir » (rentrer, montrer
+       l'adresse, appeler), ce qu'il ne faut pas manquer, le trajet du jour. -->
+  <div id="soir"></div>
+  <div id="resa"></div>
+  <div id="trajet"></div>
+
+  <!-- Le parcours vient avant la carte dans le document : sur téléphone la carte
+       passe donc dessous, et sur grand écran la grille la range dans la colonne
+       de droite, à côté de la liste. -->
   <div class="jour__grille">
+    <div class="jour__corps">
+      <div id="parcours"></div>
+    </div>
+
     <aside class="jour__aside">
       <div class="jour__sticky">
         <div id="map" class="map map--jour"></div>
@@ -38,30 +53,27 @@
         <div id="meteo"></div>
       </div>
     </aside>
-
-    <div class="jour__corps">
-      <div id="resa"></div>
-      <div id="parcours"></div>
-      <div id="coin"></div>
-      <div id="pres"></div>
-      <div id="soir"></div>
-    </div>
   </div>
 </main>
 
 <script type="module">
-import { CITIES, STEPS, HOTELS, SEGMENTS } from './data/trip.js';
+import { CITIES, STEPS, HOTELS, SEGMENTS, FLIGHTS } from './data/trip.js';
 import { DAYS } from './data/days.js';
 import { TRAJETS as VALISES } from './data/valises.js';
+import { PASSES, PROGRAMME } from './data/passes.js';
 import { LIEUX } from './data/lieux.js';
-import { mountChrome, esc, formatDate, today } from './app/ui.js';
-import { resaStrip } from './app/resa.js';
+import { mountChrome, esc, formatDate, daysBetween, today } from './app/ui.js';
+import { resaStrip, reservationsDuJour, echeancesAVenir, ETAT } from './app/resa.js';
 import { createMap } from './app/map.js';
 import { meteoDuJour } from './app/meteo.js';
-import { dansLeCoinHTML, montePresDeMoi, montreChauffeur, positionConnue, ouvrirFiche } from './app/quartiers.js';
+import { montreChauffeur, lienRentrer } from './app/quartiers.js';
 
 mountChrome('jour.html');
 const q = (id) => document.getElementById(id);
+
+// Les mots japonais d'une phrase portent lang="ja" : le téléphone choisit alors les
+// bons caractères (le nom lu sur un bus doit ressembler à celui du bus).
+const avecJp = (t) => esc(t).replace(/[぀-ヿ㐀-鿿＀-￯]+/g, (m) => `<span lang="ja">${m}</span>`);
 
 // --- quelle journée ? ---------------------------------------------------------
 const url = new URLSearchParams(location.search);
@@ -166,6 +178,94 @@ q('tete').innerHTML = `
     ${KIND[jour.kind] ? `<span class="day__kind">${KIND[jour.kind]}</span>` : ''}
   </p>` : ''}`;
 
+// --- la barre « Ce soir » ------------------------------------------------------
+// Ce qu'on cherche fatigué ou perdu : rentrer, montrer l'adresse, appeler.
+// Le jour du départ, c'est le vol qui compte. Le 8 novembre (le vol aller), la
+// journée n'a pas d'étape : pas d'hôtel, donc pas de barre.
+const retour = FLIGHTS.find((f) => f.id === 'retour');
+const estDepart = retour && jour.date === retour.date;
+const arriveeDuJour = hotel && step && step.from === jour.date;
+const teinte = ville ? `var(--c-${ville.id})` : 'var(--mut)';   // la couleur de la ville, comme au calendrier
+if (estDepart) {
+  const leg = retour.legs[0];
+  q('soir').innerHTML = `<section class="soir soir--depart" style="--c:${teinte}" aria-label="Départ">
+    <p class="soir__titre"><span class="label">Départ</span> ${esc(leg.flight)} à <span class="data">${esc(leg.depart)}</span>, Haneda terminal 3</p>
+    <p class="soir__actions">
+      <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent('Haneda Airport Terminal 3')}&travelmode=transit" target="_blank" rel="noopener">Y aller</a>
+      <a class="btn btn--ghost" href="valises.html#t6">Les valises du départ</a>
+    </p></section>`;
+} else if (hotel) {
+  // Sous le nom du logement, une ligne d'accès : la gare la plus proche (`hotel.gare`,
+  // avec le temps à pied) ; à défaut, la première partie de `access` (avant « · »), le
+  // quartier ou le repère le plus proche. Plus longue que ACCES_MAX caractères, ce n'est
+  // plus une ligne courte : on s'en passe.
+  const ACCES_MAX = 70;
+  const acces = (hotel.gare || (hotel.access || '').split(' · ')[0]).trim();
+
+  // Le jour d'arrivée dans un logement, les consignes sont dépliées. checkIn
+  // s'écrit « 15:00 – 19:00 » ou « à partir de 16:00 ». Une plage se lisait comme
+  // un couvre-feu (« Arrivée : 16:00 – 00:00 ») : on dit qu'elle est possible, de
+  // l'heure d'ouverture à l'heure limite, et minuit s'écrit « minuit ». Une forme
+  // inconnue garde l'ancienne tournure, citée telle quelle.
+  const ci = hotel.checkIn || '';
+  const plage = /^(\d{1,2}:\d{2})\s*[–-]\s*(\d{1,2}:\d{2})$/.exec(ci);
+  const arriveeTitre = plage ? `Arrivée possible de ${plage[1]} à ${plage[2] === '00:00' ? 'minuit' : plage[2]}`
+    : /^à partir de /.test(ci) ? `Arrivée possible ${ci}`
+    : `Arrivée : ${ci}`;
+
+  q('soir').innerHTML = `<section class="soir" style="--c:${teinte}" aria-label="Ce soir">
+    <p class="soir__titre"><span class="label">Ce soir</span> ${esc(hotel.name)}</p>
+    ${acces && acces.length <= ACCES_MAX ? `<p class="soir__acces mut">${esc(acces)}</p>` : ''}
+    <p class="soir__actions">
+      <a class="btn" href="${esc(lienRentrer(hotel))}" target="_blank" rel="noopener">Y aller</a>
+      <button class="btn btn--ghost" type="button" id="chauffeur-btn">Montrer au chauffeur</button>
+      ${hotel.tel
+        ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler</a>`
+        : '<span class="mut soir__sanstel">Pas de téléphone : messagerie Booking</span>'}
+    </p>
+    ${arriveeDuJour && hotel.arrivee ? `<details class="soir__arrivee" open><summary>${esc(arriveeTitre)}</summary><p>${esc(hotel.arrivee)}</p>${hotel.meals ? `<p class="mut">Repas : ${esc(hotel.meals)}</p>` : ''}</details>` : ''}
+  </section>`;
+  q('chauffeur-btn').addEventListener('click', () => montreChauffeur(hotel));
+}
+
+// --- à ne pas manquer -----------------------------------------------------------
+// Les rendez-vous à heure fixe du jour, avec leur état, et les échéances qui
+// tombent ce jour-là. Un billet payé garde sa grande carte, en tête (resaStrip) :
+// la liste reprend le reste, puis deux rappels sans heure : le pass du jour (et,
+// à Hakone, la règle des bus) et, la veille d'un changement de ville, les valises.
+const resas = reservationsDuJour(jour.date);
+const duJourMeme = echeancesAVenir(jour.date).filter((x) => x.deadline === jour.date);
+// « aujourd'hui » seulement si l'on regarde la journée en cours : en parcourant
+// les jours à l'avance, ce serait faux.
+const quand = jour.date === today() ? "aujourd'hui" : 'ce jour-là';
+
+// Le pass du jour : PROGRAMME dit les jours qu'un pass couvre (12, 25, 26, 27 nov.).
+const progPass = PROGRAMME.find((d) => d.date === jour.date);
+const passDuJour = progPass && PASSES.find((p) => p.id === progPass.passId);
+// La veille d'un changement de ville : le trajet de valises (TRAJETS) qui a lieu demain.
+const nomDe = (hotelId) => CITIES[HOTELS.find((h) => h.id === hotelId).cityId].name;
+const trajetDemain = VALISES.find((t) => daysBetween(jour.date, t.date) === 1);
+
+const lignesAmanquer = [
+  // Sans heure (une table sans créneau), pas de « — » devant le nom.
+  ...resas.filter((r) => r.etat !== 'paye').map((r) => `<li class="amanquer__item amanquer__item--${r.etat}">
+      ${r.heure ? `<span class="data">${esc(r.heure)}</span> ` : ''}${esc(r.titre)} <span class="label">${ETAT[r.etat]}</span>
+      ${r.etat === 'a-reserver' && r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">en ligne</a>` : ''}</li>`),
+  // L'ancre #e-<id> est posée par la page À faire sur la ligne de la démarche.
+  ...duJourMeme.map((x) => `<li class="amanquer__item amanquer__item--echeance">
+      <span class="label">Échéance ${quand}</span> ${esc(x.titre)} — <a href="aujourdhui.html#e-${esc(x.id)}">À faire</a></li>`),
+  ...(passDuJour ? [`<li class="amanquer__item amanquer__item--pass">
+      <span class="label">Votre pass :</span> ${esc(passDuJour.nom)} — <a href="passes.html#${esc(passDuJour.id)}">ce qu'il couvre</a>
+      ${passDuJour.regleBus ? `<span class="amanquer__bus">${avecJp(passDuJour.regleBus)}</span>` : ''}</li>`] : []),
+  ...(trajetDemain ? [`<li class="amanquer__item amanquer__item--demain">
+      <span class="label">Demain :</span> ${esc(nomDe(trajetDemain.fromHotelId))} → ${esc(trajetDemain.toAirport ? 'Haneda' : nomDe(trajetDemain.toHotelId))}
+      · Les valises : ${esc(trajetDemain.decision)} — <a href="valises.html#t${trajetDemain.n}">le détail</a></li>`] : []),
+].join('');
+q('resa').innerHTML = (resas.length || lignesAmanquer) ? `
+  <div class="shead"><h2>À ne pas manquer</h2></div>
+  ${resaStrip(jour.date)}
+  ${lignesAmanquer ? `<ul class="amanquer">${lignesAmanquer}</ul>` : ''}` : '';
+
 // --- distances ----------------------------------------------------------------
 // À vol d'oiseau : on ne connaît pas le tracé des rues. C'est un ordre de
 // grandeur — l'étape suivante est-elle à deux pas ou à l'autre bout ?
@@ -176,9 +276,11 @@ function metres(a, b) {
     + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
+// Les kilomètres s'écrivent à la française : « 1,4 km », pas « 1.4 km ».
+const enKm = (m) => `${(m / 1000).toFixed(1).replace('.', ',')} km`;
 const ecart = (m) => m < 250 ? 'à côté'
   : m < 1200 ? `${Math.round(m / 100) * 100} m à vol d'oiseau`
-  : `${(m / 1000).toFixed(1)} km à vol d'oiseau`;
+  : `${enKm(m)} à vol d'oiseau`;
 
 // --- les étapes ---------------------------------------------------------------
 const etapes = jour.items.map((it, i) => ({
@@ -201,9 +303,10 @@ for (let i = 0; i < points.length; i++) for (let j = i + 1; j < points.length; j
 const transitDabord = transfert || etendue > 3000;
 
 // L'hôtel du matin : celui qu'on quitte un jour de transfert (l'étape qui se
-// termine aujourd'hui), sinon l'hôtel de l'étape du jour.
+// termine aujourd'hui). Le jour d'arrivée (9 novembre), aucune étape ne se
+// termine : il n'y a rien à libérer.
 const stepVeille = STEPS.find((s) => s.to === jour.date);
-const hotelMatin = stepVeille ? HOTELS.find((h) => h.id === stepVeille.hotelId) : hotel;
+const hotelMatin = stepVeille ? HOTELS.find((h) => h.id === stepVeille.hotelId) : null;
 
 // --- le lien qui ouvre tout le parcours --------------------------------------
 const MAX_ETAPES = 11;
@@ -241,10 +344,6 @@ q('go').innerHTML = lienWalk ? `
   : '<p class="mut">Jour de trajet — aucun arrêt à cartographier.</p>';
 
 // --- le parcours --------------------------------------------------------------
-q('resa').innerHTML = resaStrip(jour.date).trim()
-  ? `<div class="shead"><h2>Le rendez-vous du jour</h2></div>${resaStrip(jour.date)}`
-  : '';
-
 let numero = 0;
 const lignes = etapes.map((e) => {
   const situee = e.lieux.length > 0;
@@ -284,11 +383,32 @@ const departBlock = (transfert && hotelMatin) ? `<div class="alert jour__depart"
 
 // Les jours où l'on change de ville avec les valises (les six trajets de la
 // page Valises, y compris le départ pour Haneda, un jour « vol » sans
-// departBlock) : un renvoi discret vers la fiche du trajet.
+// departBlock) : la décision, et un renvoi vers la fiche du trajet.
 const trajetValises = VALISES.find((t) => t.date === jour.date);
 const valisesLigne = trajetValises
-  ? `<p class="day__free"><a href="valises.html#t${trajetValises.n}">Les valises : voir la page</a></p>`
+  ? `<p class="jour__valises"><span class="label">Les valises</span> ${esc(trajetValises.decision)} — <a href="valises.html#t${trajetValises.n}">le détail</a></p>`
   : '';
+
+// --- le trajet du jour --------------------------------------------------------
+// Les jours de changement de ville : le train, ce qu'on libère, les valises.
+const legDuJour = SEGMENTS.find((g) => {
+  const to = STEPS.find((s) => s.id === g.toStepId);
+  return to && to.from === jour.date;
+});
+
+q('trajet').innerHTML = `
+  ${legDuJour ? `
+  <div class="shead"><h2>Le trajet du jour</h2></div>
+  <div class="alert">
+    <p class="alert__main">
+      ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.fromStepId).cityId].name)}
+      → ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.toStepId).cityId].name)}
+    </p>
+    <p class="mut">${esc(legDuJour.label)} · <span class="data">${esc(legDuJour.duration)}</span>
+       · <span class="data">${esc(legDuJour.pricePerPerson)}</span></p>
+  </div>` : ''}
+  ${departBlock}
+  ${valisesLigne}`;
 
 // Jour normal : « Depuis l'hôtel : X km — itinéraire en transports » vers le
 // premier arrêt. Origine = l'hôtel (ses coordonnées), jamais celles du voyageur.
@@ -296,21 +416,23 @@ const premier = points[0];
 let depuisLigne = '';
 if (!transfert && hotel && hotel.ll && premier) {
   const d0 = metres({ lat: hotel.ll[0], lng: hotel.ll[1] }, premier);
-  const km = d0 < 1000 ? `${Math.round(d0 / 100) * 100} m` : `${(d0 / 1000).toFixed(1)} km`;
+  const dist = d0 < 1000 ? `${Math.round(d0 / 100) * 100} m` : enKm(d0);
   const pq = new URLSearchParams({ api: '1', origin: `${hotel.ll[0]},${hotel.ll[1]}`, destination: coord(premier), travelmode: 'transit' });
-  depuisLigne = `<p class="jour__depuis"><span class="label">Depuis l'hôtel</span> <span class="data">${esc(km)}</span> — <a href="https://www.google.com/maps/dir/?${pq}" target="_blank" rel="noopener">itinéraire en transports</a></p>`;
+  depuisLigne = `<p class="jour__depuis"><span class="label">Depuis l'hôtel</span> <span class="data">${esc(dist)}</span> — <a href="https://www.google.com/maps/dir/?${pq}" target="_blank" rel="noopener">itinéraire en transports</a></p>`;
 }
 
 q('parcours').innerHTML = `
   <div class="shead">
     <h2>Le parcours</h2>
-    <p>${situees.length} arrêt${situees.length > 1 ? 's' : ''} situé${situees.length > 1 ? 's' : ''} sur ${etapes.length} ligne${etapes.length > 1 ? 's' : ''}.</p>
+    <p>${etapes.length} étape${etapes.length > 1 ? 's' : ''}, dont ${situees.length || 'aucune'} sur la carte.</p>
   </div>
-  ${departBlock}
-  ${valisesLigne}
   ${depuisLigne}
   <ol class="etapes">${lignes}</ol>
-  ${jour.tip ? `<p class="day__tip">${esc(jour.tip.replace(/^💡\s*/, ''))}</p>` : ''}`;
+  ${jour.tip ? `<p class="day__tip">${esc(jour.tip.replace(/^💡\s*/, ''))}</p>` : ''}
+  <p class="jour__ailleurs">
+    <a class="btn btn--ghost" href="itineraire.html#jour-${jour.n}">Cette journée dans le programme</a>
+    <a class="btn btn--ghost" href="villes.html${step ? `?e=${step.n}` : ''}">Autour de moi</a>
+  </p>`;
 
 // --- la carte -----------------------------------------------------------------
 if (points.length) {
@@ -362,7 +484,7 @@ if (points.length) {
   addEventListener('load', tenter);
 
   // « Sur la carte » va chercher l'arrêt, plutôt que de laisser repérer la
-  // pastille à l'œil. Sur téléphone la carte est en haut : on y remonte.
+  // pastille à l'œil. Sur téléphone la carte est sous la liste : on y descend.
   q('parcours').addEventListener('click', (ev) => {
     const b = ev.target.closest('[data-voir]');
     if (!b) return;
@@ -376,75 +498,13 @@ if (points.length) {
   const total = situees.reduce((m, e, i) =>
     i === 0 ? 0 : m + metres(situees[i - 1].lieux[situees[i - 1].lieux.length - 1], e.lieux[0]), 0);
   q('carte-meta').innerHTML =
-    `<span class="data">${(total / 1000).toFixed(1)} km</span> cumulés, à vol d'oiseau · ${points.length} arrêts`;
+    `<span class="data">${enKm(total)}</span> cumulés, à vol d'oiseau · ${situees.length} étape${situees.length > 1 ? 's' : ''}`;
 
   window.__carte = map;   // pour inspecter le cadrage depuis la console
 } else {
   q('map').remove();
   q('carte-meta').remove();
 }
-
-// --- le trajet et le soir -----------------------------------------------------
-const legDuJour = SEGMENTS.find((g) => {
-  const to = STEPS.find((s) => s.id === g.toStepId);
-  return to && to.from === jour.date;
-});
-
-q('soir').innerHTML = `
-  ${legDuJour ? `
-  <div class="shead"><h2>Le trajet du jour</h2></div>
-  <div class="alert">
-    <p class="alert__main">
-      ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.fromStepId).cityId].name)}
-      → ${esc(CITIES[STEPS.find((s) => s.id === legDuJour.toStepId).cityId].name)}
-    </p>
-    <p class="mut">${esc(legDuJour.label)} · <span class="data">${esc(legDuJour.duration)}</span>
-       · <span class="data">${esc(legDuJour.pricePerPerson)}</span></p>
-  </div>` : ''}
-
-  ${hotel ? `
-  <div class="shead"><h2>Ce soir</h2></div>
-  <div class="card tonight">
-    <div class="tonight__body">
-      <h3>${esc(hotel.name)}</h3>
-      <p class="mut">${esc(hotel.address)}</p>
-      <dl class="tonight__facts">
-        <div><dt>Arrivée</dt><dd class="data">${esc(hotel.checkIn)}</dd></div>
-        <div><dt>Chambre</dt><dd>${esc(hotel.room)}</dd></div>
-        ${hotel.meals ? `<div><dt>Repas</dt><dd>${esc(hotel.meals)}</dd></div>` : ''}
-      </dl>
-      ${hotel.arrivee ? `<p class="hotel__arrivee"><b>À l'arrivée</b> ${esc(hotel.arrivee)}</p>` : ''}
-      <p><a class="btn" href="${esc(hotel.maps)}" target="_blank" rel="noopener">M'y emmener</a>
-        ${hotel.tel ? `<a class="btn btn--ghost" href="tel:${esc(hotel.tel.replace(/[^+\d]/g, ''))}">Appeler ${esc(hotel.tel)}</a>` : ''}
-        <button class="btn btn--ghost" id="chauffeur-btn">Montrer au chauffeur</button></p>
-    </div>
-  </div>` : ''}
-
-  <p class="jour__ailleurs">
-    <a class="btn btn--ghost" href="itineraire.html#jour-${jour.n}">Cette journée dans le programme</a>
-    <a class="btn btn--ghost" href="guide.html?ville=${esc(step ? step.cityId : '')}">Les adresses de ${esc(ville ? ville.name : 'la ville')}</a>
-  </p>`;
-
-// --- dans le coin, près de moi, montrer au chauffeur --------------------------
-// « Dans le coin » se trie par la position si « Près de moi » a été utilisé,
-// sinon par le barycentre des lieux du jour — et se re-trie quand on se localise.
-const renderCoin = (pos) => { q('coin').innerHTML = dansLeCoinHTML(jour, { pos: pos || positionConnue() }); };
-renderCoin();
-
-if (step) {
-  q('pres').innerHTML = '<div class="shead"><h2>Près de moi</h2></div><div id="presdemoi"></div>';
-  montePresDeMoi(document.getElementById('presdemoi'), { step: step, hotel: hotel, onPos: (pos) => renderCoin(pos) });
-}
-
-// Toucher une adresse de « Dans le coin » ou d'« Autour de l'hôtel » ouvre la
-// fiche dans le site (pas window.open vers Maps, bloqué sur iOS).
-document.addEventListener('click', (e) => {
-  const b = e.target.closest('#coin [data-fiche], .tonight [data-fiche]');
-  if (b) ouvrirFiche(b.dataset.fiche, { hotel });
-});
-
-const cb = document.getElementById('chauffeur-btn');
-if (cb && hotel) cb.addEventListener('click', () => montreChauffeur(hotel));
 
 // --- la météo de cette journée ------------------------------------------------
 // Sur place, ce qui décide d'une journée n'est pas la température de l'instant

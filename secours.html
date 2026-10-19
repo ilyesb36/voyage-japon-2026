@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Fiche de secours — Japon 2026</title>
-<meta name="description" content="Une page à imprimer ou à garder en capture : les logements (adresse en japonais), les vols, les urgences et les phrases à montrer. Sert même téléphone éteint.">
+<meta name="description" content="Blessé ou malade : les numéros, un hôpital qui parle anglais, les phrases à montrer. Puis les urgences, les six logements (adresse en japonais, téléphone, arrivée) et les vols. Une page à imprimer ou à garder en capture : elle sert même téléphone éteint.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -36,26 +36,203 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     </header>
 
     <!-- Le gros du contenu coule en deux colonnes à l'impression ; l'en-tête
-         ci-dessus les enjambe. Logements, vols et rendez-vous viennent des
-         données ; seules les urgences et les phrases sont écrites ici. -->
+         ci-dessus les enjambe. Les sections suivent l'ordre d'une urgence : un
+         blessé d'abord, puis les numéros, le lit où l'on dort, les vols, les phrases.
+         Les numéros, le séisme, les logements et les vols viennent des données ; seuls
+         le bloc « Blessé ou malade », l'ambassade et les phrases sont écrits ici, avec
+         trois numéros de repli. -->
     <div class="secours__flow">
-      <section class="secours__sec">
-        <h2>Logements</h2>
-        <div class="secours__lieux" id="hotels"></div>
+      <!-- Blessé ou malade. Écrit à la main, sans les données : il sert même si le script
+           manque (seul le badge « Ce soir » en a besoin). Rien n'est deviné : chaque numéro,
+           horaire et hôpital vient d'une source officielle (relevé du 16 octobre 2026 ; à
+           revérifier avant le départ, car une liste d'hôpitaux change).
+
+           Les numéros :
+           - 119 et 110, la hotline touristes (050-3816-2787, 24h/24, anglais, chinois, coréen,
+             elle oriente vers un hôpital) et la phrase « Appelez une ambulance » : guide du JNTO,
+             https://www.jnto.go.jp/emergency/eng/mi_guide.html
+           - appel au 119 gratuit : ville de Yokohama,
+             https://www.city.yokohama.lg.jp/lang/residents/en/emergencies/20200221091958448.html ;
+             ambulance sans frais : ville de Chuo (Tokyo), https://www.city.chuo.lg.jp/en/introuble.html ;
+             appel au 110 gratuit : police de Kanagawa,
+             https://www.police.pref.kanagawa.jp/kurashi/110ban_riyo/mesg2005.html
+           - « 救急です » (urgence médicale, la réponse à l'opérateur du 119) : guide des
+             ambulances de l'agence des incendies (FDMA),
+             https://www.fdma.go.jp/publication/portal/items/portal001_pamphiet_english.pdf
+           - AMDA, 03-6233-9266, du lundi au vendredi 10:00 – 16:00, fermé les jours fériés et
+             du 29/12 au 3/1 : https://www.amdamedicalcenter.com/consaltant ; numéro et heures
+             confirmés par la métropole de Tokyo
+             (https://www.hokeniryo.metro.tokyo.lg.jp/iryo/iryo_hoken/medical_info_eng/pregnant),
+             et l'anglais « du lundi au vendredi » par l'arrondissement de Chuo :
+             https://www.city.chuo.lg.jp/en/consultation/medical.html
+           - le lundi 23 nov. est férié (fête du travail et de la gratitude) :
+             https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html
+
+           Les hôpitaux : la liste officielle des établissements qui reçoivent les patients
+           étrangers (ministère de la Santé et agence du tourisme ; publiée le 30 juin 2026, mise
+           à jour le 6 août pour Tokyo, Ishikawa et Osaka, le 30 septembre pour Kyoto) :
+           https://www.mhlw.go.jp/stf/newpage_05774.html ; le JNTO la publie aussi,
+           https://www.jnto.go.jp/emergency/eng/mi_guide.html. Un hôpital n'est retenu que s'il
+           figure dans cette liste avec des urgences 24h/24, et si son propre site confirme
+           l'adresse et le téléphone. Écartés, après lecture de leur site : l'hôpital métropolitain
+           de Bokutoh (Sumida), dont la page des urgences dit « no interpreters »
+           (https://www.tmhp.jp/bokutoh/en/flow-of-emergency-outpatients.html) alors qu'une autre
+           annonce des interprètes en semaine de 9:00 à 17:00, puis des outils de traduction
+           (https://www.tmhp.jp/bokutoh/about/information/foreign-patient-language.html) : pages
+           contradictoires ; l'hôpital Manaka d'Odawara, dont le service international a fermé fin
+           août 2026 (https://www.manaka-hp.jp/outpatient-services) ; la Croix-Rouge d'Osaka, dont le
+           service d'urgences dit avoir des horaires limités
+           (https://www.osaka-med.jrc.or.jp/department/s32.html).
+           Tokyo a une fiche par logement : l'hôpital de Tsukiji est à environ 10 km de La Vita
+           (Ikebukuro), loin pour un blessé. -->
+      <section class="secours__sec" id="malade">
+        <h2>Blessé ou malade</h2>
+        <p class="secours__lead">Si c'est grave, appelez le 119. Sinon, téléphonez avant d'y aller : l'anglais n'est pas sûr à toute heure.</p>
+        <p class="secours__papier">Grave : 119. Sinon, téléphonez à l'hôpital avant d'y aller.</p>
+        <div class="secours__urg secours__malade">
+          <div class="secours__urg-row"><b>Ambulance</b><span class="secours__urg-num"><a href="tel:119">119</a></span><span class="mut secours__urg-sub">Gratuit. Au 119, dites « 救急です » (kyūkyū desu) : urgence médicale.</span></div>
+          <div class="secours__urg-row"><b>Hotline touristes</b><span class="secours__urg-num"><a href="tel:+815038162787">050-3816-2787</a></span><span class="mut secours__urg-sub">24h/24, en anglais. Elle oriente vers un hôpital. Appel payant.</span></div>
+          <div class="secours__urg-row"><b>Infos médicales AMDA</b><span class="secours__urg-num"><a href="tel:+81362339266">03-6233-9266</a></span><span class="mut secours__urg-sub">En anglais<span class="secours__ecran">, pour trouver un hôpital</span>. Lun.–ven., 10:00 – 16:00 ; fermé le lun. 23 nov.<span class="secours__ecran"> (férié).</span></span></div>
+        </div>
+        <div class="secours__phrases secours__phrases--soin">
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">救急車を呼んでください</p>
+            <p class="secours__romaji">Kyūkyūsha o yonde kudasai</p>
+            <p class="secours__fr">Appelez une ambulance, s'il vous plaît</p>
+          </div>
+          <div class="secours__phrase">
+            <p class="secours__jp" lang="ja">病院に行きたいです</p>
+            <p class="secours__romaji">Byōin ni ikitai desu</p>
+            <p class="secours__fr">Je voudrais aller à l'hôpital</p>
+          </div>
+        </div>
+        <p class="secours__assur">Votre assurance voyage : son numéro d'assistance (en français, 24h/24) est sur votre attestation. Enregistrez-le dans vos contacts.</p>
+        <!-- L'hôpital de l'étape en cours sort du pli (voir le script) : un blessé n'a pas à le chercher. -->
+        <div id="hop-soir" hidden><div class="secours__lieux" id="hop-soir-liste"></div></div>
+        <details class="secours__plie" id="hop-plie">
+          <summary id="hop-resume">Un hôpital qui parle anglais, ville par ville</summary>
+          <div class="secours__lieux" id="hop-liste">
+            <!-- Tokyo, Asakusa : 聖路加国際病院, à Tsukiji. Adresse et téléphone : page
+                 d'accès du site de l'hôpital, https://hospital.luke.ac.jp/access/index.html ; urgences,
+                 https://hospital.luke.ac.jp/eng/for-patients/emergency-care/index.html (ces deux pages
+                 relevées par recherche : le serveur de l'hôpital refuse la lecture directe).
+                 Catégorie 1, urgences 24h/24, interprète au téléphone 24h/24 (anglais, français…) :
+                 liste du ministère, feuille 13.東京都 ; anglais, chinois, coréen, russe : liste de la
+                 métropole de Tokyo (30 janv. 2026),
+                 https://www.hokeniryo.metro.tokyo.lg.jp/iryo/iryo_hoken/medical_info_eng/hospitals_list/chiyodaku -->
+            <article class="secours__lieu secours__hop" id="hop-asakusa" data-etapes="step-1">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Tokyo</b><span class="secours__dates">Asakusa</span></p>
+              <p class="secours__hop-nom"><b lang="ja">聖路加国際病院</b> <span class="mut">St. Luke's International Hospital</span></p>
+              <p class="secours__adr" lang="ja">〒104-8560 東京都中央区明石町9-1</p>
+              <p class="secours__tel">Tél. <a href="tel:+81335415151">03-3541-5151</a></p>
+              <p class="secours__hop-note">Urgences 24h/24. Interprète au téléphone 24h/24, dont anglais et français.</p>
+            </article>
+            <!-- Kanazawa : 石川県立中央病院. Site de l'hôpital : adresse et téléphone, https://kenchu.ipch.jp/ ;
+                 centre d'urgences ouvert 365 jours, 24h/24, https://kenchu.ipch.jp/department/ipch-ec3/ ;
+                 « certains médecins parlent anglais », pas de réservation d'interprète,
+                 https://kenchu.ipch.jp/for-international-patients/. Liste du ministère, feuille 17.石川県 :
+                 catégorie 1, urgences de niveau 3, interprète à distance 24h/24 (anglais, français…) ;
+                 le site de l'hôpital ne parle pas de ce service. -->
+            <article class="secours__lieu secours__hop" id="hop-kanazawa" data-etapes="step-2">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Kanazawa</b></p>
+              <p class="secours__hop-nom"><b lang="ja">石川県立中央病院</b> <span class="mut">Ishikawa Prefectural Central Hospital</span></p>
+              <p class="secours__adr" lang="ja">〒920-8530 石川県金沢市鞍月東2丁目1番地</p>
+              <p class="secours__tel">Tél. <a href="tel:+81762378211">076-237-8211</a></p>
+              <p class="secours__hop-note">Urgences 24h/24, pour les cas graves. Interprète à distance 24h/24, dont anglais et français. Certains médecins parlent anglais.</p>
+            </article>
+            <!-- Kyoto : 康生会 武田病院, près de la gare. Site de l'hôpital : adresse et téléphone,
+                 https://www.takedahp.or.jp/koseikai/access/ ; urgences 24h/24, centre d'aide aux
+                 étrangers (interprètes anglais, chinois, coréen) du lundi au vendredi 8:00 – 19:00 et le
+                 samedi 8:30 – 17:00, interprétation par tablette (KOTOBAL) 24h/24,
+                 https://www.takedahp.or.jp/koseikai/english/. Liste du ministère, feuille 26.京都府 :
+                 catégorie 1, certifié JMIP (accueil des patients étrangers), interprètes du lundi au
+                 samedi, interprète à distance 24h/24. -->
+            <article class="secours__lieu secours__hop" id="hop-kyoto" data-etapes="step-3">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Kyoto</b></p>
+              <p class="secours__hop-nom"><b lang="ja">康生会 武田病院</b> <span class="mut">Koseikai Takeda Hospital</span></p>
+              <p class="secours__adr" lang="ja">〒600-8558 京都市下京区塩小路通西洞院東入東塩小路町841-5</p>
+              <p class="secours__tel">Tél. <a href="tel:+81753611351">075-361-1351</a></p>
+              <p class="secours__hop-note">Près de la gare. Urgences 24h/24. Interprètes du lundi au samedi ; tablette d'interprétation 24h/24.</p>
+            </article>
+            <!-- Osaka : 大野記念病院, à Minami-Horie. Site de l'hôpital : https://www.ohno.or.jp/english/ (adresse,
+                 téléphone, urgences 24h/24, interprètes gratuits). Liste du ministère, feuille 27.大阪府 :
+                 interprète à distance 24h/24, dont anglais et français. -->
+            <article class="secours__lieu secours__hop" id="hop-osaka" data-etapes="step-4">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Osaka</b></p>
+              <p class="secours__hop-nom"><b lang="ja">大野記念病院</b> <span class="mut">Ohno Memorial Hospital</span></p>
+              <p class="secours__adr" lang="ja">〒550-0015 大阪府大阪市西区南堀江1-26-10</p>
+              <p class="secours__tel">Tél. <a href="tel:+81665311815">06-6531-1815</a></p>
+              <p class="secours__hop-note">Urgences 24h/24. Interprètes gratuits, dont anglais et français, 24h/24 au téléphone.</p>
+            </article>
+            <!-- Hakone : aucun établissement de la liste ni à Hakone, ni à Yugawara, ni à Manazuru. Le plus
+                 proche : 小田原市立総合医療センター, à Odawara (ex-小田原市立病院, renommé à l'ouverture du
+                 nouvel hôpital en 2026), environ 1 h de Moto-Hakone : le bus Odawara – Motohakone prend
+                 ~1 h (fiche du ryokan, data/trip.js), puis ~5 min en taxi depuis la gare d'Odawara (page
+                 d'accès). Site : https://www.city.odawara.kanagawa.jp/hospital/ (adresse, téléphone),
+                 https://www.city.odawara.kanagawa.jp/hospital/access/ et
+                 https://www.city.odawara.kanagawa.jp/hospital/outpatient/emergency/ : urgences 24h/24 ;
+                 « 原則、平日日中は救急搬送される患者さん以外、救急外来での診療を行っていません » (en
+                 semaine de jour, seulement les patients amenés en ambulance) ; de 17:00 à 8:30 les jours
+                 de semaine, et tout le week-end et les jours fériés : « 事前にお電話で受診確認 »
+                 (téléphoner avant). Le séjour à Hakone, du mercredi 25 au vendredi 27 nov., ne compte que
+                 des jours de semaine. Liste du ministère, feuille 14.神奈川県 (encore sous l'ancien nom) :
+                 catégorie 1, urgences de niveau 3, interprètes MIC Kanagawa (anglais, français…)
+                 « 原則 平日の8:30-17:00 », appli VoiceTra sinon. MIC Kanagawa envoie ses interprètes à la
+                 demande de l'hôpital, pas du patient :
+                 https://www.pref.kanagawa.jp/docs/md5/cnt/f536320/p240917.html. Retiré de la fiche (en semaine de 8:30 à 17:00,
+                 à la demande de l'hôpital) : à ces heures, l'hôpital ne reçoit que les ambulances. -->
+            <article class="secours__lieu secours__hop" id="hop-hakone" data-etapes="step-5">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Hakone</b><span class="secours__dates">à Odawara, ~1 h</span></p>
+              <p class="secours__hop-nom"><b lang="ja">小田原市立総合医療センター</b> <span class="mut">Odawara Municipal Medical Center, ex‑<span lang="ja">小田原市立病院</span></span></p>
+              <p class="secours__adr" lang="ja">〒250-8558 神奈川県小田原市久野46番地</p>
+              <p class="secours__tel">Tél. <a href="tel:+81465343175">0465-34-3175</a></p>
+              <p class="secours__hop-note">En semaine de 8:30 à 17:00 : seulement en ambulance (119). Le soir, la nuit et le week-end : téléphonez d'abord.</p>
+            </article>
+            <!-- Tokyo, Ikebukuro : 東京都立大塚病院 (Ohtsuka), à Minami-Otsuka, dans le même arrondissement
+                 (Toshima-ku) que La Vita. Adresse et téléphone : https://www.tmhp.jp/ohtsuka/index.html ;
+                 urgences : https://www.tmhp.jp/ohtsuka/outpatient/er.html (« 当院は原則紹介予約制の病院です
+                 が、緊急性のある患者様には24時間体制で対応しています » : en principe sur recommandation
+                 et rendez-vous, mais urgences 24h/24 pour les cas urgents ; « 来院前にお電話をお願いします
+                 (代表) 03-3941-3211 » ; la page n'exige pas l'ambulance ; soins surtout de premiers
+                 secours) ; accueil des étrangers :
+                 https://www.tmhp.jp/ohtsuka/section/womensmedicalcare.html (audit JMIP passé en octobre
+                 2019, centre d'aide aux patients, outils d'interprétation).
+                 Liste du ministère, feuille 13.東京都, « Tokyo Metropolitan Ohtsuka hospital » : catégorie 1,
+                 interprète à distance (Mediphone, dont anglais et français) 24h/24, appli VoiceTra et
+                 Pocketalk 24h/24.
+                 Écarté, moins bien documenté : l'hôpital métropolitain de Toshima (Itabashi-ku), urgences
+                 24h/24 sur appel (https://www.tmhp.jp/toshima/section/feature/emergency.html) mais le
+                 français seulement en semaine de 9:00 à 19:00 (liste du ministère) et une page d'admission
+                 qui demande de venir avec un interprète
+                 (https://www.tmhp.jp/toshima/inpatient/admission/procedure.html). -->
+            <article class="secours__lieu secours__hop" id="hop-ikebukuro" data-etapes="step-6">
+              <span class="secours__soir" hidden>Ce soir</span>
+              <p class="secours__quand"><b class="secours__nom">Tokyo</b><span class="secours__dates">Ikebukuro</span></p>
+              <p class="secours__hop-nom"><b lang="ja">東京都立大塚病院</b> <span class="mut">Tokyo Metropolitan Ohtsuka Hospital</span></p>
+              <p class="secours__adr" lang="ja">〒170-8476 東京都豊島区南大塚2丁目8番1号</p>
+              <p class="secours__tel">Tél. <a href="tel:+81339413211">03-3941-3211</a></p>
+              <p class="secours__hop-note">Urgences 24h/24 si c'est urgent : téléphonez d'abord. Interprète à distance 24h/24, dont anglais et français.</p>
+            </article>
+          </div>
+        </details>
       </section>
 
-      <section class="secours__sec">
-        <h2>Vols &amp; rendez-vous</h2>
-        <div id="flights"></div>
-        <div id="rdv"></div>
-      </section>
-
-      <section class="secours__sec">
+      <section class="secours__sec" id="urgences">
         <h2>Urgences</h2>
         <div class="secours__urg">
-          <div class="secours__urg-row"><b>Police</b><span class="secours__urg-num"><a href="tel:110">110</a></span></div>
-          <div class="secours__urg-row"><b>Pompiers &amp; ambulance</b><span class="secours__urg-num"><a href="tel:119">119</a></span></div>
-          <div class="secours__urg-row"><b>Japan Visitor Hotline <span class="mut">anglais, 24h/24</span></b><span class="secours__urg-num"><a href="tel:05038162787">050-3816-2787</a></span></div>
+          <p class="secours__urg-what" id="urg-what" hidden></p>
+          <!-- Écrits ici en repli : la page donne toujours 110, 119 et la hotline, même si
+               les données ou le script manquent. Le script les remplace par ceux de SURPLACE. -->
+          <div id="urg-tels">
+            <div class="secours__urg-row"><b>Police</b><span class="secours__urg-num"><a href="tel:110">110</a></span></div>
+            <div class="secours__urg-row"><b>Pompiers, ambulance</b><span class="secours__urg-num"><a href="tel:119">119</a></span></div>
+            <div class="secours__urg-row"><b>Hotline touristes</b><span class="secours__urg-num"><a href="tel:05038162787">050-3816-2787</a></span></div>
+          </div>
           <div class="secours__amba">
             <b>Ambassade de France à Tokyo</b>
             <p class="secours__adr" lang="ja">〒106-8514 東京都港区南麻布4-11-44</p>
@@ -64,72 +241,89 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
             <div class="secours__urg-row"><b>Urgence consulaire <span class="mut">urgence humaine avérée, hors visa</span></b><span class="secours__urg-num"><a href="tel:+818095393970">+81 80-9539-3970</a></span></div>
           </div>
         </div>
+        <div class="secours__seisme" id="seisme" hidden></div>
       </section>
 
-      <section class="secours__sec">
+      <section class="secours__sec" id="logements">
+        <h2>Logements</h2>
+        <div class="secours__lieux" id="hotels"></div>
+      </section>
+
+      <section class="secours__sec" id="vols">
+        <h2>Vols &amp; rendez-vous</h2>
+        <!-- Repliés à l'écran pour garder la page courte ; la feuille imprimée les ouvre. -->
+        <details class="secours__plie" id="vols-plie">
+          <summary id="vols-resume"></summary>
+          <div id="flights"></div>
+          <div id="rdv"></div>
+        </details>
+      </section>
+
+      <section class="secours__sec" id="phrases">
         <h2>Phrases à montrer</h2>
-        <div class="secours__phrases">
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">この住所までお願いします</p>
-            <p class="secours__romaji">Kono jūsho made onegai shimasu</p>
-            <p class="secours__fr">À cette adresse, s'il vous plaît</p>
+        <!-- Repliées à l'écran, comme les vols : sur un téléphone, la place se compte en pixels.
+             Les deux phrases du blessé, elles, sont en tête de la fiche. La feuille imprimée
+             ouvre le pli. -->
+        <details class="secours__plie" id="phrases-plie">
+          <summary>Adresse, perdu, toilettes, addition…</summary>
+          <div class="secours__phrases">
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">この住所までお願いします</p>
+              <p class="secours__romaji">Kono jūsho made onegai shimasu</p>
+              <p class="secours__fr">À cette adresse, s'il vous plaît</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">道に迷いました</p>
+              <p class="secours__romaji">Michi ni mayoimashita</p>
+              <p class="secours__fr">Je suis perdu(e)</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">この番号に電話してもらえますか</p>
+              <p class="secours__romaji">Kono bangō ni denwa shite moraemasu ka</p>
+              <p class="secours__fr">Pouvez-vous appeler ce numéro ?</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">トイレはどこですか</p>
+              <p class="secours__romaji">Toire wa doko desu ka</p>
+              <p class="secours__fr">Où sont les toilettes ?</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">お会計お願いします</p>
+              <p class="secours__romaji">O-kaikei onegai shimasu</p>
+              <p class="secours__fr">L'addition, s'il vous plaît</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">二人です</p>
+              <p class="secours__romaji">Futari desu</p>
+              <p class="secours__fr">Deux personnes</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">予約なしで大丈夫ですか</p>
+              <p class="secours__romaji">Yoyaku nashi de daijōbu desu ka</p>
+              <p class="secours__fr">Sans réservation, c'est possible ?</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">カードは使えますか</p>
+              <p class="secours__romaji">Kādo wa tsukaemasu ka</p>
+              <p class="secours__fr">La carte bancaire, c'est possible ?</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">日本語が話せません</p>
+              <p class="secours__romaji">Nihongo ga hanasemasen</p>
+              <p class="secours__fr">Je ne parle pas japonais</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">ありがとうございます</p>
+              <p class="secours__romaji">Arigatō gozaimasu</p>
+              <p class="secours__fr">Merci beaucoup</p>
+            </div>
+            <div class="secours__phrase">
+              <p class="secours__jp" lang="ja">すみません</p>
+              <p class="secours__romaji">Sumimasen</p>
+              <p class="secours__fr">Excusez-moi</p>
+            </div>
           </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">道に迷いました</p>
-            <p class="secours__romaji">Michi ni mayoimashita</p>
-            <p class="secours__fr">Je suis perdu(e)</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">この番号に電話してもらえますか</p>
-            <p class="secours__romaji">Kono bangō ni denwa shite moraemasu ka</p>
-            <p class="secours__fr">Pouvez-vous appeler ce numéro ?</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">トイレはどこですか</p>
-            <p class="secours__romaji">Toire wa doko desu ka</p>
-            <p class="secours__fr">Où sont les toilettes ?</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">お会計お願いします</p>
-            <p class="secours__romaji">O-kaikei onegai shimasu</p>
-            <p class="secours__fr">L'addition, s'il vous plaît</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">二人です</p>
-            <p class="secours__romaji">Futari desu</p>
-            <p class="secours__fr">Deux personnes</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">予約なしで大丈夫ですか</p>
-            <p class="secours__romaji">Yoyaku nashi de daijōbu desu ka</p>
-            <p class="secours__fr">Sans réservation, c'est possible ?</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">カードは使えますか</p>
-            <p class="secours__romaji">Kādo wa tsukaemasu ka</p>
-            <p class="secours__fr">La carte bancaire, c'est possible ?</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">日本語が話せません</p>
-            <p class="secours__romaji">Nihongo ga hanasemasen</p>
-            <p class="secours__fr">Je ne parle pas japonais</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">病院に行きたいです</p>
-            <p class="secours__romaji">Byōin ni ikitai desu</p>
-            <p class="secours__fr">Un hôpital, s'il vous plaît</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">ありがとうございます</p>
-            <p class="secours__romaji">Arigatō gozaimasu</p>
-            <p class="secours__fr">Merci beaucoup</p>
-          </div>
-          <div class="secours__phrase">
-            <p class="secours__jp" lang="ja">すみません</p>
-            <p class="secours__romaji">Sumimasen</p>
-            <p class="secours__fr">Excusez-moi</p>
-          </div>
-        </div>
+        </details>
       </section>
     </div>
   </div>
@@ -137,36 +331,73 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 
 <script type="module">
 import { TRIP, STEPS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
-import { mountChrome, esc, formatDate } from './app/ui.js';
+import { SURPLACE } from './data/pratique.js';
+import { mountChrome, esc, formatDate, today } from './app/ui.js';
 
 // Même coque que les autres pages (barre, pied) ; masquée à l'impression.
 mountChrome('secours.html');
 const q = (id) => document.getElementById(id);
 const telHref = (t) => t.replace(/[^+\d]/g, '');
 
+// L'étape de ce soir : celle où l'on dort la nuit qui vient. On y dort de l'arrivée (incluse)
+// au départ (exclu) : le 14 nov., on dort déjà à Kanazawa. Le 2 déc. (le départ) et hors du
+// séjour, aucune étape ne convient : ni badge, ni changement d'ordre.
+const auj = today();
+const ceSoir = STEPS.find((s) => auj >= s.from && auj < s.to);
+
 q('dates').textContent =
   formatDate(TRIP.start) + ' → ' + formatDate(TRIP.end, { year: true })
   + ' · ' + TRIP.nights + ' nuits · ' + TRIP.travellers + ' voyageurs';
 
-// Les six logements, dans l'ordre du voyage. L'adresse japonaise est en grand :
-// c'est ce qu'on montre au chauffeur. Rien de sensible (ni code, ni n° de résa).
-q('hotels').innerHTML = HOTELS.map((h) => {
+// Les urgences : les numéros et le séisme viennent de SURPLACE, la seule version
+// de ces textes. Les numéros deviennent des liens d'appel. Chaque entrée est gardée :
+// si elle manque, le repli écrit dans le HTML (110, 119, la hotline) reste en place.
+const urgences = SURPLACE.find((k) => k.id === 'urgences');
+if (urgences?.what) {
+  q('urg-what').textContent = urgences.what;
+  q('urg-what').hidden = false;
+}
+if (urgences?.tels?.length) {
+  q('urg-tels').innerHTML = urgences.tels.map((t) => `
+  <div class="secours__urg-row"><b>${esc(t.label)}</b><span class="secours__urg-num"><a href="tel:${esc(telHref(t.n))}">${esc(t.n)}</a></span></div>`).join('');
+}
+
+const seisme = SURPLACE.find((k) => k.id === 'seisme');
+if (seisme) {
+  q('seisme').innerHTML = `<h3>${esc(seisme.title)}</h3><p>${esc(seisme.what)}</p>`;
+  q('seisme').hidden = false;
+}
+
+// Les six logements, dans l'ordre du voyage — sauf celui de ce soir, qui passe en
+// premier avec son badge : rentrer est ce qu'on cherche fatigué ou blessé (le tri est
+// stable : les autres gardent leur ordre). L'adresse japonaise est en grand : c'est ce
+// qu'on montre au chauffeur. Chaque fiche a son ancre (#h-<id>), pour que les autres
+// pages y renvoient. Sans téléphone, on dit où écrire : le logement répond par la
+// messagerie Booking. Rien de sensible (ni code, ni n° de résa).
+const logements = [...HOTELS].sort((a, b) => (b.stepId === ceSoir?.id) - (a.stepId === ceSoir?.id));
+q('hotels').innerHTML = logements.map((h) => {
   const s = STEPS.find((x) => x.id === h.stepId);
   return `
-  <article class="secours__lieu">
+  <article class="secours__lieu" id="h-${esc(h.id)}">${s === ceSoir ? '<span class="secours__soir">Ce soir</span>' : ''}
     <p class="secours__quand"><span class="secours__num">${s.n}</span>
-      <span>du <span class="data">${formatDate(s.from)}</span> au <span class="data">${formatDate(s.to)}</span></span></p>
-    <p class="secours__nom">${esc(h.name)}</p>
+      <b class="secours__nom">${esc(h.name)}</b>
+      <span class="secours__dates data">${esc(s.label)}</span></p>
     <p class="secours__adr" lang="ja">${esc(h.address)}</p>
     <p class="secours__tel">${h.tel
       ? `Tél. <a href="tel:${esc(telHref(h.tel))}">${esc(h.tel)}</a>`
-      : '<span class="mut">Téléphone non communiqué</span>'}</p>
-    <p class="secours__io"><span class="mut">Arrivée</span> <span class="data">${esc(h.checkIn)}</span>
-      · <span class="mut">Départ</span> <span class="data">${esc(h.checkOut)}</span></p>
+      : '<span class="mut">Pas de téléphone : messagerie Booking</span>'}</p>
+    <p class="secours__acts"><button class="btn btn--ghost" type="button" disabled>Montrer au chauffeur</button><a class="btn btn--ghost" href="${esc(h.maps)}" target="_blank" rel="noopener">Maps</a></p>
+    <details class="secours__arrivee">
+      <summary><span><span class="mut">Arrivée</span> <span class="data">${esc(h.checkIn)}</span>
+        · <span class="mut">Départ</span> <span class="data">${esc(h.checkOut)}</span></span></summary>
+      <p>${esc(h.arrivee)}</p>
+    </details>
   </article>`;
 }).join('');
 
-// Les vols : date, horaires, numéro, aéroports. « +1 » = le lendemain.
+// Les vols : le pli dit les deux dates, le détail donne les horaires, le numéro et
+// les aéroports. « +1 » = le lendemain.
+q('vols-resume').textContent = FLIGHTS.map((f) => `${f.label} ${formatDate(f.date)}`).join(' · ');
 q('flights').innerHTML = FLIGHTS.map((f) => `
   <article class="secours__vol">
     <p class="secours__vol-h">${esc(f.label)} · <span class="data">${formatDate(f.date, { year: true })}</span> · ${esc(f.airline)}</p>
@@ -177,11 +408,48 @@ q('flights').innerHTML = FLIGHTS.map((f) => `
 q('rdv').innerHTML = RESERVATIONS.map((r) => `
   <p class="secours__rdv"><b>${esc(r.title)}</b> · <span class="data">${formatDate(r.date)} ${esc(r.slot)}</span> · ${esc(r.where)}</p>`).join('');
 
-q('print').addEventListener('click', () => window.print());
-</script>
+// L'hôpital de ce soir sort du pli, avec son badge : un blessé n'a pas à le chercher. Il
+// est écrit en dur plus haut, avec les étapes qu'il dessert (data-etapes) : une fiche par
+// étape ; Tokyo en a deux (Asakusa, Ikebukuro). Hors séjour, ou le jour du départ, tous restent dans le pli.
+const hopitalSoir = ceSoir && document.querySelector(`.secours__hop[data-etapes~="${ceSoir.id}"]`);
+if (hopitalSoir) {
+  hopitalSoir.querySelector('.secours__soir').hidden = false;
+  q('hop-soir-liste').append(hopitalSoir);
+  q('hop-soir').hidden = false;
+  q('hop-resume').textContent = 'Les autres hôpitaux';
+}
 
-<script>
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+q('print').addEventListener('click', () => window.print());
+// À l'impression, les plis (hôpitaux, vols, phrases) s'ouvrent : la feuille les porte. On
+// note l'état de chaque pli avant, et on le rétablit après : l'écran retrouve la page
+// comme on l'a laissée.
+const plis = [...document.querySelectorAll('.secours__plie')];
+let etatsDesPlis = [];
+addEventListener('beforeprint', () => { etatsDesPlis = plis.map((d) => d.open); plis.forEach((d) => { d.open = true; }); });
+addEventListener('afterprint', () => { plis.forEach((d, i) => { d.open = etatsDesPlis[i]; }); });
+
+// Une ancre (#h-<id>, depuis Villes ou la recherche) vise une fiche que ce script
+// vient de dessiner : le navigateur n'a pas trouvé sa cible au chargement. On y va
+// à la main, sous la barre collante (scroll-margin), et d'un coup — le défilement
+// en douceur de la page partirait du haut et serait coupé. Une fois tout chargé,
+// on recadre : une police qui se pose peut décaler la page.
+if (location.hash) {
+  const allerALAncre = () => document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+  history.scrollRestoration = 'manual';   // le navigateur ne rend pas la main à l'ancien défilement
+  allerALAncre();
+  addEventListener('load', allerALAncre);
+}
+
+// « Montrer au chauffeur » : l'adresse en grand, plein écran. Le module des quartiers
+// pèse près de 570 Ko avec ses données et ne sert qu'à ce bouton : on ne le charge
+// qu'après le premier rendu. Les numéros et les logements sont là d'abord ; le bouton,
+// grisé en attendant, est remplacé par le vrai, déjà câblé, sans rien déplacer. Si le
+// module ne vient pas (hors-ligne, ou cassé), la page reste complète sans ce bouton.
+import('./app/quartiers.js').then(({ boutonChauffeur }) => {
+  HOTELS.forEach((h) => q('h-' + h.id).querySelector('.secours__acts button').replaceWith(boutonChauffeur(h)));
+}).catch(() => {
+  document.querySelectorAll('.secours__acts button:disabled').forEach((b) => b.remove());
+});
 </script>
 </body>
 </html>

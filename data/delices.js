@@ -19,6 +19,8 @@ export const DELICES = Object.freeze([
     { id: 'iekei', img: 'img/01-2fb7065c.webp', e: '🍜', n: 'Ramen iekei de Yokohama', jp: '家系ラーメン', d: 'Ramen tonkotsu-shōyu né à Yokohama, nouilles épaisses, épinards et nori — sur place le 28 novembre, dans sa ville d\'origine.' },
     { id: 'hato-sable', img: 'img/hatosable-5e740272.webp', e: '🍪', n: 'Hato sablé de Kamakura', jp: '鳩サブレー', d: 'Les sablés au beurre en forme de colombe de Toshimaya, LE souvenir de Kamakura — à deux pas de Komachi-dōri, le 29 novembre.' },
     { id: 'unagi', img: 'img/tokyo-chikuyotei-unadon01s2100-a40b537a.webp', e: '🍱', n: 'Unagi kabayaki', jp: '鰻の蒲焼き', d: 'Anguille ouverte, grillée et laquée d\'une sauce soja sucrée sur le riz, façon Edo — dans les vieilles maisons à anguille d\'Asakusa.' },
+    { id: 'taiyaki', img: 'img/taiyaki-07c7a57a.webp', e: '🐟', n: 'Taiyaki', jp: 'たい焼き', d: 'Le poisson fourré, mangé chaud dans la rue.' },
+    { id: 'ichigo-daifuku', img: 'img/ichigo-daifuku-ae27e308.webp', e: '🍓', n: 'Ichigo daifuku', jp: 'いちご大福', d: 'Fraise + mochi = magie.' },
   ]},
   { cityId: 'kanazawa', items: [
     { id: 'kaisendon', img: 'img/20231125-p1033778-e2cf0824.webp', e: '🍚', n: 'Kaisen-don aux amaebi', jp: '海鮮丼', d: 'Le bol du marché Ōmichō, couronné de crevettes douces crues de la mer du Japon.' },
@@ -54,6 +56,7 @@ export const DELICES = Object.freeze([
     { id: 'ikayaki', img: 'img/img-20211230-113552-3f30deb6.webp', e: '🦑', n: 'Ikayaki', jp: 'いか焼き', d: 'Une fine galette de pâte saisie avec du calamar, pliée brûlante — la version culte au sous-sol du grand magasin Hanshin, à Umeda.' },
     { id: 'doteyaki', img: 'img/doteyaki-001-2e9a5662.webp', e: '🥘', n: 'Doteyaki', jp: 'どて焼き', d: 'Du tendon de bœuf fondant, longuement mijoté au miso sucré — aux comptoirs de Shinsekai, à côté des brochettes panées.' },
     { id: 'kakinoha', img: 'img/kakinoha-persimmon-leaf-sushi-in-nara-de308e61.webp', e: '🍣', n: 'Kakinoha-zushi de Nara', jp: '柿の葉寿司', d: 'Bouchées de sushi au maquereau enveloppées d\'une feuille de kaki, spécialité de l\'intérieur des terres — à Nara, pour le déjeuner du 24 novembre.' },
+    { id: 'horumon', img: 'img/horumon-add8bb49.webp', e: '🥩', n: 'Horumon', jp: 'ホルモン', d: 'Les abats grillés, pour les braves — ils se répandent à Osaka après-guerre, portés par la communauté coréenne.' },
   ]},
   { cityId: 'hakone', items: [
     { id: 'kurotamago', img: 'img/black-egg-owakudani-hakone-10621176696-70307239.webp', e: '🥚', n: 'Œufs noirs d\'Ōwakudani', jp: '黒たまご', d: 'Cuits dans les sources sulfureuses de la vallée — la légende offre sept ans de vie par œuf.' },
@@ -61,5 +64,6 @@ export const DELICES = Object.freeze([
     { id: 'kaiseki-fukuya', img: 'img/jisaku-kaiseki-ryori-01-afcb0d2f.webp', e: '♨️', n: 'Kaiseki du Fukuya', jp: '会席', d: 'Votre dîner du 25 novembre, une dizaine de plats — déjà réservé, ventre vide exigé.' },
     { id: 'kamaboko', img: 'img/odawarakamaboko-b3385f96.webp', e: '🍥', n: 'Kamaboko d\'Odawara', jp: '小田原かまぼこ', d: 'Le pain de poisson vapeur d\'Odawara, un savoir-faire de six siècles — à grignoter à la gare d\'Odawara, chez Suzuhiro, avant le bus pour le lac.' },
     { id: 'onsen-manju', img: 'img/yunohana-manju-4e45a0d5.webp', e: '🥮', n: 'Onsen manjū de Hakone-Yumoto', jp: '温泉まんじゅう', d: 'Les petites brioches vapeur fourrées à l\'anko, le souvenir tiède des villes d\'eaux — dans la grand-rue de Hakone-Yumoto, en passant le 25 novembre.' },
+    { id: 'soba-hakone', img: 'img/soba-de-montagne-d40cea73.webp', e: '🍜', n: 'Soba de montagne', jp: '蕎麦', d: 'Des soba avec vue, après le téléphérique.' },
   ]},
 ].map(Object.freeze));

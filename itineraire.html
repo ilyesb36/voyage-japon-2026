@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le programme — Japon 2026</title>
-<meta name="description" content="Le programme jour par jour, et trente journées type par ville si le programme tombe à l'eau.">
+<meta name="description" content="Le programme jour par jour, et des journées type par ville si le programme tombe à l'eau.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -31,7 +31,7 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   <section class="section">
     <div class="shead disc">
       <h2>Les journées type</h2>
-      <p>Trente façons d'occuper une journée, si le programme tombe à l'eau.</p>
+      <p>De quoi occuper une journée, si le programme tombe à l'eau.</p>
       <span class="shead__meta" id="tpl-meta"></span>
     </div>
     <div class="chipbar" id="tpl-filter"></div>
@@ -39,20 +39,13 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
 
   <section class="section">
-    <div class="shead disc">
-      <h2>À manger absolument</h2>
-      <p>Les spécialités de chaque étape.</p>
-      <span class="shead__meta" id="eat-meta"></span>
-    </div>
-    <div class="chipbar" id="eat-filter"></div>
-    <div id="eatlist"></div>
-  </section>
-
-  <section class="section">
     <div class="shead disc"><h2 id="jours-titre">Les jours</h2></div>
     <nav class="daynav chipbar" id="daynav" aria-label="Aller à une étape"></nav>
     <div id="itin"></div>
   </section>
+
+  <!-- Les plats et les bonnes tables ont leur page : une seule place pour manger. -->
+  <p class="more"><a href="table.html">Les spécialités et les bonnes tables, ville par ville</a></p>
 </main>
 <dialog class="tpldlg" id="tpldlg"><div class="tpldlg__in"><button class="tpldlg__x" id="tpldlg-x" aria-label="Fermer">&times;</button><div id="tpldlg-body"></div></div></dialog>
 
@@ -61,7 +54,6 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 import { CITIES, STEPS, HOTELS, SEGMENTS, EXCURSIONS } from './data/trip.js';
 import { DAYS, TEMPLATES } from './data/days.js';
 import { LIEUX } from './data/lieux.js';
-import { DELICES } from './data/delices.js';
 import { SPOTS } from './data/spots.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, today } from './app/ui.js';
 import { resaStrip, resasForDate } from './app/resa.js';
@@ -77,23 +69,9 @@ const KIND = {
   vol: 'Vol', transfert: 'Trajet', excursion: 'Excursion', etape: null, libre: 'Journée libre',
 };
 
-// Les journées type ne méritent pas leur propre page : elles ne servent qu'au
-// moment où l'on regarde un jour sans programme. On les rattache donc à la
-// ville, et on les propose au bon endroit.
-const tplByCity = TEMPLATES.reduce((m, t) => ((m[t.cityId] ||= []).push(t), m), {});
-
-// Une journée est libre si elle le dit, ou si son programme tient en trois
-// lignes. Ces jours-là renvoient vers les journées type de leur ville.
-
-// Tokyo est deux étapes distinctes mais une seule ville : ses journées type ne
-// se rendent qu'à la première, la seconde y renvoie.
-const firstStepOfCity = {};
-STEPS.forEach((s) => (firstStepOfCity[s.cityId] ??= s.id));
-
 // --- les journées type, en vue ------------------------------------------------
 // Elles étaient repliées en fin d'étape : personne ne les trouvait. Elles ont
-// leur section, en haut, avec leur photo — et le renvoi depuis les jours
-// libres reste en place.
+// leur section, en haut, avec leur photo.
 const TPL_CITY = [{ id: 'all', name: 'Toutes' },
   ...[...new Set(TEMPLATES.map((t) => t.cityId))].filter(Boolean)
     .map((id) => ({ id, name: CITIES[id]?.name || id, color: CITIES[id]?.color })),
@@ -103,7 +81,7 @@ let tplState = 'all';
 
 q('tpl-filter').innerHTML = TPL_CITY.map((o) => `
   <button class="chip" data-city="${o.id}" aria-pressed="${o.id === 'all'}">
-    ${o.color ? `<span class="chip__dot" style="background:${o.color}"></span>` : ''}${esc(o.name)}
+    ${o.color ? `<span class="chip__dot" style="background:var(--c-${o.id})"></span>` : ''}${esc(o.name)}
   </button>`).join('');
 
 q('tpl-filter').addEventListener('click', (e) => {
@@ -142,26 +120,11 @@ function paintTemplates() {
 }
 paintTemplates();
 
-// Cliquer une vignette ouvre le détail là où il vit déjà, en bas de l'étape.
-q('tplgrid').addEventListener('click', (e) => {
-  const a = e.target.closest('.tpl');
-  if (!a) return;
-  const target = document.querySelector(a.getAttribute('href'));
-  if (!target) return;
-  e.preventDefault();
-  target.closest('details.alt')?.setAttribute('open', '');
-  target.setAttribute('open', '');
-  // Le défilement animé est une animation comme une autre : si le système
-  // demande de les réduire, on saute directement à la cible.
-  const anime = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  target.scrollIntoView({ block: 'center', behavior: anime ? 'smooth' : 'auto' });
-});
-
 // --- navigation par étape -----------------------------------------------------
 q('daynav').innerHTML = STEPS.map((s) => {
   const c = CITIES[s.cityId];
   return `<a class="chip" href="#${s.id}" style="--c:var(--c-${c.id})">
-    <span class="chip__dot" style="background:${c.color}"></span>${esc(c.name)}
+    <span class="chip__dot" style="background:var(--c-${c.id})"></span>${esc(c.name)}
     <span class="mut data"> ${formatDate(s.from).replace(/ (novembre|décembre)/, (m, p) => ' ' + p.slice(0, 3))}</span>
   </a>`;
 }).join('');
@@ -205,33 +168,6 @@ for (const step of STEPS) {
     ${days.map((d) => renderDay(d, c)).join('')}
     
   </section>`;
-}
-
-/**
- * Les journées type de la ville, une seule fois par étape et non sous chaque
- * jour : les répéter était précisément le défaut qu'on corrige.
- */
-
-function templateItem(t) {
-  return `
-  <details class="alt__item" id="${t.id}">
-    <summary>
-      ${t.img ? `<img class="alt__thumb" src="${esc(t.img)}" alt="" loading="lazy" decoding="async">` : ''}
-      <b>${esc(t.title)}</b>
-      <span class="mut">${esc(t.sub)}</span>
-      ${t.category ? `<span class="day__kind">${esc(t.category)}</span>` : ''}
-      ${t.priority ? `<span class="prio prio--${t.priority}"></span>` : ''}
-    </summary>
-    <ol class="alt__steps">
-      ${t.steps.map((s) => `
-        <li>
-          <span class="data alt__h">${esc(s.h)}</span>
-          <span class="alt__what">${esc(s.text)}${s.note ? ` <span class="mut">— ${esc(s.note)}</span>` : ''}
-          ${s.maps ? ` <a href="${esc(s.maps)}" target="_blank" rel="noopener" class="alt__pin" aria-label="Ouvrir dans Google Maps">↗</a>` : ''}</span>
-          ${s.img ? `<img class="alt__stepshot" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : ''}
-        </li>`).join('')}
-    </ol>
-  </details>`;
 }
 
 // Le vol aller n'appartient à aucune étape : il ouvre le voyage.
@@ -313,52 +249,23 @@ if (location.hash) {
   if(location.hash&&location.hash.indexOf('#tpl-')===0) openTpl(location.hash.slice(1));
 })();
 
-// --- à manger absolument ------------------------------------------------------
-(function(){
-  var KEY='jp2026_eat'; var done={}; try{done=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
-  var st=(function(){var v=new URLSearchParams(location.search).get('ville');return DELICES.some(function(g){return g.cityId===v;})?v:'all';})();
-  var CITYCHIPS=[{id:'all',name:'Toutes'}].concat(DELICES.map(function(g){var c=CITIES[g.cityId];return {id:g.cityId,name:c?c.name:g.cityId,color:c?c.color:null};}));
-  function meta(){var tot=0,ok=0;DELICES.forEach(function(g){g.items.forEach(function(x){tot++;if(done[x.id])ok++;});});q('eat-meta').textContent=tot+' plats';}
-  function paint(){
-    var h='';
-    DELICES.forEach(function(g){
-      if(st!=='all'&&g.cityId!==st)return;
-      var c=CITIES[g.cityId];
-      h+='<div class="eatgrp"><h3><span class="city-dot" style="--c:var(--c-'+g.cityId+')">'+esc(c?c.name:g.cityId)+'</span></h3>';
-      h+='<div class="dishes">';
-      g.items.forEach(function(x){
-        h+='<article class="dish">'+(x.img?'<img class="dish__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="dish__img dish__img--nue">'+x.e+'</span>')+'<span class="dish__txt"><b>'+esc(x.n)+'</b><span class="dish__jp">'+esc(x.jp)+'</span><span class="dish__d">'+esc(x.d)+'</span></span></article>';
-      });
-      h+='</div>';
-      h+='</div>';
-    });
-    q('eatlist').innerHTML=h; meta();
-  }
-  q('eat-filter').innerHTML=CITYCHIPS.map(function(o){return '<button class="chip" data-city="'+o.id+'" aria-pressed="'+(o.id===st)+'">'+(o.color?'<span class="chip__dot" style="background:'+o.color+'"></span>':'')+esc(o.name)+'</button>';}).join('');
-  q('eat-filter').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;st=b.dataset.city;q('eat-filter').querySelectorAll('.chip').forEach(function(c){c.setAttribute('aria-pressed',String(c===b));});paint();});
-  
-  paint();
-})();
 initReveal();
 initCoverParallax();
 initProgressBar();
 </script>
 
 <script>
-/* Enregistrement du service worker : c'est lui qui rend le site utilisable
-   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
-</script>
-<script>
 (function(){
-  var CFG=[["jours","Les jours",["Les jours"]],["types","Journées type",["Les journées type"]],["manger","À manger",["À manger absolument"]]];
+  var CFG=[["jours","Les jours",["Les jours"]],["types","Journées type",["Les journées type"]]];
   var secs=[].slice.call(document.querySelectorAll("main > section.section"));
   var h=function(s){var x=s.querySelector("h2");return x?x.textContent.trim():"";};
   var groups=CFG.map(function(c){return {id:c[0],label:c[1],els:secs.filter(function(s){return c[2].indexOf(h(s))>-1;})};}).filter(function(g){return g.els.length;});
   if(groups.length<2)return;
   var bar=document.createElement("div");bar.className="chipbar ptabs";
   groups[0].els[0].parentNode.insertBefore(bar,groups[0].els[0]);
-  groups.forEach(function(g){g.els.forEach(function(s){s.parentNode.insertBefore(s,null);});});
+  /* Les sections se rangent dans l'ordre des onglets, mais avant le lien de fin de page, qui reste en dernier. */
+  var fin=document.querySelector("main > .more");
+  groups.forEach(function(g){g.els.forEach(function(s){s.parentNode.insertBefore(s,fin);});});
   bar.parentNode.insertBefore(bar,groups[0].els[0]);
   bar.innerHTML=groups.map(function(g){return "<button class=\"chip\" data-tab=\""+g.id+"\">"+g.label+"</button>";}).join("");
   function show(id,push){groups.forEach(function(g){var on=g.id===id;g.els.forEach(function(s){s.hidden=!on;});});

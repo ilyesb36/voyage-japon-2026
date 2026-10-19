@@ -131,7 +131,7 @@ export const BOOKINGS = {
     meals: null,
     amenities: { kitchen: true, washer: true, dryer: false, fridge: true, microwave: true, balcony: true, ac: true },
     bath: 'Douche ou baignoire, salle de bains privative',
-    arrivee: "Métro Kanamecho, sortie 4 : à droite tout de suite, puis tout droit, à droite au carrefour ; l'immeuble noir sur la droite. Le code du portail est dans le PDF d'accès envoyé par l'hôte ; numéro de chambre et code de la boîte à clés arrivent 3 jours avant, le 24 novembre, par la messagerie Booking. Pas d'accueil sur place : ils ne réceptionnent pas de colis et ne gardent rien avant le jour d'arrivée (réponse du 14 octobre). Le jour même, un espace à bagages en libre accès près de l'entrée, avant 16:00 et après le départ (message du 17 août). Valises envoyées d'avance : au centre Yamato d'Ikebukuro-Ekimae, 2-39-7 Nishi-Ikebukuro, à y retirer soi-même.",
+    arrivee: "Métro Kanamecho, sortie 4 : à droite tout de suite, tout droit, à droite au carrefour ; immeuble noir à droite. Code du portail dans le PDF de l'hôte ; chambre et boîte à clés par la messagerie Booking le 24 novembre. Pas d'accueil ni de colis. Espace à bagages en libre accès près de l'entrée, avant 16:00 et après le départ.",
   },
 };
 

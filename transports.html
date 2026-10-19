@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transports — Japon 2026</title>
+<meta name="description" content="Les trajets entre les villes, les passes, les valises et les gestes du quotidien.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- L'ouverture : la gare de Tokyo, d'où part le premier trajet. Photo déjà au
+     catalogue (data/spots.js), donc déjà hors-ligne. -->
+<header class="cover cover--short">
+  <img class="cover__img" src="img/gare-de-tokyo-marunouchi-9a26e211.webp"
+       alt="La façade Marunouchi de la gare de Tokyo" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>Transports</h1>
+    <p class="cover__dates transports__bandeau" id="cover-sub"></p>
+  </div>
+</header>
+
+<!-- Comment je bouge : quatre sections, dans l'ordre où on en a besoin. Les pages
+     Passes et Valises en sont le détail. Les ancres #trajets, #passes, #valises
+     et #quotidien servent de cibles aux autres pages (la recherche, par exemple). -->
+<main class="wrap">
+  <!-- Les raccourcis : les quatre ancres de la page, sous le pouce dès l'ouverture,
+       pour aller droit à la section voulue sans faire défiler les trajets. -->
+  <nav class="transports__raccourcis" aria-label="Aller à une section">
+    <a class="chip" href="#trajets">Trajets</a>
+    <a class="chip" href="#passes">Passes</a>
+    <a class="chip" href="#valises">Valises</a>
+    <a class="chip" href="#quotidien">Au quotidien</a>
+  </nav>
+
+  <!-- 1 — Les trajets entre villes : la seule source, SEGMENTS, plus le départ pour Haneda. -->
+  <section class="section transports__sec" id="trajets">
+    <div class="shead">
+      <h2>Vos trajets entre villes</h2>
+    </div>
+  </section>
+
+  <!-- 2 — Les passes : une carte par pass, qui mène à son détail. -->
+  <section class="section transports__sec" id="passes">
+    <div class="shead">
+      <h2>Vos passes</h2>
+    </div>
+  </section>
+
+  <!-- 3 — Les valises : le système en trois étapes, puis la page Valises. -->
+  <section class="section transports__sec" id="valises">
+    <div class="shead">
+      <h2>Les valises</h2>
+      <p id="valises-lead"></p>
+    </div>
+  </section>
+
+  <!-- 4 — Au quotidien : la Suica, l'escalator, le taxi. -->
+  <section class="section transports__sec" id="quotidien">
+    <div class="shead">
+      <h2>Au quotidien</h2>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { CITIES, STEPS, SEGMENTS, FLIGHTS } from './data/trip.js';
+import { TRAJETS, ENVOYER } from './data/valises.js';
+import { PASSES } from './data/passes.js';
+import { AVANT, SURPLACE } from './data/pratique.js';
+import { mountChrome, esc, formatDate } from './app/ui.js';
+
+mountChrome('transports.html');
+const q = (id) => document.getElementById(id);
+
+// Les mots japonais d'une phrase portent lang="ja" : le téléphone choisit alors les
+// bons caractères (le nom lu sur un bus doit ressembler à celui du bus).
+const avecJp = (t) => esc(t).replace(/[぀-ヿ㐀-鿿＀-￯]+/g, (m) => `<span lang="ja">${m}</span>`);
+
+// --- 1 · les trajets entre villes ---------------------------------------------
+// La seule source des trajets : SEGMENTS (le train, la durée, le prix), plus le
+// départ pour Haneda le 2 décembre, qui n'est pas un changement de ville. Le jour
+// d'un trajet est le jour où l'étape d'arrivée commence ; c'est aussi la date du
+// trajet de valises (TRAJETS) qui lui correspond, d'où la décision et le lien.
+const villeDe = (stepId) => CITIES[STEPS.find((s) => s.id === stepId).cityId];
+const retour = FLIGHTS.find((f) => f.id === 'retour');
+const lignes = [
+  ...SEGMENTS.map((g) => ({
+    date: STEPS.find((s) => s.id === g.toStepId).from,
+    de: villeDe(g.fromStepId), vers: villeDe(g.toStepId),
+    comment: g.label, duree: g.duration, prix: g.pricePerPerson,
+  })),
+  { date: retour.date, de: CITIES.tokyo, vers: { id: 'tokyo', name: 'Haneda' },
+    comment: `Keikyū vers le terminal 3, vol ${retour.legs[0].flight} à ${retour.legs[0].depart}`, duree: '~1 h', prix: '' },
+];
+
+// Le bandeau compte les trajets et les passes ; le nombre de passes mène à la section.
+q('cover-sub').innerHTML = `${lignes.length} trajets entre villes · <a href="#passes">${PASSES.length} passes</a>`;
+
+q('trajets').insertAdjacentHTML('beforeend', `<ol class="ttrajets">${lignes.map((l) => {
+  const v = TRAJETS.find((t) => t.date === l.date);
+  return `<li class="ttrajets__item" style="--c:var(--c-${l.vers.id})">
+    <p><span class="data">${esc(formatDate(l.date, { weekday: true }))}</span> · <b>${esc(l.de.name)} → ${esc(l.vers.name)}</b></p>
+    <p class="mut">${esc(l.comment)} · <span class="data">${esc(l.duree)}</span>${l.prix ? ` · <span class="data">${esc(l.prix)}</span>` : ''}</p>
+    ${v ? `<p><span class="label">Valises</span> ${esc(v.decision)} — <a href="valises.html#t${v.n}">le détail</a></p>` : ''}
+  </li>`; }).join('')}</ol>`);
+
+// --- 2 · les passes -----------------------------------------------------------
+// Les mêmes cartes que « En bref » sur passes.html, dérivées de PASSES : chacune
+// mène au détail du pass (passes.html#hakone, #nikko). La carte du Hakone Freepass
+// porte en plus la règle des bus en une ligne : c'est ce qu'on cherche en montant.
+q('passes').insertAdjacentHTML('beforeend', `<div class="passes__bref">${PASSES.map((p) => `
+  <a class="passes__bref-card" href="passes.html#${esc(p.id)}" style="--c:var(--c-${esc(p.cityId)})">
+    <span class="passes__bref-name">${esc(p.nom)}</span>
+    <span class="passes__bref-meta"><span class="data">${esc(p.duree)}</span> · <span class="data">${esc(p.prix)}</span> · ${esc(p.quand)}</span>
+    <span class="passes__bref-resume">${esc(p.resume)}</span>
+    ${p.regleBus ? `<span class="passes__bref-bus">${avecJp(p.regleBus)}</span>` : ''}
+    <span class="passes__bref-go">Le détail →</span>
+  </a>`).join('')}</div>`);
+
+// --- 3 · les valises ----------------------------------------------------------
+// Le système en trois étapes, lu dans ENVOYER : la même source que la page
+// Valises, pour qu'une phrase corrigée là-bas le soit ici. Ici, la phrase
+// d'ouverture, puis le titre de chaque étape et son texte court ; les notes, les
+// phrases du comptoir et le plan trajet par trajet sont sur la page Valises.
+q('valises-lead').textContent = ENVOYER.systemeLead;
+q('valises').insertAdjacentHTML('beforeend', `
+  <ol class="transports__etapes">${ENVOYER.systeme.map((s) => `
+    <li><span class="step-num" style="--c:var(--ink-2)">${s.n}</span>
+      <div class="transports__etape-body"><h3>${esc(s.titre)}</h3><p>${esc(s.texte)}</p></div></li>`).join('')}</ol>
+  <div class="card cardlink">
+    <a class="cardlink__in" href="valises.html">
+      <span class="cardlink__texte"><b>La page Valises</b></span>
+      <span class="cardlink__fleche" aria-hidden="true">›</span>
+    </a>
+  </div>`);
+
+// --- 4 · au quotidien ---------------------------------------------------------
+// La Suica vient d'AVANT (la démarche, avec son échéance, vit sur À faire : le
+// texte est le même), les conseils de SURPLACE dont la page est Transports, et
+// le taxi, qui renvoie à Secours pour les adresses en japonais. Le conseil
+// « valises » est bien de cette page, mais on ne le redit pas ici : la section
+// « Les valises » et la page Valises le portent déjà (une seule place par besoin).
+const suica = AVANT.find((a) => a.id === 'suica');
+const conseils = [
+  ...(suica ? [{ title: suica.title, what: suica.what }] : []),
+  ...SURPLACE.filter((s) => s.place === 'transports' && s.id !== 'valises'),
+];
+q('quotidien').insertAdjacentHTML('beforeend', `<div class="know">${conseils.map((k) => `
+  <div class="know__item">
+    <h3>${esc(k.title)}</h3>
+    <p>${esc(k.what)}</p>
+    ${k.page ? `<p><a href="${esc(k.page)}">${esc(k.pageLabel || 'Voir la page')}</a></p>` : ''}
+  </div>`).join('')}
+  <div class="know__item">
+    <h3>Taxi : montrez l'adresse en japonais</h3>
+    <p><a href="secours.html#logements">Vos logements en japonais, sur la fiche Secours</a></p>
+  </div>
+</div>`);
+</script>
+</body>
+</html>

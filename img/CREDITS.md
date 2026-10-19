@@ -3,7 +3,7 @@
 Les images de ce site sont rapatriées en local pour que le mode hors-ligne
 fonctionne réellement. Leur source d'origine est listée ici.
 
-## Wikimedia Commons (263)
+## Wikimedia Commons (250)
 
 Sous les licences indiquées sur chaque page Commons — se reporter à l'URL source.
 
@@ -53,33 +53,22 @@ Sous les licences indiquées sur chaque page Commons — se reporter à l'URL so
 - `owakudani-a0fab7e5.webp` — Owakudani — https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Owakudani_-_Hakone_%2827369344357%29.jpg/960px-Owakudani_-_Hakone_%2827369344357%29.jpg
 - `musee-en-plein-air-599cb156.webp` — Musée en plein air — https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Hakone5.jpg/960px-Hakone5.jpg
 - `pola-museum-of-art-39cce3c6.webp` — Pola Museum of Art — https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/191103_Pola_Museum_of_Art_Hakone_Japan02s3.jpg/500px-191103_Pola_Museum_of_Art_Hakone_Japan02s3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
-- `sushi-a-tsukiji-13027814.webp` — Sushi à Tsukiji — https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Sushi_platter.jpg/960px-Sushi_platter.jpg
-- `monjayaki-478a8a0c.webp` — Monjayaki — https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Monjayaki_Before.JPG/960px-Monjayaki_Before.JPG
 - `taiyaki-07c7a57a.webp` — Taiyaki — https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Taiyaki_003.jpg/500px-Taiyaki_003.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
-- `melonpan-9616a59f.webp` — Melonpan — https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Melonpan_on_the_plastic_bag.jpg/500px-Melonpan_on_the_plastic_bag.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `ichigo-daifuku-ae27e308.webp` — Ichigo daifuku — https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Daifuku_1.jpg/500px-Daifuku_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
-- `crabe-des-neiges-f0180090.webp` — Crabe des neiges — https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Chionoecetes_bairdi.jpg/500px-Chionoecetes_bairdi.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
-- `nodoguro-ea21e1a1.webp` — Nodoguro — https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Doederleinia_berycoides_Marinepia_1.jpg/500px-Doederleinia_berycoides_Marinepia_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `jibuni-42b79d28.webp` — Jibuni — https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Jibuni_01.jpg/960px-Jibuni_01.jpg
 - `oden-de-kanazawa-574890c8.webp` — Oden de Kanazawa — https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Yataioden.jpg/500px-Yataioden.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `glace-feuille-d-or-d0537bc4.webp` — Glace feuille d’or — https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Gold_leaf_on_soft_ice_cream_-_Kanazawa%2C_Japan_-_DSC00135.jpg/500px-Gold_leaf_on_soft_ice_cream_-_Kanazawa%2C_Japan_-_DSC00135.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
-- `kaiseki-c18456ee.webp` — Kaiseki — https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Jisaku_Kaiseki_Ryori_01.jpg/500px-Jisaku_Kaiseki_Ryori_01.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
-- `obanzai-f1f42b17.webp` — Obanzai — https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Obanzai-kyotofood-2018-12-30.jpg/500px-Obanzai-kyotofood-2018-12-30.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `wagashi-16c78b14.webp` — Wagashi — https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Wagashi_closeup_14.jpg/960px-Wagashi_closeup_14.jpg
 - `yudofu-f1c2fadd.webp` — Yudofu — https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG/960px-Japanese_SilkyTofu_%28Kinugoshi_Tofu%29.JPG
-- `nishin-soba-b2e83f11.webp` — Nishin soba — https://upload.wikimedia.org/wikipedia/commons/9/9c/Nishin_soba.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled
 - `yatsuhashi-efd06c1d.webp` — Yatsuhashi — https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Yatsuhashi_20160422.JPG/960px-Yatsuhashi_20160422.JPG
-- `tsukemono-63cf92b0.webp` — Tsukemono — https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Tsukemono2.jpg/500px-Tsukemono2.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `marche-kuromon-1e4ac1bd.webp` — Marché Kuromon — https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Kuromon_Ichiba_Market_at_Lalaport_Kadoma2.jpg/500px-Kuromon_Ichiba_Market_at_Lalaport_Kadoma2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `kushikatsu-b9b64ade.webp` — Kushikatsu — https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/KushikatsuDaruma01.jpg/960px-KushikatsuDaruma01.jpg
 - `butaman-551-horai-c1b1e997.webp` — Butaman 551 Horai — https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Baozi_Chengdu.JPG/500px-Baozi_Chengdu.JPG?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `horumon-add8bb49.webp` — Horumon — https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Horumonyaki.jpg/500px-Horumonyaki.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `kaiseki-du-ryokan-f0c60158.webp` — Kaiseki du ryokan — https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Jisaku_Kaiseki_Ryori_01.jpg/960px-Jisaku_Kaiseki_Ryori_01.jpg
 - `yuba-de-nikko-8fedb241.webp` — Yuba de Nikko — https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Yuba_by_Abrilon.jpg/960px-Yuba_by_Abrilon.jpg
-- `kamaboko-d-odawara-adc055f5.webp` — Kamaboko d’Odawara — https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Kamaboko.jpg/500px-Kamaboko.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail
 - `soba-de-montagne-d40cea73.webp` — Soba de montagne — https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Soba_Noodle_Bowl.jpg/500px-Soba_Noodle_Bowl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `mochi-de-nakatanidou-d5777e49.webp` — Mochi de Nakatanidou — https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Mochi_002.jpg/960px-Mochi_002.jpg
-- `kakinoha-zushi-6acb1f85.webp` — Kakinoha-zushi — https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kakinoha_%28persimmon_leaf%29_sushi_in_Nara.jpg/500px-Kakinoha_%28persimmon_leaf%29_sushi_in_Nara.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `fuunji-42a40206.webp` — Fuunji — https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Tsukemen_%28Dipping_Ramen%29_-_Goemon_Ramen_Bar_2023-07-16.jpg/500px-Tsukemen_%28Dipping_Ramen%29_-_Goemon_Ramen_Bar_2023-07-16.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `onigiri-bongo-04094e0c.webp` — Onigiri Bongo — https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Onigiri_002.jpg/500px-Onigiri_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `benitsuru-5934b938.webp` — Benitsuru — https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Biscoffee_Japanese_souffle_pancake_at_cafe_in_Melbourne.jpg/500px-Biscoffee_Japanese_souffle_pancake_at_cafe_in_Melbourne.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
@@ -99,7 +88,6 @@ Sous les licences indiquées sur chaque page Commons — se reporter à l'URL so
 - `rikuro-bca72f93.webp` — Rikuro — https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Souffl%C3%A9-style_cheesecake_001.jpg/500px-Souffl%C3%A9-style_cheesecake_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `wanaka-efa4187a.webp` — Wanaka — https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Takoyaki_stand_in_Ebisu.jpg/500px-Takoyaki_stand_in_Ebisu.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `morimori-sushi-c32e819d.webp` — Morimori Sushi — https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/A_stack_of_empty_sushi_plates_at_a_conveyor_belt_sushi_restaurant_in_Taiwan.jpg/500px-A_stack_of_empty_sushi_plates_at_a_conveyor_belt_sushi_restaurant_in_Taiwan.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
-- `kaisendon-d-omicho-998b2754.webp` — Kaisendon d’Omicho — https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Omicho_covered_market_western_entrance%2C_Kanazawa%2C_2016.jpg/500px-Omicho_covered_market_western_entrance%2C_Kanazawa%2C_2016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `les-douceurs-de-nara-d16a1c27.webp` — Les douceurs de Nara — https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Wagashi_samples_by_Noriko_Jazayeri_2025-05-18.jpg/500px-Wagashi_samples_by_Noriko_Jazayeri_2025-05-18.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `nikko-2b5b7a01.webp` — Nikko — https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg/960px-200801_Nikko_Tosho-gu_Nikko_Japan03s3.jpg
 - `kamakura-8a936830.webp` — Kamakura — https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/230128_Kamakura_Daibutsu_Japan04s3.jpg/960px-230128_Kamakura_Daibutsu_Japan04s3.jpg
@@ -161,7 +149,6 @@ Sous les licences indiquées sur chaque page Commons — se reporter à l'URL so
 - `bateau-pirate-5f189e24.webp` — Bateau pirate — https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/260505_Moto-Hakone_Hakone_Japan01s3.jpg/960px-260505_Moto-Hakone_Hakone_Japan01s3.jpg
 - `tenzan-5f0b0a8a.webp` — Tenzan — https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Takanoyu_Onsen_Womens_Rotenburo_006.JPG/500px-Takanoyu_Onsen_Womens_Rotenburo_006.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `train-hakone-tozan-a52e64a7.webp` — Train Hakone Tozan — https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hakonetozan-1002.JPG/960px-Hakonetozan-1002.JPG
-- `faire-suivre-les-valises-a19e4780.webp` — Faire suivre les valises — https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Hakone-Yumoto_station_entrance_20090604.jpg/500px-Hakone-Yumoto_station_entrance_20090604.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `atelier-yosegi-zaiku-d2a951b7.webp` — Atelier Yosegi Zaiku — https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Hakone_Yosegi_Zaiku_display_-_Hakone_Checkpoint_Exhibition_Hall_-_Hakone_no_Seki_%28barrier_station%29_-_Hakone%2C_Japan_-_DSC06051.jpg/500px-Hakone_Yosegi_Zaiku_display_-_Hakone_Checkpoint_Exhibition_Hall_-_Hakone_no_Seki_%28barrier_station%29_-_Hakone%2C_Japan_-_DSC06051.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `cup-noodles-museum-d8e309b5.webp` — Cup Noodles Museum — https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Cupnoodles-Museum-Yokohama.jpg/500px-Cupnoodles-Museum-Yokohama.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail
 - `chinatown-6915d18b.webp` — Chinatown — https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Yokohama_Chinatown_signage_2015.jpg/960px-Yokohama_Chinatown_signage_2015.jpg

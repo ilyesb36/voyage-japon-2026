@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Le guide — Japon 2026</title>
-<meta name="description" content="Les idées repérées pour le voyage : monuments, tables, quartiers, boutiques — filtrables par ville, par envie et par priorité.">
+<title>Chercher — Japon 2026</title>
+<meta name="description" content="Une seule recherche pour tout le site : adresses, plats, quartiers, journées, logements, conseils et pages. Le catalogue des adresses, ville par ville, reste dessous.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -23,53 +23,71 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <body>
 
 <main class="wrap">
-  <header class="section">
-    <h1 class="disc">Le guide</h1>
-    <p class="hero__lede" id="lede"></p>
+  <header class="section chercher__tete">
+    <h1 class="disc">Chercher</h1>
+    <p class="hero__lede">Adresses, plats, quartiers, journées, logements, conseils et pages : un seul champ pour tout le site.</p>
   </header>
 
-  <div class="chipbar ptabs" id="vue"></div>
-  <div id="sel"></div>
-  <div id="biblio">
-
-  <!-- La recherche, puis une matrice villes × envies. Les pastilles de ville et
-       le menu des envies obligeaient à croiser deux commandes à l'aveugle, sans
-       jamais montrer ce qu'il y avait derrière. La matrice affiche les
-       compteurs : on voit d'un coup où sont les 319 adresses, et on atteint
-       n'importe quel croisement en un clic. -->
-  <div class="chipbar ptabs" id="fam"></div>
-  <div class="chipbar ptabs" id="quartiers"></div>
-
+  <!-- Une seule recherche pour tout le site. Tant que le champ est vide, le
+       catalogue des adresses reste dessous, ville par ville ; ses filtres (la
+       matrice villes × envies, les quartiers, la priorité, la provenance) sont
+       repliés dans « Filtres ». Dès qu'on tape, les résultats le remplacent. -->
   <div class="tools">
     <label class="search">
       <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
-      <input type="search" id="search" placeholder="Chercher une adresse, un quartier…"
+      <input type="search" id="search" placeholder="Une adresse, un plat, un logement…"
+             aria-label="Chercher dans tout le site" enterkeyhint="search"
              autocomplete="off" spellcheck="false">
     </label>
-    <div class="tools__selects">
-      <select id="f-priority" aria-label="Filtrer par priorité"></select>
-      <select id="f-source" aria-label="Filtrer par provenance"></select>
-      <select id="f-kind" aria-label="Filtrer par type de lieu"></select>
-    </div>
-    <span class="chipbar" id="mode"></span>
-    <output id="count" class="tools__count" aria-live="polite"></output>
+  </div>
+  <div class="chercher__etat">
+    <output id="count" aria-live="polite"></output>
     <button class="chip" id="reset" hidden>Réinitialiser</button>
   </div>
 
-  <div class="mat" id="mat"></div>
+  <div class="resultats" id="resultats" hidden></div>
 
-  <div class="spotgrid" id="grid"></div>
-  <div class="more" id="more"></div>
-  <p class="empty" id="empty" hidden>Rien ne correspond. Essaie un autre mot ou élargis les filtres.</p>
-</div>
+  <div id="biblio">
+    <div class="shead">
+      <h2>Les adresses, ville par ville</h2>
+      <p id="intro"></p>
+    </div>
+
+    <!-- Les filtres du catalogue. La matrice affiche les compteurs : on voit d'un
+         coup où sont les adresses, et on atteint n'importe quel croisement en un
+         clic. Les pastilles de ville et le menu des envies obligeaient, avant, à
+         croiser deux commandes à l'aveugle. -->
+    <details class="filtres" id="filtres">
+      <summary class="filtres__resume">
+        <b>Filtres</b>
+        <span class="filtres__etat" id="filtres-etat"></span>
+      </summary>
+      <div class="filtres__corps">
+        <div class="mat" id="mat"></div>
+        <div class="chipbar" id="fam"></div>
+        <div class="chipbar" id="quartiers"></div>
+        <div class="tools__selects">
+          <select id="f-priority" aria-label="Filtrer par priorité"></select>
+          <select id="f-source" aria-label="Filtrer par provenance"></select>
+          <select id="f-kind" aria-label="Filtrer par type de lieu"></select>
+        </div>
+        <span class="chipbar" id="essentiel"></span>
+      </div>
+    </details>
+
+    <div class="spotgrid" id="grid"></div>
+    <div class="more" id="more"></div>
+    <p class="empty" id="empty" hidden>Aucune adresse ne correspond à ces filtres. Élargissez-les, ou réinitialisez-les.</p>
+  </div>
 </main>
 
 <script type="module">
 import { SPOTS, CATEGORIES, PRIORITIES } from './data/spots.js';
-import { SELECTION } from './data/selection.js';
 import { DELICES } from './data/delices.js';
-import { CITIES, STEPS } from './data/trip.js';
+import { CITIES, STEPS, HOTELS } from './data/trip.js';
 import { DAYS } from './data/days.js';
+import { QUARTIERS } from './data/quartiers.js';
+import { SURPLACE } from './data/pratique.js';
 import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, bindLightbox, today, moment } from './app/ui.js';
 import { quartiersDe, ouEst, metres, maPosition, familleDe, quartierNomDeSpot, distanceTexte, KONBINI_LIGNE, ficheExtra } from './app/quartiers.js';
 
@@ -129,13 +147,15 @@ const FACETS = {
 
 // On peut arriver ici déjà filtré : ?ville=kyoto&envie=t6 depuis la page du
 // jour ou un lien partagé. Sans ça, « les adresses de Kyoto » obligeait à
-// refaire le filtrage à la main en arrivant.
+// refaire le filtrage à la main en arrivant. Deux entrées de plus : ?chercher
+// (la loupe de la barre : le curseur dans le champ) et ?q=mot (champ prérempli).
 const entree = new URLSearchParams(location.search);
 const valide = (v, liste) => (v && liste.some((x) => x.id === v) ? v : 'all');
 
-// Pendant le voyage, sans ?ville= : on ouvre sur la ville de l'étape courante
-// (ce qui expose aussi les quartiers et « Près de moi »). La matrice « Toutes »
-// reste le geste pour revenir à toutes les villes.
+// Pendant le voyage, sans ?ville= : le catalogue s'ouvre sur la ville de l'étape
+// courante (ce qui expose aussi les quartiers et « Près de moi »). La matrice
+// « Toutes » reste le geste pour revenir à toutes les villes. Cette ville ne
+// limite JAMAIS une recherche : elle y passe seulement en premier.
 const jourCourant = DAYS.find((d) => d.date === today());
 const villeEtape = (moment() === 'pendant' && jourCourant)
   ? (STEPS.find((s) => s.id === jourCourant.stepId)?.cityId || null) : null;
@@ -157,11 +177,12 @@ const state = {
   pos: null,
   // `elargi` : la recherche a été étendue aux synonymes (via « Voir aussi »).
   elargi: false,
-  q: entree.get('q') || '',
+  // La recherche : vide, on montre le catalogue ; sinon, les résultats.
+  q: (entree.get('q') || '').trim(),
 };
 
 const nGuide = SPOTS.filter((s) => s.source === 'guide').length;
-q('lede').innerHTML =
+q('intro').innerHTML =
   `Toutes les adresses repérées, rangées par ville. ` +
   `${nGuide} viennent de l'amie guide de Mathilde.`;
 
@@ -175,31 +196,44 @@ for (const facet of ['priority', 'source', 'kind']) {
   sel.addEventListener('change', () => { state[facet] = sel.value; render(); });
 }
 
+const deployes = new Set();   // les groupes de résultats dont on a demandé « Voir les N »
 q('search').addEventListener('input', (e) => {
-  state.q = e.target.value.trim().toLowerCase();
+  state.q = e.target.value.trim();
   state.elargi = false;   // nouvelle recherche : on repart des correspondances directes
+  deployes.clear();       // et des groupes repliés
   render();
 });
+// La touche « Rechercher » du clavier iPhone referme le clavier : les résultats
+// se lisent en direct, il n'y a rien d'autre à valider.
+q('search').addEventListener('keydown', (e) => { if (e.key === 'Enter') e.target.blur(); });
 
 // --- rendu -------------------------------------------------------------------
 // La recherche porte sur le nom, la description et le quartier : c'est ce
 // qu'on tape de tête (« ramen », « Asakusa », « couteaux »).
-// Insensible aux accents, \u00e0 la casse, aux traits d'union et points m\u00e9dians, et
-// aux espaces multiples : \u00ab kodaiji \u00bb trouve \u00ab K\u014ddai-ji \u00bb.
+// Insensible aux accents et aux macrons, à la casse, aux traits d'union et
+// points médians, aux espaces multiples et à l'apostrophe (l'iPhone tape ’, les
+// textes mélangent ' et ’) : « todaiji » trouve « Tōdai-ji », « d'or » trouve « d’or ».
 const norm = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[’‘ʼ]/g, "'")
   .replace(/[-\u2010\u2013\u2014\u30fb\u00b7]/g, '').replace(/\s+/g, ' ').trim();
-const haystack = new WeakMap();
-// On cherche par nom, nom japonais, description, histoire ET quartier : tout ce
-// qu'on tape de t\u00eate (\u00ab ramen \u00bb, \u00ab Gion \u00bb, \u00ab momiji \u00bb, \u00ab \u7947\u5712 \u00bb).
-const hay = (s) => {
-  if (!haystack.has(s)) {
-    haystack.set(s, norm(`${s.name} ${s.jp || ''} ${s.blurb || ''} ${s.lore || ''} ${s.area || ''} ${quartierNomDeSpot(s) || ''}`));
-  }
-  return haystack.get(s);
-};
+// norm() retire les tirets mais garde les espaces : « kiyomizu dera » ne trouvait
+// pas « Kiyomizu-dera ». Quand la requête contient un espace, on compare donc
+// aussi sans aucun espace.
+const sansEsp = (t) => t.replace(/ /g, '');
+const contient = (t, nq) => t.includes(nq) || (nq.includes(' ') && sansEsp(t).includes(sansEsp(nq)));
+const debute = (t, nq) => t.startsWith(nq) || (nq.includes(' ') && sansEsp(t).startsWith(sansEsp(nq)));
+// Plusieurs mots (« hakone freepass », « pass hakone ») : on trouve ce qui les contient
+// tous, dans n'importe quel ordre. La phrase entière, elle, pèse plus lourd au classement.
+const motsDe = (nq) => nq.split(' ').map((m) => m.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '')).filter(Boolean);   // « kyoto, ramen » : sans la virgule
+const tousLesMots = (t, nq) => motsDe(nq).every((m) => t.includes(m));
+const correspond = (t, nq) => contient(t, nq) || tousLesMots(t, nq);
+// La part des mots de la requête que `t` contient : 1 si la phrase y est (ou si c'est un
+// mot seul, trouvé), sinon la fraction des mots. Un nom qui dit « ramen » vaut donc un
+// demi-point pour « kyoto ramen », et un point entier pour « ramen ».
+const part = (t, nq) => (contient(t, nq) ? 1 : motsDe(nq).filter((m) => t.includes(m)).length / motsDe(nq).length);
 
-// Synonymes courants \u2192 types de lieu, pour que \u00ab temple \u00bb, \u00ab caf\u00e9 \u00bb ou
-// \u00ab pluie \u00bb (ce qu'on fait \u00e0 couvert) ram\u00e8nent les bonnes adresses.
+// Synonymes courants → types de lieu, pour que « temple », « café » ou
+// « pluie » (ce qu'on fait à couvert) ramènent les bonnes adresses.
 const SYNO = {
   ramen: ['resto'], sushi: ['resto'], izakaya: ['resto', 'bar'], restaurant: ['resto'],
   cafe: ['cafe'], the: ['cafe'], onsen: ['onsen'], sento: ['onsen'], bain: ['onsen'],
@@ -215,34 +249,132 @@ let _synQ = null; let _synSet = new Set();
 const synKinds = (nq) => {
   if (nq === _synQ) return _synSet;
   _synQ = nq; _synSet = new Set();
-  for (const k in SYNO) if (nq.includes(k)) SYNO[k].forEach((x) => _synSet.add(x));
+  // Un mot est de synonyme quand il COMMENCE par la clé (comme dans chercher) : « akihabara »
+  // contient « bar », « katsushika » contient « sushi », et ne sont pas des bars ni des sushis.
+  for (const m of motsDe(nq)) for (const k in SYNO) if (m.startsWith(k)) SYNO[k].forEach((x) => _synSet.add(x));
   return _synSet;
 };
-// Une adresse correspond si le texte contient la requ\u00eate, ou si un synonyme
-// pointe vers son type de lieu.
-const qMatch = (s, qraw) => {
-  const nq = norm(qraw);
-  if (!nq) return true;
-  if (hay(s).includes(nq)) return true;
-  const kinds = synKinds(nq);
-  return kinds.size > 0 && kinds.has(s.kind);
-};
-// Score de pertinence : le nom d'abord, puis le japonais, la description, le
-// reste, enfin le synonyme. Sert \u00e0 ranger les r\u00e9sultats de recherche.
-const score = (s, qraw) => {
-  const nq = norm(qraw); if (!nq) return 0;
+// Score de pertinence d'une adresse : le nom d'abord (la phrase entière, puis les
+// mots, au prorata de ceux qu'il contient), puis le japonais, le quartier, la
+// description, le reste, enfin le synonyme. Sert à ranger les adresses trouvées.
+const score = (s, nq) => {
   const n = norm(s.name); let sc = 0;
-  if (n.startsWith(nq)) sc += 100; else if (n.includes(nq)) sc += 60;
-  if (norm(s.jp).includes(nq)) sc += 30;
-  if (norm(quartierNomDeSpot(s) || '').includes(nq)) sc += 15;
-  if (norm(s.blurb).includes(nq)) sc += 12;
-  if (norm(s.lore || '').includes(nq)) sc += 4;   // le lore est long : il pèse moins
+  if (debute(n, nq)) sc += 100; else if (contient(n, nq)) sc += 60; else sc += 40 * part(n, nq);
+  sc += 30 * part(norm(s.jp), nq);
+  sc += 15 * part(norm(quartierNomDeSpot(s) || ''), nq);
+  sc += 12 * part(norm(s.blurb), nq);
+  sc += 4 * part(norm(s.lore || ''), nq);   // le lore est long : il pèse moins
   if (synKinds(nq).has(s.kind)) sc += 5;
   return sc;
 };
 
+// --- l'index : tout le site dans une seule liste -------------------------------
+// Une seule recherche pour les adresses, les plats, les quartiers, les journées,
+// les logements, les conseils et les pages : on tape, on trouve, où que ce soit
+// rangé. Une entrée = un résultat possible. `lignes` : ce qui se lit (et d'où l'on
+// tire l'extrait) ; `cache` : des mots qu'on cherche sans les montrer (le type de
+// lieu, les mots-clés d'une page, le nom de la ville : « kyoto ramen » donne les
+// ramen de Kyoto).
+// Chaque page répond aux mots qu'on tape en détresse ou de tête, pas seulement à son titre :
+// « taxi » mène à Secours (l'adresse du logement à montrer), « taux » au budget, « offline »
+// au bouton du hors-ligne de la page À faire (son ancre).
+const PAGES_MOTS = [
+  { titre: 'Valises', href: 'valises.html', mots: 'valise valises bagage bagages takkyubin yamato consigne casier' },
+  { titre: 'Transports', href: 'transports.html', mots: 'transport train shinkansen bus metro métro suica trajet' },
+  { titre: 'Les passes', href: 'passes.html', mots: 'pass freepass hakone nikko tobu romancecar bus izu tozan' },
+  { titre: 'Secours', href: 'secours.html', mots: 'urgence urgences ambassade police hopital hôpital medecin médecin seisme séisme secours taxi chauffeur adresse hotel hôtel logement appartement rentrer ambulance blesse blessé malade sos assurance pharmacie' },
+  { titre: 'Le budget', href: 'budget.html', mots: 'budget argent yen euro depense dépense taux change' },
+  { titre: 'À faire', href: 'aujourdhui.html', mots: 'faire reserver réserver echeance échéance preparatifs préparatifs' },
+  { titre: 'Hors-ligne', href: 'aujourdhui.html#hors-ligne', mots: 'hors-ligne hors ligne offline sans réseau telecharger télécharger' },
+];
+// L'étape d'une ville où l'on est (sinon la première) : villes.html s'ouvre dessus.
+const stepDe = (cityId) => {
+  const now = today();
+  return STEPS.find((s) => s.cityId === cityId && now >= s.from && now < s.to) || STEPS.find((s) => s.cityId === cityId);
+};
+const entreeIndex = (type, titre, lignes, href, cityId, cache = '') =>
+  ({ type, titre, lignes: lignes.filter(Boolean), cache: `${cache} ${CITIES[cityId]?.name || ''}`, href, cityId });
+const INDEX = [
+  ...PAGES_MOTS.map((p) => entreeIndex('Pages', p.titre, [], p.href, null, p.mots)),
+  // Une adresse n'a pas de lien : elle ouvre sa fiche, comme les cartes du catalogue.
+  ...SPOTS.map((s) => ({ ...entreeIndex('Adresses', s.name, [s.blurb, s.jp, s.lore, quartierNomDeSpot(s)], null, s.cityId, `${s.area || ''} ${s.kind || ''}`), spot: s })),
+  ...DELICES.flatMap((c) => c.items.map((it) => entreeIndex('Plats', it.n, [it.d, it.jp], `table.html?ville=${c.cityId}#d-${it.id}`, c.cityId))),
+  ...DAYS.map((d) => entreeIndex('Journées', `${d.label} — ${d.title}`, d.items.map((i) => i.text), `jour.html?d=${d.n}`, d.cityId || null)),
+  ...QUARTIERS.map((qq) => entreeIndex('Quartiers', qq.nom, [qq.resume, qq.jp], `villes.html?e=${stepDe(qq.cityId).n}#q-${qq.id}`, qq.cityId)),
+  ...HOTELS.map((h) => entreeIndex('Logements', h.name, [h.dates, h.address], `secours.html#h-${h.id}`, h.cityId, `${h.bookingName} hôtel logement`)),
+  // Un conseil mène à la page de sa place. Les valises font exception : la page
+  // Valises le porte déjà, et Transports ne l'affiche pas dans « Au quotidien ».
+  ...SURPLACE.map((s) => entreeIndex('Conseils', s.title, [s.what],
+    s.id === 'valises' ? 'valises.html'
+      : s.place === 'secours' ? 'secours.html#urgences'
+      : s.place === 'transports' ? 'transports.html#quotidien' : 'aujourdhui.html#a-lire', null)),
+];
+const ORDRE_TYPES = ['Pages', 'Adresses', 'Plats', 'Quartiers', 'Journées', 'Logements', 'Conseils'];
+
+// --- la recherche --------------------------------------------------------------
+// Le texte cherché d'une entrée, normalisé une fois : titre, lignes, mots cachés.
+const corpus = (e) => (e.corpus ??= norm([e.titre, ...e.lignes, e.cache].join(' ')));
+
+// 0 : ne correspond pas. Sinon, plus c'est haut, plus c'est pertinent : le titre
+// d'abord, et la phrase entière avant des mots épars (de 10 à 40 selon la part des
+// mots que le titre contient).
+const scoreDe = (e, nq) => {
+  if (!correspond(corpus(e), nq)) return 0;
+  if (e.spot) return score(e.spot, nq) || 1;   // le classement fin des adresses
+  const t = norm(e.titre);
+  return debute(t, nq) ? 100 : contient(t, nq) ? 60 : 10 + 30 * part(t, nq);
+};
+
+// Environ 120 caractères de `ligne` autour du mot cherché, coupés entre deux mots.
+// La position se lit dans le texte normalisé : à quelques tirets près, c'est la bonne.
+const autour = (ligne, nq) => {
+  const MAX = 120;
+  if (ligne.length <= MAX) return ligne;
+  const nl = norm(ligne);
+  const i = [nq, ...motsDe(nq)].map((m) => nl.indexOf(m)).find((p) => p >= 0) ?? 0;
+  let a = Math.max(0, i - 40);
+  if (a > 0) a = ligne.indexOf(' ', a) + 1 || a;
+  let b = Math.min(ligne.length, a + MAX);
+  if (b < ligne.length && ligne.lastIndexOf(' ', b) > a) b = ligne.lastIndexOf(' ', b);
+  return (a > 0 ? '… ' : '') + ligne.slice(a, b) + (b < ligne.length ? ' …' : '');
+};
+
+// Pourquoi ce résultat ? La ligne où se trouvent les mots cherchés (à défaut, l'un
+// d'eux), sauf si le titre les dit déjà.
+const extraitDe = (e, nq) => {
+  if (correspond(norm(e.titre), nq)) return '';
+  const ligne = e.lignes.find((l) => correspond(norm(l), nq))
+    || e.lignes.find((l) => motsDe(nq).some((m) => norm(l).includes(m)));
+  return ligne ? autour(ligne, nq) : '';
+};
+
+// Les résultats d'une recherche, groupés par type, dans l'ordre d'ORDRE_TYPES.
+// Dans chaque groupe : par pertinence ; à pertinence égale, la ville où l'on est
+// d'abord (pendant le voyage). Une adresse qui ne correspond que par synonyme
+// (« ramen » → les restaurants) n'est montrée qu'à la demande — sauf s'il n'y a
+// rien d'autre. Et seulement si elle contient aussi les autres mots de la requête :
+// « kyoto ramen » ne ramène que les restaurants de Kyoto, pas ceux du Japon entier.
+function chercher(nq) {
+  const synos = synKinds(nq);
+  // Un mot est de synonyme quand il COMMENCE par la clé : « akihabara » contient « bar », « katsushika » « sushi ».
+  const autres = motsDe(nq).filter((m) => !Object.keys(SYNO).some((k) => m.startsWith(k)));
+  const notes = INDEX.map((e) => ({ e, sc: scoreDe(e, nq) }));
+  const ici = (r) => (villeEtape && r.e.cityId === villeEtape ? 1 : 0);
+  const ordre = (a, b) => (b.sc - a.sc) || (ici(b) - ici(a));
+  return ORDRE_TYPES.map((type) => {
+    let items = notes.filter((r) => r.sc > 0 && r.e.type === type).sort(ordre);
+    let voirAussi = 0;
+    if (type === 'Adresses') {
+      const proches = notes.filter((r) => r.sc === 0 && r.e.spot && synos.has(r.e.spot.kind)
+        && autres.every((m) => corpus(r.e).includes(m))).sort(ordre);
+      if (!items.length || state.elargi) items = items.concat(proches); else voirAussi = proches.length;
+    }
+    return { type, items: items.map((r) => r.e), voirAussi };
+  }).filter((g) => g.items.length);
+}
+
 /**
- * Le prédicat de filtrage, paramétrable par un état.
+ * Le prédicat de filtrage du catalogue, paramétrable par un état.
  *
  * Les compteurs de la matrice l'appellent avec un état modifié, si bien que le
  * nombre affiché dans une case EST le nombre de résultats qu'on obtient en
@@ -258,17 +390,16 @@ const matchesWith = (st) => (s) =>
   && (st.kind === 'all' || s.kind === st.kind)
   && (st.mode !== 'ess' || s.priority === 'ob' || s.priority === 'top')
   && (!st.fam || st.fam === 'all' || familleDe(s) === st.fam)
-  && (!st.quartier || st.quartier === 'all' || (ouEst(s)?.quartierId === st.quartier))
-  && (!st.q || hay(s).includes(norm(st.q)));
+  && (!st.quartier || st.quartier === 'all' || (ouEst(s)?.quartierId === st.quartier));
 
 const matches = (s) => matchesWith(state)(s);
 
 // --- la matrice ---------------------------------------------------------------
-// Les compteurs tiennent compte de la recherche, de la priorité et de la
-// provenance — mais PAS de la ville ni de l'envie, qui sont les deux axes de la
-// matrice elle-même. Autrement dit : le nombre affiché dans une case est
-// exactement le nombre de résultats qu'on obtient en cliquant dessus. Une
-// matrice qui ment est pire qu'un menu.
+// Les compteurs tiennent compte de la priorité et de la provenance — mais PAS
+// de la ville ni de l'envie, qui sont les deux axes de la matrice elle-même.
+// Autrement dit : le nombre affiché dans une case est exactement le nombre de
+// résultats qu'on obtient en cliquant dessus. Une matrice qui ment est pire
+// qu'un menu.
 const matLarge = matchMedia('(min-width: 760px)').matches;
 
 // Le même prédicat que la grille, avec la ville et l'envie de la case : le
@@ -282,38 +413,40 @@ const COLS = FAMS;                 // Tout · À voir · À faire · À manger
 const ROWS = FACETS.city;
 
 function renderMat() {
-  const actuelle = ROWS.find((r) => r.id === state.city);
-  const actuelleFam = COLS.find((c) => c.id === state.fam);
-  const filtre = state.city !== 'all' || state.fam !== 'all';
-
   q('mat').innerHTML = `
-    <details class="mat__pli">
-      <summary class="mat__resume">
-        <span class="mat__resumeQuoi">
-          <b>${esc(filtre ? [actuelle?.name, actuelleFam?.id !== 'all' ? actuelleFam?.name : null].filter(Boolean).join(' · ') : 'Toutes les adresses')}</b>
-        </span>
-        <span class="mat__resumeAction">Choisir</span>
-      </summary>
-      <div class="mat__grille" style="--cols:${COLS.length}">
-        <span class="mat__coin" aria-hidden="true"></span>
-        ${COLS.map((c) => `
-          <button class="mat__tete${state.fam === c.id ? ' is-actif' : ''}"
-                  data-col="${c.id}" title="${esc(c.name)} — toutes villes">${esc(c.name)}</button>`).join('')}
-        ${ROWS.map((r) => `
-          <button class="mat__tete mat__tete--ligne${state.city === r.id ? ' is-actif' : ''}"
-                  data-row="${r.id}" ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
-                  title="${esc(r.name)} — tout">${esc(r.name)}</button>
-          ${COLS.map((c) => {
-            const n = compte(r.id, c.id);
-            const actif = state.city === r.id && state.fam === c.id;
-            return `
-            <button class="mat__case${actif ? ' is-actif' : ''}${n === 0 ? ' is-vide' : ''}"
-                    data-row="${r.id}" data-col="${c.id}" ${n === 0 ? 'disabled' : ''}
-                    ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
-                    aria-label="${esc(r.name)}, ${esc(c.name)} : ${n}">${n || '·'}</button>`;
-          }).join('')}`).join('')}
-      </div>
-    </details>`;
+    <div class="mat__grille" style="--cols:${COLS.length}">
+      <span class="mat__coin" aria-hidden="true"></span>
+      ${COLS.map((c) => `
+        <button class="mat__tete${state.fam === c.id ? ' is-actif' : ''}"
+                data-col="${c.id}" title="${esc(c.name)} — toutes villes">${esc(c.name)}</button>`).join('')}
+      ${ROWS.map((r) => `
+        <button class="mat__tete mat__tete--ligne${state.city === r.id ? ' is-actif' : ''}"
+                data-row="${r.id}" ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
+                title="${esc(r.name)} — tout">${esc(r.name)}</button>
+        ${COLS.map((c) => {
+          const n = compte(r.id, c.id);
+          const actif = state.city === r.id && state.fam === c.id;
+          return `
+          <button class="mat__case${actif ? ' is-actif' : ''}${n === 0 ? ' is-vide' : ''}"
+                  data-row="${r.id}" data-col="${c.id}" ${n === 0 ? 'disabled' : ''}
+                  ${r.color ? `style="--c:var(--c-${r.id})"` : ''}
+                  aria-label="${esc(r.name)}, ${esc(c.name)} : ${n}">${n || '·'}</button>`;
+        }).join('')}`).join('')}
+    </div>`;
+}
+
+// Ce que disent les filtres quand « Filtres » est replié : la ville, le quartier,
+// l'envie… d'un coup d'œil, sans l'ouvrir.
+function renderEtatFiltres() {
+  const nom = (facet) => (state[facet] !== 'all' ? FACETS[facet].find((o) => o.id === state[facet])?.name : null);
+  q('filtres-etat').textContent = [
+    nom('city'),
+    state.quartier !== 'all' ? quartiersDe(state.city).find((x) => x.id === state.quartier)?.nom : null,
+    state.fam !== 'all' ? FAMS.find((f) => f.id === state.fam)?.name : null,
+    nom('priority'), nom('source'), nom('kind'),
+    state.mode === 'ess' ? "L'essentiel" : null,
+    state.pos ? 'Près de moi' : null,
+  ].filter(Boolean).join(' · ');
 }
 
 q('mat').addEventListener('click', (e) => {
@@ -328,6 +461,7 @@ q('mat').addEventListener('click', (e) => {
     state.fam = state.fam === b.dataset.col ? 'all' : b.dataset.col;
   }
   render();
+  q('filtres').open = false;   // le choix est fait : on revoit les adresses
 });
 
 
@@ -394,9 +528,9 @@ function openSheet(id) {
         <p class="sheet__blurb">${esc(s.blurb)}</p>
         ${s.lore ? `<p class="sheet__lore">${esc(s.lore)}</p>` : ''}
         <dl class="sheet__facts">
-          <div><dt>Durée</dt><dd>${esc(s.duration)}</dd></div>
-          <div><dt>Budget</dt><dd>${esc(s.budget)}</dd></div>
-          <div><dt>Le bon moment</dt><dd>${esc(s.when)}</dd></div>
+          ${[['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]]
+            .filter(([, v]) => v && v !== '—')   // « — » : rien à dire, pas de ligne
+            .map(([nom, v]) => `<div><dt>${nom}</dt><dd>${esc(v)}</dd></div>`).join('')}
         </dl>
         ${ficheExtra(s)}
         ${s.note ? `<p class="sheet__note">${esc(s.note)}</p>` : ''}
@@ -432,36 +566,76 @@ q('grid').addEventListener('click', (e) => {
   if (card) openSheet(card.dataset.id);
 });
 
-function render() {
+// --- les résultats ------------------------------------------------------------
+// Quand le champ n'est pas vide, une liste par type remplace le catalogue : huit
+// lignes au plus par groupe, puis « Voir les N ».
+const PAR_GROUPE = 8;
+
+function ligneHTML(e, nq) {
+  const ville = e.cityId ? CITIES[e.cityId] : null;
+  const extrait = extraitDe(e, nq);
+  const ou = ville
+    ? ` · <span class="city-dot" style="--c:var(--c-${esc(ville.id)})">${esc(ville.name)}</span>`
+    : (e.spot ? ' · Partout' : '');
+  const corps = `<span class="resultat__texte"><span class="resultat__titre">${esc(e.titre)}</span>`
+    + (extrait ? `<span class="resultat__extrait">${esc(extrait)}</span>` : '')
+    + `<span class="label resultat__meta">${esc(e.type)}${ou}</span></span>`;
+  // Une adresse ouvre sa fiche, comme les cartes du catalogue ; le reste mène à sa page.
+  return e.spot
+    ? `<li><button class="resultat" type="button" data-id="${esc(e.spot.id)}">${corps}</button></li>`
+    : `<li><a class="resultat" href="${esc(e.href)}">${corps}</a></li>`;
+}
+
+function groupeHTML(g, nq) {
+  const toutVoir = deployes.has(g.type) || g.items.length <= PAR_GROUPE;
+  const vus = toutVoir ? g.items : g.items.slice(0, PAR_GROUPE);
+  return `
+  <section class="resultats__groupe">
+    <h2 class="resultats__titre">${esc(g.type)}<span class="resultats__nb">${g.items.length}</span></h2>
+    <ul class="resultats__liste">${vus.map((e) => ligneHTML(e, nq)).join('')}</ul>
+    ${toutVoir ? '' : `<button class="btn btn--ghost resultats__plus" type="button" data-tout="${esc(g.type)}">Voir les ${g.items.length}</button>`}
+    ${g.voirAussi ? `<button class="btn btn--ghost resultats__plus" type="button" id="voir-aussi">Voir aussi tout ce qui s'en rapproche (${g.voirAussi})</button>` : ''}
+  </section>`;
+}
+
+function renderResultats() {
+  const nq = norm(state.q);
+  const groupes = chercher(nq);
+  const n = groupes.reduce((a, g) => a + g.items.length, 0);
+  // « konbini » : la bonne réponse n'est pas une adresse du guide, c'est la phrase.
+  const estKonbini = /konbini|conbini|superette|convenience/.test(nq);
+  q('resultats').innerHTML = (estKonbini ? `<p class="resultats__note">${esc(KONBINI_LIGNE)}</p>` : '')
+    + (n ? groupes.map((g) => groupeHTML(g, nq)).join('')
+      : estKonbini ? '' : '<p class="empty">Rien ne correspond. Essayez un autre mot.</p>');
+  q('count').textContent = n ? `${n} résultat${n > 1 ? 's' : ''}` : 'Aucun résultat';
+}
+
+q('resultats').addEventListener('click', (e) => {
+  const fiche = e.target.closest('button[data-id]');
+  if (fiche) { openSheet(fiche.dataset.id); return; }
+  const tout = e.target.closest('button[data-tout]');
+  if (tout) { deployes.add(tout.dataset.tout); render(); return; }
+  if (e.target.closest('#voir-aussi')) { state.elargi = true; render(); }
+});
+
+// --- le catalogue -------------------------------------------------------------
+// Un aperçu de 8 adresses par ville, ou la liste d'une ville, d'une envie, d'un
+// quartier : ce que les filtres demandent.
+function renderCatalogue() {
   // Un quartier n'a de sens que dans sa ville : si la ville change, on l'oublie.
   if (state.quartier !== 'all' && !quartiersDe(state.city).some((x) => x.id === state.quartier)) state.quartier = 'all';
 
   renderFam();
   renderMode();
   renderQuartiers();
-  // La matrice se redessine avec la grille : ses compteurs dépendent de la
-  // recherche et des filtres secondaires, ils ne peuvent pas rester figés.
+  // La matrice se redessine avec la grille : ses compteurs dépendent des
+  // filtres secondaires, ils ne peuvent pas rester figés.
   renderMat();
+  renderEtatFiltres();
 
-  // Recherche : on montre d'abord les correspondances DIRECTES (nom, quartier,
-  // description…). Les synonymes (ramen → restaurants) n'élargissent qu'à la
-  // demande (« Voir aussi »), ou d'office s'il n'y a aucun résultat direct —
-  // ainsi les compteurs ne gonflent pas par surprise.
-  const directs = SPOTS.filter(matches);
-  let list = directs;
-  let voirAussi = 0;
-  if (state.q) {
-    const kinds = synKinds(norm(state.q));
-    if (kinds.size) {
-      const dset = new Set(directs);
-      const synos = SPOTS.filter(matchesWith({ ...state, q: '' })).filter((s) => !dset.has(s) && kinds.has(s.kind));
-      if (directs.length === 0) list = synos;
-      else if (state.elargi) list = directs.concat(synos);
-      else voirAussi = synos.length;
-    }
-  }
+  const list = SPOTS.filter(matches);
   // 24 cartes, puis « voir plus » : 414 cartes d'un bloc, c'était 47 écrans.
-  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.quartier, !!state.pos, state.elargi, state.q]);
+  const sig = JSON.stringify([state.city, state.category, state.priority, state.source, state.kind, state.fam, state.mode, state.quartier, !!state.pos]);
   if (sig !== window.__sig) { window.__sig = sig; window.__lim = 24; }
 
   // « Près de moi » : les adresses situées d'abord, de la plus proche à la plus
@@ -473,43 +647,53 @@ function render() {
   // Groupée par ville, dans l'ordre du voyage, quand aucune ville n'est choisie.
   const ORDRE = ['tokyo', 'kanazawa', 'kyoto', 'osaka', 'hakone'];
   const rang = (s) => { const i = ORDRE.indexOf(s.cityId); return i < 0 ? 9 : i; };
-  // Recherche : par pertinence, puis par distance si « Près de moi » est actif.
-  const trie = state.q
-      ? [...list].sort((a, b) => (score(b, state.q) - score(a, state.q)) || (state.pos ? parDistance(a, b) : 0))
-    : state.pos ? [...list].sort(parDistance)
+  const trie = state.pos ? [...list].sort(parDistance)
     : state.city === 'all' ? [...list].sort((a, b) => rang(a) - rang(b)) : list;
   const parVille = {}; trie.forEach((s) => { parVille[s.cityId] = (parVille[s.cityId] || 0) + 1; });
-  // Sans ville ni recherche (et hors tri par distance) : un aperçu de 8 par ville.
+  // Sans ville (et hors tri par distance) : un aperçu de 8 par ville.
   // Sinon Tokyo (200+ adresses) occupait à lui seul toutes les pages avant Kanazawa.
-  const apercu = !state.pos && state.city === 'all' && !state.q;
+  const apercu = !state.pos && state.city === 'all';
   const vus = {};
   const montres = apercu ? trie.filter((s) => { vus[s.cityId] = (vus[s.cityId] || 0) + 1; return vus[s.cityId] <= 8; }) : trie.slice(0, window.__lim);
   let avant;
   q('grid').innerHTML = montres.map((s, i) => {
     const fin = apercu && (i === montres.length - 1 || montres[i + 1].cityId !== s.cityId) && parVille[s.cityId] > 8
       ? `<p class="bib__all"><button class="btn btn--ghost" type="button" data-ville="${s.cityId || 'partout'}">Toutes les adresses ${s.cityId ? (/^[AEIOUHaeiouh]/.test(CITIES[s.cityId].name) ? "d'" : 'de ') + esc(CITIES[s.cityId].name) : 'hors étapes'} (${parVille[s.cityId]}) →</button></p>` : '';
-    const tete = !state.pos && !state.q && state.city === 'all' && s.cityId !== avant
+    const tete = !state.pos && state.city === 'all' && s.cityId !== avant
       ? `<h3 class="bib__city"><span class="city-dot" style="--c:${s.cityId ? `var(--c-${s.cityId})` : 'var(--mut)'}">${esc(s.cityId ? CITIES[s.cityId].name : 'Partout au Japon')}</span><span class="mut">${parVille[s.cityId]} adresses</span></h3>` : '';
     avant = s.cityId;
     return tete + card(s) + fin;
   }).join('');
   const reste = apercu ? 0 : list.length - window.__lim;
-  const moreBtn = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
-  const aussiBtn = voirAussi > 0 ? `<button class="btn btn--ghost" type="button" id="voir-aussi">Voir aussi tout ce qui s'en rapproche (${voirAussi})</button>` : '';
-  q('more').innerHTML = moreBtn + aussiBtn;
-  // « konbini » : la bonne réponse n'est pas une adresse du guide, c'est la phrase.
-  const estKonbini = /konbini|conbini|superette|convenience/.test(norm(state.q));
-  if (estKonbini) { q('empty').textContent = KONBINI_LIGNE; q('empty').hidden = false; }
-  else { q('empty').textContent = 'Rien ne correspond. Essaie un autre mot ou élargis les filtres.'; q('empty').hidden = list.length > 0; }
-
-  const filtered = state.q !== '' || !!state.pos || ['city', 'category', 'priority', 'source', 'kind', 'fam', 'quartier'].some((k) => state[k] !== 'all');
+  q('more').innerHTML = reste > 0 ? `<button class="btn" type="button" id="more-btn">Voir ${Math.min(reste, 48)} de plus <span class="mut">· ${reste} restantes</span></button>` : '';
+  q('empty').hidden = list.length > 0;
   q('count').textContent = `${list.length} adresse${list.length > 1 ? 's' : ''}${state.pos ? ' · au plus près' : ''}`;
-  q('reset').hidden = !filtered;
+}
 
-  // URL : le quartier est partageable, comme ?ville= et ?envie=.
+// Le champ vide montre le catalogue ; dès qu'on tape, les résultats le remplacent.
+function render() {
+  const cherche = /[\p{L}\p{N}]/u.test(norm(state.q));   // « - », « ' » ou « ? » seuls ne cherchent rien
+  const commence = cherche && q('resultats').hidden;
+  q('resultats').hidden = !cherche;
+  q('biblio').hidden = cherche;
+  if (cherche) renderResultats(); else renderCatalogue();
+  // Le catalogue, très long, vient de céder la place : si la page était défilée
+  // plus bas que le début des résultats, on remonte à eux.
+  if (commence) {
+    const haut = q('resultats').getBoundingClientRect().top - 130;   // sous la barre et le champ
+    if (haut < 0) window.scrollBy({ top: haut, behavior: 'instant' });
+  }
+
+  // « Réinitialiser » : dès qu'il y a une recherche ou un filtre à effacer.
+  const filtre = !!state.pos || ['city', 'category', 'priority', 'source', 'kind', 'fam', 'quartier'].some((k) => state[k] !== 'all');
+  q('reset').hidden = !(cherche || filtre);
+
+  // URL : la recherche et le quartier sont partageables, comme ?ville= et ?envie=.
+  // En revenant d'un résultat avec « Retour », on retrouve ainsi sa recherche.
   const u = new URL(location.href);
+  if (cherche) u.searchParams.set('q', state.q); else u.searchParams.delete('q');
   if (state.quartier !== 'all') u.searchParams.set('quartier', state.quartier); else u.searchParams.delete('quartier');
-  history.replaceState(null, '', u.pathname + u.search + u.hash);
+  try { history.replaceState(null, '', u.pathname + u.search + u.hash); } catch {}   // Safari limite les appels
 }
 
 // --- quartiers de la ville choisie + tri « Près de moi » ----------------------
@@ -542,10 +726,10 @@ function toggleProche(btn) {
 // --- onglets de famille -------------------------------------------------------
 function renderMode() {
   const n = (m) => SPOTS.filter(matchesWith({ ...state, mode: m })).length;
-  q('mode').innerHTML = [['ess', 'L\'essentiel'], ['all', 'Tout voir']].map(([id, lab]) =>
+  q('essentiel').innerHTML = [['ess', 'L\'essentiel'], ['all', 'Tout voir']].map(([id, lab]) =>
     `<button class="chip" data-mode="${id}" aria-pressed="${state.mode === id}">${lab}<span class="ptabs__n">${n(id)}</span></button>`).join('');
 }
-q('mode').addEventListener('click', (e) => {
+q('essentiel').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-mode]');
   if (!b) return;
   state.mode = b.dataset.mode;
@@ -567,53 +751,6 @@ q('fam').addEventListener('click', (e) => {
   render();
 });
 
-// --- la sélection, étape par étape -------------------------------------------
-function renderSelection() {
-  const nav = SELECTION.map((st) => `<a class="chip" href="#etape-${st.step}"><span class="chip__dot" style="background:var(--c-${st.cityId})"></span>${esc(st.title)}</a>`).join('');
-  q('sel').innerHTML = `<nav class="chipbar sel__nav">${nav}</nav>` + SELECTION.map((st) => {
-    const plats = (DELICES.find((d) => d.cityId === st.cityId) || { items: [] }).items;
-    const aGouter = st.step === 6 ? plats.filter((x) => ['monja', 'nikuman', 'shirasu', 'dorayaki'].includes(x.id))
-                  : st.step === 1 ? plats.filter((x) => ['sushi-tsukiji', 'tsukemen', 'melonpan', 'yuba'].includes(x.id))
-                  : plats.slice(0, 4);
-    return `
-    <section class="section sel__step" id="etape-${st.step}" style="--c:var(--c-${st.cityId})">
-      <div class="shead"><h2><span class="sel__n">${String(st.step).padStart(2, '0')}</span> ${esc(st.title)}</h2><span class="shead__meta">${esc(st.dates)}</span></div>
-      <p class="sel__intro">${esc(st.intro)}</p>
-      <ol class="sel__list">${st.picks.map((p) => {
-        const s = byId.get(p.id); if (!s) return '';
-        return `<li><button class="sel__item" type="button" data-id="${esc(s.id)}">
-          ${s.img ? `<img class="sel__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : `<span class="sel__img sel__img--nue">${esc(s.name.trim()[0])}</span>`}
-          <span><b>${esc(s.name)}</b><span class="sel__why">${esc(p.why)}</span>
-          <span class="sel__meta">${[s.duration, s.budget].filter(Boolean).map(esc).join(' · ')}</span></span>
-        </button></li>`;
-      }).join('')}</ol>
-      ${st.arbitrage ? `<p class="sel__arb"><b>Arbitrage</b> ${esc(st.arbitrage)}</p>` : ''}
-      ${aGouter.length ? `<div class="sel__eat"><span class="label">À goûter</span>${aGouter.map((x) => `<a class="chip sel__plat" href="itineraire.html?onglet=manger&ville=${st.cityId}">${x.img ? `<img src="${x.img}" alt="" loading="lazy" decoding="async">` : x.e} ${esc(x.n)}</a>`).join('')}</div>` : ''}
-    </section>`;
-  }).join('');
-}
-q('sel').addEventListener('click', (e) => { const b = e.target.closest('.sel__item'); if (b) openSheet(b.dataset.id); });
-
-// La sélection d'abord. Un lien filtré (?ville=, ?q=…) ouvre directement la bibliothèque.
-const VUES = [['sel', 'La sélection', SELECTION.reduce((a, s) => a + s.picks.length, 0)], ['biblio', 'La bibliothèque', SPOTS.length]];
-let vue = 'biblio';
-function paintVue() {
-  // La sélection étape par étape est dans Les villes : ici, toutes les adresses.
-  q('vue').innerHTML = `<p class="guide__renvoi">Le tri par étape (incontournables, plats, jours) est dans <a href="villes.html">Les villes</a>. Ici, toutes les adresses.</p>`;
-  q('sel').hidden = vue !== 'sel';
-  q('biblio').hidden = vue !== 'biblio';
-}
-q('vue').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-vue]'); if (!b) return;
-  vue = b.dataset.vue; paintVue();
-  const u = new URL(location.href); if (vue === 'biblio') u.searchParams.set('vue', 'biblio'); else u.searchParams.delete('vue');
-  history.replaceState(null, '', u.pathname + u.search);
-});
-renderSelection();
-paintVue();
-// Arrivée depuis l'accueil sur une étape : la section est rendue en JS, il faut y descendre soi-même.
-if (/^#etape-\d$/.test(location.hash)) requestAnimationFrame(() => document.querySelector(location.hash)?.scrollIntoView({ block: 'start' }));
-
 q('grid').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-ville]');
   if (!b) return;
@@ -624,7 +761,6 @@ q('grid').addEventListener('click', (e) => {
 });
 
 q('more').addEventListener('click', (e) => {
-  if (e.target.closest('#voir-aussi')) { state.elargi = true; render(); return; }
   if (!e.target.closest('#more-btn')) return;
   window.__lim += 48;
   const sig = window.__sig; render(); window.__sig = sig;
@@ -646,16 +782,12 @@ q('f-priority').value = state.priority;
 q('f-source').value = state.source;
 
 render();
+// La loupe de la barre (?chercher) et un lien avec ?q= posent le curseur dans le champ.
+if (entree.has('chercher') || entree.has('q')) q('search').focus();
 
 initReveal();
 initCoverParallax();
 initProgressBar();
-</script>
-
-<script>
-/* Enregistrement du service worker : c'est lui qui rend le site utilisable
-   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>

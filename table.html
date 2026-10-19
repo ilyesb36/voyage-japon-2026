@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>À table — Japon 2026</title>
+<meta name="description" content="Les tables à réserver, les spécialités à goûter et les bonnes adresses où manger, ville par ville.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- L'ouverture : un plateau de sushis, déjà au catalogue des plats (data/delices.js),
+     donc déjà hors-ligne. -->
+<header class="cover cover--short">
+  <img class="cover__img" src="img/sushi-platter-a2e4caf6.webp"
+       alt="Un plateau de sushis" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>À table</h1>
+    <p class="cover__dates">Réserver, goûter, bien manger</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Une ville à la fois, comme les étapes de villes.html. -->
+  <nav class="chipbar ptabs" id="villes" aria-label="Choisir une ville"></nav>
+
+  <!-- 1 — Les tables de la ville à réserver (ou déjà réservées), par date. -->
+  <section class="section" id="resas">
+    <div class="shead"><h2>Vos réservations</h2><span class="shead__meta" id="resas-meta"></span></div>
+  </section>
+
+  <!-- 2 — Les plats à goûter. Chaque plat a son ancre : la recherche y renvoie
+       (table.html?ville=<ville>#d-<plat>). -->
+  <section class="section" id="specialites">
+    <div class="shead"><h2>Les spécialités à goûter</h2><span class="shead__meta" id="spe-meta"></span></div>
+  </section>
+
+  <!-- 3 — Les bonnes adresses, rangées par quartier. -->
+  <section class="section" id="tables">
+    <div class="shead"><h2>Les bonnes tables</h2><span class="shead__meta" id="tab-meta"></span></div>
+  </section>
+</main>
+
+<script type="module">
+import { CITIES, STEPS } from './data/trip.js';
+import { DELICES } from './data/delices.js';
+import { SPOTS } from './data/spots.js';
+import { RESERVER } from './data/pratique.js';
+import { mountChrome, esc, formatDate, today, moment } from './app/ui.js';
+import { etatDe, ETAT } from './app/resa.js';
+import { quartierNomDeSpot, quartier, ouEst, fermeBadgeHTML, lienMaps } from './app/quartiers.js';
+
+// Une seule place pour manger : les réservations, les plats à goûter, les bonnes tables, ville par ville.
+mountChrome('table.html');
+const q = (id) => document.getElementById(id);
+const villes = [...new Set(STEPS.map((s) => s.cityId))];           // l'ordre du voyage, Tokyo une fois
+const param = new URLSearchParams(location.search).get('ville');
+const enCours = STEPS.find((s) => today() >= s.from && today() < s.to);
+const ville = villes.includes(param) ? param : (moment() === 'pendant' && enCours ? enCours.cityId : villes[0]);
+const spotsParId = new Map(SPOTS.map((s) => [s.id, s]));
+document.documentElement.style.setProperty('--c', `var(--c-${ville})`);
+
+q('villes').innerHTML = villes.map((id) => `<a class="chip" href="table.html?ville=${id}" aria-pressed="${id === ville}">
+  <span class="chip__dot" style="background:var(--c-${id})"></span>${esc(CITIES[id].name)}</a>`).join('');
+// Sur un petit écran la barre défile : la ville ouverte (Hakone, la dernière) se montre en entier.
+q('villes').querySelector('[aria-pressed="true"]').scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'instant' });
+
+// 1. Les réservations de la ville : les tables, rangées par date.
+const resas = RESERVER.filter((r) => r.type === 'table' && spotsParId.get(r.spotId)?.cityId === ville)
+  .sort((a, b) => a.forDate.localeCompare(b.forDate));
+q('resas-meta').textContent = resas.length ? `${resas.length} table${resas.length > 1 ? 's' : ''}` : '';
+q('resas').insertAdjacentHTML('beforeend', resas.length ? `<ul class="tresas">${resas.map((r) => `
+  <li class="tresas__item tresas__item--${etatDe(r)}">
+    <span class="data">${esc(formatDate(r.forDate, { weekday: true }))}${r.heure ? ` · ${esc(r.heure)}` : ''}</span>
+    <b>${esc(r.title)}</b> <span class="label">${ETAT[etatDe(r)]}</span>
+    ${etatDe(r) === 'a-reserver' ? `<details><summary>Comment réserver</summary><p>${esc(r.commentReserver || '')}</p>${r.url ? `<p><a class="btn" href="${esc(r.url)}" target="_blank" rel="noopener">Réserver</a></p>` : ''}</details>` : ''}
+  </li>`).join('')}</ul>` : '<p class="mut">Aucune table à réserver dans cette ville : les bonnes adresses sont plus bas.</p>');
+
+// 2. Les plats à goûter : ceux de DELICES, lus en direct. La photo, sinon l'emoji.
+const plats = (DELICES.find((g) => g.cityId === ville) || { items: [] }).items;
+q('spe-meta').textContent = `${plats.length} à goûter`;
+q('specialites').insertAdjacentHTML('beforeend', `<div class="tspe">${plats.map((it) => `
+  <article class="tplat" id="d-${esc(it.id)}">
+    ${it.img ? `<img class="tplat__img" src="${esc(it.img)}" alt="${esc(it.n)}" loading="lazy" decoding="async">`
+             : `<span class="tplat__img tplat__img--nue" aria-hidden="true">${esc(it.e)}</span>`}
+    <div class="tplat__txt">
+      <h3 class="tplat__nom">${esc(it.n)}</h3>
+      <p class="tplat__jp" lang="ja">${esc(it.jp)}</p>
+      <p class="tplat__d">${esc(it.d)}</p>
+    </div>
+  </article>`).join('')}</div>`);
+
+// 3. Les bonnes tables : les adresses de la ville marquées `table`, regroupées par quartier.
+// Une adresse sans quartier connu va dans « Autres adresses ».
+const tables = SPOTS.filter((s) => s.table && s.cityId === ville);
+const parQuartier = new Map();
+const excursions = new Set();   // les quartiers où l'on part pour la journée (Nikkō, Kamakura, Yokohama…)
+for (const s of tables) {
+  const nom = quartierNomDeSpot(s) || 'Autres adresses';
+  if (!parQuartier.has(nom)) parQuartier.set(nom, []);
+  parQuartier.get(nom).push(s);
+  if (quartier(ouEst(s)?.quartierId)?.excursion) excursions.add(nom);
+}
+// Les excursions en dernier, comme les cartes de villes.html (quartiersOrdonnes) ; le reste garde son ordre.
+const quartiersTries = [...parQuartier].sort(([a], [b]) => Number(excursions.has(a)) - Number(excursions.has(b)));
+// Une adresse : le nom, sa ligne courte, les liens ; le « pourquoi » (une note de préparation), la fermeture et la réservation, repliés.
+function carteTable(s) {
+  const resa = s.resa;
+  const plus = [
+    s.pourquoi ? `<p><span class="label">Pourquoi</span> ${esc(s.pourquoi)}</p>` : '',
+    s.fermeture ? `<p><span class="label">Fermeture</span> ${esc(s.fermeture)}</p>` : '',
+    resa ? `<p><span class="label">Réservation</span> ${[resa.canal, resa.ouverture, resa.conseil].filter(Boolean).map(esc).join(' · ')}</p>` : '',
+  ].join('');
+  return `
+  <li class="ttab">
+    <h3 class="ttab__nom">${esc(s.name)}${s.jp ? ` <span class="ttab__jp" lang="ja">${esc(s.jp)}</span>` : ''}</h3>
+    <p class="ttab__meta">${fermeBadgeHTML(s)}${s.tabelog ? `<span class="data ttab__tabelog">Tabelog ${esc(s.tabelog)}</span>` : ''}${s.budget ? `<span class="data">${esc(s.budget)}</span>` : ''}</p>
+    <p class="ttab__why">${esc(s.blurb)}</p>
+    <p class="ttab__liens"><a href="${esc(lienMaps(s))}" target="_blank" rel="noopener">Maps</a>${resa && resa.url ? ` <a href="${esc(resa.url)}" target="_blank" rel="noopener">Réserver</a>` : ''}</p>
+    ${plus ? `<details class="ttab__plus"><summary>Les détails</summary>${plus}</details>` : ''}
+  </li>`;
+}
+// Un panneau par quartier. Peu de quartiers : on les montre ouverts. Tokyo en a
+// neuf : repliés, sinon la page passe les 6 000 px.
+const ouverts = parQuartier.size <= 3;
+q('tab-meta').textContent = `${tables.length} adresse${tables.length > 1 ? 's' : ''}`;
+q('tables').insertAdjacentHTML('beforeend', quartiersTries.map(([nom, liste]) => `
+  <details class="tq"${ouverts ? ' open' : ''}>
+    <summary class="tq__nom"><span>${esc(nom)}</span><span class="tq__n">${liste.length}<span class="sr"> adresse${liste.length > 1 ? 's' : ''}</span></span></summary>
+    <ul class="tq__liste">${liste.map(carteTable).join('')}</ul>
+  </details>`).join(''));
+
+// Arrivée par une ancre : un plat (table.html?ville=…#d-<plat>, depuis la recherche) ou une
+// des trois sections (#resas, #specialites, #tables). Le contenu vient d'être posé par le
+// script : on défile nous-mêmes jusqu'à la cible. La page défile en douceur (scroll-behavior),
+// et « auto » s'y plie : au chargement cette animation part du haut et se fait couper,
+// donc on demande « instant ».
+if (location.hash.length > 1) {
+  const allerALAncre = () => document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+  history.scrollRestoration = 'manual';   // le navigateur ne rend pas la main à l'ancien défilement
+  allerALAncre();
+  // La photo de couverture se pose tard : une fois tout chargé, on recadre la cible.
+  addEventListener('load', allerALAncre);
+}
+</script>
+</body>
+</html>

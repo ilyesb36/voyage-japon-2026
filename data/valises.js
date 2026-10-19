@@ -23,7 +23,7 @@ export const TRAJETS = Object.freeze([
     toAirport: false,
     region: 'Kantō → Hokuriku (Ishikawa)',
     train: 'Kagayaki — Hokuriku Shinkansen, direct, 2 h 30',
-    recoTitre: 'Les garder avec soi',
+    decision: 'Avec vous',
     cout2: 'inclus',
     options: [
       {
@@ -59,14 +59,18 @@ export const TRAJETS = Object.freeze([
     toAirport: false,
     region: 'Hokuriku → Kansai',
     train: 'Tsurugi + Thunderbird via Tsuruga, 2 h 15 (un changement)',
-    recoTitre: 'Les garder avec soi',
-    cout2: 'inclus',
+    decision: 'Avec vous',
+    // Le train ne coûte rien de plus, mais l'appartement n'ouvre qu'à 16 h : les casiers
+    // font le coût du trajet. Ce montant tient dans la ligne du plan de valises.html,
+    // qui ne passe pas à la ligne : on y met le milieu de la fourchette (2 casiers à
+    // ~800 ¥) ; la fourchette complète est dans l'option conseillée.
+    cout2: '≈ 1 600 ¥',
     options: [
       {
         reco: true,
         titre: 'Les garder avec soi',
-        cout: 'Aucun supplément',
-        pour: "Un seul changement, à Tsuruga, où le Tsurugi et le Thunderbird se font quai à quai ; aucune réservation « bagage surdimensionné » sur ces deux trains. À l'arrivée, l'appartement n'ouvre qu'à 16 h : laisser les valises aux casiers de la gare de Kyoto, ou de la gare JR de Nijō (7 min de l'appartement).",
+        cout: 'casiers ≈ 1 400–1 800 ¥ pour deux, en attendant 16 h',
+        pour: "Un seul changement, à Tsuruga, où le Tsurugi et le Thunderbird se font quai à quai ; aucune réservation « bagage surdimensionné » sur ces deux trains. À l'arrivée, l'appartement n'ouvre qu'à 16 h : laisser les valises aux casiers de la gare de Kyoto (grand casier 700–900 ¥ par casier et par jour), ou de la gare JR de Nijō (7 min de l'appartement).",
         contre: null,
       },
       {
@@ -93,14 +97,16 @@ export const TRAJETS = Object.freeze([
     toAirport: false,
     region: 'Kansai (intra)',
     train: 'JR Special Rapid, 30 min, direct',
-    recoTitre: 'Les garder avec soi',
-    cout2: 'inclus',
+    decision: 'Avec vous',
+    // Arrivée vers 11 h 30, entrée à 16 h : les casiers font le coût du trajet, comme au
+    // trajet 2 (milieu de la fourchette dans la ligne du plan, fourchette dans l'option).
+    cout2: '≈ 1 600 ¥',
     options: [
       {
         reco: true,
         titre: 'Les garder avec soi',
-        cout: 'Aucun supplément',
-        pour: "Trajet direct de 30 min : porter les valises ne coûte rien. 川HOUSE n'ouvre qu'à 16 h (l'hôte répond de 9 h à 12 h) — casiers du côté de Nipponbashi / Namba en attendant : la gare Kintetsu-Nippombashi est la mieux fournie en grands casiers (grand 600–1 000 ¥, surdimensionné 800–1 500 ¥).",
+        cout: 'casiers ≈ 1 200–2 000 ¥ pour deux, en attendant 16 h',
+        pour: "Trajet direct de 30 min : dans le train, les valises ne coûtent rien. 川HOUSE n'ouvre qu'à 16 h (l'hôte répond de 9 h à 12 h) — casiers du côté de Namba en attendant : la gare Kintetsu-Nippombashi est la mieux fournie en grands casiers (grand 600–1 000 ¥, surdimensionné 800–1 500 ¥, par casier et par jour).",
         contre: null,
       },
       {
@@ -128,7 +134,7 @@ export const TRAJETS = Object.freeze([
     toAirport: false,
     region: 'Kansai → Kanagawa',
     train: 'Hikari → Odawara, puis bus Tozan → port de Moto-Hakone',
-    recoTitre: 'Avec soi — le ryokan vient au port',
+    decision: 'Avec vous',
     cout2: 'inclus',
     options: [
       {
@@ -170,9 +176,9 @@ export const TRAJETS = Object.freeze([
     toHotelId: 'hotel-la-vita-ikebukuro-residence',
     toAirport: false,
     region: 'Kanagawa → Tokyo',
-    train: 'Bus → Odawara, Odakyu → Shinjuku, Fukutoshin → Kanamecho (~2 h 45, plusieurs changements)',
-    recoTitre: '営業所止め — centre Yamato d’Ikebukuro',
-    cout2: '≈ 6 040 ¥ les deux (taille 160)',
+    train: 'Train Tozan → Odawara (Freepass), shinkansen → Tokyo (35 min), métro → Kanamecho (~2 h)',
+    decision: 'Au centre Yamato',
+    cout2: '≈ 6 040 ¥',
     options: [
       {
         reco: true,
@@ -180,14 +186,14 @@ export const TRAJETS = Object.freeze([
         cout: '≈ 6 040 ¥ les deux (taille 160 ; un peu moins avec les remises)',
         delai: 'Livré le lendemain au centre, gardé 7 jours',
         quand: "Faire remettre les valises à Yamato par le ryokan le matin du départ.",
-        pour: "La Vita ne reçoit aucun colis et propose justement ce centre Yamato (Ikebukuro-Ekimae), à retirer soi-même. On traverse Shinjuku les mains libres, puis on récupère les valises à deux pas de l'hôtel quand on veut.",
+        pour: "La Vita ne reçoit aucun colis et propose justement ce centre Yamato (Ikebukuro-Ekimae), à retirer soi-même. On traverse Tokyo les mains libres, puis on récupère les valises à deux pas de l'hôtel quand on veut.",
         contre: "Vérifier que le ryokan peut confier les valises à Yamato ; retrait au centre sur présentation du passeport et du double du bordereau.",
       },
       {
         titre: 'Les garder avec soi',
         cout: 'Aucun supplément',
         pour: "Toujours possible ; le jour de l'arrivée, La Vita a un espace à bagages en libre accès près de l'entrée.",
-        contre: "Plusieurs changements (Odawara, Shinjuku) avec deux grosses valises.",
+        contre: "Plusieurs changements (Odawara, gare de Tokyo, Ikebukuro) avec deux grosses valises.",
       },
     ],
     demander: {
@@ -207,7 +213,7 @@ export const TRAJETS = Object.freeze([
     toAirport: true,
     region: 'Tokyo → Haneda (terminal 3, international)',
     train: 'Keikyū depuis la ligne Asakusa → Haneda T3 (~50–65 min)',
-    recoTitre: 'Les emporter le jour même',
+    decision: 'Avec vous',
     cout2: 'inclus',
     options: [
       {
@@ -234,16 +240,43 @@ export const TRAJETS = Object.freeze([
   },
 ]);
 
-// Comment envoyer : les bases du takkyubin, le bordereau, le 営業所止め, et les
-// adresses de chaque logement (lues dans HOTELS, jamais recopiées ici), plus le
-// centre Yamato où La Vita fait retirer les colis.
+// Comment envoyer : le système en 3 étapes, les phrases à montrer au comptoir,
+// le bordereau, le 営業所止め, ce que chaque logement accepte (adresses lues dans
+// HOTELS, jamais recopiées ici), et le centre Yamato où La Vita fait retirer.
 export const ENVOYER = Object.freeze({
   intro: "Deux grosses valises à déplacer six fois. La règle simple : sur les trajets directs ou courts, on les garde avec soi ; sur les étapes à changements, on les fait suivre — quand le logement le permet. Deux logements ne reçoivent aucun colis (Matatabi, La Vita), deux sont des appartements sans accueil (Center Point, 川HOUSE) : la bonne option change à chaque fois.",
-  recapNote: "Coûts pour deux valises, barème Yamato en vigueur en 2026, payé au départ, taxes comprises. Une grosse valise se facture en taille 160 dès qu'elle dépasse 20 kg ; « estimation » quand un montant n'est pas confirmé sur une page officielle. Toutes les routes sont livrées le lendemain.",
-  envoi: [
-    "Le takkyubin (宅急便, « Kuroneko Yamato ») fait suivre une valise d'un point à un autre au Japon, livrée le lendemain entre toutes ces villes — Hakone compris, sans supplément montagne. On remplit un bordereau (送り状), on paie au dépôt, on garde le double : c'est lui qu'on présente pour un retrait en 営業所止め ou au comptoir de l'aéroport.",
-    "Où déposer : à la réception d'un hôtel qui a un accueil (il remplit le bordereau pour vous — demander que ce soit « payé au départ », 元払い), à un centre Yamato (営業所), ou dans un konbini partenaire — en 2026, seuls 7-Eleven et FamilyMart prennent Yamato ; Lawson et Ministop passent par la Poste (ゆうパック), un autre réseau. Un konbini n'accepte pas au-delà de la taille 160 : mesurer la somme des trois côtés avant d'y compter.",
-    "Un petit rabais « dépôt » (持込割) d'environ 100 ¥ par valise s'applique hors réception d'hôtel, et 100 ¥ de plus par valise si les deux partent ensemble vers le même logement (複数口). Paiement en espèces ou par carte au comptoir.",
+  recapNote: "Coûts pour deux valises, barème Yamato en vigueur en 2026, payé au départ, taxes comprises. Une grosse valise se facture en taille 160 dès qu'elle dépasse 20 kg ; « estimation » quand un montant n'est pas confirmé sur une page officielle. Toutes les routes sont livrées le lendemain. Les casiers des trajets 2 et 3 se paient par casier et par jour.",
+  // 1 — Le système en 3 étapes. Remplace les anciens paragraphes « envoi » :
+  // mêmes faits, répartis entre déposer, le bordereau / payer, et la livraison.
+  systemeLead: "Le takkyubin (宅急便, « Kuroneko Yamato ») fait suivre une valise d'un point à un autre au Japon, livrée le lendemain. Trois étapes.",
+  systeme: [
+    {
+      n: 1,
+      titre: 'Déposer',
+      texte: "À la réception de l'hôtel s'il a un accueil, dans un 7-Eleven ou un FamilyMart, ou à un centre Yamato (営業所).",
+      note: "Lawson et Ministop passent par la Poste (ゆうパック), un autre réseau. Un konbini ne prend rien au-delà de la taille 160 : mesurer la somme des trois côtés avant d'y compter.",
+    },
+    {
+      n: 2,
+      titre: 'Le bordereau, et payer au départ (元払い)',
+      texte: "On remplit le bordereau (送り状) et on paie au dépôt : environ 3 000 ¥ par valise en taille 160. À l'hôtel, la réception le remplit pour vous — demandez « 元払い », port payé au départ.",
+      note: "Un petit rabais « dépôt » (持込割) d'environ 100 ¥ par valise hors réception d'hôtel, et 100 ¥ de plus par valise si les deux partent ensemble vers le même logement (複数口). Espèces ou carte. On garde le double du bordereau.",
+    },
+    {
+      n: 3,
+      titre: 'La livraison',
+      texte: "Le lendemain à l'adresse d'arrivée, partout entre ces villes — Hakone compris, sans supplément montagne.",
+      note: "Logement sans accueil ou qui ne reçoit pas de colis : on se fait livrer à un centre Yamato (営業所止め) et on retire soi-même, passeport et double du bordereau, gardé 7 jours. C'est aussi ce double qu'on présente au comptoir de l'aéroport.",
+    },
+  ],
+  // 2 — Au comptoir : les phrases à montrer à l'employé, en gros, avec la
+  // traduction dessous. Phrases validées — ne pas réécrire.
+  comptoir: [
+    { jp: 'このスーツケース2個を宅急便で送りたいです。', fr: 'Je voudrais envoyer ces deux valises en takkyūbin.' },
+    { jp: '明日のお届けでお願いします。', fr: "Livraison demain, s'il vous plaît." },
+    { jp: '元払いでお願いします。', fr: 'Je paie maintenant (port payé au départ).' },
+    { jp: '営業所止めでお願いします。', fr: 'Je viendrai les retirer au centre Yamato.' },
+    { jp: '宅急便の手配をお願いできますか。', fr: "À la réception de l'hôtel : pouvez-vous organiser l'envoi ?" },
   ],
   bordereau: [
     { champ: 'お届け先 — destinataire', valeur: "Nom et adresse du logement d'arrivée, + téléphone", aide: "Adresses prêtes à recopier ci-dessous." },
@@ -288,6 +321,6 @@ export const TRAINS = Object.freeze([
   },
   {
     titre: 'Casiers et comptoirs en gare',
-    texte: "Les jours d'arrivée avant l'ouverture du logement : casiers à la gare de Kyoto (grand 700–900 ¥, surdimensionné ~1 000 ¥, vite pris en milieu de journée) et vers Nipponbashi / Namba (grand 600–1 000 ¥, surdimensionné 800–1 500 ¥). En secours : la consigne Crosta au sous-sol de la gare de Kyoto (1 000 ¥/valise/jour, 8 h–20 h) ou ecbo cloak, réservable (800 ¥/valise). La gare de Nijō a peu de grands casiers : viser Kyoto ou ecbo. Les comptoirs « mains libres » (Crosta : Kyoto 1 500 ¥/valise avant 14 h, Osaka 2 000 ¥ avant 12 h) ne livrent que dans la même ville, vers des hôtels partenaires avec accueil — ils ne couvrent ni ces changements de ville ni les appartements sans réception.",
+    texte: "Les jours d'arrivée avant l'ouverture du logement : casiers à la gare de Kyoto (grand 700–900 ¥, surdimensionné ~1 000 ¥, vite pris en milieu de journée) et à la gare Kintetsu-Nippombashi, du côté de Namba (grand 600–1 000 ¥, surdimensionné 800–1 500 ¥) : prix par casier et par jour. En secours : la consigne Crosta au sous-sol de la gare de Kyoto (1 000 ¥/valise/jour, 8 h–20 h) ou ecbo cloak, réservable (800 ¥/valise). La gare de Nijō a peu de grands casiers : viser Kyoto ou ecbo. Les comptoirs « mains libres » (Crosta : Kyoto 1 500 ¥/valise avant 14 h, Osaka 2 000 ¥ avant 12 h) ne livrent que dans la même ville, vers des hôtels partenaires avec accueil — ils ne couvrent ni ces changements de ville ni les appartements sans réception.",
   },
 ]);

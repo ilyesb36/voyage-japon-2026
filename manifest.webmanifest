@@ -28,11 +28,11 @@
       "url": "./jour.html"
     },
     {
-      "name": "Le guide",
-      "url": "./guide.html"
+      "name": "Chercher",
+      "url": "./guide.html?chercher"
     },
     {
-      "name": "Jour par jour",
+      "name": "Le programme",
       "url": "./itineraire.html"
     }
   ]

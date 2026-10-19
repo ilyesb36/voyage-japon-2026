@@ -15,311 +15,240 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Japon 2026">
 <link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
 </head>
 <body>
 
 <main class="wrap">
-  <!-- À deux, le budget c'est trois questions : qui doit combien à l'autre,
-       qu'est-ce qui reste à payer, et qui a payé quoi. La page fait ça et rien
-       d'autre : une phrase, un tableau, une liste. Le tableau et la liste sont
-       deux onglets : répéter le compte sous chaque poste de la liste empilait
-       des petites lignes que personne ne lisait. -->
-  <header class="section">
+  <!-- Le budget tient en une phrase : ce que coûte le voyage, ce qui est payé, ce
+       qui reste à payer. Dessous, une barre en trois couleurs, « entre vous » en une
+       ligne, ce qu'il reste à payer en deux listes (à réserver avant le départ, sur
+       place), puis le détail par catégorie, replié. Pendant le voyage, une ligne en
+       tête dit ce qu'on dépense par jour. Tout vient des données : qui a payé quoi
+       s'écrit dans BUDGET[].qui, et le taux des yens dans BUDGET.yenParEuro, donc
+       c'est pareil sur les deux téléphones. -->
+  <header class="section bud__tete">
     <h1>Le budget</h1>
-    <p class="hero__lede" id="lede"></p>
   </header>
 
-  <section class="section">
-    <div class="bilan" id="bilan"></div>
-  </section>
-
-  <section class="section">
-    <div class="chipbar onglets" role="tablist" aria-label="Vue">
-      <button class="chip" type="button" role="tab" data-onglet="compte" aria-selected="true" id="tab-compte" aria-controls="compte">Le compte</button>
-      <button class="chip" type="button" role="tab" data-onglet="dep" aria-selected="false" id="tab-dep" aria-controls="dep">Les dépenses</button>
-    </div>
-
-    <div id="compte" role="tabpanel" aria-labelledby="tab-compte"></div>
-
-    <div id="dep" role="tabpanel" aria-labelledby="tab-dep" hidden>
-      <p class="dep__legende mut"><b>I</b> Ilyès · <b>M</b> Mathilde · <b>½</b> moitié chacun. Re-cliquer efface.</p>
-      <div class="dep" id="dep-liste"></div>
-    </div>
-  </section>
+  <section class="section bud__sec" id="synthese"></section>      <!-- la phrase et la barre -->
+  <section class="section bud__sec" id="entre-vous"></section>    <!-- une phrase -->
+  <section class="section bud__sec" id="avant"></section>         <!-- à réserver avant le départ -->
+  <section class="section bud__sec" id="sur-place"></section>     <!-- sur place -->
+  <section class="section bud__sec" id="detail"></section>        <!-- le détail par catégorie, replié -->
 
   <section class="section">
     <p class="jour__ailleurs">
-      <a class="btn btn--ghost" href="pratique.html">Les hébergements</a>
+      <a class="btn btn--ghost" href="secours.html#logements">Adresses des logements</a>
       <a class="btn btn--ghost" href="aujourdhui.html">Ce qu'il reste à réserver</a>
     </p>
   </section>
 </main>
 
 <script type="module">
-import { TRIP, HOTELS, BUDGET } from './data/trip.js';
-import { mountChrome, initReveal, esc, eur } from './app/ui.js';
+import { HOTELS, BUDGET } from './data/trip.js';
+import { RESERVER } from './data/pratique.js';
+import { mountChrome, esc, eur, formatDate, moment } from './app/ui.js';
+import { etatDe, ETAT } from './app/resa.js';
 
 mountChrome('budget.html');
 const q = (id) => document.getElementById(id);
 
-const QUI = { I: 'Ilyès', M: 'Mathilde', D: 'moitié chacun' };
-
 // --- le calcul ----------------------------------------------------------------
+// Rien ne vient du téléphone : les forfaits sont ceux de BUDGET.defaults et les
+// payeurs ceux de BUDGET[].qui, donc la page est la même chez Ilyès et chez Mathilde.
 // Le poste hébergement est la somme des réservations, jamais une saisie.
-const RATE_LABEL = { vol: '€ / pers.', train: '€ / pers.', food: '€ / jour / pers.', act: '€ / jour / pers.' };
 const MULT = { vol: 2, train: 2, food: 24 * 2, act: 24 * 2 };
-
-const lire = (k, repli) => { try { return JSON.parse(localStorage.getItem(k)) ?? repli; } catch { return repli; } };
-const rates = { ...BUDGET.defaults, ...lire('jp2026_rates', {}) };
-const saveRates = () => localStorage.setItem('jp2026_rates', JSON.stringify(rates));
 
 function montant(item) {
   if (item.fromHotel) return HOTELS.find((h) => h.id === item.fromHotel).price;
   if (item.fix != null) return item.fix;
-  return (rates[item.dyn] || 0) * MULT[item.dyn];
+  return (BUDGET.defaults[item.dyn] || 0) * MULT[item.dyn];
 }
 const somme = (items) => items.reduce((t, i) => t + montant(i), 0);
-const ITEMS = BUDGET.categories.flatMap((c) => c.items);
 
-// Ce qui est déjà sorti d'un compte, sans qu'on sache duquel : hôtels
-// prépayés via Booking, billets datés. C'est un fait, pas une case à cocher.
-const prepaye = new Set([
-  ...HOTELS.filter((h) => h.paid).map((h) => h.id),
-  ...ITEMS.filter((i) => i.settled).map((i) => i.key),
-]);
+// Payé = un payeur connu dans les données, ou un hôtel réglé.
+const payeLigne = (i) => !!i.qui || HOTELS.some((h) => h.id === i.key && h.paid);
+const lignes = BUDGET.categories.flatMap((c) => c.items.map((i) => ({ ...i, cat: c.id })));
+const total = somme(lignes);
+const paye = somme(lignes.filter(payeLigne));
+// Avant le départ : ce qui se réserve ou se paie en ligne (billets, tables), non réglé.
+const avant = lignes.filter((i) => ['billets', 'tables'].includes(i.cat) && !payeLigne(i));
+// Sur place : le reste non réglé (passes, trains, repas, sorties).
+const surPlace = lignes.filter((i) => !payeLigne(i) && !avant.includes(i));
+// Entre vous : la part de chacun = ce qu'il a avancé seul + la moitié de ce qui est payé à deux.
+const avI = somme(lignes.filter((i) => i.qui === 'I'));
+const avM = somme(lignes.filter((i) => i.qui === 'M'));
+const ecart = (avI - avM) / 2;   // > 0 : Mathilde doit cet écart à Ilyès
 
-// Qui a payé : 'I', 'M', 'D' (moitié chacun) ou rien. L'ancienne case « payé »
-// sans payeur est reprise comme payé par on-ne-sait-qui.
-const payeur = lire('jp2026_payeur', {});
-// Un payeur écrit dans les données (BUDGET, champ `qui`) est un fait connu de
-// tous — les hôtels réglés à deux : il s'applique sur chaque téléphone, sauf si
-// quelqu'un a choisi autre chose sur le sien.
-BUDGET.categories.flatMap((c) => c.items).forEach((i) => { if (i.qui && !(i.key in payeur)) payeur[i.key] = i.qui; });
-const ancien = lire('jp2026_paid', lire('bdg_paid', {}));
-const savePayeur = () => localStorage.setItem('jp2026_payeur', JSON.stringify(payeur));
+// --- de quoi écrire les listes ---------------------------------------------------
+// Une rangée : le nom et, dessous, ce qui le situe ; le montant à droite. C'est du
+// HTML : l'appelant échappe ce qui vient des données.
+const rangee = (nom, sous, droite) => `
+  <li class="bud__ligne">
+    <span class="bud__texte">
+      <b class="bud__nom">${nom}</b>
+      <span class="bud__sous">${sous}</span>
+    </span>
+    <span class="bud__montant">${droite}</span>
+  </li>`;
+const chiffre = (n) => `<span class="data">${eur(n)}</span>`;
+// Un montant écrit dans un texte des données (« ≈ 6 040 ¥ ») ne se coupe pas en deux lignes : les
+// milliers, l'unité et le « ≈ » qui le précède tiennent ensemble.
+const insec = (t) => t.replace(/(\d) (?=\d{3}(?!\d))/g, '$1\u00a0').replace(/ (¥|€)/g, '\u00a0$1').replace(/≈ /g, '≈\u00a0');
+const QUI = { I: 'par Ilyès', M: 'par Mathilde', D: 'à deux' };
+// Les yens des équivalents suivent le taux du budget, à la centaine près : un ordre de grandeur.
+// Une espace insécable ordinaire, comme eur() : l'espace fine d'Intl se lit « 11500 ».
+const yen = (euros) => {
+  const n = new Intl.NumberFormat('fr-FR').format(Math.round((euros * BUDGET.yenParEuro) / 100) * 100);
+  return `<span class="data">${n.replace(/\u202f/g, '\u00a0')}\u00a0¥</span>`;
+};
+// Ce qu'on dépense par jour, repas et sorties, pour deux : le forfait des données, rien de saisi ici.
+const parJour = (BUDGET.defaults.food + BUDGET.defaults.act) * 2;
+// Un total impair ne se partage pas en deux montants entiers (4 129,5 € chacun) : on écrit « ≈ » devant la moitié arrondie.
+const chacun = `${Number.isInteger(total / 2) ? '' : '≈\u00a0'}${eur(total / 2)}`;
 
-const estPaye = (i) => prepaye.has(i.key) || !!ancien[i.key] || !!payeur[i.key];
-const sansPayeur = (i) => estPaye(i) && !payeur[i.key];
-
-function bilan(items = ITEMS) {
-  const total = somme(items);
-  const paye = somme(items.filter(estPaye));
-  const avI = somme(items.filter((i) => payeur[i.key] === 'I'));
-  const avM = somme(items.filter((i) => payeur[i.key] === 'M'));
-  const flou = items.filter(sansPayeur);
-  // Ce que chacun a déjà mis : ce qu'il a avancé, plus la moitié de ce qui a été
-  // payé à deux — et, faute de mieux, la moitié de ce qui est payé sans qu'on
-  // sache par qui.
-  const moitie = (somme(items.filter((i) => payeur[i.key] === 'D')) + somme(flou)) / 2;
-  const part = total / 2;
-  // Chacun doit la moitié de ce que l'un ou l'autre a avancé.
-  return {
-    total, paye, reste: total - paye, avI, avM, flou, moitie,
-    payeI: avI + moitie, payeM: avM + moitie,
-    solde: (avI - avM) / 2,
-    resteI: Math.max(0, part - avI - moitie),
-    resteM: Math.max(0, part - avM - moitie),
-  };
-}
-
-// « Mathilde doit 581 € à Ilyès » : ce que l'un rembourse à l'autre pour être à
-// égalité maintenant. L'autre option — ne rien rembourser, l'autre paie plus du
-// reste — c'est ce que disent les colonnes « lui reste » du tableau.
-function phraseDoit(b) {
-  const s = Math.round(Math.abs(b.solde));
-  if (!b.avI && !b.avM) return '';
-  if (s === 0) return 'chacun a mis autant';
-  const [doit, a] = b.solde > 0 ? ['Mathilde', 'Ilyès'] : ['Ilyès', 'Mathilde'];
-  return `${doit} doit <b class="data">${eur(s)}</b> à ${a}`;
-}
-
-q('lede').textContent =
-  'Qui a payé quoi, ce qu\'il reste, et qui doit combien à l\'autre. Mémorisé sur cet appareil.';
-
-// --- le bilan : la phrase, et l'autre option ------------------------------------
-function renderBilan() {
-  const b = bilan();
-  const s = Math.round(Math.abs(b.solde));
-  const phrase = !b.avI && !b.avM ? 'Personne n\'a encore rien avancé'
-    : s === 0 ? 'Vous êtes à l\'équilibre'
-    : phraseDoit(b);
-  const autre = s && b.reste
-    ? `Après remboursement, il reste <span class="data">${eur(b.reste / 2)}</span> chacun.
-       Sans remboursement, ${b.solde > 0 ? 'Mathilde' : 'Ilyès'} paie plus du reste : c'est le tableau.`
-    : '';
-
-  q('bilan').innerHTML = `
-    <div class="bilan__solde">
-      <span class="chiffre__quoi">Entre vous</span>
-      <span class="bilan__phrase">${phrase}</span>
-      ${autre ? `<span class="bilan__sous">${autre}</span>` : ''}
+// --- la phrase et la barre ------------------------------------------------------
+// Trois parts, qui font le voyage : ce qui est payé, ce qui est à réserver avant le départ,
+// ce qui se dépense sur place. La barre les montre à l'échelle ; la légende les nomme.
+// Pendant le voyage, la première ligne dit ce qu'on peut dépenser aujourd'hui, avec le
+// chemin vers les tables. Dessous, ce que le budget ne compte pas, et son taux de change.
+function renderSynthese() {
+  const parts = [
+    ['paye', 'Payé', paye],
+    ['avant', moment() === 'avant' ? 'À réserver avant le départ' : 'À réserver', somme(avant)],
+    ['place', 'Sur place', somme(surPlace)],
+  ];
+  q('synthese').innerHTML = `
+    ${moment() === 'pendant' ? `<p class="bud__jour"><span>Aujourd'hui : <b>≈\u00a0${chiffre(parJour)} (≈\u00a0${yen(parJour)})</b> pour deux</span>
+      <a class="btn btn--ghost" href="table.html">Où dîner</a></p>` : ''}
+    <p class="bud__phrase">Le voyage coûte ${eur(total)} pour deux (${chacun} chacun).</p>
+    <p class="bud__bilan"><span>Déjà payé : <b>${eur(paye)}</b></span> <span>Reste à payer : <b>${eur(total - paye)}</b></span></p>
+    <div class="bud__barre" role="img" aria-label="${parts.map(([, nom, n]) => `${nom} ${eur(n)}`).join(', ')}">
+      ${parts.filter(([, , n]) => n > 0).map(([id, , n]) => `<span class="bud__seg bud__seg--${id}" style="flex-grow:${n}"></span>`).join('')}
     </div>
-    <dl class="bilan__faits">
-      <div><dt>Reste à payer</dt><dd class="data bilan__fort">${eur(b.reste)}</dd></div>
-      <div><dt>Déjà payé</dt><dd class="data">${eur(b.paye)}</dd></div>
-      <div><dt>Le voyage</dt><dd class="data">${eur(b.total)}</dd></div>
-      <div><dt>Par jour et par personne</dt><dd class="data">${eur(b.total / 2 / TRIP.days)}</dd></div>
-    </dl>`;
+    <ul class="bud__legende">
+      ${parts.map(([id, nom, n]) => `<li><i class="bud__pastille bud__pastille--${id}" aria-hidden="true"></i>${nom} <b class="data">${eur(n)}</b></li>`).join('')}
+    </ul>
+    <p class="bud__note">Pas compris : la taxe de séjour (à régler sur place, voir <a href="aujourdhui.html#a-lire">À faire</a>) et les achats personnels.
+      Les yens suivent le taux du budget : 1\u00a0€\u00a0≈\u00a0${BUDGET.yenParEuro}\u00a0¥.</p>`;
 }
 
-// --- le compte : un tableau, une ligne par poste ---------------------------------
-// Les colonnes qu'on lit : ce qu'il reste à payer, et ce qu'il reste à chacun
-// s'il paie jusqu'à sa part sans se faire rembourser. Sous le nom du poste, ce
-// que l'un doit à l'autre s'il préfère se faire rembourser tout de suite.
-function renderCompte() {
-  const ligne = (nom, b, cls = '') => `
-    <div class="cpt__ligne ${cls}">
-      <span class="cpt__poste">
-        <b>${esc(nom)}</b>
-        <span class="mut">${b.reste === 0 ? '<span class="cpt__ok">tout est payé</span>' : `${eur(b.total)} au total`}${
-          phraseDoit(b) ? ` · ${phraseDoit(b)}` : ''}${
-          b.flou.length ? ` · <span class="data">${eur(somme(b.flou))}</span> payés sans savoir par qui<sup>?</sup>` : ''}</span>
-      </span>
-      <span class="cpt__n data cpt__reste">${b.reste ? eur(b.reste) : '—'}</span>
-      <span class="cpt__n data"><span class="cpt__paye mut">${eur(b.payeI)}</span>${b.resteI ? eur(b.resteI) : '—'}</span>
-      <span class="cpt__n data"><span class="cpt__paye mut">${eur(b.payeM)}</span>${b.resteM ? eur(b.resteM) : '—'}</span>
-    </div>`;
+// --- entre vous -----------------------------------------------------------------
+// « Payé à deux : hébergement et vols. Payé par Ilyès : Nintendo Museum. » — lu dans
+// les `qui`, jamais écrit en dur. Une catégorie payée en entier par la même personne
+// se nomme d'un mot ; sinon, on cite les lignes.
+const liste = (xs) => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} et ${xs.at(-1)}` : xs.join(''));
+const explication = () => ['D', 'I', 'M']
+  .map((code) => ({
+    code,
+    quoi: BUDGET.categories.flatMap((c) => {
+      const siennes = c.items.filter((i) => i.qui === code);
+      return siennes.length === c.items.length ? [c.name.toLowerCase()] : siennes.map((i) => i.label);
+    }),
+  }))
+  .filter((g) => g.quoi.length)
+  .map((g) => `Payé ${QUI[g.code]} : ${liste(g.quoi)}.`)
+  .join(' ');
 
-  const tout = bilan();
-  q('compte').innerHTML = `
-    <div class="cpt">
-      <div class="cpt__ligne cpt__tete" aria-hidden="true">
-        <span></span>
-        <span class="cpt__n">Reste<br><small>à payer</small></span>
-        <span class="cpt__n">Ilyès<br><small>a payé · lui reste</small></span>
-        <span class="cpt__n">Mathilde<br><small>a payé · lui reste</small></span>
-      </div>
-      ${BUDGET.categories.map((cat) => ligne(cat.name, bilan(cat.items))).join('')}
-      ${ligne('Le voyage', tout, 'cpt__pied')}
-    </div>
-    <p class="cpt__note mut">
-      « Lui reste » : ce que chacun paie encore pour atteindre sa part, la moitié, sans se faire rembourser.
-      La part de chacun sur le voyage : <span class="data">${eur(tout.total / 2)}</span>.${
-      tout.flou.length ? ' <sup>?</sup> Compté moitié-moitié en attendant de savoir qui a payé.' : ''}
-    </p>`;
+function renderEntreVous() {
+  const s = Math.round(Math.abs(ecart));
+  const [doit, a] = ecart > 0 ? ['Mathilde', 'Ilyès'] : ['Ilyès', 'Mathilde'];
+  const pourquoi = explication();
+  q('entre-vous').innerHTML = `
+    <h2 class="bud__quoi">Entre vous</h2>
+    <p class="bud__solde">${s === 0 ? 'Vous êtes à égalité' : `${doit} doit <b>${eur(s)}</b> à ${a}`}</p>
+    ${pourquoi ? `<p class="bud__explique">${esc(pourquoi)}</p>` : ''}`;
 }
 
-// --- les dépenses : une ligne par dépense, avec son payeur -----------------------
+// --- à réserver avant le départ --------------------------------------------------
+// Chaque ligne : le libellé, la date de la réservation, son état, le montant. L'état
+// d'une table ou d'un billet à réserver s'écrit une seule fois, dans RESERVER : la clé
+// du budget est `table-<id>` ou `billet-<id>`, on lit la réservation de l'<id>.
+const resaDe = (i) => /^(table|billet)-/.test(i.key)
+  ? RESERVER.find((r) => r.id === i.key.replace(/^(table|billet)-/, '')) : undefined;
+// Du plus proche au plus lointain ; sans date, à la fin.
+const parDate = (a, b) => (resaDe(a)?.forDate || '9999').localeCompare(resaDe(b)?.forDate || '9999');
+
+function ligneAvant(i) {
+  const resa = resaDe(i);
+  const etat = resa ? etatDe(resa) : '';
+  return rangee(esc(i.label),
+    `${resa ? `<span class="data">${esc(formatDate(resa.forDate))}</span>` : ''}${
+      etat ? ` <span class="bud__etat bud__etat--${etat}">${ETAT[etat]}</span>` : ''}`,
+    chiffre(montant(i)));
+}
+
+// Les billets en lignes ; les tables, plus nombreuses, sous un seul total qui les replie.
+function renderAvant() {
+  const billets = avant.filter((i) => i.cat === 'billets').sort(parDate);
+  const tables = avant.filter((i) => i.cat === 'tables').sort(parDate);
+  q('avant').innerHTML = `
+    <div class="shead"><h2 class="bud__titre"><i class="bud__pastille bud__pastille--avant" aria-hidden="true"></i>${moment() === 'avant' ? 'À réserver avant le départ' : 'À réserver'}</h2><span class="shead__meta">${eur(somme(avant))}</span></div>
+    ${tables.length ? '<p class="bud__note">Les tables se paient au restaurant.</p>' : ''}
+    ${billets.length ? `<ul class="card bud__lignes">${billets.map(ligneAvant).join('')}</ul>` : ''}
+    ${tables.length ? `
+    <details class="card bud__pli">
+      <summary><span class="bud__texte"><b class="bud__nom">${tables.length} table${tables.length > 1 ? 's' : ''} · ${chiffre(somme(tables))}</b></span></summary>
+      <ul class="bud__lignes">${tables.map(ligneAvant).join('')}</ul>
+    </details>` : ''}
+    ${avant.length ? '' : '<p class="mut">Tout est réservé : rien à réserver avant le départ.</p>'}`;
+}
+
+// --- sur place -------------------------------------------------------------------
+// Les passes, les trains et les valises en lignes ; les repas et les sorties se disent en un
+// forfait par jour, pour deux, avec son équivalent en yens.
 const court = (i) => (i.sub || '').split(' · ')[0];
 
-function renderDep() {
-  q('dep-liste').innerHTML = `
-    <div class="dep__ligne dep__tete" aria-hidden="true">
-      <span>Dépense</span><span class="dep__n">Montant</span>
-      <span class="dep__qui">Qui a payé</span>
-    </div>
-    ${BUDGET.categories.map((cat) => `
-      <h2 class="dep__ligne dep__poste" id="cat-${cat.id}">
-        <span>${esc(cat.name)}</span>
-        <span class="dep__n data mut" data-cat="${cat.id}">${eur(somme(cat.items))}</span>
-        <span class="dep__n dep__resteCat" data-reste="${cat.id}">${resteCat(cat)}</span>
-      </h2>
-      ${cat.items.map(ligne).join('')}`).join('')}
-    <div class="dep__ligne dep__pied">
-      <span>Le voyage</span>
-      <span class="dep__n data" data-cat="tout">${eur(somme(ITEMS))}</span>
-      <span></span>
-    </div>`;
-
-  q('dep-liste').querySelectorAll('input[data-rate]').forEach((input) => {
-    input.addEventListener('input', () => {
-      rates[input.dataset.rate] = Math.max(0, +input.value || 0);
-      saveRates();
-      refresh();
-    });
-  });
-
-  q('dep-liste').querySelectorAll('.qui button').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const key = btn.closest('.qui').dataset.key;
-      // Re-cliquer le payeur choisi l'efface : la ligne redevient « pas payé »,
-      // sauf si c'est un fait (prépayé) — alors seul le payeur s'efface.
-      payeur[key] = payeur[key] === btn.dataset.qui ? undefined : btn.dataset.qui;
-      if (!payeur[key]) { delete payeur[key]; delete ancien[key]; localStorage.setItem('jp2026_paid', JSON.stringify(ancien)); }
-      savePayeur();
-      refresh();
-    });
-  });
+function renderSurPlace() {
+  const forfaits = surPlace.filter((i) => i.cat === 'place');
+  q('sur-place').innerHTML = `
+    <div class="shead"><h2 class="bud__titre"><i class="bud__pastille bud__pastille--place" aria-hidden="true"></i>Sur place</h2><span class="shead__meta">${eur(somme(surPlace))}</span></div>
+    <ul class="card bud__lignes">
+      ${surPlace.filter((i) => i.cat !== 'place').map((i) => rangee(esc(i.label), esc(insec(court(i))), chiffre(montant(i)))).join('')}
+      ${forfaits.length ? rangee('Repas et sorties', `≈\u00a0${chiffre(parJour)} (≈\u00a0${yen(parJour)}) par jour pour deux (les tables réservées en plus)`, chiffre(somme(forfaits))) : ''}
+    </ul>`;
 }
 
-// Dans la colonne de droite de l'en-tête de poste : juste le reste, en un mot.
-function resteCat(cat) {
-  const b = bilan(cat.items);
-  return b.reste ? `reste <b class="data">${eur(b.reste)}</b>` : '<span class="dep__ok">tout est payé</span>';
+// --- le détail --------------------------------------------------------------------
+// Un repli par catégorie : son total, ce qui est payé et ce qu'il reste ; dedans,
+// ses lignes avec leur légende, leur montant et leur payeur.
+function ligneDetail(i) {
+  const texte = i.qui ? `payé ${QUI[i.qui]}` : payeLigne(i) ? 'payé' : 'pas encore payé';
+  return rangee(esc(i.label), esc(insec(i.sub || '')),
+    `${chiffre(montant(i))}<span class="bud__qui${payeLigne(i) ? ' is-paye' : ''}">${texte}</span>`);
 }
 
-function ligne(i) {
-  const paye = estPaye(i);
-  const sub = i.dyn
-    ? `<label class="dep__forfait">
-         <input type="number" min="0" step="5" value="${rates[i.dyn]}" data-rate="${i.dyn}"
-                aria-label="${esc(i.label)} — ${RATE_LABEL[i.dyn]}">
-         <span class="mut">${RATE_LABEL[i.dyn]}</span>
-       </label>`
-    : `<span class="mut" data-sub="${i.key}">${esc(sousLigne(i))}</span>`;
-  return `
-    <div class="dep__ligne dep__row${paye ? ' is-paye' : ''}" data-row="${i.key}">
-      <span class="dep__quoi"><b>${esc(i.label)}</b>${sub}</span>
-      <span class="dep__n data" data-line="${i.key}">${eur(montant(i))}</span>
-      <span class="qui" role="group" data-key="${i.key}" aria-label="Qui a payé ${esc(i.label)}">
-        ${['I', 'M', 'D'].map((k) => `
-          <button type="button" data-qui="${k}" aria-pressed="${payeur[i.key] === k}"
-                  title="${k === 'D' ? 'Moitié chacun' : `${QUI[k]} a payé`}">${k === 'D' ? '½' : k}</button>`).join('')}
-      </span>
-    </div>`;
+function renderDetail() {
+  q('detail').innerHTML = `
+    <div class="shead"><h2>Le détail</h2></div>
+    ${BUDGET.categories.map((cat) => {
+      const items = lignes.filter((i) => i.cat === cat.id);
+      const reste = somme(items.filter((i) => !payeLigne(i)));
+      return `
+      <details class="card bud__pli">
+        <summary>
+          <span class="bud__texte">
+            <b class="bud__nom">${esc(cat.name)}</b>
+            <span class="bud__sous">${reste === 0 ? '<span class="bud__ok">tout est payé</span>'
+              : `payé ${eur(somme(items) - reste)} · reste ${eur(reste)}`}</span>
+          </span>
+          <span class="bud__montant">${chiffre(somme(items))}</span>
+        </summary>
+        <ul class="bud__lignes">${items.map(ligneDetail).join('')}</ul>
+      </details>`;
+    }).join('')}`;
 }
 
-// Sous le libellé : le lieu, et l'état quand il manque quelque chose.
-function sousLigne(i) {
-  const lieu = court(i);
-  if (prepaye.has(i.key) && !payeur[i.key]) return `${lieu} · ${i.settled ? 'payé' : 'réglé via Booking'} — par qui ?`;
-  if (ancien[i.key] && !payeur[i.key]) return `${lieu} · payé — par qui ?`;
-  return lieu;
-}
-
-// En place : redessiner la liste ferait perdre le focus du forfait qu'on tape.
-// Le compte et le bilan, eux, se redessinent : rien n'y a le focus.
-function refresh() {
-  const root = q('dep-liste');
-  for (const cat of BUDGET.categories) {
-    for (const i of cat.items) {
-      root.querySelector(`[data-line="${i.key}"]`).textContent = eur(montant(i));
-      const row = root.querySelector(`[data-row="${i.key}"]`);
-      row.classList.toggle('is-paye', estPaye(i));
-      row.querySelectorAll('.qui button').forEach((b) => b.setAttribute('aria-pressed', String(payeur[i.key] === b.dataset.qui)));
-      const sub = row.querySelector('[data-sub]');
-      if (sub) sub.textContent = sousLigne(i);
-    }
-    root.querySelector(`[data-cat="${cat.id}"]`).textContent = eur(somme(cat.items));
-    root.querySelector(`[data-reste="${cat.id}"]`).innerHTML = resteCat(cat);
-  }
-  root.querySelector('[data-cat="tout"]').textContent = eur(somme(ITEMS));
-  renderBilan();
-  renderCompte();
-}
-
-// --- les onglets ---------------------------------------------------------------
-// Le dernier onglet ouvert est retenu : on revient voir le compte plus souvent
-// qu'on ne coche une dépense.
-let onglet = location.hash === '#dep' ? 'dep' : location.hash === '#compte' ? 'compte'
-  : (lire('jp2026_budget_onglet', 'compte'));
-function montreOnglet(id) {
-  onglet = id;
-  localStorage.setItem('jp2026_budget_onglet', id);
-  document.querySelectorAll('.onglets .chip').forEach((b) => {
-    const actif = b.dataset.onglet === id;
-    b.setAttribute('aria-selected', String(actif));
-    b.setAttribute('aria-pressed', String(actif));
-    q(b.dataset.onglet).hidden = !actif;
-  });
-}
-document.querySelectorAll('.onglets .chip').forEach((b) => b.addEventListener('click', () => montreOnglet(b.dataset.onglet)));
-
-renderBilan();
-renderCompte();
-renderDep();
-montreOnglet(onglet);
-initReveal();
+renderSynthese();
+renderEntreVous();
+renderAvant();
+renderSurPlace();
+renderDetail();
 </script>
 </body>
 </html>

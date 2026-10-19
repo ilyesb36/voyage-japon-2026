@@ -254,6 +254,22 @@
     .nav a:not(.nav__brand) { padding: var(--s-3) var(--s-4); font-size: var(--t-base); }
   }
 
+  /* Entre 781 et 960 px (un iPhone en paysage, une tablette), les six entrées de
+     « pendant » plus la loupe, le compteur et le bouton de thème ne tiennent pas sur
+     une ligne : les libellés passaient sur deux lignes, puis la barre débordait.
+     On resserre les marges ; sous 900 px, « En voyage » (qui n'apprend rien) cède
+     sa place, comme sur un petit téléphone. Le compteur J−24 reste. */
+  @media (min-width: 781px) and (max-width: 960px) {
+    .nav__in { padding-inline: max(var(--s-4), env(safe-area-inset-left)) max(var(--s-4), env(safe-area-inset-right)); }
+    .nav__brand { margin-right: var(--s-3); }
+    .nav a:not(.nav__brand) { padding-inline: var(--s-2); }
+  }
+  @media (min-width: 781px) and (max-width: 899px) {
+    .nav__count--etat { display: none; }
+    /* sans lui, plus rien ne pousse le bouton de thème au bord droit de la barre */
+    .nav__in:has(.nav__count--etat) .nav__search { margin-right: auto; }
+  }
+
   /* titres de section ------------------------------------------------------ */
   .shead { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap;
            margin-bottom: var(--s-5); }
@@ -334,6 +350,11 @@
   .chip:hover { background: var(--paper-3); color: var(--ink); }
   .chip[aria-pressed="true"] {
     background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600;
+  }
+  /* la pastille de couleur d'un onglet de ville : la couleur vient du style en ligne */
+  .chip__dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: 6px; vertical-align: middle;
   }
   .chipbar { display: flex; gap: var(--s-2); flex-wrap: wrap; }
   @media (max-width: 640px) {
@@ -437,52 +458,15 @@
     font-size: var(--t-sm); color: var(--ink-2);
   }
 
-  .day__free {
-    margin-top: var(--s-3); font-size: var(--t-sm); color: var(--mut);
-  }
-  .day__free a { color: var(--acc); font-weight: 600; }
-
-  /* Les journées type, qui remplacent l'ancienne page dédiée. Une seule fois
-     par étape, en fin de section : les répéter sous chaque jour était le
-     défaut qu'on corrige. */
-  .alt--phase { margin-top: var(--s-4); }
-  .alt--phase > .alt__head {
-    display: flex; align-items: baseline; gap: var(--s-3);
-    padding: var(--s-3) var(--s-2); border-radius: var(--r-s);
-    background: var(--paper-3);
-  }
-  .alt--phase > .alt__head:hover { background: var(--line); }
-  .alt--phase[open] > .alt__head { margin-bottom: var(--s-3); }
-  .alt--phase[open] > .alt__head .day__car { transform: rotate(90deg); }
-  .alt--phase .day__car { margin-left: auto; }
-  .alt__head { font-size: var(--t-sm); font-weight: 600; }
-  .alt__head .mut { font-weight: 400; }
-  .alt__list { display: flex; flex-direction: column; gap: var(--s-2); }
-  .alt__item { border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper-2); }
-  .alt__item > summary {
-    padding: var(--s-2) var(--s-3); display: flex; align-items: baseline;
-    gap: var(--s-3); flex-wrap: wrap; font-size: var(--t-sm);
-  }
-  .alt__item > summary:hover { background: var(--paper-3); }
-  .alt__item > summary b { font-weight: 600; }
-  .alt__item > summary .mut { flex: 1; min-width: 0; }
-  .alt__steps { padding: 0 var(--s-3) var(--s-3) var(--s-3);
-                display: flex; flex-direction: column; gap: var(--s-2); }
-  .alt__steps li { display: flex; gap: var(--s-3); font-size: var(--t-sm); align-items: baseline; }
-  .alt__h { flex: none; width: 52px; color: var(--acc); font-weight: 700; font-size: var(--t-xs); }
-  .alt__pin { color: var(--mut); text-decoration: none; }
-  .alt__pin:hover { color: var(--acc); }
-  .alt--standalone { border-top: 0; margin-top: 0; padding-top: 0; }
-
   @media (max-width: 640px) {
     .day__body { padding-left: var(--s-2); }
     .phase__arrive { display: none; }
-    .alt__h { width: 44px; }
   }
 
-  /* guide : la barre d'outils -----------------------------------------------
-     Une seule ligne : recherche, villes, puis les axes secondaires en menus.
-     Quatre rangées de pastilles faisaient un pavé qu'on ne lisait plus. */
+  /* guide : la barre de recherche -------------------------------------------
+     Le champ reste collé sous la barre du site pendant qu'on fait défiler. Les
+     menus du catalogue (.tools__selects) vivent dans « Filtres », repliés : leur
+     mise en page est dans le bloc « chercher ». */
   .tools {
     position: sticky; top: var(--nav-h); z-index: 700;
     display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap;
@@ -513,10 +497,6 @@
   .search input::placeholder { color: var(--mut); }
   .search input::-webkit-search-cancel-button { filter: grayscale(1) opacity(.5); }
 
-  .tools .chipbar { flex: 0 1 auto; gap: var(--s-1); }
-  .tools .chip { padding: var(--s-1) var(--s-3); height: 34px; display: inline-flex;
-                 align-items: center; }
-
   .tools__selects { display: flex; gap: var(--s-2); flex-wrap: wrap; }
   .tools__selects select {
     height: 34px; padding: 0 var(--s-6) 0 var(--s-3);
@@ -531,20 +511,14 @@
     background-repeat: no-repeat;
   }
   .tools__selects select:hover { border-color: var(--line-2); }
-  .tools__count { margin-left: auto; font-size: var(--t-sm); color: var(--mut);
-                  font-variant-numeric: tabular-nums; }
 
   @media (max-width: 860px) {
     .tools { gap: var(--s-2); padding: var(--s-3) 0; }
     .search { max-width: none; flex-basis: 100%; }
-    .tools .chipbar { flex-basis: 100%; overflow-x: auto; flex-wrap: nowrap;
-                      scrollbar-width: none; }
-    .tools .chipbar::-webkit-scrollbar { display: none; }
     .tools__selects { flex: 1; }
     .tools__selects select { flex: 1; min-width: 0; }
-    /* 16px : en deçà, iOS zoome la page au focus du champ ou du menu. */
-    .search input, .tools select { font-size: 16px; }
-    .tools__count { margin-left: 0; flex-basis: 100%; }
+    /* 16px : en deçà, iOS zoome la page au focus du champ. */
+    .search input { font-size: 16px; }
   }
 
   .empty { padding: var(--s-8) 0; text-align: center; color: var(--mut); }
@@ -894,14 +868,6 @@
 }
 
 @layer components {
-  .alt-ref {
-    margin-top: var(--s-4); padding: var(--s-3) var(--s-2);
-    font-size: var(--t-sm); color: var(--mut);
-  }
-  .alt-ref a { color: var(--acc); font-weight: 600; }
-}
-
-@layer components {
   /* pratique : les hébergements ---------------------------------------------
      Les six fiches sortent du même gabarit. Une information absente s'écrit
      « non communiquée » : escamoter la ligne rendait les fiches incomparables. */
@@ -997,7 +963,7 @@
                                     text-decoration-color: var(--line-2); }
   .pay__row > .data { flex: none; font-weight: 600; font-size: var(--t-sm); }
 
-  /* pratique : hors-ligne ----------------------------------------------------- */
+  /* à faire : hors-ligne ------------------------------------------------------ */
   .offline { padding: var(--s-5); max-width: 62ch; }
   .offline b { font-size: var(--t-md); }
   .offline .mut { font-size: var(--t-sm); margin-top: var(--s-2); }
@@ -1007,8 +973,6 @@
 @layer components {
   /* aujourd'hui -------------------------------------------------------------- */
   .countdown h1 { margin-top: var(--s-3); }
-  .countdown__n { font-family: var(--f-data); font-size: var(--t-3xl); font-weight: 700;
-                  letter-spacing: -0.05em; color: var(--ink); }
 
   .today { padding-bottom: var(--s-5); }
   .today h1 { margin-top: var(--s-3); font-size: var(--t-2xl); font-weight: 600; }
@@ -1034,18 +998,6 @@
 
   .daycard { padding: var(--s-5); }
   .daycard .day__items li::before { background: var(--c, var(--mut)); }
-
-  .tonight__body { padding: var(--s-5); }
-  .tonight__body h3 { font-size: var(--t-lg); }
-  .tonight__body > .mut { font-size: var(--t-sm); margin-top: 2px; }
-  .tonight__facts {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--s-3) var(--s-5); margin: var(--s-4) 0;
-    padding-top: var(--s-4); border-top: 1px solid var(--line);
-  }
-  .tonight__facts dt { font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-                       letter-spacing: .06em; text-transform: uppercase; }
-  .tonight__facts dd { font-size: var(--t-sm); margin-top: 1px; }
 
   /* Sur place, on tient le téléphone d'une main : les cibles restent larges. */
   @media (max-width: 640px) {
@@ -1125,20 +1077,6 @@
   }
   .phase__shot img { width: 100%; aspect-ratio: 21 / 8; object-fit: cover; }
   @media (max-width: 640px) { .phase__shot img { aspect-ratio: 16 / 9; } }
-
-  /* la vignette d'une journée type, et les photos de ses étapes */
-  .alt__thumb {
-    flex: none; width: 44px; height: 44px; object-fit: cover;
-    border-radius: var(--r-s); margin-right: var(--s-1);
-  }
-  .alt__item > summary { align-items: center; }
-  .alt__steps li { align-items: flex-start; }
-  .alt__what { flex: 1; min-width: 0; }
-  .alt__stepshot {
-    flex: none; width: 72px; height: 52px; object-fit: cover;
-    border-radius: var(--r-s); margin-left: var(--s-3);
-  }
-  @media (max-width: 560px) { .alt__stepshot { display: none; } }
 }
 
 @layer components {
@@ -1424,8 +1362,6 @@
     color: var(--ink); padding: 2px var(--s-2); border-radius: var(--r-s);
     backdrop-filter: blur(4px);
   }
-  /* la journée qu'on vient d'ouvrir depuis la grille */
-  .alt__item:target { box-shadow: 0 0 0 2px var(--acc); }
 }
 
 @layer components {
@@ -1506,17 +1442,976 @@
   }
 }
 
+/* --- passes : comprendre et utiliser les deux passes de transport ----------- */
+/* Une page qui explique, plus qu'elle ne liste : deux cartes en tête, puis une
+   section par pass (compris/pas compris, lequel acheter, où, comment s'en
+   servir), et le détail jour par jour. On réutilise les jetons et les
+   composants (.card, .shead, .step-num, .city-dot, .data) ; ce bloc n'ajoute
+   que la mise en page propre aux passes. Mobile d'abord, les grilles se
+   replient en une colonne. La couleur de ville (--c) est passée en inline
+   comme ailleurs : var(--c-…), jamais un hex, pour suivre le thème sombre. */
+@layer components {
+  .passes__lede { max-width: 64ch; color: var(--ink-2); font-size: var(--t-md); }
+  .passes__note { margin-top: var(--s-4); font-size: var(--t-sm); color: var(--mut); }
+
+  /* En bref : deux cartes côte à côte, empilées sur téléphone */
+  .passes__bref { display: grid; gap: var(--s-4); grid-template-columns: 1fr 1fr; }
+  .passes__bref-card {
+    display: flex; flex-direction: column; gap: var(--s-2);
+    padding: var(--s-5); background: var(--paper-2);
+    border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line-2));
+    border-radius: var(--r-m); transition: background .15s, border-color .15s;
+  }
+  .passes__bref-card:hover { background: var(--paper-3); }
+  .passes__bref-name { font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.016em; color: var(--ink); }
+  .passes__bref-meta { font-size: var(--t-sm); color: var(--mut); }
+  .passes__bref-resume { font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5; }
+  /* La règle des bus de Hakone, sur la carte de la page Transports : une ligne en
+     gras sous le résumé, séparée par un filet — c'est ce qu'on cherche en montant. */
+  .passes__bref-bus {
+    padding-top: var(--s-2); border-top: 1px solid var(--line);
+    font-size: var(--t-sm); font-weight: 600; line-height: 1.5; color: var(--ink);
+  }
+  .passes__bref-go { margin-top: auto; font-size: var(--t-sm); font-weight: 600; color: var(--c, var(--acc)); }
+
+  /* Une section par pass */
+  .passes__pass { scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+  .passes__pass + .passes__pass { padding-top: var(--s-7); border-top: 1px solid var(--line); }
+  .passes__pass h3 { font-size: var(--t-base); font-weight: 600; margin-bottom: var(--s-3); }
+  .passes__jp { font-size: var(--t-md); font-weight: 500; color: var(--mut); }
+
+  /* Le titre, la ligne de chiffres et le résumé restent visibles ; le reste est
+     replié dans un <details> par bloc (comme les replis de la page Valises) */
+  .passes__pass .shead { margin-bottom: var(--s-2); }
+  .passes__resume { margin-bottom: var(--s-4); max-width: 64ch; font-size: var(--t-sm); color: var(--ink-2); }
+  .passes__folds { display: flex; flex-direction: column; gap: var(--s-3); }
+  .passes__fold { border: 1px solid var(--line); border-radius: var(--r-m);
+                  background: var(--paper-2); overflow: hidden; }
+  .passes__fold > summary {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+    font-size: var(--t-base); font-weight: 600; color: var(--ink);
+  }
+  .passes__fold > summary::after {
+    content: '▾'; margin-left: auto; color: var(--mut); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  .passes__fold[open] > summary::after { transform: rotate(180deg); }
+  .passes__fold > summary:hover { color: var(--acc); }
+  .passes__fold-body { padding: 0 var(--s-4) var(--s-4); }
+  /* le premier bloc d'un détail touche son titre : sa marge du haut ne sert plus */
+  .passes__fold-body > :first-child { margin-top: 0; }
+
+  /* Compris / Pas compris : deux colonnes, deux listes ✓ / ✗ */
+  .passes__io { display: grid; gap: var(--s-4); grid-template-columns: 1fr 1fr; }
+  .passes__io-col { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); }
+  .passes__io-col--yes { border-color: color-mix(in srgb, var(--pine) 35%, var(--line)); }
+  .passes__io-col--no { border-color: color-mix(in srgb, var(--acc) 30%, var(--line)); }
+  .passes__io-col--yes h3 { color: var(--pine); }
+  .passes__io-col--no h3 { color: var(--acc); }
+
+  .passes__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+  .passes__list li {
+    position: relative; padding-left: 1.4rem;
+    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
+  }
+  .passes__list li::before {
+    content: "✓"; position: absolute; left: 0; top: 0;
+    font-weight: 700; color: var(--pine);
+  }
+  .passes__list--no li::before,
+  .passes__io-col--no .passes__list li::before { content: "✗"; color: var(--acc); }
+
+  /* Lequel acheter : la version conseillée se détache en vert sapin */
+  .passes__choix {
+    margin-top: var(--s-5); padding: var(--s-5);
+    border: 1px solid color-mix(in srgb, var(--pine) 45%, var(--line));
+    background: color-mix(in srgb, var(--pine) 7%, var(--paper-2));
+    border-radius: var(--r-m);
+  }
+  .passes__choix h3 { display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap; }
+  .passes__badge {
+    flex: none; font-size: var(--t-xs); font-weight: 700; letter-spacing: .02em;
+    color: var(--pine); border: 1px solid color-mix(in srgb, var(--pine) 45%, transparent);
+    border-radius: var(--r-s); padding: 1px var(--s-2);
+  }
+  .passes__choix-prix { margin-left: auto; font-family: var(--f-data); font-size: var(--t-sm);
+                        font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .passes__choix p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); max-width: 72ch; }
+  .passes__choix .passes__choix-qui { color: var(--ink); font-weight: 500; }
+  .passes__choix .passes__choix-tarifs { font-size: var(--t-xs); }
+
+  /* Le supplément express (Nikko) : une note chaude, à ne pas rater */
+  .passes__express {
+    margin-top: var(--s-4); padding: var(--s-4) var(--s-5);
+    background: color-mix(in srgb, var(--gold) 8%, var(--paper-2));
+    border-left: 3px solid var(--gold); border-radius: 0 var(--r-s) var(--r-s) 0;
+  }
+  .passes__express p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); max-width: 72ch; }
+  .passes__express p:first-child { margin-top: 0; }
+
+  /* blocs « acheter », « s'en servir », « reconnaître le bus » */
+  .passes__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+  .passes__steps li { display: flex; gap: var(--s-3); align-items: flex-start; }
+  .passes__steps .step-num { margin-top: 1px; }
+  .passes__step-txt { font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5; max-width: 72ch; }
+
+  .passes__use { display: grid; gap: var(--s-3); grid-template-columns: 1fr 1fr; }
+  .passes__use-part { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); }
+  .passes__use-part h4 { font-size: var(--t-sm); font-weight: 600; }
+  .passes__use-part p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5; }
+
+  .passes__bus-intro { margin-bottom: var(--s-3); font-size: var(--t-sm); color: var(--ink-2); max-width: 72ch; }
+  .passes__bus { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+  .passes__bus-line {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s-1) var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--line); border-left-width: 3px; border-radius: var(--r-m);
+    background: var(--paper-2);
+  }
+  .passes__bus-line--yes { border-left-color: var(--pine); }
+  .passes__bus-line--no { border-left-color: var(--acc); }
+  .passes__bus-name { font-size: var(--t-sm); font-weight: 600; }
+  /* Le nom japonais et le verdict (compris / pas compris) ont la même taille : le
+     nom se compare à celui du bus, le verdict est la réponse qu'on vient chercher.
+     Le ✓ ou ✗ vient de la classe, comme dans les listes (.passes__list). */
+  .passes__bus-jp { font-size: var(--t-lg); }
+  .passes__bus-verdict { font-size: var(--t-lg); font-weight: 700; line-height: 1.2; }
+  .passes__bus-line--yes .passes__bus-verdict { color: var(--pine); }
+  .passes__bus-line--no .passes__bus-verdict { color: var(--acc); }
+  .passes__bus-line--yes .passes__bus-verdict::before { content: "✓ "; }
+  .passes__bus-line--no .passes__bus-verdict::before { content: "✗ "; }
+  .passes__bus-note { flex-basis: 100%; font-size: var(--t-sm); color: var(--mut); line-height: 1.5; }
+  /* « Au moindre doute » : la phrase à dire au chauffeur, le japonais plus gros
+     pour pouvoir la lui montrer. */
+  .passes__bus-doute { margin-top: var(--s-3); font-size: var(--t-sm); color: var(--ink-2); max-width: 72ch; }
+  .passes__bus-doute [lang="ja"] { font-size: var(--t-md); color: var(--ink); }
+  /* Un mot japonais ne se coupe pas en fin de ligne : un nom de bus se compare en
+     entier, une phrase se montre d'un bloc. */
+  .passes__bus-intro [lang="ja"], .passes__bus-doute [lang="ja"], .passes__list [lang="ja"],
+  .passes__bref-bus [lang="ja"] { white-space: nowrap; }
+
+  /* Dans votre programme : une carte par journée, lien vers jour.html?d=n */
+  .passes__days { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .passes__day { padding: var(--s-5); display: flex; flex-direction: column; }
+  .passes__day-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); flex-wrap: wrap; }
+  .passes__day-date { color: var(--mut); }
+  .passes__day-title { margin-top: var(--s-2); font-size: var(--t-md); font-weight: 600; }
+  .passes__day .passes__list { margin-top: var(--s-3); }
+  .passes__day-note { margin-top: var(--s-3); font-size: var(--t-xs); color: var(--mut); line-height: 1.5; }
+  .passes__day-link { margin-top: auto; padding-top: var(--s-3); align-self: flex-start;
+                      font-size: var(--t-sm); font-weight: 600; color: var(--acc); }
+
+  /* Sources : repliées, discrètes, datées */
+  .passes__sources > summary {
+    cursor: pointer; padding: var(--s-2) 0;
+    font-size: var(--t-sm); font-weight: 600; color: var(--ink-2);
+  }
+  .passes__sources[open] > summary { margin-bottom: var(--s-3); }
+  .passes__src { display: grid; gap: var(--s-2); }
+  .passes__src-line { font-size: var(--t-xs); color: var(--mut); line-height: 1.5; }
+  .passes__src-line a { color: var(--mut); text-decoration: underline; text-underline-offset: 2px;
+                        text-decoration-color: var(--line-2); }
+  .passes__src-line a:hover { color: var(--acc); text-decoration-color: var(--acc); }
+
+  @media (max-width: 640px) {
+    .passes__bref, .passes__io, .passes__use { grid-template-columns: 1fr; }
+    .passes__choix-prix { margin-left: 0; flex-basis: 100%; white-space: normal; }
+  }
+}
+
+/* --- barre et couvertures --------------------------------------------------
+   La loupe de la barre : un lien, mais à la taille et aux couleurs du bouton de
+   thème. Et la couverture courte, qui ne prend plus qu'un tiers de l'écran sur
+   téléphone : l'information passe avant la photo. */
+@layer components {
+  /* `.nav a:not(.nav__brand)` vise tout lien de la barre : `.nav__search` seul
+     perdrait contre lui. Avec la classe du lien, le poids est le même et la
+     règle, plus bas dans la feuille, gagne. */
+  .nav a.nav__search {
+    flex: none; width: 44px; height: 44px; padding: 0; margin-left: var(--s-2);
+    border-radius: var(--r-s); color: var(--mut); line-height: 1;
+    display: grid; place-items: center;
+  }
+  /* sur la page de recherche, la loupe s'allume comme un lien actif du menu */
+  .nav a.nav__search[aria-current="page"] { color: var(--ink); }
+
+  /* Sur un petit téléphone, la loupe a besoin de la place : seul le compte à
+     rebours (J−24) reste dans la barre. « En voyage », « Souvenirs » et « C'est
+     aujourd'hui » n'apprennent rien, et le dernier faisait déborder la barre de
+     plus de 50 px à 375 px. */
+  @media (max-width: 460px) { .nav__count--etat { display: none; } }
+
+  @media (max-width: 640px) {
+    /* `.cover` pèse autant que `.cover--short` et vient après lui : la classe en plus l'emporte.
+       29 % et non 30 : à 30 %, la hauteur arrondie par le navigateur tombait à 0,006 px de la limite. */
+    .cover.cover--short { height: min(29svh, 260px); }
+    /* Sur une photo si basse, le texte monte jusqu'au milieu, là où le dégradé
+       de `.cover::after` est encore clair : on le descend, on fonce plus tôt (même
+       brun que lui) et on pose une ombre douce sous les lettres. */
+    .cover--short .cover__text { padding-bottom: var(--s-5); }
+    .cover--short::after {
+      background: linear-gradient(180deg, rgb(26 21 18 / .38) 0%, rgb(26 21 18 / .2) 30%, rgb(26 21 18 / .8) 100%);
+    }
+    .cover--short .cover__text h1, .cover--short .cover__dates { text-shadow: 0 1px 12px rgb(26 21 18 / .5); }
+  }
+}
+
+/* --- transports : comment je bouge ------------------------------------------ */
+/* Quatre sections : les six trajets entre villes, les deux passes, le système
+   des valises en bref, les gestes du quotidien. Les pages Passes et Valises en
+   sont le détail. On réutilise les composants existants (.card, .cardlink,
+   .know, .step-num) et les cartes « En bref » de passes.html ; ce bloc
+   n'ajoute que la liste des trajets et les trois étapes. Mobile d'abord, clair
+   comme sombre via les variables. */
+@layer components {
+  /* Les ancres #trajets, #passes, #valises et #quotidien : on cadre la section
+     sous la barre, comme les ancres des autres pages. */
+  .transports__sec { scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+
+  /* Les raccourcis en tête de page : une puce par ancre, sur une seule ligne à
+     375 px (marges serrées pour que « Au quotidien » y tienne) ; elles passent à la
+     ligne si le texte grossit. Chaque puce garde ses 44 px de haut (.chip). */
+  .transports__raccourcis { display: flex; flex-wrap: wrap; gap: var(--s-1); padding-top: var(--s-5); }
+  .transports__raccourcis .chip {
+    flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: center;
+    padding-inline: var(--s-2); color: var(--ink-2);
+  }
+  /* la première section n'est plus la première de la page : on ramène son haut à
+     la mesure des raccourcis, sinon 64 px de vide les séparent */
+  .transports__raccourcis + .transports__sec { padding-top: var(--s-6); }
+
+  /* Le bandeau de la couverture : « 2 passes » est un lien, souligné pour qu'on le
+     voie sur la photo, avec une zone tapable plus haute que le texte. */
+  .transports__bandeau a { position: relative; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+  .transports__bandeau a::after { content: ''; position: absolute; inset: -12px -6px; }
+
+  /* les trajets : une carte par changement de ville, au liseré de la ville
+     d'arrivée (la couleur passe en inline, var(--c-…), pour suivre le sombre) */
+  .ttrajets { display: grid; gap: var(--s-3); }
+  .ttrajets__item {
+    padding: var(--s-3) var(--s-4); background: var(--paper-2);
+    border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line-2));
+    border-radius: var(--r-m);
+  }
+  .ttrajets__item p + p { margin-top: 2px; font-size: var(--t-sm); }
+  /* la durée et le prix ne se coupent pas en deux (« ~86 » en bout de ligne,
+     « €/pers. » sur la suivante) : ils passent à la ligne d'un bloc */
+  .ttrajets__item .data { white-space: nowrap; }
+  /* « le détail » : un lien en ligne, trop fin pour un pouce. On étend la zone
+     tapable sans toucher au dessin, comme .todo__link. */
+  .ttrajets__item a { position: relative; display: inline-block; font-weight: 600; color: var(--acc); }
+  .ttrajets__item a::after { content: ''; position: absolute; inset: -12px -6px; }
+
+  /* les valises : les trois étapes du système, numérotées, chacune avec son titre
+     et son texte court. Le renvoi vers la page Valises reprend .cardlink, en plus
+     bas : il n'a pas de texte dessous. */
+  .transports__etapes { display: grid; gap: var(--s-4); margin-bottom: var(--s-4); }
+  .transports__etapes li { display: flex; gap: var(--s-3); align-items: flex-start; }
+  .transports__etapes .step-num { margin-top: 1px; }
+  .transports__etape-body { min-width: 0; }
+  .transports__etape-body h3 { font-size: var(--t-base); font-weight: 600; }
+  .transports__etape-body p { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); max-width: 72ch; }
+  .transports__sec .cardlink__in { padding-block: var(--s-3); }
+
+  /* au quotidien : le lien du taxi se cherche au bord du trottoir, il lui faut une
+     vraie zone tapable. Même principe que « le détail » des trajets : on l'étend
+     sans toucher au dessin (le lien est en position relative, la zone s'y accroche). */
+  .transports__sec .know__item a { position: relative; display: inline-block; }
+  .transports__sec .know__item a::after { content: ''; position: absolute; inset: -12px -6px; }
+}
+
+/* --- autour de moi ----------------------------------------------------------
+   villes.html, de haut en bas : « Où suis-je ? », les quartiers en cartes
+   repliées (les incontournables de l'étape y portent une étoile), les fêtes,
+   l'hôtel sur une ligne, les plans B repliés. Une carte s'ouvre au toucher ;
+   l'adresse de l'hôtel, elle, vit dans Secours.
+   Les identifiants sont rangés sous `.villes`, la classe du <main> de villes.html :
+   `#lede` existe aussi sur le programme, les passes et les valises, `#quartiers` et
+   `#biblio` sur le guide. */
+@layer components {
+  /* « Où suis-je ? » : compact, le bouton puis le message dessous. Sur téléphone
+     le bouton prend toute la largeur. */
+  .villes #ou { padding-block: 0 var(--s-5); }
+  .villes #ou-btn { min-height: 48px; }
+  .villes #ou-msg:not(:empty) { margin-top: var(--s-3); line-height: 1.5; }
+  @media (max-width: 640px) {
+    .villes #ou-btn { width: 100%; justify-content: center; font-size: var(--t-base); }
+  }
+
+  /* Le chapeau de l'étape, sous « Où suis-je ? », puis ce qu'on laisse de côté à
+     cette étape : une ligne discrète (le texte est en .mut). Aucun `display` sur
+     `.villes__arb` : le [hidden] de la page, sans arbitrage, doit rester effectif. */
+  .villes__arb { max-width: 68ch; margin-top: var(--s-2); font-size: var(--t-sm); }
+
+  /* Une carte de quartier repliée garde l'allure de l'ancienne tête : le nom, son
+     japonais et le badge « excursion » sur une ligne, plus un chevron qui tourne
+     à l'ouverture. Elle ne s'étire pas à la hauteur de sa voisine (deux colonnes),
+     et l'ancre la cadre sous la barre.
+     Le rembourrage de la carte passe au résumé (marge négative, même rembourrage,
+     lu dans --qpad, que `.qcard` pose plus bas) : toute la carte répond au toucher,
+     pas seulement la ligne du nom. La hauteur repliée ne change pas : 44 px de ligne,
+     plus le rembourrage de chaque côté. */
+  details.qcard { align-self: start; scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+  details.qcard > summary {
+    display: flex; align-items: center; gap: var(--s-3);
+    margin: calc(-1 * var(--qpad)); padding: var(--qpad);
+    min-height: calc(44px + 2 * var(--qpad));
+  }
+  details.qcard > summary > .qcard__nom { flex: 1; min-width: 0; }
+  /* le japonais passe à la ligne d'un bloc, pas au milieu : plus de « 浅 » seul en bout de ligne */
+  details.qcard > summary .qcard__jp { display: inline-block; }
+  details.qcard > summary::after, .vplans > summary::after {
+    content: '▾'; flex: none; margin-left: auto; color: var(--mut); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  details.qcard[open] > summary::after, .vplans[open] > summary::after { transform: rotate(180deg); }
+
+  /* L'étoile d'un incontournable : l'accent de la ville de la carte. Dans le résumé
+     d'une carte repliée, elle annonce qu'il y en a un à l'intérieur : entre le nom
+     et le chevron, sans jamais être écrasée par un nom long. */
+  .etoile { color: var(--c, var(--acc)); }
+  .qcard__star { flex: none; font-size: var(--t-md); line-height: 1; }
+
+  /* L'hôtel : une seule ligne, qui passe sous le nom quand le lien ne tient pas à côté.
+     Le lien est le seul chemin vers l'adresse et le téléphone : il prend l'accent,
+     comme .todo__link, et on étend sa zone tapable sans toucher au dessin. */
+  .villes #hotel { padding-block: var(--s-4); }
+  .villes #hotel p { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-3); font-size: var(--t-sm); }
+  .villes #hotel a { position: relative; color: var(--acc); }
+  .villes #hotel a::after { content: ''; position: absolute; inset: -12px -4px; }
+
+  /* Les plans B : une ligne repliée, les journées type dessous. */
+  .vplans { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); }
+  .vplans > summary {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+  }
+  .vplans__txt { flex: 1; min-width: 0; font-size: var(--t-sm); }
+  .vplans__nom { margin-right: var(--s-2); font-size: var(--t-base); font-weight: 600; }
+  .vplans > .vtypes { padding: 0 var(--s-4) var(--s-4); }
+}
+
+/* --- à table : les réservations, les plats à goûter, les bonnes tables -------
+   Une seule place pour manger, ville par ville (table.html). On réutilise les
+   jetons et les composants existants (.chip, .shead, .label, .data, .badge-ferme) ;
+   ce bloc ne pose que la mise en page propre à la page. Mobile d'abord : deux
+   colonnes de plats, des adresses en lignes, et le détail replié. */
+@layer components {
+  /* La page : les villes sous la couverture (ni collées à elle, ni trop loin du
+     premier titre), puis trois sections que d'autres pages visent par leur ancre
+     (table.html#resas…) : la barre collante ne doit pas cacher le titre. */
+  #villes { padding-top: var(--s-4); }
+  #resas { padding-top: 0; }
+  #resas, #specialites, #tables { scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+
+  /* 1 — les réservations : une ligne par table, l'état en pastille à droite. La
+     couleur du filet dit l'état : érable pour « à réserver », sapin pour « réservé »,
+     gris pour « date passée ». */
+  .tresas { display: grid; gap: var(--s-2); }
+  .tresas__item {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline;
+    column-gap: var(--s-3); row-gap: 2px;
+    padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-left: 3px solid var(--line-2);
+    border-radius: var(--r-m); background: var(--paper-2);
+  }
+  .tresas__item--a-reserver { border-left-color: var(--acc); }
+  .tresas__item--reserve { border-left-color: var(--pine); }
+  .tresas__item > .data { grid-column: 1; grid-row: 1; font-size: var(--t-sm); color: var(--mut); }
+  .tresas__item > .label {
+    grid-column: 2; grid-row: 1; padding: 1px var(--s-2); border-radius: var(--r-full);
+    font-weight: 600; white-space: nowrap;
+  }
+  .tresas__item--a-reserver > .label { color: var(--acc); background: var(--acc-soft); }
+  .tresas__item--reserve > .label { color: var(--pine); background: color-mix(in srgb, var(--pine) 12%, var(--paper-2)); }
+  .tresas__item--passee > .label { color: var(--ink-2); background: var(--paper-3); }
+  .tresas__item > b { grid-column: 1 / -1; font-size: var(--t-base); font-weight: 600; }
+  .tresas__item > details { grid-column: 1 / -1; }
+  .tresas__item > details > summary {
+    display: flex; align-items: center; min-height: 44px;
+    font-size: var(--t-sm); font-weight: 600; color: var(--ink);
+  }
+  .tresas__item > details > summary::after {
+    content: '▾'; margin-left: auto; color: var(--mut); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  .tresas__item > details[open] > summary::after { transform: rotate(180deg); }
+  .tresas__item > details > summary:hover { color: var(--acc); }
+  .tresas__item > details p { font-size: var(--t-sm); color: var(--ink-2); }
+  .tresas__item > details p + p { margin-top: var(--s-2); }
+  .tresas__item > details .btn { min-height: 44px; }
+
+  /* 2 — les plats à goûter : une grille de cartes, deux colonnes sur téléphone.
+     L'ancre #d-<plat> cadre la carte sous la barre et la souligne à la couleur de la ville. */
+  .tspe { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
+  @media (min-width: 640px) { .tspe { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+  .tplat {
+    display: flex; flex-direction: column; overflow: hidden;
+    border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2);
+    scroll-margin-top: calc(var(--nav-h) + var(--s-5));
+  }
+  .tplat:target { outline: 2px solid var(--c); outline-offset: 2px; }
+  .tplat__img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--paper-3); }
+  .tplat__img--nue { display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+  .tplat__txt { padding: var(--s-3); }
+  .tplat__nom { font-size: var(--t-sm); font-weight: 600; line-height: 1.3; }
+  .tplat__jp { font-size: var(--t-xs); color: var(--mut); }
+  .tplat__d { margin-top: var(--s-1); font-size: var(--t-xs); color: var(--ink-2); line-height: 1.45; }
+
+  /* 3 — les bonnes tables : un quartier par panneau, puis ses adresses en lignes.
+     Le panneau se replie quand il y a beaucoup de quartiers (Tokyo en a neuf),
+     comme les trajets de la page Valises. Le détail (fermeture, réservation) se
+     replie sous chaque adresse ; les liens gardent une zone tapable de 44 px sans
+     prendre la place (comme « doigts, pas souris »). */
+  .tq { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); overflow: hidden; }
+  .tq + .tq { margin-top: var(--s-3); }
+  .tq__nom {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 52px; padding: var(--s-3) var(--s-4);
+    font-size: var(--t-base); font-weight: 600;
+  }
+  .tq__nom::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 2px; background: var(--c); }
+  .tq__nom::after { content: '▾'; flex: none; color: var(--mut); font-size: var(--t-xs); transition: transform .15s; }
+  .tq[open] > .tq__nom::after { transform: rotate(180deg); }
+  .tq__nom:hover { color: var(--acc); }
+  .tq__n { margin-left: auto; font-family: var(--f-data); font-size: var(--t-xs); font-weight: 400; color: var(--mut); }
+  .tq__liste { padding: 0 var(--s-4); border-top: 1px solid var(--line); }
+  .ttab { padding: var(--s-3) 0; border-top: 1px solid var(--line); }
+  .ttab:first-child { border-top: 0; }
+  .ttab__nom { font-size: var(--t-base); font-weight: 600; }
+  .ttab__jp { margin-left: var(--s-1); font-size: var(--t-sm); font-weight: 400; color: var(--mut); }
+  .ttab__meta {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-1) var(--s-3);
+    margin-top: 2px; font-size: var(--t-xs); color: var(--mut);
+  }
+  .ttab__meta:empty { display: none; }
+  /* la note Tabelog et le prix : un `.data` à 92 % de 12 px ne faisait que 11 px, on les lit à 13 px */
+  .ttab__meta .data { font-size: var(--t-sm); }
+  .ttab__tabelog { color: var(--ink-2); font-weight: 600; }
+  .ttab__why { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); line-height: 1.45; }
+  .ttab__liens { display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-5); margin-top: var(--s-2); font-size: var(--t-sm); font-weight: 600; }
+  .ttab__liens a { position: relative; }
+  .ttab__liens a::after { content: ''; position: absolute; inset: -12px -6px; }
+  /* la zone tapable de « Maps » déborde de 12 px : on laisse 12 px avant « Les détails » */
+  .ttab__plus { margin-top: var(--s-3); }
+  .ttab__plus > summary {
+    display: flex; align-items: center; min-height: 44px;
+    font-size: var(--t-sm); font-weight: 600; color: var(--mut);
+  }
+  .ttab__plus > summary::after {
+    content: '▾'; margin-left: var(--s-2); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  .ttab__plus[open] > summary::after { transform: rotate(180deg); }
+  .ttab__plus > summary:hover { color: var(--acc); }
+  .ttab__plus p { font-size: var(--t-sm); color: var(--ink-2); }
+  .ttab__plus p + p { margin-top: var(--s-2); }
+  .ttab__plus .label { margin-right: var(--s-1); }
+}
+
+/* --- aujourd'hui : la barre « Ce soir » et ce qu'il ne faut pas manquer -----
+   Fatigué ou perdu, on cherche trois gestes : rentrer, montrer l'adresse,
+   appeler. La barre les met sous le pouce, avant le parcours ; son liseré
+   prend la couleur de la ville (var(--c-…) passé en inline, pour suivre le
+   thème sombre). Dessous, ce qui a une heure ou une échéance : une ligne
+   chacun, et l'accent seulement quand il reste quelque chose à faire. Puis
+   deux rappels sans accent : le pass du jour (avec la règle des bus à Hakone)
+   et, la veille d'un changement de ville, les valises de demain. */
+@layer components {
+  .soir {
+    margin: 0 0 var(--s-5); padding: var(--s-3) var(--s-4);
+    background: var(--paper-2);
+    border: 1px solid var(--line); border-left: 4px solid var(--c, var(--line-2));
+    border-radius: var(--r-m);
+  }
+  .soir__titre { font-size: var(--t-md); font-weight: 600; line-height: 1.3; }
+  .soir__titre .label { margin-right: var(--s-2); }
+  /* La ligne d'accès sous le nom : le quartier ou le repère le plus proche, en gris
+     (la couleur vient de .mut). */
+  .soir__acces { margin: var(--s-1) 0 0; font-size: var(--t-sm); line-height: 1.4; }
+
+  /* Les gestes passent à la ligne, et chaque bouton garde une zone de touche
+     de 44 px. Sur téléphone ils se partagent la largeur de leur ligne. */
+  .soir__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-3); }
+  .soir__actions .btn { min-height: 44px; justify-content: center; }
+  .soir__sanstel { align-self: center; font-size: var(--t-xs); }
+  @media (max-width: 560px) {
+    .soir__actions .btn { flex: 1 1 auto; }
+  }
+
+  /* Les consignes d'arrivée, dépliées le jour où l'on arrive dans le logement. */
+  .soir__arrivee { margin-top: var(--s-3); border-top: 1px solid var(--line); }
+  .soir__arrivee > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    min-height: 44px; font-size: var(--t-sm); font-weight: 600;
+  }
+  .soir__arrivee > summary::after {
+    content: '▾'; flex: none; color: var(--mut); font-size: var(--t-xs); transition: transform .15s;
+  }
+  .soir__arrivee[open] > summary::after { transform: rotate(180deg); }
+  .soir__arrivee p { max-width: 70ch; font-size: var(--t-sm); line-height: 1.55; color: var(--ink-2); }
+  .soir__arrivee p + p { margin-top: var(--s-2); }
+  .soir__arrivee p.mut { font-size: var(--t-xs); }
+
+  /* À ne pas manquer : la grande carte d'un billet payé (.resa) reste en tête ;
+     cette liste reprend les tables, les billets à réserver et les échéances. */
+  .amanquer { display: grid; gap: var(--s-2); margin: 0 0 var(--s-5); padding: 0; list-style: none; }
+  .amanquer__item {
+    padding: var(--s-3) var(--s-4); min-height: 44px;
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-s);
+    font-size: var(--t-sm); line-height: 1.5;
+  }
+  .amanquer__item .data { margin-right: var(--s-1); font-weight: 600; }
+  /* l'accent, pour ce qui reste à faire : « à réserver » et l'échéance du jour */
+  .amanquer__item--a-reserver, .amanquer__item--echeance { border-left: 3px solid var(--acc); }
+  .amanquer__item--a-reserver .label, .amanquer__item--echeance .label { color: var(--acc); font-weight: 600; }
+  /* un lien en ligne est trop fin pour un pouce : on étend la zone tapable sans
+     toucher au dessin, comme .todo__link. 13 px au-dessus et au-dessous : une ligne
+     de 20 px fait alors plus de 44 px de haut (avec 10 px, environ 40) */
+  .amanquer__item a, .jour__valises a {
+    position: relative; display: inline-block;
+    font-weight: 600; color: var(--acc);
+  }
+  .amanquer__item a::after, .jour__valises a::after { content: ''; position: absolute; inset: -13px -4px; }
+  /* même zone pour les liens « À ne pas rater » de l'accueil, sans toucher à leur dessin */
+  .city__ob a { position: relative; }
+  .city__ob a::after { content: ''; position: absolute; inset: -13px -4px; }
+  /* « à réserver » puis « réserver » : deux mots voisins, on les distingue */
+  .amanquer__item--a-reserver .label { margin-right: var(--s-2); }
+  /* La règle des bus de Hakone, sous le pass : sur sa propre ligne, et en gras — on la
+     lit au moment de monter dans le bus, pas avant. */
+  .amanquer__bus { display: block; margin-top: var(--s-1); font-weight: 600; color: var(--ink); }
+  .amanquer__bus [lang="ja"] { white-space: nowrap; }
+
+  /* Le trajet du jour : l'alerte du départ colle à celle du train, on l'écarte ;
+     la décision pour les valises vient dessous, comme « Depuis l'hôtel » (.jour__depuis). */
+  .alert + .jour__depart { margin-top: var(--s-3); }
+  .jour__valises { margin: var(--s-3) 0 var(--s-4); font-size: var(--t-sm); color: var(--ink-2); }
+  .jour__valises .label { margin-right: var(--s-2); }
+
+  /* Le parcours vient avant la carte dans le document : sur téléphone la carte
+     passe dessous, sur grand écran elle reste dans la colonne de droite. Des
+     zones nommées fixent la place, quel que soit l'ordre. */
+  .jour__corps { grid-area: corps; }
+  .jour__aside { grid-area: aside; }
+  .jour__grille { grid-template-areas: "corps aside"; }
+  @media (max-width: 900px) {
+    .jour__grille { grid-template-areas: "corps" "aside"; }
+  }
+}
+
+/* --- secours et à faire ----------------------------------------------------
+   Secours se lit dans l'ordre d'une urgence : un blessé d'abord (les numéros, les
+   phrases, un hôpital), puis les numéros généraux, le lit où l'on dort, les vols,
+   les phrases. Les numéros, le séisme et les logements viennent des données ; ce
+   bloc ajoute ce que ces lignes demandent (l'intro des urgences, le séisme, les
+   deux boutons d'un logement, son arrivée repliée, le badge « Ce soir »). Les
+   autres hôpitaux, les vols et les phrases sont repliés pour tenir en
+   4 000 px. Tout ce qui se touche y fait 44 px au moins : les numéros à appeler,
+   les arrivées, les boutons. À faire gagne « À lire avant de partir » : un
+   conseil par ligne, replié.
+   L'impression (menu, pied de page et boutons cachés, une feuille A4) vit ici
+   aussi, hors de la couche : à l'impression, ses règles passent avant celles
+   de l'écran. */
+@layer components {
+  /* une ancre ne se cache pas sous la barre collante */
+  .secours__sec, .secours__lieu, #hors-ligne, #a-lire { scroll-margin-top: calc(var(--nav-h) + var(--s-3)); }
+
+  /* urgences : l'intro dans l'encadré, le séisme dessous */
+  .secours__urg-what { margin-bottom: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+  .secours__seisme {
+    margin-top: var(--s-3); padding: var(--s-3) var(--s-4);
+    border: 1px solid var(--line); border-left: 3px solid var(--acc);
+    border-radius: var(--r-m); background: var(--paper-2); break-inside: avoid;
+  }
+  .secours__seisme h3 { font-size: var(--t-sm); font-weight: 600; }
+  .secours__seisme p { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); }
+
+  /* les numéros à appeler : des cibles à la taille d'un doigt. Le lien garde sa taille
+     de texte ; sa zone tapable déborde, en absolu, sans rien bouger (le motif de
+     .todo__link). Elle fait 44 px au moins dans les deux sens et ne recouvre jamais
+     un autre contrôle : un appel lancé par erreur coûte cher. */
+  .secours__urg-num a, .secours__tel a { position: relative; display: inline-block; }
+  .secours__urg-num a::after, .secours__tel a::after { content: ''; position: absolute; }
+  /* une ligne d'urgence fait 44 px de haut : la zone la remplit, centrée sur le
+     numéro, et 44 px de large même pour « 110 » */
+  .secours__urg-num a::after {
+    top: 50%; left: 50%; height: 44px; width: max(calc(100% + 20px), 44px);
+    transform: translate(-50%, -50%);
+  }
+  /* sous un logement, les boutons suivent à 8 px : la zone monte vers l'adresse
+     (qui n'est pas un contrôle) et ne descend que de 6 px */
+  .secours__tel a::after { inset: -18px -10px -6px; }
+
+  /* un logement : les deux boutons, puis l'arrivée, repliée. Le bouton « Montrer au
+     chauffeur » est grisé le temps que son module arrive : même taille, rien ne bouge. */
+  .secours__acts { margin-top: var(--s-2); display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .secours__acts button:disabled { opacity: .5; cursor: default; }
+  .secours__arrivee { margin-top: var(--s-1); border-top: 1px solid var(--line); }
+  .secours__arrivee > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    min-height: 44px; font-size: var(--t-xs);
+  }
+  .secours__arrivee > summary .data { color: var(--ink-2); }
+  .secours__arrivee > summary::after { content: '▾'; color: var(--mut); transition: transform .15s; }
+  .secours__arrivee[open] > summary::after { transform: rotate(180deg); }
+  .secours__arrivee > p { padding-bottom: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+
+  /* les vols : un pli à l'écran, ouvert sur la feuille imprimée */
+  .secours__plie { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); }
+  .secours__plie > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+    font-size: var(--t-sm); font-weight: 600;
+  }
+  .secours__plie > summary::after { content: '▾'; color: var(--mut); font-size: var(--t-xs); transition: transform .15s; }
+  .secours__plie[open] > summary::after { transform: rotate(180deg); }
+  .secours__plie > div { padding-inline: var(--s-4); }
+  .secours__plie > div:last-child { padding-bottom: var(--s-3); }
+
+  /* blessé ou malade, en tête de la fiche : l'intro, les trois numéros (l'encadré des
+     urgences, avec dessous ce que chaque numéro donne et quand), les deux phrases, la
+     ligne d'assurance, puis l'hôpital de l'étape en cours et, dans un pli, les autres
+     hôpitaux. Ce pli et celui des phrases font tenir la page sous 4 000 px. */
+  .secours__lead { margin-bottom: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+  /* la version courte de l'intro, pour le papier seulement (voir l'impression) */
+  .secours__papier { display: none; }
+  /* une ligne : le nom et le numéro, puis dessous (sur toute la largeur) ce que le numéro donne */
+  .secours__malade .secours__urg-row { flex-wrap: wrap; row-gap: 0; padding-block: 6px; }
+  .secours__malade .secours__urg-row > b { min-width: 0; }
+  .secours__urg-sub { flex: 1 0 100%; margin-top: calc(var(--s-1) * -1); font-size: var(--t-xs); line-height: 1.4; }
+  .secours__phrases--soin { margin-top: var(--s-2); }
+  .secours__phrases--soin .secours__phrase { padding-block: 4px; }
+  .secours__assur { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+  #hop-soir { margin-top: var(--s-3); }
+  #hop-plie { margin-top: var(--s-2); }
+
+  /* un hôpital : la fiche d'un logement (ville, nom, adresse japonaise, téléphone) et une
+     note sur ce qu'on y trouve. Dans le pli, les fiches deviennent des lignes séparées
+     d'un filet : un cadre dans un cadre alourdirait la page. */
+  .secours__hop-nom { margin-top: var(--s-1); font-size: var(--t-sm); }
+  .secours__hop-note { margin-top: var(--s-1); font-size: var(--t-xs); line-height: 1.45; color: var(--mut); }
+  .secours__plie > .secours__lieux, #hop-soir > .secours__lieux { grid-template-columns: 1fr; gap: 0; }
+  .secours__plie .secours__lieu { padding-inline: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; }
+  .secours__plie .secours__lieu:first-child { border-top: 0; }
+
+  /* « Ce soir » : l'étape en cours (logement, hôpital), repérée d'un coup d'œil. Le badge se
+     pose à cheval sur le bord haut de la fiche : il ne prend aucune hauteur et ne pousse pas
+     les dates à la ligne. */
+  .secours__lieu { position: relative; }
+  .secours__soir {
+    position: absolute; top: -10px; right: var(--s-4); z-index: 1;
+    padding: 1px var(--s-2); border-radius: var(--r-full);
+    border: 1px solid color-mix(in srgb, var(--acc) 40%, var(--line));
+    background: var(--acc-soft); color: var(--acc);
+    font-size: var(--t-xs); font-weight: 700; line-height: 1.4; white-space: nowrap;
+  }
+
+  /* À faire : « À lire avant de partir », un conseil par ligne, replié */
+  .lire { display: flex; flex-direction: column; gap: var(--s-2); }
+  .lire__item { border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper-2); }
+  .lire__item > summary {
+    display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+    font-size: var(--t-base); font-weight: 600;
+  }
+  .lire__item > summary::after { content: '▾'; color: var(--mut); font-size: var(--t-xs); transition: transform .15s; }
+  .lire__item[open] > summary::after { transform: rotate(180deg); }
+  .lire__item > summary:hover { color: var(--acc); }
+  .lire__corps { padding: 0 var(--s-4) var(--s-4); }
+  .lire__corps p { font-size: var(--t-sm); color: var(--ink-2); }
+  .lire__corps .lire__warn {
+    margin-top: var(--s-3); padding-top: var(--s-3); border-top: 1px solid var(--line);
+    font-size: var(--t-xs); color: var(--acc);
+  }
+}
+
+/* impression : une seule feuille A4, noir sur blanc, deux colonnes */
+@media print {
+  .nav, .foot, #progress-bar, .secours__tools, .secours__acts, .btn, button { display: none !important; }
+  :root, :root[data-theme="dark"] {
+    --paper: #fff; --paper-2: #fff; --paper-3: #fff;
+    --ink: #000; --ink-2: #000; --mut: #333;
+    --line: #c4c4c4; --line-2: #8a8a8a;
+    --acc: #000; --acc-soft: #fff;
+  }
+  @page { size: A4; margin: 9mm; }
+  html, body { background: var(--paper); color: var(--ink); font-size: 9pt; line-height: 1.16; }
+  .wrap { max-width: none; padding-inline: 0; }
+  .secours__sheet { max-width: none; margin: 0; padding: 0; }
+
+  .secours__head { margin-bottom: 3mm; break-after: avoid; }
+  .secours__head h1 { font-size: 15pt; }
+  .secours__head p { font-size: 9pt; }
+
+  /* le gros du contenu coule en deux colonnes ; l'en-tête les enjambe */
+  .secours__flow { columns: 2; column-gap: 9mm; }
+  .secours__sec { margin-top: 3mm; }
+  .secours__sec > h2 { font-size: 10.5pt; border-bottom-width: 1px; margin-bottom: 1.2mm; padding-bottom: 0.8mm; }
+
+  .secours__lieux, .secours__phrases { display: block; }
+  .secours__lieu { padding: 1.1mm 2mm; margin-bottom: 1.3mm; border-color: var(--line); }
+  .secours__adr { margin-top: 1mm; font-size: 11pt; }
+  .secours__tel { margin-top: 0.6mm; }
+  /* l'arrivée garde sa ligne (les heures), sans la flèche ; les consignes ne s'impriment
+     jamais, même dépliées : elles feraient déborder la feuille sur une deuxième page */
+  .secours__arrivee { margin-top: 0.6mm; border-top: 0; }
+  .secours__arrivee > summary { min-height: 0; }
+  .secours__arrivee > summary::after { display: none; }
+  .secours__arrivee > p { display: none; }
+
+  /* les cibles à 44 px sont pour le doigt : sur le papier, les lignes reprennent leur hauteur */
+  .secours__urg { border: 1.4px solid var(--ink); background: var(--paper); padding: 1.6mm 2mm; }
+  .secours__urg-row { min-height: 0; align-items: baseline; }
+  .secours__seisme { margin-top: 2mm; padding: 1.4mm 2mm; border-color: var(--ink); }
+  .secours__vol { margin-bottom: 1.8mm; }
+  /* les vols : le pli s'efface, son contenu reste (la page l'ouvre avant d'imprimer) */
+  .secours__plie { border: 0; background: none; }
+  .secours__plie > summary { display: none; }
+  .secours__plie > div { padding: 0; }
+
+  /* blessé ou malade : la feuille garde les numéros (avec leurs horaires), les deux phrases,
+     la ligne d'assurance et les six fiches d'hôpital (une par logement : ville, nom japonais,
+     téléphone, adresse japonaise), en lignes courtes pour tenir sur une page. L'intro du bloc
+     (.secours__lead) cède la place à une ligne courte, « Grave : 119. Sinon, téléphonez… »
+     (.secours__papier). Le badge « Ce soir » n'a pas de sens sur le papier ; les notes des
+     hôpitaux et l'intro des urgences se lisent à l'écran, sauf la note de Hakone : de jour,
+     en semaine, l'hôpital ne reçoit que les ambulances, et sur papier un taxi pour rien coûte
+     cher. Les bouts de phrase réservés à l'écran (.secours__ecran) sont masqués. */
+  .secours__soir, .secours__hop-note, .secours__urg-what, .secours__lead, .secours__ecran { display: none !important; }
+  .secours__papier { display: block !important; margin: 0 0 1.5mm; font-size: 8pt; font-weight: 600; }
+  .secours__malade .secours__urg-row { padding-block: 0.4mm; }
+  .secours__urg-sub { margin-top: 0; font-size: 7.5pt; line-height: 1.2; }
+  .secours__assur { margin-top: 1.5mm; font-size: 8.5pt; }
+  #hop-soir, #hop-plie { margin-top: 1.5mm; }
+  .secours__plie > .secours__lieux, #hop-soir > .secours__lieux { gap: 0; }
+  /* un hôpital tient en deux lignes : la ville, le nom japonais et le téléphone, puis l'adresse */
+  .secours__hop.secours__lieu {
+    display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 2mm;
+    padding: 0.7mm 0; margin-bottom: 0; border: 0; border-top: 0.3mm solid var(--line); border-radius: 0;
+  }
+  .secours__hop .secours__quand { flex: none; }
+  .secours__hop .secours__dates { font-size: 8pt; }
+  .secours__hop-nom { margin-top: 0; font-size: 8.5pt; }
+  .secours__hop-nom .mut { display: none; }
+  .secours__hop .secours__tel { order: 1; flex: none; margin: 0 0 0 auto; }
+  .secours__hop .secours__adr { order: 2; flex: 1 0 100%; margin-top: 0.4mm; font-size: 10pt; }
+  /* à Hakone, l'hôpital est loin et ne reçoit de jour que les ambulances : cette règle-là s'imprime */
+  #hop-hakone .secours__hop-note { display: block !important; order: 3; flex: 1 0 100%; margin: 0.4mm 0 0; font-size: 7.5pt; }
+  /* les phrases : le japonais et son sens sur une ligne s'ils tiennent, sans la romanisation */
+  .secours__romaji { display: none; }
+  .secours__phrase { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 2.5mm; padding: 0.6mm 0; }
+  .secours__jp { font-size: 10.5pt; }
+  .secours__fr { font-size: 8.5pt; }
+
+  a { color: var(--ink) !important; text-decoration: none !important; }
+}
+
+/* --- chercher ----------------------------------------------------------------
+   La page de la loupe. Un seul champ pour tout le site : les résultats sont
+   rangés par type (pages, adresses, plats, quartiers, journées, logements,
+   conseils), une ligne chacun. Quand le champ est vide, le catalogue par ville
+   reste dessous, ses filtres repliés dans « Filtres ». Mêmes jetons que le reste :
+   aucune couleur en dur, le thème sombre suit tout seul. */
+@layer components {
+  /* L'en-tête tient en un titre et une ligne d'aide : le champ doit rester sous le pouce. */
+  .chercher__tete { padding-block: var(--s-5) var(--s-4); }
+  .chercher__tete p { margin-top: var(--s-2); max-width: 52ch; font-size: var(--t-sm); color: var(--mut); }
+
+  /* « 23 résultats » et « Réinitialiser » : une ligne sous le champ. */
+  .chercher__etat {
+    display: flex; align-items: center; gap: var(--s-3);
+    max-width: 52rem; min-height: 44px; margin-bottom: var(--s-3);
+  }
+  .chercher__etat output {
+    font-size: var(--t-sm); color: var(--mut); font-variant-numeric: tabular-nums;
+  }
+  .chercher__etat .chip { margin-left: auto; }
+
+  /* « Toutes les adresses de… » fait défiler jusqu'au catalogue : on s'arrête sous la
+     barre et sous le champ collé en haut (58 + 72 px), sinon « Filtres » reste caché. */
+  #biblio { scroll-margin-top: calc(var(--nav-h) + 72px); }
+
+  /* Les filtres du catalogue, repliés : une ligne dit ce qui est filtré. */
+  .filtres {
+    margin: 0 0 var(--s-5); background: var(--paper-2);
+    border: 1px solid var(--line); border-radius: var(--r-m);
+  }
+  .filtres__resume {
+    display: flex; align-items: baseline; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+  }
+  .filtres__resume b { font-size: var(--t-base); font-weight: 600; }
+  .filtres__etat {
+    flex: 1; min-width: 0; font-size: var(--t-sm); color: var(--mut);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .filtres__resume::after {
+    content: '▾'; margin-left: auto; font-size: var(--t-sm); font-weight: 600; color: var(--acc);
+  }
+  .filtres[open] > .filtres__resume::after { content: '▴'; }
+  .filtres__corps {
+    display: grid; gap: var(--s-4); padding: var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  /* Une rangée vide (les quartiers, tant qu'aucune ville n'est choisie) ne prend pas de place. */
+  .filtres__corps .chipbar:empty { display: none; }
+  .filtres .mat { margin: 0; }
+  /* Les trois menus s'empilent sur un téléphone : « Toutes provenances » ne tient
+     pas à trois de front. 16 px : en deçà, iOS zoome la page au focus du menu. */
+  .filtres .tools__selects { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .filtres .tools__selects select { width: 100%; font-size: 16px; }
+
+  /* Les résultats : un groupe par type, une ligne par résultat. */
+  .resultats { max-width: 52rem; padding-bottom: var(--s-8); }
+  .resultats__groupe + .resultats__groupe { margin-top: var(--s-6); }
+  .resultats__titre {
+    display: flex; align-items: baseline; gap: var(--s-2); margin-bottom: var(--s-2);
+    font-size: var(--t-md); font-weight: 600; letter-spacing: -0.011em;
+  }
+  .resultats__nb { font-family: var(--f-data); font-size: var(--t-xs); font-weight: 400; color: var(--mut); }
+  .resultats__liste { border-top: 1px solid var(--line); }
+
+  /* Un lien, ou un bouton pour les adresses (elles ouvrent leur fiche) : même ligne. */
+  .resultat {
+    display: flex; align-items: center; gap: var(--s-3);
+    width: 100%; min-height: 56px; padding: var(--s-3) var(--s-2);
+    border-bottom: 1px solid var(--line); text-align: left;
+    color: inherit; transition: background .15s;
+  }
+  .resultat:hover { background: var(--paper-3); }
+  .resultat::after { content: '›'; flex: none; font-size: var(--t-lg); line-height: 1; color: var(--mut); }
+  .resultat__texte { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .resultat__titre { font-size: var(--t-base); font-weight: 600; line-height: 1.35; }
+  .resultat__extrait { font-size: var(--t-sm); color: var(--ink-2); line-height: 1.45; }
+  /* « Voir les 12 » et « Voir aussi… » : l'espace est à droite de chaque bouton, pas à
+     gauche du second, sinon celui-ci se décale quand il passe à la ligne. */
+  .resultats__plus { margin: var(--s-3) var(--s-2) 0 0; }
+
+  /* « konbini » : la réponse est une phrase, pas une adresse. */
+  .resultats__note {
+    margin: 0 0 var(--s-5); padding: var(--s-3) var(--s-4);
+    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
+    background: color-mix(in srgb, var(--gold) 8%, var(--paper-2));
+    border-left: 3px solid var(--gold); border-radius: 0 var(--r-s) var(--r-s) 0;
+  }
+}
+
+/* --- le budget ---------------------------------------------------------------
+   Une phrase, une barre en trois couleurs, « entre vous » en une ligne, puis deux
+   listes — ce qui se règle avant le départ, ce qui se dépense sur place — et le
+   détail par catégorie, replié. Qui a payé quoi vient des données : aucun bouton.
+   On réutilise .shead, .card, .data et .mut ; la couleur ne porte qu'une
+   information : sapin pour « payé », érable pour « avant le départ », or pour
+   « sur place » (la barre, sa légende et le titre de chaque liste). */
+@layer components {
+  /* La page : une colonne de lecture (les listes ne s'étirent pas sur un grand écran)
+     et des sections serrées, pour que la phrase, la barre et « Entre vous » tiennent
+     sur le premier écran. Les listes se cadrent sous la barre collante. */
+  .bud__tete { padding-bottom: var(--s-4); }
+  .bud__sec { max-width: 40rem; padding-bottom: var(--s-6); scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+
+  /* la phrase : ce que coûte le voyage, puis ce qui est payé et ce qui reste */
+  .bud__phrase { font-size: var(--t-lg); font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; }
+  .bud__bilan { margin-top: var(--s-2); font-size: var(--t-md); color: var(--ink-2); }
+  .bud__bilan b { color: var(--ink); font-weight: 700; }
+  /* le payé, puis le reste à payer : une ligne chacun (ensemble, ils ne tiennent pas à 375 px) */
+  .bud__bilan span { display: block; }
+
+  /* pendant le voyage, en tête : ce qu'on peut dépenser aujourd'hui, et le chemin vers les
+     tables. Le bouton passe sous la phrase quand elle prend toute la largeur. */
+  .bud__jour {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-4);
+    margin-bottom: var(--s-4); font-size: var(--t-base); color: var(--ink-2);
+  }
+  .bud__jour b { color: var(--ink); font-weight: 700; }
+
+  /* une note en petit : ce que le budget ne compte pas, son taux, ce qui se paie où. Sous le
+     titre d'une liste (l'écart du titre se resserre), elle reste collée à lui. Le lien garde
+     une zone tapable de 44 px sans prendre de place (comme « doigts, pas souris »). */
+  .bud__note { max-width: 52ch; font-size: var(--t-sm); line-height: 1.5; color: var(--mut); }
+  #synthese .bud__note { margin-top: var(--s-3); }
+  #avant .bud__note { margin: calc(-1 * var(--s-3)) 0 var(--s-3); }
+  .bud__note a { position: relative; display: inline-block; font-weight: 600; color: var(--acc); }
+  .bud__note a::after { content: ''; position: absolute; inset: -13px -4px; }
+
+  /* la barre : trois parts à l'échelle (la page pose `flex-grow` = le montant),
+     séparées par un filet de la couleur du fond */
+  .bud__barre {
+    display: flex; gap: 2px; height: 14px; margin-top: var(--s-4);
+    border-radius: var(--r-full); overflow: hidden;
+  }
+  .bud__seg { flex: 1 1 0; min-width: 0; }
+  .bud__seg--paye, .bud__pastille--paye { background: var(--pine); }
+  .bud__seg--avant, .bud__pastille--avant { background: var(--acc); }
+  .bud__seg--place, .bud__pastille--place { background: var(--gold); }
+  .bud__legende {
+    display: flex; flex-wrap: wrap; gap: var(--s-1) var(--s-4); margin-top: var(--s-3);
+    font-size: var(--t-sm); color: var(--mut);
+  }
+  .bud__legende li { display: inline-flex; align-items: center; gap: var(--s-2); }
+  .bud__legende b { color: var(--ink); font-weight: 600; }
+  .bud__pastille { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 2px; }
+
+  /* entre vous : un petit titre, la phrase, ce qui l'explique */
+  .bud__quoi {
+    font-size: var(--t-xs); font-weight: 600; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--mut);
+  }
+  .bud__solde { margin-top: var(--s-1); font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.015em; line-height: 1.25; }
+  .bud__solde b { color: var(--acc); }
+  .bud__explique { margin-top: var(--s-2); max-width: 52ch; font-size: var(--t-sm); color: var(--mut); }
+
+  /* le titre d'une liste porte la pastille de sa part dans la barre */
+  .bud__titre .bud__pastille { margin-right: var(--s-2); vertical-align: middle; }
+
+  /* les listes : une ligne par élément, le montant à droite */
+  .bud__ligne {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline;
+    column-gap: var(--s-4); padding: var(--s-3) var(--s-4);
+    border-top: 1px solid var(--line);
+  }
+  .bud__ligne:first-child { border-top: 0; }
+  .bud__texte { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .bud__nom { font-size: var(--t-base); font-weight: 600; }
+  .bud__sous { font-size: var(--t-xs); color: var(--mut); }
+  /* une date en monospace à 92 % de 12 px ne faisait que 11 px : on la lit à 13 px */
+  .bud__sous .data { font-size: var(--t-sm); }
+  .bud__montant {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    font-weight: 600; white-space: nowrap;
+  }
+  .bud__qui { font-size: var(--t-xs); font-weight: 400; color: var(--mut); }
+  .bud__qui.is-paye, .bud__ok { color: var(--pine); font-weight: 600; }
+
+  /* l'état d'une table ou d'un billet : érable tant qu'il reste à réserver, sapin une fois réservé,
+     gris quand la date est passée */
+  .bud__etat { padding: 1px var(--s-2); border-radius: var(--r-full); font-weight: 600; white-space: nowrap; }
+  .bud__etat--a-reserver { color: var(--acc); background: var(--acc-soft); }
+  .bud__etat--reserve { color: var(--pine); background: color-mix(in srgb, var(--pine) 12%, var(--paper-2)); }
+  .bud__etat--passee { color: var(--ink-2); background: var(--paper-3); }
+
+  /* un repli : le résumé est une ligne de plus, le chevron dit qu'elle s'ouvre */
+  .bud__lignes + .bud__pli, .bud__pli + .bud__pli { margin-top: var(--s-3); }
+  .bud__pli > summary {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 56px; padding: var(--s-3) var(--s-4);
+  }
+  .bud__pli > summary > .bud__texte { flex: 1; }
+  .bud__pli > summary::after { content: '▾'; flex: none; font-size: var(--t-xs); color: var(--mut); transition: transform .15s; }
+  .bud__pli[open] > summary::after { transform: rotate(180deg); }
+  .bud__pli > summary:hover .bud__nom { color: var(--acc); }
+  .bud__pli > .bud__lignes { border-top: 1px solid var(--line); }
+}
+
 /* --- doigts, pas souris ----------------------------------------------------
    Ce site se consulte au Japon, sur un téléphone, souvent en marchant. Les
-   commandes principales étaient dimensionnées pour un curseur : le « ↗ » qui
-   lance l'itinéraire Google Maps faisait 10 × 16 px, et il apparaît 165 fois.
-   On agrandit la zone tapable, pas le dessin. */
+   commandes principales étaient dimensionnées pour un curseur : des liens de
+   10 × 16 px, des entrées de menu de 21 px de haut. On agrandit la zone
+   tapable, pas le dessin. */
 @layer components {
-  /* Une zone tapable posée par-dessus, en absolu : rien ne bouge dans la page. */
-  .alt__pin { position: relative; }
-  .alt__pin::after { content: ''; position: absolute; inset: -12px; }
-
-  /* Même principe pour les autres liens en ligne, trop fins pour un pouce. */
+  /* Une zone tapable posée par-dessus, en absolu : rien ne bouge dans la page.
+     Les liens en ligne sont trop fins pour un pouce. */
   .todo__link, .spot__maps, .know__item a, .day__tip a {
     position: relative; display: inline-block;
   }
@@ -1524,8 +2419,7 @@
     content: ''; position: absolute; inset: -10px -4px;
   }
 
-  .tools .chip { height: 44px; }
-  .tools__selects select, .tools select { min-height: 44px; }
+  .tools__selects select { min-height: 44px; }
   .tools .search, .tools label.search { min-height: 44px; }
 
   .chip { min-height: 44px; }
@@ -1536,9 +2430,8 @@
      viser le mauvais laissait les liens à 21 px de haut. */
   .nav a { min-height: 44px; display: inline-flex; align-items: center; }
 
-  /* Le « × » des modales (journées type, fiche d'une ville) ne faisait que la
-     taille du glyphe : on étend la zone tapable sans toucher au dessin. */
-  .tpldlg__x::after { content: ''; position: absolute; inset: -15px; }
+  /* Le « × » des modales (journées type, fiche d'une ville) fait lui-même 44 px
+     (voir .tpldlg__x) : une zone posée par-dessus dépassait de 3 px et faisait défiler la fiche. */
 
   /* La case reste petite, mais toute la ligne est tapable — c'est un label. */
   .pay__row { min-height: 44px; }
@@ -1603,22 +2496,6 @@
     .resa-item { grid-template-columns: 1fr; gap: var(--s-3); }
     .resa-item__shot { width: 100%; aspect-ratio: 16 / 9; }
   }
-}
-
-/* --- protocole d'arrivée ----------------------------------------------------
-   Un seul hébergement du voyage ne se rejoint pas seul : au ryokan de Hakone,
-   on appelle depuis le 7-Eleven du port et on vient vous chercher. Cette
-   information ne sert qu'une fois, mais ce jour-là elle est la seule qui
-   compte — elle sort donc du gris des autres lignes. */
-@layer components {
-  .hotel__arrivee {
-    margin-top: var(--s-3); padding: var(--s-3) var(--s-4);
-    background: var(--acc-soft);
-    border-left: 3px solid var(--acc);
-    border-radius: var(--r-s);
-    font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5;
-  }
-  .hotel__arrivee b { color: var(--acc); margin-right: var(--s-2); }
 }
 
 /* --- une fiche sans photo ---------------------------------------------------
@@ -1749,8 +2626,9 @@
 
    Sur grand écran, la carte et le bouton restent collés à droite pendant qu'on
    lit la liste à gauche — sinon on fait défiler la liste entière pour revoir la
-   carte, puis on remonte. Sur téléphone la carte passe en tête, parce que la
-   colonne collante n'a pas de sens quand il n'y a qu'une colonne. */
+   carte, puis on remonte. Sur téléphone la carte passe sous le parcours, qu'on
+   suit en premier : la colonne collante n'a pas de sens quand il n'y a qu'une
+   colonne. */
 @layer components {
   .jour__tete { padding-block: 0 var(--s-5); }
   .jour__ou {
@@ -1763,8 +2641,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 38%);
     align-items: start; padding-bottom: var(--s-8);
   }
-  .jour__aside { order: 2; }
-  .jour__corps { order: 1; min-width: 0; }
+  .jour__corps { min-width: 0; }
   .jour__sticky { position: sticky; top: calc(var(--nav-h) + var(--s-4)); }
 
   .map--jour { height: 380px; border-radius: var(--r-m); border: 1px solid var(--line); }
@@ -1827,8 +2704,6 @@
 
   @media (max-width: 900px) {
     .jour__grille { grid-template-columns: 1fr; gap: var(--s-5); }
-    .jour__aside { order: 0; }         /* la carte passe devant la liste */
-    .jour__corps { order: 1; }
     .jour__sticky { position: static; }
     .map--jour { height: 300px; }
   }
@@ -1896,22 +2771,6 @@
 @layer components {
   .mat { margin: 0 0 var(--s-5); }
 
-  .mat__pli > summary { list-style: none; cursor: pointer; }
-  .mat__pli > summary::-webkit-details-marker { display: none; }
-  .mat__resume {
-    display: flex; align-items: center; gap: var(--s-3);
-    min-height: 44px; padding-block: var(--s-2);
-  }
-  .mat__resumeQuoi b { font-size: var(--t-base); font-weight: 600; }
-  .mat__resumeAction {
-    margin-left: auto; font-size: var(--t-xs); font-weight: 600; color: var(--acc);
-  }
-  .mat__resumeAction::after { content: ' ▾'; }
-  .mat__pli[open] .mat__resumeAction::after { content: ' ▴'; }
-  @media (min-width: 760px) {
-    .mat__pli[open] > summary { display: none; }
-  }
-
   .mat__grille {
     display: grid;
     grid-template-columns: minmax(88px, auto) repeat(var(--cols), minmax(0, 1fr));
@@ -1975,143 +2834,10 @@
   .jour__ailleurs .btn { font-size: var(--t-xs); }
 }
 
-/* --- le budget : le solde entre vous, puis une ligne par dépense ----------------
-   Trois questions à deux : qui doit combien à l'autre, ce qu'il reste à payer,
-   qui a payé quoi. Un bilan de trois lignes, puis une liste sur une grille
-   fixe — quoi, combien, qui a payé — pour que tout soit aligné. */
+/* --- une carte qui n'est qu'un renvoi ----------------------------------------
+   Une carte, un texte, une flèche : le renvoi vers une autre page (l'accueil,
+   À faire, Transports). */
 @layer components {
-  .chiffre__quoi {
-    display: block; font-size: var(--t-xs); font-weight: 600;
-    color: var(--mut); letter-spacing: .04em; text-transform: uppercase;
-  }
-
-  /* le bilan --------------------------------------------------------------- */
-  .bilan {
-    display: grid; gap: var(--s-4) var(--s-6);
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    padding: var(--s-4) var(--s-5);
-    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--r-m);
-  }
-  .bilan__solde { margin: 0; display: flex; flex-direction: column; gap: var(--s-2); }
-  .bilan__phrase { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
-  .bilan__phrase b { color: var(--acc); }
-  .bilan__sous { font-size: var(--t-xs); }
-
-  .bilan__sous b { color: var(--acc); }
-  .bilan__faits {
-    margin: 0; display: grid; grid-template-columns: auto auto; gap: var(--s-2) var(--s-5);
-    align-content: start; justify-content: end;
-  }
-  .bilan__faits > div { display: contents; }
-  .bilan__faits dt { font-size: var(--t-sm); color: var(--mut); }
-  .bilan__faits dd { margin: 0; font-weight: 600; text-align: right; }
-  .bilan__fort { color: var(--acc); }
-  @media (max-width: 720px) {
-    .bilan { grid-template-columns: 1fr; }
-    .bilan__phrase { font-size: 1.25rem; }
-    .bilan__faits { justify-content: start; }
-  }
-
-  /* les onglets ------------------------------------------------------------- */
-  .onglets { margin-bottom: var(--s-4); }
-  .onglets .chip { min-height: 40px; padding-inline: var(--s-4); }
-
-  /* le compte : une ligne par poste ---------------------------------------- */
-  .cpt { border-top: 1px solid var(--line-2); }
-  .cpt__ligne {
-    display: grid; align-items: center; gap: var(--s-2) var(--s-3);
-    grid-template-columns: minmax(0, 1fr) 96px 120px 120px;
-    padding: var(--s-3) var(--s-2); border-bottom: 1px solid var(--line);
-  }
-  .cpt__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .cpt__tete {
-    padding-top: var(--s-2); padding-bottom: var(--s-2); align-items: end;
-    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-    letter-spacing: .04em; text-transform: uppercase; border-bottom-color: var(--line-2);
-  }
-  .cpt__tete small { display: block; font-size: 10px; font-weight: 500; letter-spacing: 0; text-transform: none; }
-  .cpt__poste { display: flex; flex-direction: column; min-width: 0; }
-  .cpt__poste b { font-weight: 600; font-size: var(--t-base); }
-  .cpt__poste .mut { font-size: var(--t-xs); }
-  .cpt__poste .mut b { color: var(--acc); font-weight: 700; font-size: var(--t-xs); }
-  .cpt__ok { color: var(--pine); font-weight: 600; }
-  .cpt__reste { color: var(--acc); font-weight: 700; font-size: var(--t-md); }
-  /* dans les colonnes de chacun : ce qu'il a payé en petit, ce qu'il lui reste en gras */
-  .cpt__n .cpt__paye { display: block; font-size: var(--t-xs); font-weight: 400; }
-  .cpt__ligne:not(.cpt__tete) .cpt__n:not(.cpt__reste) { font-weight: 700; }
-  .cpt__pied { border-top: 2px solid var(--ink); border-bottom: 0; margin-top: -1px; }
-  .cpt__pied .cpt__poste b { font-size: var(--t-md); }
-  .cpt__note { font-size: var(--t-xs); margin: var(--s-3) 0 0; max-width: 60ch; }
-  @media (max-width: 640px) {
-    .cpt__ligne { grid-template-columns: minmax(0, 1fr) 64px 76px 76px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
-    .cpt__n { font-size: var(--t-sm); }
-    .cpt__reste { font-size: var(--t-base); }
-  }
-
-  /* la liste --------------------------------------------------------------- */
-  .dep { border-top: 1px solid var(--line-2); }
-  .dep__ligne {
-    display: grid; align-items: center; gap: var(--s-1) var(--s-3);
-    grid-template-columns: minmax(0, 1fr) 92px 126px;
-    padding: var(--s-2) var(--s-2); min-height: 48px;
-    border-bottom: 1px solid var(--line);
-  }
-  .dep__n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .dep__tete {
-    min-height: 0; padding-top: var(--s-2); padding-bottom: var(--s-2);
-    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-    letter-spacing: .04em; text-transform: uppercase; border-bottom-color: var(--line-2);
-  }
-  .dep__tete .dep__qui { text-align: right; white-space: nowrap; }
-  .dep__legende { font-size: var(--t-xs); margin: 0 0 var(--s-3); }
-  .dep__legende b { color: var(--ink); font-weight: 700; }
-  .dep__poste {
-    margin: 0; padding-top: var(--s-4); min-height: 0;
-    font-size: var(--t-sm); font-weight: 700; letter-spacing: .02em;
-    border-bottom-color: var(--line-2);
-  }
-  .dep__poste .dep__n { font-weight: 500; }
-  .dep__resteCat { font-size: var(--t-xs); font-weight: 500; color: var(--mut); }
-  .dep__resteCat b { color: var(--acc); font-weight: 700; }
-  .dep__ok { color: var(--pine); font-weight: 600; }
-  .dep__pied { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; }
-  .dep__pied .dep__n { font-size: var(--t-md); }
-
-  .dep__quoi { display: flex; flex-direction: column; min-width: 0; }
-  .dep__quoi b { font-weight: 500; font-size: var(--t-base); }
-  .dep__quoi .mut { font-size: var(--t-xs); }
-  .dep__row .dep__n { font-weight: 600; }
-  .dep__row.is-paye .dep__n { color: var(--pine); }
-  .dep__row.is-paye .dep__quoi b { color: var(--mut); }
-
-  .dep__forfait { display: inline-flex; align-items: center; gap: var(--s-2); margin-top: 2px; }
-  .dep__forfait input {
-    width: 64px; padding: var(--s-1) var(--s-2); text-align: right;
-    /* 16px : en deçà, iOS zoome la page quand on tape dans le champ. */
-    font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 16px;
-    background: var(--paper-2); border: 1px solid var(--line-2);
-    border-radius: var(--r-s); color: var(--ink);
-  }
-  .dep__forfait .mut { white-space: nowrap; }
-
-  /* qui a payé : trois boutons, un seul allumé, re-cliquer éteint */
-  .qui { display: inline-flex; justify-self: end; border: 1px solid var(--line-2); border-radius: var(--r-s); overflow: hidden; }
-  .qui button {
-    width: 40px; height: 44px; border: 0; border-left: 1px solid var(--line-2);
-    background: var(--paper-2); color: var(--mut);
-    font-weight: 600; font-size: var(--t-sm); cursor: pointer;
-  }
-  .qui button:first-child { border-left: 0; }
-  .qui button:hover { background: var(--paper-3); color: var(--ink); }
-  .qui button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
-
-  @media (max-width: 640px) {
-    .dep__ligne { grid-template-columns: minmax(0, 1fr) 72px 108px; gap: var(--s-1) var(--s-2); padding-inline: 0; }
-    .dep__n { font-size: var(--t-sm); }
-    .qui button { width: 36px; }
-  }
-
-  /* une carte qui n'est qu'un renvoi -------------------------------------- */
   .cardlink { padding: 0; overflow: hidden; }
   .cardlink__in {
     display: flex; align-items: center; gap: var(--s-4);
@@ -2121,6 +2847,8 @@
   .cardlink__in:hover { background: var(--paper-3); }
   .cardlink__texte b { display: block; font-size: var(--t-md); }
   .cardlink__texte .mut { display: block; margin-top: var(--s-2); font-size: var(--t-sm); }
+  /* une échéance en retard : le mot, à l'accent (l'accueil, « Prochaines échéances ») */
+  .cardlink__retard { color: var(--acc); font-weight: 600; }
   .cardlink__fleche { margin-left: auto; font-size: var(--t-xl); color: var(--mut); flex: none; }
 }
 
@@ -2148,10 +2876,15 @@
     display: grid; grid-template-columns: 28px minmax(0, 1fr);
     gap: var(--s-3); align-items: start;
     border-bottom: 1px solid var(--line);
+    /* une ancre (#e-<démarche>) se cadre sous la barre collante */
+    scroll-margin-top: calc(var(--nav-h) + var(--s-3));
   }
-  .ech__item > input[type="checkbox"] {
-    width: 20px; height: 20px; margin: 16px 0 0 4px; cursor: pointer;
-  }
+  /* La case reste petite (20 px) : son label porte une zone tapable de 44 px, posée en
+     absolu par-dessus (12 px de plus de chaque côté), sans rien déplacer — le motif de
+     « doigts, pas souris ». Elle ne recouvre ni le titre (12 px d'écart) ni la ligne voisine. */
+  .ech__case { position: relative; display: block; width: 20px; height: 20px; margin: 16px 0 0 4px; cursor: pointer; }
+  .ech__case::after { content: ''; position: absolute; inset: -12px; }
+  .ech__case > input[type="checkbox"] { display: block; width: 20px; height: 20px; margin: 0; cursor: pointer; }
   .ech__pli { min-width: 0; }
   .ech__pli > summary {
     list-style: none; cursor: pointer;
@@ -2188,10 +2921,10 @@
   .ech__blurb { color: var(--ink-2); }
   .ech__detail .resa-item__actions { margin-top: var(--s-3); }
 
-  /* fait : une ligne, barrée, et rien de plus */
+  /* fait : une ligne, barrée, et rien de plus — de 44 px de haut, comme la zone de sa case */
   .ech__item--fait { border-bottom: 0; align-items: center; }
-  .ech__item--fait > input[type="checkbox"] { margin-top: 0; }
-  .ech__item--fait .ech__quoi { min-height: 36px; justify-content: center; font-size: var(--t-sm); color: var(--mut); }
+  .ech__item--fait .ech__case { margin-top: 0; }
+  .ech__item--fait .ech__quoi { min-height: 44px; justify-content: center; font-size: var(--t-sm); color: var(--mut); }
   .ech__item--fait s { text-decoration-color: var(--line-2); }
 
   @media (max-width: 560px) {
@@ -2275,8 +3008,8 @@
 
 
 /* ==========================================================================
-   v8 — allègement. Onglets de page, modale des journées type, liste « à manger »,
-   accueil compact, guide paginé. Uniquement des tokens de la charte : aucune
+   v8 — allègement. Onglets de page, modale des journées type, accueil compact,
+   guide paginé. Uniquement des tokens de la charte : aucune
    couleur, taille ou rayon en dur, pour que le mode sombre suive tout seul.
    ========================================================================== */
 .ptabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 0 var(--s-6); }
@@ -2287,7 +3020,8 @@
   padding: 0; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: var(--ink); box-shadow: var(--sh-3); }
 .tpldlg::backdrop { background: rgb(15 15 15 / 0.45); }
 .tpldlg__in { padding: var(--s-5); overflow: auto; max-height: 85vh; }
-.tpldlg__x { position: absolute; top: var(--s-3); right: var(--s-3); border: 0; background: none; color: var(--mut); font-size: var(--t-lg); line-height: 1; cursor: pointer; }
+/* le × est une zone de 44 px dans le coin, glyphe centré : elle ne dépasse jamais de la fiche */
+.tpldlg__x { position: absolute; top: 0; right: 0; width: 44px; height: 44px; border: 0; background: none; color: var(--mut); font-size: var(--t-lg); line-height: 1; cursor: pointer; }
 .tpldlg__x:hover { color: var(--ink); }
 .tpldlg__img { width: 100%; aspect-ratio: 3 / 1; object-fit: cover; border-radius: var(--r-m); margin-bottom: var(--s-4); }
 .tpldlg__kicker { font-family: var(--f-data); font-size: var(--t-xs); letter-spacing: 0.05em; text-transform: uppercase; color: var(--mut); margin: 0 0 var(--s-1); }
@@ -2298,14 +3032,6 @@
 .tpldlg__h { font-family: var(--f-data); font-size: var(--t-sm); color: var(--acc); }
 .tpldlg__note { font-size: var(--t-sm); color: var(--mut); margin-top: var(--s-1) !important; }
 .tpldlg__links { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-2) 0 0; }
-
-.eatgrp { margin: var(--s-6) 0 var(--s-2); }
-.eatgrp h3 { font-size: var(--t-md); margin: 0 0 var(--s-2); }
-.eat { display: grid; grid-template-columns: auto auto 1fr; gap: var(--s-3); align-items: baseline; padding: var(--s-3) 0; border-bottom: 1px solid var(--line); cursor: pointer; }
-.eat input { accent-color: var(--acc); }
-.eat__jp { margin-left: var(--s-2); font-size: var(--t-sm); color: var(--mut); }
-.eat__d { grid-column: 3; margin: 0; font-size: var(--t-sm); color: var(--mut); }
-.eat.is-done b { text-decoration: line-through; color: var(--mut); }
 
 /* Accueil : les six étapes en grille plutôt qu'en zigzag pleine largeur (9 écrans → 4). */
 .cities { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6) var(--s-5);
@@ -2320,13 +3046,7 @@
 .spot .thumb.thumb--nue { aspect-ratio: auto; height: 4.5rem; }
 .more { display: flex; justify-content: center; margin: var(--s-6) 0 0; }
 
-/* Guide : bascule L'essentiel / Tout voir, collée au compteur. */
-#mode { flex: 0 0 auto; gap: var(--s-1); margin-left: auto; }
-
-/* Guide : la sélection, étape par étape (façon carnet), et la bibliothèque groupée par ville. */
-.sel__nav { margin: 0 0 var(--s-6); }
-.sel__n { font-family: var(--f-data); font-size: var(--t-sm); color: var(--c); margin-right: var(--s-2); vertical-align: middle; }
-.sel__intro { max-width: 68ch; color: var(--ink-2); margin: 0 0 var(--s-5); }
+/* Les fêtes de l'étape (villes.html), et le catalogue du guide groupé par ville. */
 .sel__list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); }
 .sel__item { display: grid; grid-template-columns: 96px 1fr; gap: var(--s-4); width: 100%; height: 100%; padding: var(--s-3); text-align: left;
   border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: inherit; font: inherit; cursor: pointer; align-items: start; }
@@ -2336,34 +3056,13 @@
 .sel__item b { display: block; font-size: var(--t-md); font-weight: 600; }
 .sel__why { display: block; margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); line-height: 1.45; }
 .sel__meta { display: block; margin-top: var(--s-2); font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); }
-.sel__arb { margin: var(--s-4) 0 0; max-width: 68ch; font-size: var(--t-sm); color: var(--mut); }
-.sel__arb b { color: var(--ink); margin-right: var(--s-2); }
-.sel__eat { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; margin-top: var(--s-4); }
-.sel__eat .label { margin-right: var(--s-2); }
 .bib__city { grid-column: 1 / -1; display: flex; align-items: baseline; gap: var(--s-3); margin: var(--s-5) 0 0; font-size: var(--t-md); }
 .bib__city:first-child { margin-top: 0; }
 @media (max-width: 760px) { .sel__list { grid-template-columns: 1fr; } .sel__item { grid-template-columns: 72px 1fr; } .sel__img { width: 72px; height: 56px; } }
 
 .bib__all { grid-column: 1 / -1; margin: 0; }
 
-/* Plats : la photo plutôt que l'emoji. */
-.eat { grid-template-columns: auto 64px 1fr; align-items: center; }
-.eat__img { width: 64px; height: 48px; object-fit: cover; border-radius: var(--r-m); background: var(--paper-3); }
-.eat__d { grid-column: 3; }
-.sel__plat { display: inline-flex; align-items: center; gap: var(--s-2); padding-left: var(--s-1); }
-.sel__plat img { width: 26px; height: 26px; border-radius: var(--r-full); object-fit: cover; }
-
 /* Les villes : une page par étape. */
-.ville__hotel { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); line-height: 1.8; }
-.ville__hotel .label { margin-right: var(--s-2); }
-.vdays { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.vday { display: grid; grid-template-columns: 3.5rem 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-3) 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
-.vday:hover b { color: var(--acc); }
-.vday__d { display: flex; flex-direction: column; align-items: center; font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); }
-.vday__d b { font-size: var(--t-lg); color: var(--ink); }
-.vday > span:nth-child(2) b { display: block; }
-.vday .mut { font-size: var(--t-sm); }
-.vday__go { color: var(--mut); font-size: var(--t-lg); }
 .vtypes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
 .vtype { display: flex; flex-direction: column; gap: var(--s-1); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); color: inherit; text-decoration: none; }
 .vtype:hover { border-color: var(--line-2); background: var(--paper-3); }
@@ -2373,70 +3072,18 @@
 .fiche__facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); margin: var(--s-4) 0; }
 .fiche__facts dt { font-size: var(--t-xs); color: var(--mut); text-transform: uppercase; letter-spacing: 0.05em; }
 .fiche__facts dd { margin: var(--s-1) 0 0; font-size: var(--t-sm); }
-.guide__renvoi { margin: 0; font-size: var(--t-sm); color: var(--mut); }
 @media (max-width: 760px) { .vtypes { grid-template-columns: 1fr; } .fiche__facts { grid-template-columns: 1fr; } }
 
 #etapes { margin-top: var(--s-5); }
 
-/* Plats : une grille de tuiles photo. */
-.dishes { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: var(--s-3); }
-.dish { position: relative; display: flex; flex-direction: column; padding: 0; overflow: hidden; text-align: left;
-  border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); }
-.dish__img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: var(--paper-3); }
-.dish__img--nue { display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
-.dish__txt { display: flex; flex-direction: column; gap: 2px; padding: var(--s-3); }
-.dish__txt b { font-size: var(--t-sm); font-weight: 600; line-height: 1.3; }
-.dish__jp { font-size: var(--t-xs); color: var(--mut); }
-.dish__d { margin-top: var(--s-1); font-size: var(--t-xs); color: var(--ink-2); line-height: 1.4;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.eatgrp .dishes { margin-top: var(--s-2); }
-@media (max-width: 600px) { .dishes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dish__d { -webkit-line-clamp: 2; } }
-
 /* ==========================================================================
    Les quartiers — « où suis-je, qu'y a-t-il autour, comment rentrer ? »
-   (chantier du 14 octobre 2026). Composants « Près de moi » et « Montrer au
-   chauffeur », cartes de quartier, « Dans le coin ». Uniquement des tokens de
-   la charte, pour que le sombre suive — sauf « Montrer au chauffeur », clair
-   et à contraste maximal par parti pris (couleurs figées en dur).
+   (chantier du 14 octobre 2026). Composants « Montrer au chauffeur » et cartes
+   de quartier. Uniquement des tokens de la charte, pour que le sombre suive —
+   sauf « Montrer au chauffeur », clair et à contraste maximal par parti pris
+   (couleurs figées en dur).
    ========================================================================== */
 @layer components {
-
-  /* --- en-tête hôtel enrichi (villes.html) -------------------------------- */
-  .vhotel {
-    display: flex; flex-wrap: wrap; gap: var(--s-4);
-    align-items: flex-start; justify-content: space-between;
-    margin-top: var(--s-4); padding: var(--s-4);
-    border: 1px solid var(--line); border-radius: var(--r-l);
-    background: var(--paper-2);
-  }
-  .vhotel__main { flex: 1 1 15rem; min-width: 0; }
-  .vhotel__nom { font-size: var(--t-md); font-weight: 600; margin: 2px 0 0; }
-  .vhotel__adr { font-size: var(--t-sm); margin-top: var(--s-1); line-height: 1.5; }
-  .vhotel__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-  .vhotel__actions .btn { min-height: 44px; }
-  .vhotel__exc { flex-basis: 100%; margin: 0; font-size: var(--t-sm); color: var(--mut); }
-  .vhotel__exc .label { margin-right: var(--s-2); }
-
-  /* --- « Près de moi » (réutilisable) ------------------------------------- */
-  .proche__btn { width: 100%; justify-content: center; min-height: 48px; font-size: var(--t-base); }
-  .proche__panel {
-    margin-top: var(--s-3); padding: var(--s-4);
-    border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2);
-  }
-  .proche__ou { margin: 0 0 var(--s-3); font-size: var(--t-md); line-height: 1.4; }
-  .proche__ou b { font-weight: 700; }
-  .proche__jp { color: var(--mut); font-size: var(--t-sm); margin-left: var(--s-1); }
-  .proche__liste { display: grid; gap: var(--s-2); margin: 0 0 var(--s-4); }
-  .proche__spot {
-    display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left;
-    min-height: 44px; padding: var(--s-2) var(--s-3);
-    border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper);
-  }
-  .proche__spot:hover { border-color: var(--line-2); background: var(--paper-3); }
-  .proche__nom { font-weight: 600; font-size: var(--t-sm); }
-  .proche__meta { font-size: var(--t-xs); color: var(--mut); }
-  .proche__rentrer { width: 100%; justify-content: center; min-height: 48px; }
-
   /* --- cartes de quartier (villes.html) ----------------------------------- */
   .qmap { height: 300px; border-radius: var(--r-m); border: 1px solid var(--line); margin-bottom: var(--s-5); }
   @media (max-width: 640px) { .qmap { height: 240px; } }
@@ -2451,7 +3098,8 @@
   .qcards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
   @media (max-width: 760px) { .qcards { grid-template-columns: 1fr; } }
   .qcard {
-    padding: var(--s-4); background: var(--paper-2);
+    --qpad: var(--s-4);   /* le résumé de la carte (plus haut) reprend ce rembourrage */
+    padding: var(--qpad); background: var(--paper-2);
     border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line-2));
     border-radius: var(--r-l);
   }
@@ -2482,36 +3130,12 @@
   .qall { margin-top: var(--s-2); display: grid; gap: var(--s-3); }
   .qall__fam { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: baseline; }
 
-  /* --- « À table » : tables recommandées (caché tant qu'il n'y en a pas) --- */
-  .tables { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-5); }
-  @media (max-width: 760px) { .tables { grid-template-columns: 1fr; } }
-  .table { display: grid; gap: var(--s-2); padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper-2); }
-  .table__top { display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-  .table__badge { font-size: var(--t-xs); font-weight: 600; padding: 2px var(--s-2); border-radius: var(--r-full); background: var(--acc-soft); color: var(--acc); }
-  .table__tabelog { font-family: var(--f-data); font-size: var(--t-xs); color: var(--gold); }
-  .table__nom { font-size: var(--t-md); font-weight: 600; }
-  .table__meta { font-size: var(--t-sm); color: var(--mut); }
-  .table__resa { font-size: var(--t-sm); }
-
   /* --- fiche enrichie : quartier, distance, réservation, Tabelog ---------- */
   .fiche__q { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3); margin: var(--s-4) 0 0; }
   .fiche__q dt { font-size: var(--t-xs); color: var(--mut); text-transform: uppercase; letter-spacing: 0.05em; }
   .fiche__q dd { margin: var(--s-1) 0 0; font-size: var(--t-sm); }
   .fiche__resa { margin: var(--s-3) 0 0; font-size: var(--t-sm); color: var(--ink-2); }
   .fiche__resa b { color: var(--ink); margin-right: var(--s-2); }
-
-  /* --- « Dans le coin » (jour.html) --------------------------------------- */
-  .coin { display: grid; gap: var(--s-4); }
-  .coin__items { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-2); }
-  .coin__item {
-    display: inline-flex; flex-direction: column; gap: 1px;
-    min-height: 44px; padding: var(--s-2) var(--s-3);
-    border: 1px solid var(--line); border-radius: var(--r-s);
-    background: var(--paper-2); color: var(--ink); text-decoration: none;
-  }
-  .coin__item:hover { border-color: var(--acc); background: var(--acc-soft); }
-  .coin__nom { font-weight: 600; font-size: var(--t-sm); }
-  .coin__q { font-size: var(--t-xs); }
 
   /* --- l'heure sur une ligne de journée (jour.html) ----------------------- */
   .etape__h { font-family: var(--f-data); font-size: var(--t-xs); color: var(--mut); margin: 0 0 var(--s-1); }
@@ -2524,7 +3148,7 @@
      lisible même en thème sombre, pour un chauffeur ou un passant. Aucune
      ressource externe : marche hors-ligne. */
   /* <dialog> ouvert par showModal() : centré, dans le top layer (au-dessus de
-     « Perdu ? »). Fond blanc / texte noir figés, lisibles même en thème sombre. */
+     tout le reste). Fond blanc / texte noir figés, lisibles même en thème sombre. */
   .chauffeur {
     position: fixed; inset: 0; margin: auto; width: min(94vw, 560px);
     height: fit-content; max-height: 92vh; padding: 0; border: none;
@@ -2541,12 +3165,20 @@
     width: 48px; height: 48px; font-size: 2rem; line-height: 1; color: #666; background: none;
   }
   .chauffeur__phrase { margin: var(--s-3) 0 var(--s-1); font-size: clamp(1.5rem, 7vw, 2.25rem); font-weight: 700; color: #111; line-height: 1.3; }
+  /* la phrase passe à la ligne d'un bloc, pas au milieu : plus de « す » seul en bout de ligne */
+  .chauffeur__bloc { display: inline-block; }
   .chauffeur__sub { margin: 0 0 var(--s-6); font-size: var(--t-sm); color: #666; }
   .chauffeur__adresse { margin: 0; font-size: clamp(2rem, 9vw, 2.5rem); font-weight: 700; line-height: 1.3; color: #000; word-break: break-word; }
   .chauffeur__adresse2 { margin: var(--s-3) 0 0; font-size: clamp(1.25rem, 5vw, 1.5rem); color: #222; }
   .chauffeur__hotel { margin: var(--s-5) 0 0; font-size: var(--t-md); color: #444; }
+  /* le numéro du logement à la japonaise, pour le GPS du chauffeur, puis sa traduction */
+  .chauffeur__gps { margin: var(--s-4) 0 0; font-size: clamp(1.5rem, 7vw, 2rem); font-weight: 700; line-height: 1.3; color: #000; }
+  .chauffeur__gps [lang="ja"] { margin-right: var(--s-2); font-size: var(--t-md); font-weight: 400; color: #444; }
+  .chauffeur__gps + .chauffeur__sub { margin: var(--s-1) 0 0; }
+  /* un numéro ne se coupe pas en deux lignes (le tiret est un point de coupure) */
+  .chauffeur__num { white-space: nowrap; }
   .chauffeur__tel {
-    display: inline-flex; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
     min-height: 54px; margin-top: var(--s-5); padding: 0 var(--s-6);
     background: #111; color: #fff; font-weight: 600; font-size: var(--t-md);
     border-radius: var(--r-m); text-decoration: none;
@@ -2554,23 +3186,10 @@
 }
 
 /* ==========================================================================
-   Les quartiers — compléments (14 octobre 2026) : « Autour de l'hôtel » par
-   distance, l'étiquette d'excursion, le quartier et la distance sur les cartes
-   du guide. Mêmes tokens, le sombre suit.
+   Les quartiers — compléments (14 octobre 2026) : l'étiquette d'excursion, le
+   quartier et la distance sur les cartes du guide. Mêmes tokens, le sombre suit.
    ========================================================================== */
 @layer components {
-  .autour { margin-bottom: var(--s-5); }
-  .autour__items { display: grid; gap: var(--s-2); margin-top: var(--s-2); }
-  .autour__item {
-    display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left;
-    min-height: 44px; padding: var(--s-2) var(--s-3);
-    border: 1px solid var(--line); border-radius: var(--r-s); background: var(--paper-2);
-    color: var(--ink); text-decoration: none;
-  }
-  .autour__item:hover { border-color: var(--line-2); background: var(--paper-3); }
-  .autour__nom { font-weight: 600; font-size: var(--t-sm); }
-  .autour__meta { font-size: var(--t-xs); color: var(--mut); }
-
   .qcard__exc {
     font-family: var(--f-body); font-size: var(--t-xs); font-weight: 600; color: var(--mut);
     border: 1px solid var(--line-2); border-radius: var(--r-full);
@@ -2585,58 +3204,18 @@
 }
 
 /* ==========================================================================
-   « Perdu ? » et compléments terrain (14 octobre 2026) : bouton d'urgence dans
-   la barre + panneau, badges de fermeture, filtres d'envie de « Près de moi »,
-   ligne konbini, fenêtre d'arrivée de l'hôtel, « depuis l'hôtel » du jour.
-   Tokens de la charte, le sombre suit.
+   Compléments terrain (14 octobre 2026) : badges de fermeture, « Autour de moi »
+   accolé au bandeau « Aujourd'hui » de l'accueil, départ de transfert et
+   « depuis l'hôtel » du jour. Tokens de la charte, le sombre suit.
    ========================================================================== */
 @layer components {
-  /* le bouton « Perdu ? » de la barre, pendant le voyage */
-  .nav__perdu {
-    flex: none; min-height: 40px; padding: 0 var(--s-3); margin-left: var(--s-1);
-    border-radius: var(--r-full); background: var(--acc); color: var(--paper);
-    font-size: var(--t-sm); font-weight: 700; white-space: nowrap;
-  }
-  .nav__perdu:hover { opacity: .9; }
-  @media (max-width: 780px) { .nav__perdu { min-height: 44px; } }
-
-  /* le panneau « Perdu ? » */
-  .perdu {
-    position: fixed; inset: 0; margin: auto; width: min(94vw, 520px);
-    height: fit-content; max-height: 88vh; padding: 0;
-    border: 1px solid var(--line); border-radius: var(--r-l);
-    background: var(--paper-2); color: var(--ink); box-shadow: var(--sh-3);
-  }
-  .perdu::backdrop { background: rgb(15 15 15 / 0.5); }
-  .perdu__in { padding: var(--s-5); overflow: auto; max-height: 88vh; }
-  .perdu__x { position: absolute; top: var(--s-2); right: var(--s-3); width: 44px; height: 44px; font-size: var(--t-lg); line-height: 1; color: var(--mut); background: none; }
-  .perdu__x:hover { color: var(--ink); }
-  .perdu__titre { font-size: var(--t-xl); margin: 0 0 var(--s-4); }
-  .perdu__actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-bottom: var(--s-4); }
-  .perdu__actions .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
-  .perdu__urgences { margin-top: var(--s-5); padding-top: var(--s-4); border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: var(--s-2); align-items: center; }
-  .perdu__urgences .label { flex-basis: 100%; margin-bottom: var(--s-1); }
-  .perdu__urgences .btn { min-height: 44px; }
-
   /* badges de fermeture (même palette que les priorités) */
   .badge-ferme { font-size: var(--t-xs); font-weight: 700; padding: 1px var(--s-2); border-radius: var(--r-full); color: #9B2C1A; background: #FAE7E3; white-space: nowrap; }
   :root[data-theme="dark"] .badge-ferme { color: #F0A08E; background: #3B1B14; }
   .badge-verif { font-size: var(--t-xs); font-weight: 600; padding: 1px var(--s-2); border-radius: var(--r-full); color: var(--mut); border: 1px solid var(--line-2); white-space: nowrap; }
   .fiche__ferme { margin: var(--s-4) 0 0; }
 
-  /* « Près de moi » : filtres d'envie, ligne `when`, ligne konbini */
-  .proche__fams { margin: 0 0 var(--s-3); }
-  .proche__when { display: block; margin-top: 1px; font-size: var(--t-xs); color: var(--mut); }
-  .proche__konbini { margin: var(--s-3) 0; padding: var(--s-3); font-size: var(--t-xs); line-height: 1.5; color: var(--ink-2); background: var(--paper-3); border-radius: var(--r-s); }
-
-  /* en-tête hôtel : fenêtre d'arrivée + consignes repliées (villes.html) */
-  .vhotel__quand { margin-top: var(--s-2); font-size: var(--t-sm); }
-  .vhotel__consignes { margin-top: var(--s-2); font-size: var(--t-sm); }
-  .vhotel__consignes summary { min-height: 32px; display: inline-flex; align-items: center; font-weight: 600; color: var(--ink); }
-  .vhotel__consignes summary:hover { color: var(--acc); }
-  .vhotel__consignes p { margin-top: var(--s-2); color: var(--ink-2); line-height: 1.55; }
-
-  /* accueil : « Près de moi » accolé au bandeau « Aujourd'hui » */
+  /* accueil : « Autour de moi » accolé au bandeau « Aujourd'hui » */
   .ojd-wrap { display: flex; align-items: stretch; }
   .ojd-wrap .ojd { flex: 1 1 auto; }
   .ojd__pres { flex: none; min-height: 52px; padding-inline: var(--s-5); background: var(--paper); color: var(--ink); font-weight: 700; justify-content: center; box-shadow: inset 1px 0 0 rgb(0 0 0 / 0.15); }
@@ -2650,14 +3229,6 @@
 }
 
 @layer components {
-  /* Sur un petit écran, le bouton « Perdu ? » prime : le compteur « En voyage »
-     (redondant une fois sur place) s'efface pour que la barre tienne. */
-  @media (max-width: 440px) {
-    .nav__in:has(.nav__perdu) .nav__count { display: none; }
-  }
-}
-
-@layer components {
   /* fiche de secours ----------------------------------------------------------
      Une page à imprimer (A4, une seule feuille) ou à garder en capture :
      logements avec l'adresse en japonais (pour le chauffeur), vols, urgences et
@@ -2667,15 +3238,17 @@
 
   .secours__tools {
     display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap;
-    margin-bottom: var(--s-5);
+    margin-bottom: var(--s-4);
   }
-  .secours__tools p { margin: 0; font-size: var(--t-sm); color: var(--mut); }
+  /* le bouton et sa phrase tiennent sur une ligne : sur téléphone, chaque ligne
+     gagnée remonte les numéros d'urgence */
+  .secours__tools p { margin: 0; flex: 1 1 12rem; font-size: var(--t-sm); color: var(--mut); }
 
-  .secours__head { margin-bottom: var(--s-5); }
+  .secours__head { margin-bottom: var(--s-4); }
   .secours__head h1 { font-size: var(--t-xl); }
   .secours__head p { margin-top: 2px; font-size: var(--t-sm); color: var(--mut); }
 
-  .secours__sec { margin-top: var(--s-6); }
+  .secours__sec { margin-top: var(--s-5); }
   .secours__sec > h2 {
     font-size: var(--t-md); font-weight: 600; letter-spacing: -0.01em;
     padding-bottom: var(--s-2); margin-bottom: var(--s-3);
@@ -2691,20 +3264,19 @@
     border: 1px solid var(--line); border-radius: var(--r-m);
     background: var(--paper-2); padding: var(--s-3) var(--s-4); break-inside: avoid;
   }
-  .secours__quand { display: flex; align-items: center; gap: var(--s-2);
-                    font-size: var(--t-xs); color: var(--mut); }
+  /* une ligne : le numéro de l'étape, le nom, les dates (qui passent dessous si le nom est long) */
+  .secours__quand { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-1) var(--s-2); }
   .secours__num {
     flex: none; width: 20px; height: 20px; border-radius: var(--r-s);
     background: var(--ink); color: var(--paper); display: grid; place-items: center;
     font-family: var(--f-data); font-size: 11px; font-weight: 700;
   }
-  .secours__nom { margin-top: 2px; font-weight: 600; font-size: var(--t-sm); }
-  .secours__adr { margin-top: var(--s-2); font-size: var(--t-md); font-weight: 600;
+  .secours__nom { flex: 1 1 auto; min-width: 0; font-weight: 600; font-size: var(--t-sm); }
+  .secours__dates { margin-left: auto; font-size: var(--t-xs); color: var(--mut); white-space: nowrap; }
+  .secours__adr { margin-top: var(--s-1); font-size: var(--t-md); font-weight: 600;
                   line-height: 1.35; letter-spacing: 0; }
-  .secours__tel { margin-top: var(--s-2); font-size: var(--t-sm); }
+  .secours__tel { margin-top: var(--s-1); font-size: var(--t-sm); }
   .secours__tel a { font-family: var(--f-data); font-weight: 600; color: var(--ink); }
-  .secours__io { margin-top: 2px; font-size: var(--t-xs); }
-  .secours__io .data { color: var(--ink-2); }
 
   /* vols & rendez-vous */
   .secours__vol { margin-bottom: var(--s-3); break-inside: avoid; }
@@ -2722,8 +3294,8 @@
     padding: var(--s-3) var(--s-4); break-inside: avoid;
   }
   .secours__urg-row {
-    display: flex; justify-content: space-between; align-items: baseline;
-    gap: var(--s-4); padding: var(--s-1) 0; font-size: var(--t-sm);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: var(--s-4); padding: var(--s-1) 0; min-height: 44px; font-size: var(--t-sm);
   }
   .secours__urg-row + .secours__urg-row {
     border-top: 1px solid color-mix(in srgb, var(--acc) 16%, var(--line));
@@ -2739,107 +3311,82 @@
 
   /* phrases : japonais en grand, rōmaji, puis le sens */
   .secours__phrases {
-    display: grid; gap: var(--s-2) var(--s-5);
+    display: grid; gap: 0 var(--s-5);
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
-  .secours__phrase { padding: var(--s-2) 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+  .secours__phrase { padding: 6px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
   .secours__jp { font-size: var(--t-md); font-weight: 600; line-height: 1.3; }
-  .secours__romaji { font-size: var(--t-xs); color: var(--mut); font-style: italic; }
-  .secours__fr { font-size: var(--t-sm); color: var(--ink-2); }
+  .secours__romaji { font-size: var(--t-xs); line-height: 1.4; color: var(--mut); font-style: italic; }
+  .secours__fr { font-size: var(--t-sm); line-height: 1.4; color: var(--ink-2); }
 
   @media (max-width: 640px) {
     .secours__lieux, .secours__phrases { grid-template-columns: 1fr; }
   }
 
-  /* impression : une seule feuille A4, noir sur blanc, deux colonnes ---------- */
-  @media print {
-    .nav, .foot, #progress-bar, .secours__tools { display: none !important; }
-    :root, :root[data-theme="dark"] {
-      --paper: #fff; --paper-2: #fff; --paper-3: #fff;
-      --ink: #000; --ink-2: #000; --mut: #333;
-      --line: #c4c4c4; --line-2: #8a8a8a;
-      --acc: #000; --acc-soft: #fff;
-    }
-    @page { size: A4; margin: 9mm; }
-    html, body { background: #fff; color: #000; font-size: 9pt; line-height: 1.28; }
-    .wrap { max-width: none; padding-inline: 0; }
-    .secours__sheet { max-width: none; margin: 0; padding: 0; }
-
-    .secours__head { margin-bottom: 3mm; break-after: avoid; }
-    .secours__head h1 { font-size: 15pt; }
-    .secours__head p { font-size: 9pt; }
-
-    /* le gros du contenu coule en deux colonnes ; l'en-tête les enjambe */
-    .secours__flow { columns: 2; column-gap: 9mm; }
-    .secours__sec { margin-top: 3.5mm; }
-    .secours__sec > h2 { font-size: 10.5pt; border-bottom-width: 1px; margin-bottom: 1.5mm; padding-bottom: 1mm; }
-
-    .secours__lieux, .secours__phrases { display: block; }
-    .secours__lieu { padding: 1.4mm 2mm; margin-bottom: 1.6mm; border-color: #c4c4c4; }
-    .secours__adr { margin-top: 1mm; font-size: 11pt; }
-    .secours__tel, .secours__io { margin-top: 0.6mm; }
-
-    .secours__urg { border: 1.4px solid #000; background: #fff; padding: 2mm; }
-    .secours__vol { margin-bottom: 1.8mm; }
-
-    .secours__phrase { padding: 0.9mm 0; }
-    .secours__jp { font-size: 11pt; }
-
-    a { color: #000 !important; text-decoration: none !important; }
-  }
+  /* L'impression vit plus haut, dans le bloc « secours et à faire » : hors de la
+     couche, pour que ses règles passent avant celles de l'écran. */
 }
 
 /* --- valises : faire suivre (ou pas) les bagages ---------------------------- */
-/* Une page de logistique : un tableau en tête, une carte par changement de
-   ville, puis le bordereau et les trains. On réutilise les jetons et les
-   composants existants (.card, .shead, .alert, .data) ; ce bloc n'ajoute que
-   la mise en page propre aux valises. Mobile d'abord, cibles à 44 px. */
+/* Une page de logistique pensée pour l'iPhone : le système en trois cases, le
+   plan en lignes qui se déplient, les phrases du comptoir, puis le reste replié.
+   On réutilise les jetons et les composants existants (.card, .shead, .step-num,
+   .city-dot, .data) ; ce bloc n'ajoute que la mise en page propre aux valises.
+   Mobile d'abord, cibles tactiles à 44 px, clair comme sombre via les variables. */
 @layer components {
   .valises__lede { max-width: 64ch; color: var(--ink-2); font-size: var(--t-md); }
+  .valises__syslead { font-size: var(--t-sm); margin-bottom: var(--s-4); }
+  .valises__note { margin-top: var(--s-3); font-size: var(--t-xs); }
+  /* un sous-titre discret entre deux blocs d'une même section (base h3 : t-md/600) */
+  .valises__subhead { margin-top: var(--s-6); }
 
-  /* le tableau récapitulatif — un vrai <table> qui se replie en blocs sur
-     téléphone : chaque cellule reprend son en-tête via data-label. */
-  .valises__recap { width: 100%; border-collapse: collapse; }
-  .valises__recap th, .valises__recap td {
-    text-align: left; padding: var(--s-3) var(--s-3);
-    border-bottom: 1px solid var(--line); vertical-align: top;
-    font-size: var(--t-sm);
+  /* 1 — le système en 3 étapes : trois cases numérotées */
+  .valises__systeme { display: grid; gap: var(--s-3); }
+  @media (min-width: 720px) { .valises__systeme { grid-template-columns: repeat(3, 1fr); } }
+  .valises__etape {
+    display: flex; gap: var(--s-3); align-items: flex-start;
+    padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
+    background: var(--paper-2);
   }
-  .valises__recap thead th {
-    font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-    letter-spacing: .04em; text-transform: uppercase;
-    border-bottom: 1px solid var(--line-2);
-  }
-  .valises__recap tbody tr:hover { background: var(--paper-2); }
-  .valises__recap .valises__recap-trajet { font-weight: 600; color: var(--ink); }
-  .valises__recap .valises__recap-trajet:hover { color: var(--acc); }
-  .valises__recap .valises__recap-when { display: block; color: var(--mut); font-weight: 400; }
-  .valises__recap .valises__recap-cout { font-family: var(--f-data); font-size: 0.92em; white-space: nowrap; }
+  .valises__etape .step-num { margin-top: 1px; }
+  .valises__etape-body { min-width: 0; }
+  .valises__etape-body h3 { font-size: var(--t-base); font-weight: 600; }
+  .valises__etape-body p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+  .valises__etape-body p.valises__etape-note { color: var(--mut); font-size: var(--t-xs); }
 
-  @media (max-width: 640px) {
-    .valises__recap, .valises__recap tbody, .valises__recap tr, .valises__recap td { display: block; }
-    .valises__recap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-    .valises__recap tr {
-      border: 1px solid var(--line); border-radius: var(--r-m);
-      background: var(--paper-2); margin-bottom: var(--s-3); padding: var(--s-3) var(--s-4);
-    }
-    .valises__recap td { border: 0; padding: var(--s-1) 0; display: flex; gap: var(--s-3); }
-    .valises__recap td::before {
-      content: attr(data-label); flex: 0 0 7.5em;
-      font-size: var(--t-xs); font-weight: 600; color: var(--mut);
-      text-transform: uppercase; letter-spacing: .03em; padding-top: 2px;
-    }
+  /* 2 — le plan : une ligne (summary) par trajet, qui se déplie au toucher */
+  .valises__plan { display: flex; flex-direction: column; gap: var(--s-3); }
+  .valises__trajet { scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
+  .valises__row {
+    display: flex; align-items: center; gap: var(--s-3);
+    padding: var(--s-3) var(--s-4); min-height: 56px;
   }
+  .valises__row:hover .valises__row-route { color: var(--acc); }
+  .valises__row .step-num { flex: none; }
+  .valises__row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .valises__row-route {
+    font-size: var(--t-base); font-weight: 600; letter-spacing: -0.012em;
+    display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap;
+  }
+  .valises__row-arrow { color: var(--mut); font-weight: 400; }
+  .valises__row-meta { font-size: var(--t-xs); color: var(--mut); }
+  .valises__row-cout {
+    flex: none; font-family: var(--f-data); font-size: var(--t-sm);
+    font-weight: 600; color: var(--ink); white-space: nowrap;
+  }
+  .valises__row::after {
+    content: '▾'; flex: none; color: var(--mut); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  .valises__trajet[open] .valises__row::after { transform: rotate(180deg); }
 
-  /* une carte par trajet */
-  .valises__trajet { padding: var(--s-5); scroll-margin-top: calc(var(--nav-h) + var(--s-5)); }
-  .valises__trajet + .valises__trajet { margin-top: var(--s-5); }
-  .valises__th { display: flex; align-items: flex-start; gap: var(--s-3); flex-wrap: wrap; }
-  .valises__th .step-num { margin-top: 2px; }
-  .valises__th-main { flex: 1; min-width: 0; }
-  .valises__th-route { font-size: var(--t-lg); font-weight: 600; letter-spacing: -0.016em; }
-  .valises__th-sub { margin-top: 2px; font-size: var(--t-sm); color: var(--mut); }
-  .valises__th-sub .data { color: var(--ink-2); }
+  /* le détail d'un trajet, sous la ligne */
+  .valises__detail { padding: var(--s-4); border-top: 1px solid var(--line); }
+  .valises__detail-meta {
+    font-size: var(--t-sm); color: var(--mut);
+    display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap;
+  }
+  .valises__detail-meta .data { color: var(--ink-2); }
   .valises__th-train { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
   .valises__th-train .label { display: inline; }
 
@@ -2873,11 +3420,12 @@
     background: var(--acc-soft); border-left: 3px solid var(--acc);
     border-radius: 0 var(--r-s) var(--r-s) 0;
   }
+  .valises__ask--gold { background: var(--paper-3); border-left-color: var(--gold); }
   .valises__ask h4 { font-size: var(--t-sm); font-weight: 600; }
   .valises__ask p { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); }
   .valises__ask .valises__ask-q { font-style: italic; color: var(--ink); }
 
-  /* sources datées, discrètes */
+  /* sources datées, discrètes (dans le détail d'un trajet) */
   .valises__src { margin-top: var(--s-4); font-size: var(--t-xs); color: var(--mut);
                   padding-top: var(--s-3); border-top: 1px solid var(--line); }
   .valises__src b { font-weight: 600; color: var(--ink-2); }
@@ -2886,8 +3434,19 @@
   .valises__src a:hover { color: var(--acc); text-decoration-color: var(--acc); }
   .valises__src .valises__src-sep { margin: 0 var(--s-2); color: var(--line-2); }
 
-  /* comment remplir le bordereau */
-  .valises__slip { margin: var(--s-4) 0; border: 1px solid var(--line); border-radius: var(--r-m);
+  /* 3 — au comptoir : les phrases à montrer, en gros caractères */
+  .valises__comptoir { display: grid; gap: var(--s-3); }
+  @media (min-width: 720px) { .valises__comptoir { grid-template-columns: repeat(2, 1fr); } }
+  .valises__phrase {
+    padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
+    background: var(--paper-2);
+  }
+  .valises__phrase-jp { font-size: clamp(1.375rem, 4.5vw, 1.6rem); line-height: 1.4;
+                        font-weight: 600; color: var(--ink); }
+  .valises__phrase-fr { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--mut); }
+
+  /* le bordereau, champ par champ */
+  .valises__slip { margin: var(--s-4) 0 0; border: 1px solid var(--line); border-radius: var(--r-m);
                    overflow: hidden; }
   .valises__slip > div {
     display: flex; gap: var(--s-4); padding: var(--s-3) var(--s-4);
@@ -2902,32 +3461,73 @@
     .valises__slip dt { flex: none; }
   }
 
-  /* les adresses des logements, à recopier sur le bordereau */
-  .valises__addr { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  /* 4 — ce que chaque logement accepte : un petit tableau ✓ / ✗ / ? */
+  .valises__accept { border: 1px solid var(--line); border-radius: var(--r-m);
+                     overflow: hidden; background: var(--paper-2); }
+  .valises__acc-row {
+    display: flex; gap: var(--s-3); align-items: flex-start;
+    padding: var(--s-3) var(--s-4); border-top: 1px solid var(--line);
+  }
+  .valises__acc-row:first-child { border-top: 0; }
+  .valises__acc-mark {
+    flex: none; width: 24px; height: 24px; border-radius: var(--r-s);
+    display: grid; place-items: center; font-weight: 700; font-size: var(--t-sm);
+    border: 1px solid var(--line-2); color: var(--mut); background: var(--paper);
+  }
+  .valises__acc--ok { color: var(--pine); background: color-mix(in srgb, var(--pine) 12%, var(--paper));
+                      border-color: color-mix(in srgb, var(--pine) 45%, transparent); }
+  .valises__acc--no { color: var(--acc); background: var(--acc-soft);
+                      border-color: color-mix(in srgb, var(--acc) 40%, transparent); }
+  .valises__acc--ask { color: var(--gold); background: color-mix(in srgb, var(--gold) 12%, var(--paper));
+                       border-color: color-mix(in srgb, var(--gold) 40%, transparent); }
+  .valises__acc-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .valises__acc-name { font-size: var(--t-sm); font-weight: 600;
+                       display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; }
+  .valises__acc-note { font-size: var(--t-xs); color: var(--mut); }
+
+  /* 5 — le reste, replié dans des <details> */
+  .valises__folds { display: flex; flex-direction: column; gap: var(--s-3); }
+  .valises__fold { border: 1px solid var(--line); border-radius: var(--r-m);
+                   background: var(--paper-2); overflow: hidden; }
+  .valises__fold > summary {
+    display: flex; align-items: center; gap: var(--s-3);
+    min-height: 48px; padding: var(--s-3) var(--s-4);
+    font-size: var(--t-base); font-weight: 600; color: var(--ink);
+  }
+  .valises__fold > summary::after {
+    content: '▾'; margin-left: auto; color: var(--mut); font-size: var(--t-xs);
+    transition: transform .15s;
+  }
+  .valises__fold[open] > summary::after { transform: rotate(180deg); }
+  .valises__fold > summary:hover { color: var(--acc); }
+  .valises__fold-body { padding: 0 var(--s-4) var(--s-4); }
+
+  /* les adresses des logements, à recopier sur le bordereau (repliées) */
+  .valises__addr { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .valises__addr + .valises__ask { margin-top: var(--s-3); }
   .valises__addr-card { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
-                        background: var(--paper-2); }
+                        background: var(--paper); }
   .valises__addr-card h4 { font-size: var(--t-sm); font-weight: 600; display: flex; gap: var(--s-2);
                            align-items: center; flex-wrap: wrap; }
   .valises__addr-jp { margin-top: var(--s-2); font-size: var(--t-md); line-height: 1.4; }
   .valises__addr-note { margin-top: var(--s-2); font-size: var(--t-xs); color: var(--mut); }
-  .valises__addr-note--no { color: var(--acc); }
-  .valises__tag {
-    flex: none; font-size: var(--t-xs); font-weight: 600; padding: 1px var(--s-2);
-    border-radius: var(--r-s); border: 1px solid var(--line-2); color: var(--mut);
-  }
-  .valises__tag--no { color: var(--acc); border-color: color-mix(in srgb, var(--acc) 40%, transparent);
-                      background: var(--acc-soft); }
-  .valises__tag--ok { color: var(--pine); border-color: color-mix(in srgb, var(--pine) 45%, transparent); }
 
-  /* dans les trains */
-  .valises__trains { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  /* dans les trains (replié) */
+  .valises__trains { display: grid; gap: var(--s-3); grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .valises__train { padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-m);
-                    background: var(--paper-2); }
-  .valises__train h3 { font-size: var(--t-sm); font-weight: 600; }
+                    background: var(--paper); }
+  .valises__train h4 { font-size: var(--t-sm); font-weight: 600; }
   .valises__train p { margin-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
 
+  /* la bibliographie : toutes les sources, dédoublonnées (replié) */
+  .valises__srclist { display: flex; flex-direction: column; gap: var(--s-2); font-size: var(--t-sm); }
+  .valises__srclist li { color: var(--mut); padding-left: var(--s-4); position: relative; }
+  .valises__srclist li::before { content: '·'; position: absolute; left: var(--s-2); color: var(--line-2); }
+  .valises__srclist a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px;
+                        text-decoration-color: var(--line-2); }
+  .valises__srclist a:hover { color: var(--acc); text-decoration-color: var(--acc); }
+
   @media (max-width: 640px) {
-    .valises__trajet { padding: var(--s-4); }
     .valises__opt-cout { margin-left: 0; flex-basis: 100%; white-space: normal; }
   }
 }

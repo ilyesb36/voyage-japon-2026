@@ -1,58 +1,67 @@
-// Chrome de page et petits composants partagés par les cinq pages.
-import { TRIP, STEPS, HOTELS } from '../data/trip.js';
-import { DAYS as JOURS_VOYAGE } from '../data/days.js';
-import { montePerdu } from './quartiers.js';
+// Chrome de page et petits composants partagés par toutes les pages.
+import { TRIP } from '../data/trip.js';
 
 /**
  * Le moment du voyage : avant, pendant, après.
  *
  * Le site a trois vies et la même barre servait aux trois. Avant, on prépare :
- * échéances, budget, programme. Pendant, téléphone en main, on veut la journée
- * et le guide — pas le compte à rebours ni le budget. Après, c'est un souvenir.
- * La barre change d'ordre et de libellés selon le moment, et cache ce qui ne
- * sert plus. Rien n'est supprimé : toutes les pages restent atteignables par
- * leur adresse.
+ * échéances, budget, programme. Pendant, téléphone en main, on veut la journée,
+ * ce qu'il y a autour, où manger, comment bouger, les urgences. Après, c'est un
+ * souvenir. La barre change d'ordre et de libellés selon le moment, et cache ce
+ * qui ne sert plus. Rien n'est supprimé : toutes les pages restent atteignables
+ * par leur adresse.
+ *
+ * Les bornes sont celles du séjour au Japon (TRIP.japon), pas du voyage :
+ * « avant » va jusqu'au 8 novembre inclus, le jour du vol ; « pendant » va du
+ * 9 novembre au 2 décembre ; « après » commence le 3 décembre.
  */
 export function moment() {
   const t = today();
-  if (t < TRIP.start) return 'avant';
-  if (t <= TRIP.end) return 'pendant';
+  // Le jour du vol (8 nov.) est encore « avant » : on part le soir de Paris, on veut la liste.
+  if (t < TRIP.japon.du) return 'avant';
+  if (t <= TRIP.japon.au) return 'pendant';
   return 'apres';
 }
 
 const PAGES_PAR_MOMENT = {
-  // Avant : cinq entrées. La journée se rejoint depuis le programme (chaque
-  // ligne y mène), le budget depuis Pratique — ils allument leur parent.
+  // Avant : préparer. Une entrée par besoin, cinq en tout.
   avant: [
-    { href: 'index.html',      label: 'Le voyage' },
-    { href: 'aujourdhui.html', label: 'Préparatifs' },
+    { href: 'aujourdhui.html', label: 'À faire' },
     { href: 'itineraire.html', label: 'Le programme' },
     { href: 'villes.html',     label: 'Les villes' },
-    { href: 'guide.html',      label: 'Le guide' },
-    { href: 'pratique.html',   label: 'Budget & pratique' },
+    { href: 'transports.html', label: 'Transports' },
+    { href: 'budget.html',     label: 'Le budget' },
   ],
-  // Pendant : « Aujourd'hui » EST la page du jour, qui s'ouvre sur la date du
-  // jour. Le compte à rebours et le budget reculent — on ne les cherche pas dans
-  // le métro. Le voyage (l'accueil) reste là pour le montrer à quelqu'un.
+  // Pendant : téléphone en main. La journée, ce qu'il y a autour, où manger,
+  // comment bouger, les urgences, l'argent.
   pendant: [
     { href: 'jour.html',       label: "Aujourd'hui" },
-    { href: 'villes.html',     label: 'La ville' },
-    { href: 'guide.html',      label: 'Le guide' },
-    { href: 'itineraire.html', label: 'Le programme' },
-    { href: 'pratique.html',   label: 'Pratique' },
+    { href: 'villes.html',     label: 'Autour de moi' },
+    { href: 'table.html',      label: 'À table' },
+    { href: 'transports.html', label: 'Transports' },
+    { href: 'secours.html',    label: 'Secours' },
     { href: 'budget.html',     label: 'Le budget' },
-    { href: 'index.html',      label: 'Le voyage' },
   ],
   apres: [
     { href: 'index.html',      label: 'Le voyage' },
     { href: 'itineraire.html', label: 'Le programme' },
-    { href: 'jour.html',       label: 'Les journées' },
-    { href: 'guide.html',      label: 'Le guide' },
     { href: 'budget.html',     label: 'Le budget' },
-    { href: 'pratique.html',   label: 'Pratique' },
   ],
 };
 const PAGES = PAGES_PAR_MOMENT[moment()];
+// Une page hors menu allume son parent.
+const PARENT = {
+  'passes.html': 'transports.html', 'valises.html': 'transports.html',
+  'jour.html': 'itineraire.html', 'aujourdhui.html': 'jour.html',
+  'pratique.html': 'secours.html', 'secours.html': 'aujourdhui.html',
+  'table.html': 'villes.html',
+};
+// Toujours joignables, par le pied de page.
+const PIED_EXTRA = [
+  { href: 'index.html',      label: 'Le voyage' },
+  { href: 'aujourdhui.html', label: 'À faire' },
+  { href: 'secours.html',    label: 'Secours' },
+];
 
 export const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) =>
@@ -84,8 +93,11 @@ export function formatDate(iso, { weekday = false, year = false } = {}) {
   return parts.join(' ');
 }
 
+// Intl sépare les milliers par une espace fine (U+202F) : à 12 px de corps, elle ne fait que
+// 1,7 px et « 1 584 € » se lit « 1584 € ». On met une vraie espace insécable.
 export const eur = (n) =>
-  new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+  new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+    .format(n).replace(/\u202f/g, '\u00a0');
 
 /** Monte la barre de navigation et le pied de page. */
 /**
@@ -118,16 +130,36 @@ function syncThemeButton() {
 }
 
 export function mountChrome(current) {
+  // Le service worker rend le site utilisable sans réseau : toutes les pages
+  // l'installent d'ici, et d'ici seulement, la première ouverte suffit. (La page À
+  // faire l'enregistre aussi, pour brancher son bouton : deux fois, c'est sans effet.)
+  // Là où il est interdit (iframe en bac à sable, cookies bloqués), c'est LIRE
+  // navigator.serviceWorker qui lève, tout de suite : sans ce try, la barre ne serait
+  // jamais posée et la page perdrait tout son contenu.
+  try {
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  } catch { /* service worker interdit ici : le site marche sans */ }
+
   const away = daysBetween(today(), TRIP.start);
   const counter = away > 0 ? `J−${away}`
                 : away === 0 ? "C'est aujourd'hui"
                 : daysBetween(today(), TRIP.end) >= 0 ? 'En voyage'
                 : 'Souvenirs';
+  // Seul « J−24 » est un vrai compte à rebours. Les autres libellés disent où l'on
+  // en est, et s'effacent sur un petit téléphone pour laisser la place à la loupe.
+  const classeCompteur = away > 0 ? 'nav__count' : 'nav__count nav__count--etat';
 
-  // Pendant le voyage, un bouton « Perdu ? » sur toutes les pages : où je suis,
-  // les adresses autour, rentrer à l'hôtel, le chauffeur, les urgences.
-  const perduActif = moment() === 'pendant';
-  const perduBtn = perduActif ? '<button class="nav__perdu" type="button" aria-haspopup="dialog">Perdu&nbsp;?</button>' : '';
+  // La page à allumer dans le menu : la page elle-même, ou son parent si elle n'y est pas.
+  const actif = PAGES.some((x) => x.href === current) ? current : PARENT[current];
+  // La loupe n'est pas une entrée du menu : elle est là à tous les moments et
+  // ouvre la recherche du guide, curseur dedans.
+  const loupe = `<a class="nav__search" href="guide.html?chercher" aria-label="Chercher dans tout le site"${current === 'guide.html' ? ' aria-current="page"' : ''}>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4.2-4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></a>`;
+  // Le pied de page reprend le menu, plus ce qui doit rester joignable partout.
+  const pied = [...PAGES, ...PIED_EXTRA.filter((x) => !PAGES.some((p) => p.href === x.href))];
+  // Pendant le voyage, index.html ouvre Aujourd'hui : « Le voyage » y va avec ?accueil,
+  // sinon l'accueil ne serait plus joignable. (Le logo, lui, mène volontairement à Aujourd'hui.)
+  const lienPied = (href) => (href === 'index.html' && moment() === 'pendant' ? 'index.html?accueil' : href);
 
   document.body.insertAdjacentHTML('afterbegin', `
     <nav class="nav">
@@ -135,10 +167,10 @@ export function mountChrome(current) {
         <a class="nav__brand" href="index.html">Japon 2026</a>
         <button class="nav__burger" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
         <div class="nav__links">
-          ${PAGES.map((p) => `<a href="${p.href}"${p.href === (PAGES.some((x) => x.href === current) ? current : ({ 'jour.html': 'itineraire.html', 'budget.html': 'pratique.html', 'aujourdhui.html': 'jour.html' })[current]) ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
+          ${PAGES.map((p) => `<a href="${p.href}"${p.href === actif ? ' aria-current="page"' : ''}>${p.label}</a>`).join('')}
         </div>
-        <span class="nav__count">${counter}</span>
-        ${perduBtn}
+        ${loupe}
+        <span class="${classeCompteur}">${counter}</span>
         <button class="nav__theme" type="button"></button>
       </div>
     </nav>`);
@@ -148,7 +180,7 @@ export function mountChrome(current) {
       <div class="foot__in">
         <b>Japon 2026</b>
         <span>8 novembre — 3 décembre · Tokyo, Kanazawa, Kyoto, Osaka, Hakone</span>
-        <nav>${PAGES.filter((p) => p.href !== current).map((p) => `<a href="${p.href}">${p.label}</a>`).join('')}</nav>
+        <nav>${pied.filter((p) => p.href !== current).map((p) => `<a href="${lienPied(p.href)}">${p.label}</a>`).join('')}</nav>
         <small>Fait maison, pour Ilyès &amp; Mathilde. Photos : Wikimedia Commons — voir img/CREDITS.md.</small>
       </div>
     </footer>`);
@@ -164,13 +196,6 @@ export function mountChrome(current) {
     burger.setAttribute('aria-expanded', String(!open));
     burger.textContent = open ? '☰' : '✕';
   });
-
-  if (perduActif) {
-    const jour = JOURS_VOYAGE.find((d) => d.date === today());
-    const step = jour ? STEPS.find((s) => s.id === jour.stepId) : null;
-    const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
-    document.querySelector('.nav__perdu')?.addEventListener('click', () => montePerdu({ step, hotel }));
-  }
 }
 
 /**

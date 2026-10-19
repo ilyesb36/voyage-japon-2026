@@ -1,5 +1,5 @@
 // La sélection : le tri fait à la main, étape par étape, comme un carnet.
-// Les 414 adresses restent dans la bibliothèque ; ici, seulement ce qui compte.
+// Toutes les adresses restent dans la bibliothèque ; ici, seulement ce qui compte.
 // Chaque choix renvoie à une fiche du guide (spot-…) et dit pourquoi y aller.
 export const SELECTION = Object.freeze([
  {
@@ -33,10 +33,6 @@ export const SELECTION = Object.freeze([
    {
     "id": "spot-teamlab-planets",
     "why": "L'expérience immersive les pieds dans l'eau. Créneau horodaté à réserver pour le soir du 13 novembre, vers 18h30, après le coucher du soleil à Yanaka."
-   },
-   {
-    "id": "spot-sushi-a-tsukiji",
-    "why": "Le petit-déjeuner au marché extérieur, au comptoir, avant le train pour Kanazawa le 14."
    },
    {
     "id": "spot-nikko",
@@ -75,10 +71,6 @@ export const SELECTION = Object.freeze([
    {
     "id": "spot-nagamachi",
     "why": "Les ruelles des samouraïs, murs de terre et canaux. La maison Nomura se visite, avec son petit jardin intérieur."
-   },
-   {
-    "id": "spot-kaisendon-d-omicho",
-    "why": "Le déjeuner au marché d'Ōmichō : bol de poisson cru et crabe des neiges, dont la saison vient d'ouvrir le 6 novembre."
    }
   ]
  },
@@ -143,10 +135,6 @@ export const SELECTION = Object.freeze([
    {
     "id": "spot-marche-kuromon",
     "why": "Le marché couvert juste en bas de chez vous, à grignoter en marchant. Plutôt en matinée."
-   },
-   {
-    "id": "spot-kushikatsu",
-    "why": "Brochettes panées à Shinsekai, au pied de la tour Tsūtenkaku. Règle du quartier : on ne trempe jamais deux fois dans la sauce."
    },
    {
     "id": "spot-ev-midosuji",

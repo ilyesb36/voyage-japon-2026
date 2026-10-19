@@ -28,10 +28,14 @@ export function createMap(el, opts = {}) {
   // au pire elle est grossière, jamais absente.
   map.setView([35.4, 137.5], 6);
 
+  // crossOrigin : sans lui, la réponse d'une tuile est « opaque » (res.ok faux) et le
+  // service worker ne l'écrit jamais dans jp-tiles : les cartes consultées ne
+  // restaient pas hors-ligne. Esri répond Access-Control-Allow-Origin: * ; s'il le
+  // retirait, les tuiles ne s'afficheraient plus du tout.
   L.tileLayer(`${ESRI}/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`,
-    { maxZoom: 16, attribution: ATTRIB }).addTo(map);
+    { maxZoom: 16, attribution: ATTRIB, crossOrigin: true }).addTo(map);
   L.tileLayer(`${ESRI}/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}`,
-    { maxZoom: 16 }).addTo(map);
+    { maxZoom: 16, crossOrigin: true }).addTo(map);
 
   // Une carte qui zoome sous le doigt pendant qu'on fait défiler la page est
   // une nuisance. On active la molette seulement après un clic délibéré.

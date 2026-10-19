@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Les passes — Japon 2026</title>
+<meta name="description" content="Les deux passes de transport du voyage : le Hakone Freepass (25–27 nov.) et le Nikko Pass (12 nov.). Ce qui est compris, lequel acheter, où, et comment s'en servir aux portiques et dans le bus.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- L'ouverture : le train Hakone Tozan, celui que le Freepass couvre. Photo
+     déjà au catalogue (data/spots.js), donc déjà hors-ligne. -->
+<header class="cover cover--short">
+  <img class="cover__img" src="img/train-hakone-tozan-a52e64a7.webp"
+       alt="Le train de montagne Hakone Tozan, au milieu des hortensias" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>Les passes</h1>
+    <p class="cover__dates" id="cover-sub"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <header class="section">
+    <p class="passes__lede" id="lede"></p>
+  </header>
+
+  <!-- En bref : deux cartes côte à côte, empilées sur téléphone. -->
+  <section class="section">
+    <div class="shead">
+      <h2>En bref</h2>
+    </div>
+    <div class="passes__bref" id="bref"></div>
+    <p class="passes__note" id="bref-note"></p>
+  </section>
+
+  <!-- Une section par pass : rendue depuis PASSES. -->
+  <div id="passes"></div>
+
+  <!-- Dans votre programme : jour par jour, avec un lien vers la journée. -->
+  <section class="section">
+    <div class="shead disc">
+      <h2>Dans votre programme</h2>
+      <p>Les quatre journées où un pass sert, et ce qu'il couvre.</p>
+    </div>
+    <div class="passes__days" id="programme"></div>
+  </section>
+
+  <!-- Sources : repliées, avec la date du relevé. -->
+  <section class="section">
+    <details class="passes__sources">
+      <summary>Sources</summary>
+      <div class="passes__src" id="sources"></div>
+    </details>
+  </section>
+</main>
+
+<script type="module">
+import { INTRO, PASSES, PROGRAMME, SOURCES } from './data/passes.js';
+import { mountChrome, esc, formatDate } from './app/ui.js';
+
+mountChrome('passes.html');
+const q = (id) => document.getElementById(id);
+
+// Les mots japonais d'une phrase portent lang="ja" : le téléphone choisit alors les
+// bons caractères (le nom lu sur un bus doit ressembler à celui du bus).
+const avecJp = (t) => esc(t).replace(/[぀-ヿ㐀-鿿＀-￯]+/g, (m) => `<span lang="ja">${m}</span>`);
+
+// Une liste à puces ✓ ou ✗, selon la classe passée.
+const liste = (items) => `<ul class="passes__list">${items.map((t) => `<li>${avecJp(t)}</li>`).join('')}</ul>`;
+
+// --- couverture et chapô ------------------------------------------------------
+q('cover-sub').textContent = INTRO.sub;
+q('lede').textContent = INTRO.lede;
+
+// --- En bref : deux cartes, dérivées de PASSES --------------------------------
+q('bref').innerHTML = PASSES.map((p) => `
+  <a class="passes__bref-card" href="#${esc(p.id)}" style="--c:var(--c-${esc(p.cityId)})">
+    <span class="passes__bref-name">${esc(p.nom)}</span>
+    <span class="passes__bref-meta"><span class="data">${esc(p.duree)}</span> · <span class="data">${esc(p.prix)}</span> · ${esc(p.quand)}</span>
+    <span class="passes__bref-resume">${esc(p.resume)}</span>
+    <span class="passes__bref-go">Le détail ↓</span>
+  </a>`).join('');
+q('bref-note').textContent = INTRO.jrPass;
+
+// --- une section par pass -----------------------------------------------------
+// Le titre, la ligne de chiffres et le résumé restent visibles ; le détail est
+// replié, un bloc par <details>, pour que la page tienne en quelques écrans de
+// téléphone. Le titre du bloc est celui de son <summary>, on ne le répète pas dedans.
+const fold = (titre, inner) => `
+  <details class="passes__fold">
+    <summary>${esc(titre)}</summary>
+    <div class="passes__fold-body">${inner}</div>
+  </details>`;
+
+q('passes').innerHTML = PASSES.map((p) => `
+  <section class="section passes__pass" id="${esc(p.id)}">
+    <div class="shead">
+      <h2>${esc(p.nom)}${p.jp ? ` <span class="passes__jp" lang="ja">${esc(p.jp)}</span>` : ''}</h2>
+      <span class="shead__meta">${esc(p.duree)} · ${esc(p.prix)} · ${esc(p.quand)}</span>
+    </div>
+    <p class="passes__resume">${esc(p.resume)}</p>
+
+    <div class="passes__folds">
+      <!-- Compris / Pas compris : deux listes courtes -->
+      ${fold('Compris / Pas compris', `
+        <div class="passes__io">
+          <div class="passes__io-col passes__io-col--yes">
+            <h3>Compris</h3>
+            ${liste(p.compris)}
+          </div>
+          <div class="passes__io-col passes__io-col--no">
+            <h3>Pas compris</h3>
+            ${liste(p.pasCompris)}
+          </div>
+        </div>`)}
+
+      <!-- Lequel acheter : la version conseillée se détache en vert sapin -->
+      ${fold('Lequel acheter', `
+        <div class="passes__choix">
+          <h3><span class="passes__badge">Conseillé</span> ${esc(p.choix.version)} <span class="passes__choix-prix">${esc(p.choix.prix)}</span></h3>
+          ${p.pourQui ? `<p class="passes__choix-qui">${esc(p.pourQui)}</p>` : ''}
+          <p>${esc(p.choix.pourquoi)}</p>
+          ${p.choix.tarifs ? `<p class="passes__choix-tarifs mut">${esc(p.choix.tarifs)}</p>` : ''}
+        </div>`)}
+
+      <!-- Le supplément express : propre au Nikko Pass -->
+      ${p.express ? fold('Le supplément express', `
+        <div class="passes__express">
+          <p>${esc(p.express.texte)}</p>
+          <p>${esc(p.express.reserver)}</p>
+          <p class="mut">${esc(p.express.sans)}</p>
+        </div>`) : ''}
+
+      <!-- Où et comment l'acheter : en étapes numérotées -->
+      ${fold("Où et comment l'acheter", `
+        <ol class="passes__steps">
+          ${p.acheter.map((s, i) => `
+            <li><span class="step-num" style="--c:var(--c-${esc(p.cityId)})">${i + 1}</span><span class="passes__step-txt">${esc(s)}</span></li>`).join('')}
+        </ol>`)}
+
+      <!-- Comment s'en servir : aux portiques, et dans le bus -->
+      ${fold("Comment s'en servir", `
+        <div class="passes__use">
+          <div class="passes__use-part">
+            <h4>Aux portiques</h4>
+            <p>${esc(p.utiliser.portiques)}</p>
+          </div>
+          <div class="passes__use-part">
+            <h4>Dans le bus</h4>
+            <p>${esc(p.utiliser.bus)}</p>
+          </div>
+        </div>`)}
+
+      <!-- Reconnaître le bon bus : on lit le nom japonais sur le bus, et le verdict
+           (compris / pas compris) s'écrit aussi gros que ce nom -->
+      ${fold('Reconnaître le bon bus', `
+        <p class="passes__bus-intro">${avecJp(p.reconnaitreBus.intro)}</p>
+        <ul class="passes__bus">
+          ${p.reconnaitreBus.lignes.map((b) => `
+            <li class="passes__bus-line passes__bus-line--${b.statut === 'oui' ? 'yes' : 'no'}">
+              <span class="passes__bus-name"><span class="passes__bus-jp" lang="ja">${esc(b.jp)}</span> <span class="mut">${esc(b.romaji)}</span></span>
+              <span class="passes__bus-verdict">${b.statut === 'oui' ? 'Compris' : 'Pas compris'}</span>
+              <span class="passes__bus-note">${esc(b.note)}</span>
+            </li>`).join('')}
+        </ul>
+        ${p.reconnaitreBus.doute ? `<p class="passes__bus-doute">${avecJp(p.reconnaitreBus.doute)}</p>` : ''}`)}
+    </div>
+  </section>`).join('');
+
+// --- dans votre programme : une carte par journée, lien vers jour.html?d=n ----
+q('programme').innerHTML = PROGRAMME.map((d) => {
+  const p = PASSES.find((x) => x.id === d.passId);
+  const c = (p || {}).cityId || 'exc';
+  return `
+  <article class="passes__day card">
+    <div class="passes__day-head">
+      <span class="city-dot" style="--c:var(--c-${esc(c)})">${esc((p || {}).nom || '')}</span>
+      <span class="passes__day-date data">${esc(formatDate(d.date, { weekday: true }))}</span>
+    </div>
+    <p class="passes__day-title">${esc(d.titre)}</p>
+    <ul class="passes__list">${d.couvre.map((t) => `<li>${avecJp(t)}</li>`).join('')}</ul>
+    ${d.horsPass ? `<ul class="passes__list passes__list--no">${d.horsPass.map((t) => `<li>${avecJp(t)}</li>`).join('')}</ul>` : ''}
+    ${d.note ? `<p class="passes__day-note">${esc(d.note)}</p>` : ''}
+    <a class="passes__day-link" href="jour.html?d=${esc(String(d.dayN))}">Voir la journée →</a>
+  </article>`;
+}).join('');
+
+// --- sources, datées ----------------------------------------------------------
+q('sources').innerHTML = SOURCES.map((s) => `
+  <p class="passes__src-line">
+    ${s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.quoi)}</a>` : esc(s.quoi)}
+    <span class="mut">(relevé le ${esc(formatDate(s.date, { year: true }))})</span>
+  </p>`).join('');
+
+// Si on arrive par une ancre (#hakone, #nikko) depuis une carte « En bref »,
+// on cadre la section sous la barre.
+if (location.hash && /^#(hakone|nikko)$/.test(location.hash)) {
+  const el = document.getElementById(location.hash.slice(1));
+  if (el) requestAnimationFrame(() => el.scrollIntoView());
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Les villes — Japon 2026</title>
-<meta name="description" content="Une page par étape : l'hôtel, les incontournables, les plats à goûter, les jours prévus et les événements, au même endroit.">
+<meta name="description" content="Une page par étape : où vous êtes, les quartiers à voir, à faire et à manger, les fêtes datées, l'hôtel et les plans B.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
@@ -30,41 +30,28 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap villes">
   <nav class="chipbar ptabs" id="etapes" aria-label="Choisir une étape"></nav>
-  <header class="section">
-    <p class="hero__lede" id="lede"></p>
-    <div class="vhotel" id="hotel"></div>
-  </header>
-  <section class="section" id="pres">
-    <div class="shead"><h2>Près de moi</h2><p>Perdu ? Où vous êtes, ce qu'il y a autour, comment rentrer.</p></div>
-    <div id="presdemoi"></div>
+  <section class="section" id="ou">
+    <button class="btn" id="ou-btn" type="button">Où suis-je ?</button>
+    <p class="mut" id="ou-msg" aria-live="polite"></p>
   </section>
-  <section class="section" id="incontournables">
-    <div class="shead"><h2>À ne pas rater</h2><span class="shead__meta" id="sel-meta"></span></div>
-    <ol class="sel__list" id="sel"></ol>
-    <p class="sel__arb" id="arb" hidden></p>
-  </section>
-  <section class="section" id="quartiers" hidden>
-    <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé.</p></div>
+  <p class="hero__lede" id="lede"></p>
+  <p class="mut villes__arb" id="arbitrage" hidden></p>
+  <section class="section" id="quartiers">
+    <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé. <span class="etoile">★</span> incontournable</p></div>
     <div class="qcards" id="qcards"></div>
-  </section>
-  <section class="section" id="table">
-    <div class="shead"><h2>À table</h2><span class="shead__meta" id="eat-meta"></span></div>
-    <div id="eatlist"></div>
-    <div class="tables" id="tables" hidden></div>
   </section>
   <section class="section" id="evenements" hidden>
     <div class="shead"><h2>Pendant votre séjour</h2><p>Fêtes et illuminations datées.</p></div>
     <ol class="sel__list" id="events"></ol>
   </section>
-  <section class="section" id="jours">
-    <div class="shead"><h2>Vos jours</h2><p>Le programme prévu, jour par jour.</p></div>
-    <ol class="vdays" id="days"></ol>
-  </section>
+  <section class="section" id="hotel"></section>
   <section class="section" id="types">
-    <div class="shead"><h2>Journées type</h2><p>Si le programme tombe à l'eau.</p></div>
-    <div class="vtypes" id="tpls"></div>
+    <details class="vplans">
+      <summary><span class="vplans__txt"><span class="vplans__nom">Plans B</span> <span class="mut">si le programme tombe à l'eau</span></span></summary>
+      <div class="vtypes" id="tpls"></div>
+    </details>
   </section>
   <p class="more" id="biblio"></p>
 </main>
@@ -72,34 +59,38 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
 <dialog class="tpldlg" id="fiche"><div class="tpldlg__in"><button class="tpldlg__x" id="fiche-x" aria-label="Fermer">&times;</button><div id="fiche-body"></div></div></dialog>
 
 <script type="module">
-import { CITIES, STEPS, HOTELS, EXCURSIONS } from './data/trip.js';
-import { DAYS, TEMPLATES } from './data/days.js';
+import { CITIES, STEPS, HOTELS } from './data/trip.js';
+import { TEMPLATES } from './data/days.js';
 import { SPOTS } from './data/spots.js';
 import { SELECTION } from './data/selection.js';
-import { DELICES } from './data/delices.js';
-import { mountChrome, esc, today } from './app/ui.js';
-import { quartiersOrdonnes, carteQuartierHTML, montePresDeMoi, boutonChauffeur, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
+import { mountChrome, esc, today, moment } from './app/ui.js';
+import { quartiersOrdonnes, carteQuartierHTML, maPosition, ouSuisJe, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
 
-// Une page par étape : tout ce qui concerne une ville au même endroit,
-// au lieu de le chercher entre le programme, le guide et la liste des plats.
+// Une page par étape : on y trouve son quartier (« Où suis-je ? »), ce qu'il y a
+// à voir, à faire et à manger autour, et les fêtes datées. Les plats et les tables
+// sont sur table.html, l'adresse de l'hôtel sur secours.html, les jours sur jour.html.
 mountChrome('villes.html');
 var q = function (id) { return document.getElementById(id); };
 var HERO = { tokyo: 'img/hero/tokyo.webp', kanazawa: 'img/hero/kanazawa.webp', kyoto: 'img/hero/kyoto.webp', osaka: 'img/hero/osaka.webp', hakone: 'img/hero/hakone.webp' };
-// Les événements datés, rattachés à l'étape où ils tombent.
-// Seulement ce que la sélection ne couvre pas déjà (le Tō-ji, Eikandō, Midosuji… y sont).
-var EV_ETAPE = { 'spot-ev-shichigosan': 2, 'spot-ev-kodaiji-night': 3, 'spot-ev-hasedera-lightup': 6, 'spot-ev-minatomirai': 6 };
 var byId = new Map(SPOTS.map(function (s) { return [s.id, s]; }));
+
+// L'étape du jour, ou null hors du séjour. `cityId` : seulement si elle est dans cette ville.
+// Le 2 déc., jour du vol, la dernière étape est déjà finie d'après ses dates : on la garde, on y a dormi.
+var now = today();
+function etapeDuJour(cityId) {
+  var s = STEPS.find(function (x) { return now >= x.from && now < x.to; }) || (moment() === 'pendant' ? STEPS[STEPS.length - 1] : null);
+  return s && (!cityId || s.cityId === cityId) ? s : null;
+}
 
 // Quelle étape ? ?e=3, sinon celle du jour pendant le voyage, sinon la première.
 var par = parseInt(new URLSearchParams(location.search).get('e'), 10);
-var now = today();
-var enCours = STEPS.find(function (s) { return now >= s.from && now < s.to; });
-var step = STEPS.find(function (s) { return s.n === par; }) || enCours || STEPS[0];
+var step = STEPS.find(function (s) { return s.n === par; }) || etapeDuJour() || STEPS[0];
 var city = CITIES[step.cityId];
 var sel = SELECTION.find(function (x) { return x.step === step.n; }) || { picks: [] };
 var hotel = HOTELS.find(function (h) { return h.id === step.hotelId; });
 var titre = city.name + (step.cityId === 'tokyo' ? ' · ' + step.area : '');
-document.title = titre + ' — Japon 2026';
+// Le libellé suit le moment : on découvre « Les villes » avant le départ, on cherche « Autour de moi » sur place.
+document.title = `${titre} — ${moment() === 'pendant' ? 'Autour de moi' : 'Les villes'} · Japon 2026`;
 document.documentElement.style.setProperty('--c', 'var(--c-' + city.id + ')');
 
 // --- en-tête ------------------------------------------------------------------
@@ -112,35 +103,11 @@ q('etapes').innerHTML = STEPS.map(function (s) {
   return '<a class="chip" href="villes.html?e=' + s.n + '" aria-pressed="' + (s.n === step.n) + '"><span class="chip__dot" style="background:var(--c-' + c.id + ')"></span>' + esc(c.name + (s.cityId === 'tokyo' ? ' · ' + s.area : '')) + '</a>';
 }).join('');
 q('lede').textContent = sel.intro || '';
-var excs = EXCURSIONS.filter(function (e) { return e.fromStepId === step.id; });
+// Ce qu'on laisse de côté à cette étape, et pourquoi : une ligne discrète sous le chapeau.
+q('arbitrage').textContent = sel.arbitrage || '';
+q('arbitrage').hidden = !sel.arbitrage;
 
-// En-tête hôtel : y aller, appeler, montrer au chauffeur, et l'adresse (en
-// japonais pour la plupart) — ce qu'il faut quand on cherche sa chambre ou un taxi.
-var hEl = q('hotel');
-if (hotel) {
-  hEl.innerHTML =
-    '<div class="vhotel__main">' +
-      '<span class="label">Hôtel</span>' +
-      '<p class="vhotel__nom">' + esc(hotel.name) + '</p>' +
-      '<p class="vhotel__adr mut">' + esc(hotel.address || '') + (hotel.room ? ' · ' + esc(hotel.room) : '') + '</p>' +
-      ((hotel.checkIn || hotel.checkOut) ? '<p class="vhotel__quand"><span class="label">Arrivée</span> <span class="data">' + esc(hotel.checkIn || '—') + '</span> · <span class="label">Départ</span> <span class="data">' + esc(hotel.checkOut || '—') + '</span></p>' : '') +
-      (hotel.arrivee ? '<details class="vhotel__consignes"><summary>Consignes d\'arrivée</summary><p>' + esc(hotel.arrivee) + '</p></details>' : '') +
-    '</div>' +
-    '<div class="vhotel__actions">' +
-      '<a class="btn" href="' + esc(hotel.maps) + '" target="_blank" rel="noopener">M\'y emmener</a>' +
-      (hotel.tel ? '<a class="btn btn--ghost" href="tel:' + esc(hotel.tel.replace(/[^+\d]/g, '')) + '">Appeler</a>' : '') +
-    '</div>' +
-    (excs.length ? '<p class="vhotel__exc"><span class="label">Excursions</span> ' + excs.map(function (e) { return esc(e.name); }).join(', ') + '</p>' : '');
-  var chBtn = boutonChauffeur(hotel);
-  if (chBtn) hEl.querySelector('.vhotel__actions').appendChild(chBtn);
-} else {
-  hEl.hidden = true;
-}
-
-// « Près de moi » : GPS du téléphone, tout calculé en local, rien n'en sort.
-montePresDeMoi(q('presdemoi'), { step: step, hotel: hotel, onSpot: ouvrir });
-
-// --- à ne pas rater (la sélection) --------------------------------------------
+// --- les fêtes et illuminations de l'étape ---------------------------------------
 function item(s, why) {
   var nomQ = quartierNomDeSpot(s);
   return '<li><button class="sel__item" type="button" data-id="' + esc(s.id) + '">' +
@@ -150,19 +117,10 @@ function item(s, why) {
     (nomQ ? '<span class="sel__q">' + esc(nomQ) + '</span>' : '') +
     '</span></button></li>';
 }
-var picks = sel.picks.map(function (p) { var s = byId.get(p.id); return s ? item(s, p.why) : ''; });
-q('sel').innerHTML = picks.join('');
-q('sel-meta').textContent = picks.length + ' choix';
-if (sel.arbitrage) { q('arb').hidden = false; q('arb').innerHTML = '<b>Arbitrage</b> ' + esc(sel.arbitrage); }
 
-// --- événements de l'étape, hors ceux déjà dans la sélection --------------------
-// Rangé par le champ `etape` d'un événement quand il existe, sinon par la table
-// de repli EV_ETAPE (les plus anciens). « à confirmer » si confirme === false.
-var dejaVus = new Set(sel.picks.map(function (p) { return p.id; }));
-function etapeDe(s) { return (typeof s.etape === 'number') ? s.etape : EV_ETAPE[s.id]; }
-var evs = SPOTS.filter(function (s) {
-  return (s.kind === 'event' || EV_ETAPE[s.id] != null) && etapeDe(s) === step.n && !dejaVus.has(s.id);
-});
+// Une fête est rangée à l'étape que dit son champ `etape` (data/spots.js).
+// « à confirmer » si confirme === false.
+var evs = SPOTS.filter(function (s) { return s.kind === 'event' && s.etape === step.n; });
 if (evs.length) {
   q('evenements').hidden = false;
   q('events').innerHTML = evs.map(function (s) {
@@ -172,51 +130,19 @@ if (evs.length) {
   }).join('');
 }
 
-// --- à table : les plats à goûter, puis les tables recommandées -----------------
-var plats = (DELICES.find(function (g) { return g.cityId === step.cityId; }) || { items: [] }).items;
-q('eat-meta').textContent = plats.length + ' à goûter';
-q('eatlist').innerHTML = '<div class="dishes">' + plats.map(function (x) {
-  return '<article class="dish">'+(x.img?'<img class="dish__img" src="'+x.img+'" alt="" loading="lazy" decoding="async">':'<span class="dish__img dish__img--nue">'+x.e+'</span>')+'<span class="dish__txt"><b>'+esc(x.n)+'</b><span class="dish__jp">'+esc(x.jp)+'</span><span class="dish__d">'+esc(x.d)+'</span></span></article>';
-}).join('') + '</div>';
-
-// Tables recommandées : adresses ayant un champ `table`. Aucune encore — le bloc
-// reste caché tant qu'il n'y en a pas. La fiche (data-fiche) montre résa et note.
-var TABLE_BADGE = { belle: 'Belle table', tradi: 'Tradition', viral: 'Vu sur les réseaux', tabelog: 'Tabelog' };
-function tableCard(s) {
-  var tab = s.tabelog ? '<span class="table__tabelog">Tabelog ' + esc(s.tabelog) + '</span>' : '';
-  var badge = (s.table && s.table !== 'tabelog') ? '<span class="table__badge">' + esc(TABLE_BADGE[s.table] || 'Table') + '</span>' : '';
-  var prixMoment = [s.budget, s.when].filter(Boolean).map(esc).join(' · ');
-  return '<button class="table" type="button" data-fiche="' + esc(s.id) + '">' +
-    '<span class="table__top">' + badge + tab + '</span>' +
-    '<span class="table__nom">' + esc(s.name) + (s.jp ? ' <span class="mut">' + esc(s.jp) + '</span>' : '') + '</span>' +
-    (s.blurb ? '<span class="table__meta">' + esc(s.blurb) + '</span>' : '') +
-    (prixMoment ? '<span class="table__meta">' + prixMoment + '</span>' : '') +
-    (s.resa ? '<span class="table__resa">Réservation : ' + esc(s.resa.canal || 'voir la fiche') + '</span>' : '') +
-    '</button>';
-}
-var tables = SPOTS.filter(function (s) { return s.cityId === step.cityId && s.table; });
-if (tables.length) {
-  q('tables').hidden = false;
-  q('tables').innerHTML = '<p class="label">Tables recommandées</p>' + tables.map(tableCard).join('');
-}
-
 // --- les quartiers, dans l'ordre du programme ------------------------------------
-var ord = quartiersOrdonnes(step);
-if (ord.length) {
-  q('quartiers').hidden = false;
-  q('qcards').innerHTML = ord.map(carteQuartierHTML).join('');
+// Les incontournables de l'étape (SELECTION) ne sont plus une liste : ils portent une étoile.
+const etoiles = new Set(sel.picks.map((p) => p.id));
+q('qcards').innerHTML = quartiersOrdonnes(step).map((e) => carteQuartierHTML(e, { etoiles })).join('');
+
+// --- l'hôtel de l'étape : une ligne, tout le reste est dans Secours --------------
+if (hotel) {
+  q('hotel').innerHTML = `<p><span><span class="label">Hôtel</span> <b>${esc(hotel.name)}</b></span> <a href="secours.html#h-${esc(hotel.id)}">adresse, téléphone, arrivée</a></p>`;
+} else {
+  q('hotel').hidden = true;
 }
 
-
-// --- vos jours -----------------------------------------------------------------
-var jours = DAYS.filter(function (d) { return d.stepId === step.id; });
-q('days').innerHTML = jours.map(function (d) {
-  var j = d.label.split(' ');
-  return '<li><a class="vday" href="jour.html?d=' + d.n + '"><span class="vday__d"><b>' + esc(j[0]) + '</b>' + esc(j[1] || '') + '</span>' +
-    '<span><b>' + esc(d.title) + '</b><span class="mut">' + esc((d.items[0] && d.items[0].text || '').slice(0, 110)) + '</span></span><span class="vday__go" aria-hidden="true">›</span></a></li>';
-}).join('');
-
-// --- journées type de la ville ---------------------------------------------------
+// --- plans B : les journées type de la ville --------------------------------------
 var tpls = TEMPLATES.filter(function (t) { return t.cityId === step.cityId; });
 q('tpls').innerHTML = tpls.map(function (t) {
   return '<a class="vtype" href="itineraire.html?onglet=types#' + esc(t.id) + '"><b>' + esc(t.title) + '</b><span class="mut">' + esc(t.sub) + ' · ' + t.steps.length + ' étapes</span></a>';
@@ -225,15 +151,59 @@ if (!tpls.length) q('types').hidden = true;
 var nAdr = SPOTS.filter(function (s) { return s.cityId === step.cityId; }).length;
 q('biblio').innerHTML = '<a class="btn btn--ghost" href="guide.html?ville=' + step.cityId + '">Toutes les adresses ' + (/^[AEIOUH]/.test(city.name) ? "d'" : 'de ') + esc(city.name) + ' dans le guide (' + nAdr + ') →</a>';
 
+// --- arriver par une ancre --------------------------------------------------------
+// #table visait l'ancienne section « À table » : elle vit maintenant sur sa page.
+if (location.hash === '#table') location.replace(`table.html?ville=${city.id}`);
+// La page défile en douceur (scroll-behavior), et « auto » s'y plie : au chargement cette
+// animation part du haut et peut se faire couper, donc on demande « instant ».
+const ouvrirQuartier = (id) => {
+  const d = document.getElementById('q-' + id);
+  if (!d) return false;
+  d.open = true;
+  d.scrollIntoView({ behavior: 'instant', block: 'start' });
+  return true;
+};
+if (location.hash.startsWith('#q-')) ouvrirQuartier(location.hash.slice(3));
+
+// --- « Où suis-je ? » ---------------------------------------------------------------
+// Tout est calculé sur le téléphone, la position ne quitte jamais l'appareil.
+q('ou-btn').addEventListener('click', async () => {
+  const msg = q('ou-msg');
+  msg.textContent = 'Je cherche votre position…';
+  // Seule la position peut échouer « normalement » : une erreur de code plus bas ne doit pas
+  // passer pour un refus de localisation.
+  let pos;
+  try {
+    pos = await maPosition();
+  } catch (e) {
+    msg.textContent = e && e.code === 3   // 3 : le délai est dépassé (9 s), les Réglages n'y sont pour rien
+      ? `La position met trop de temps à arriver. Réessayez, si possible à l'air libre.`
+      : 'Position indisponible. Sur iPhone : Réglages › Confidentialité › Service de localisation › Sites Safari. Sinon, ouvrez le quartier dans la liste ci-dessous.';
+    return;
+  }
+  const r = ouSuisJe(pos);           // toutes villes : on peut être ailleurs que la page affichée
+  const qd = r.quartier;
+  if (!qd) { msg.textContent = `Aucun quartier repéré autour de vous. Choisissez l'étape où vous êtes, ou cherchez avec la loupe.`; return; }
+  if (qd.cityId !== city.id) {
+    // L'étape du jour si elle est dans cette ville, sinon la première de la ville.
+    const cible = etapeDuJour(qd.cityId) || STEPS.find((s) => s.cityId === qd.cityId);
+    msg.textContent = `Vous êtes à ${CITIES[qd.cityId].name} : j'ouvre l'étape.`;
+    location.href = `villes.html?e=${cible.n}#q-${qd.id}`;
+    return;
+  }
+  ouvrirQuartier(qd.id);
+  msg.textContent = r.type === 'dans' ? `Vous êtes dans le quartier ${qd.nom}.` : `Vous êtes près de ${r.spot.name}, quartier ${qd.nom}.`;
+});
+
 // --- la fiche d'une adresse -----------------------------------------------------
 var dlg = q('fiche');
 function ouvrir(id) {
   var s = byId.get(id); if (!s) return;
   var why = (sel.picks.find(function (p) { return p.id === id; }) || {}).why;
   q('fiche-body').innerHTML = (s.img ? '<img class="tpldlg__img" src="' + esc(s.img) + '" alt="">' : '') +
-    '<p class="tpldlg__kicker">' + esc(city.name) + (s.area ? ' · ' + esc(s.area) : '') + '</p><div class="tpldlg__head"><h3>' + esc(s.name) + '</h3><p class="mut">' + esc(s.blurb || '') + '</p></div>' +
+    '<p class="tpldlg__kicker">' + esc(city.name) + (s.area && s.area.toLowerCase() !== city.id ? ' · ' + esc(s.area) : '') + '</p><div class="tpldlg__head"><h3>' + esc(s.name) + '</h3><p class="mut">' + esc(s.blurb || '') + '</p></div>' +
     (why ? '<p class="fiche__why">' + esc(why) + '</p>' : '') + (s.lore ? '<p class="fiche__lore">' + esc(s.lore) + '</p>' : '') +
-    '<dl class="fiche__facts">' + [['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]].filter(function (x) { return x[1]; }).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl>' +
+    '<dl class="fiche__facts">' + [['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]].filter(function (x) { return x[1] && x[1] !== '—'; }).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd></div>'; }).join('') + '</dl>' +
     ficheExtra(s, hotel) +
     (s.maps ? '<p class="tpldlg__links"><a class="btn" href="' + esc(s.maps) + '" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>' : '');
   dlg.showModal();
@@ -241,11 +211,7 @@ function ouvrir(id) {
 document.addEventListener('click', function (e) { var b = e.target.closest('.sel__item, [data-fiche]'); if (b) ouvrir(b.dataset.id || b.dataset.fiche); });
 q('fiche-x').addEventListener('click', function () { dlg.close(); });
 dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
-if (location.hash) requestAnimationFrame(function () { var t = document.querySelector(location.hash); if (t) t.scrollIntoView({ block: 'start' }); });
-</script>
-
-<script>
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+if (location.hash) requestAnimationFrame(function () { var t = document.querySelector(location.hash); if (t) t.scrollIntoView({ behavior: 'instant', block: 'start' }); });
 </script>
 </body>
 </html>

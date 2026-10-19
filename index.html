@@ -67,40 +67,32 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
       <div class="shead"><h2>La carte</h2></div>
       <div id="map" class="map map--wide"></div>
     </section>
-
-    <!-- L'argent vit sur la page Budget ; gardé masqué car le script y écrit. -->
-    <section class="section" hidden>
-      <div class="shead disc"><h2>L'argent</h2></div>
-      <div id="progress"></div>
-    </section>
   </div>
 </main>
 
 <script src="vendor/leaflet.js"></script>
 <script type="module">
-import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
+import { TRIP, CITIES, STEPS, EXCURSIONS, SEGMENTS, HOTELS, FLIGHTS } from './data/trip.js';
 import { SPOTS } from './data/spots.js';
 import { DAYS } from './data/days.js';
-import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, eur, formatDate, daysBetween, today } from './app/ui.js';
+import { mountChrome, initReveal, initCoverParallax, initProgressBar, esc, formatDate, today, moment } from './app/ui.js';
+import { echeancesQuiPressent } from './app/resa.js';
+import { ouEst } from './app/quartiers.js';
 import { renderMomijiBand } from './app/momiji.js';
-import { DELICES } from './data/delices.js';
 import { SELECTION } from './data/selection.js';
 import { createMap, stepMarker, excursionMarker, routeLine, excursionLine, fitAll } from './app/map.js';
-import { montePerdu } from './app/quartiers.js';
-import { moment } from './app/ui.js';
 
-// Pendant le voyage, l'appli s'ouvre sur la journée du jour : c'est ce qu'on
-// vient y chercher neuf fois sur dix. Une seule fois par session — l'accueil
-// reste joignable depuis le menu — et jamais si l'adresse le demande
-// (?accueil). La date de test (?date=) suit.
+// Pendant le voyage, l'accueil ouvre toujours la journée du jour : c'est ce
+// qu'on vient y chercher neuf fois sur dix. Seule l'adresse (?accueil) garde
+// l'accueil. La date de test (?date=) suit.
+// Garde-fou : hors-ligne, le service worker répond par ce document à toute page
+// absente du cache. Si jour.html l'est aussi, l'accueil, arrivé à l'adresse
+// jour.html, renverrait vers jour.html, et ainsi de suite sans fin — dans l'appli
+// installée, sans barre d'adresse, on ne s'en sort qu'en la fermant. On ne
+// redirige donc que si l'adresse est bien celle de l'accueil.
 {
   const params = new URLSearchParams(location.search);
-  let dejaOuvert = true;
-  try {
-    dejaOuvert = sessionStorage.getItem('jp2026_accueil') === '1';
-    sessionStorage.setItem('jp2026_accueil', '1');
-  } catch { /* navigation privée : on reste sur l'accueil */ }
-  if (!dejaOuvert && !params.has('accueil') && moment() === 'pendant') {
+  if (!params.has('accueil') && moment() === 'pendant' && /(^|\/)(index\.html)?$/.test(location.pathname)) {
     const date = params.get('date');
     location.replace('jour.html' + (date ? `?date=${encodeURIComponent(date)}` : ''));
   }
@@ -108,15 +100,15 @@ import { moment } from './app/ui.js';
 
 mountChrome('index.html');
 
-// Pendant le voyage, l'accueil reste la couverture du magazine — mais la
-// première chose à voir, c'est la journée en cours. Un bandeau au-dessus de la
-// photo y mène ; il n'existe qu'entre le 8 novembre et le 3 décembre.
+// Pendant le voyage, l'accueil (qu'on n'ouvre plus qu'avec ?accueil) reste la
+// couverture du magazine — mais la première chose à voir, c'est la journée en
+// cours. Un bandeau au-dessus de la photo y mène ; il n'existe qu'entre le
+// 8 novembre et le 2 décembre.
 {
   const jourEnCours = DAYS.find((d) => d.date === today());
   if (jourEnCours) {
     const step = STEPS.find((s) => s.id === jourEnCours.stepId);
     const c = CITIES[step?.cityId];
-    const hotel = step ? HOTELS.find((h) => h.id === step.hotelId) : null;
     document.querySelector('.cover')?.insertAdjacentHTML('beforebegin', `
       <div class="ojd-wrap">
         <a class="ojd" href="jour.html?d=${jourEnCours.n}" ${c ? `style="--c:var(--c-${c.id})"` : ''}>
@@ -124,9 +116,37 @@ mountChrome('index.html');
           <b class="ojd__quoi">${esc(jourEnCours.title)}</b>
           <span class="ojd__aller">La journée sur la carte ›</span>
         </a>
-        <button class="btn ojd__pres" type="button">Près de moi</button>
+        <a class="btn ojd__pres" href="villes.html">Autour de moi</a>
       </div>`);
-    document.querySelector('.ojd__pres')?.addEventListener('click', () => montePerdu({ step, hotel }));
+  }
+}
+
+// Avant le départ : ce qui presse, tout en haut, sous la photo. Les échéances en retard et
+// celles des 7 prochains jours, six au plus, chacune vers sa ligne sur « À faire » ; le détail
+// (cases à cocher, comment réserver) et le reste de la liste y sont, derrière « Tout voir ».
+// Rien en retard ni cette semaine, rien d'affiché.
+if (moment() === 'avant') {
+  const prochaines = echeancesQuiPressent(today(), 7).slice(0, 6);
+  if (prochaines.length) {
+    document.querySelector('.cover')?.insertAdjacentHTML('afterend', `
+      <div class="wrap">
+        <section class="section">
+          <div class="shead"><h2>Prochaines échéances</h2></div>
+          <div class="stack">
+            ${prochaines.map((x) => `
+            <div class="card cardlink">
+              <a class="cardlink__in" href="aujourdhui.html#e-${esc(x.id)}">
+                <span class="cardlink__texte">
+                  <b>${esc(x.titre)}</b>
+                  <span class="mut">${x.deadline < today() ? '<span class="cardlink__retard">en retard</span> · pour le' : 'avant le'} ${formatDate(x.deadline)}</span>
+                </span>
+                <span class="cardlink__fleche" aria-hidden="true">›</span>
+              </a>
+            </div>`).join('')}
+            <p><a class="btn btn--ghost" href="aujourdhui.html">Tout voir</a></p>
+          </div>
+        </section>
+      </div>`);
   }
 }
 
@@ -146,6 +166,9 @@ const heroFor = (step) => (step.n === 6 && HERO.tokyo2) ? HERO.tokyo2 : HERO[ste
 // Le bloc de ville disait où l'on dort et rien de ce qu'on y fait : la moitié
 // droite restait vide sous cinq lignes. Il porte maintenant les incontournables
 // de la ville et le nombre d'adresses du guide — avec le lien déjà filtré.
+// Un incontournable mène à la carte de son quartier (elle s'ouvre seule, sur
+// villes.html) ; sans quartier connu, à la liste des quartiers de l'étape.
+const ancreQuartier = (sp) => { const o = ouEst(sp); return o ? `q-${esc(o.quartierId)}` : 'quartiers'; };
 q('cities').innerHTML = STEPS.map((step) => {
   const c = CITIES[step.cityId];
   const h = HOTELS.find((x) => x.id === step.hotelId);
@@ -158,9 +181,6 @@ q('cities').innerHTML = STEPS.map((step) => {
   const sel = SELECTION.find((x) => x.step === step.n);
   const incontournables = sel ? sel.picks.slice(0, 3).map((p) => SPOTS.find((sp) => sp.id === p.id)).filter(Boolean) : obs.slice(0, 3);
   const premierJour = DAYS.find((d) => d.stepId === step.id && d.kind !== 'vol');
-  // Trois plats à goûter : Tokyo en fin de séjour pioche dans ses excursions.
-  const plats = (DELICES.find((g) => g.cityId === step.cityId) || { items: [] }).items;
-  const aGouter = step.n === 6 ? plats.filter((x) => ['monja', 'nikuman', 'shirasu'].includes(x.id)) : plats.slice(0, 3);
   return `
   <article class="city" style="--c:var(--c-${c.id})">
     <figure class="city__shot">
@@ -175,13 +195,11 @@ q('cities').innerHTML = STEPS.map((step) => {
       ${incontournables.length ? `
       <p class="city__ob">
         <span class="label">À ne pas rater</span>
-        ${incontournables.map((sp) => `<a href="villes.html?e=${step.n}#incontournables">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
+        ${incontournables.map((sp) => `<a href="villes.html?e=${step.n}#${ancreQuartier(sp)}">${esc(sp.name)}</a>`).join('<span class="mut"> · </span>')}
       </p>` : ''}
-      ${aGouter.length ? `
       <p class="city__ob">
-        <span class="label">À goûter absolument</span>
-        ${aGouter.map((x) => `<a href="villes.html?e=${step.n}#gouter">${x.e} ${esc(x.n)}</a>`).join('<span class="mut"> · </span>')}
-      </p>` : ''}
+        <a href="table.html?ville=${esc(step.cityId)}">Les spécialités à goûter</a>
+      </p>
       <p class="city__liens">
         <a class="btn" href="villes.html?e=${step.n}">Tout sur ${esc(c.name)}</a>
         <a class="btn btn--ghost" href="guide.html?ville=${esc(step.cityId)}">${nbAdresses} adresses</a>
@@ -291,39 +309,9 @@ q('flights').innerHTML = `
       <p class="fl__layover mut">Escale de <span class="data">${esc(f.layover.duration)}</span> à ${esc(f.layover.at)}</p>
     </article>`).join('')}`;
 
-// --- où on en est -----------------------------------------------------------
-// Les hôtels sont tous réservés mais tous ne sont pas payés : la distinction
-// compte, et l'ancien site ne la faisait pas.
-const totalHotels = HOTELS.reduce((s, h) => s + h.price, 0);
-const paidHotels = HOTELS.filter((h) => h.paid).reduce((s, h) => s + h.price, 0);
-const pct = Math.round((paidHotels / totalHotels) * 100);
-
-const ryokan = HOTELS.find((h) => h.cancelBefore);
-const daysToCancel = ryokan ? daysBetween(today(), ryokan.cancelBefore) : null;
-
-// Le suivi des paiements a sa page. Ici, juste le chiffre et le renvoi — pas
-// une troisième liste de ce qui est réservé.
-q('progress').innerHTML = `
-  <div class="card cardlink">
-    <a class="cardlink__in" href="budget.html">
-      <span class="cardlink__texte">
-        <b>${eur(paidHotels)} réglés sur ${eur(totalHotels)} d'hébergement</b>
-        <span class="mut">Les ${HOTELS.length} hôtels et les ${FLIGHTS.length} vols sont pris${RESERVATIONS.length ? `, le ${esc(RESERVATIONS[0].title)} est payé` : ''}.
-          Le budget complet, ligne par ligne, et ce qui reste à sortir.</span>
-      </span>
-      <span class="cardlink__fleche" aria-hidden="true">›</span>
-    </a>
-  </div>`;
-
 initReveal();
 initCoverParallax();
 initProgressBar();
-</script>
-
-<script>
-/* Enregistrement du service worker : c'est lui qui rend le site utilisable
-   sans réseau. La page Pratique pilote en plus le téléchargement des photos. */
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
 </body>
 </html>
