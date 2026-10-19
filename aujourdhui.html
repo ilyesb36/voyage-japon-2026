@@ -171,7 +171,9 @@ function renderAvant() {
     ...AVANT.map((x) => ({ ...x, genre: 'démarche' })),
     ...RESERVER.map((x) => ({ ...x, genre: 'réservation' })),
   ]
-    .map((x) => ({ ...x, fait: !!faits[x.id] }))
+    // Une réservation marquée « réservé » dans les données est faite sur les deux téléphones,
+    // cochée ou non ; le reste suit la case de ce téléphone.
+    .map((x) => ({ ...x, fait: x.etat === 'reserve' || !!faits[x.id] }))
     .sort((a, b) => (a.fait - b.fait) || a.deadline.localeCompare(b.deadline));
 
   const restants = tout.filter((x) => !x.fait);
@@ -305,8 +307,8 @@ function ligneAvant(x) {
   if (x.fait) {
     return `
     <li class="ech__item ech__item--fait" id="e-${esc(x.id)}">
-      <label class="ech__case"><input type="checkbox" data-fait="${esc(x.id)}" checked aria-label="${esc(x.title)} — fait"></label>
-      <span class="ech__quoi"><s>${esc(x.title)}</s></span>
+      <label class="ech__case"><input type="checkbox" data-fait="${esc(x.id)}" checked${x.etat === 'reserve' ? ' disabled' : ''} aria-label="${esc(x.title)} — ${x.etat === 'reserve' ? 'réservé' : 'fait'}"></label>
+      <span class="ech__quoi"><s>${esc(x.title)}</s>${x.etat === 'reserve' && x.heure ? ` <span class="mut data">· ${esc(x.heure)}</span>` : ''}</span>
     </li>`;
   }
 
