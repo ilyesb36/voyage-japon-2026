@@ -43,15 +43,15 @@ export const AVANT = Object.freeze([
   },
   {
     id: 'pass',
-    deadline: '2026-11-11',
+    deadline: '2026-11-07',
     canal: 'en ligne',
     url: 'https://www.hakonenavi.jp/international/en/discount_passes/free_pass',
     commentReserver: "NIKKO PASS WORLD HERITAGE AREA, 2 jours dès le 12 nov. : acheté sur Klook pour vous deux (bon papier à échanger au comptoir Tobu de la gare d'Asakusa, la veille ou le matin même). L'express Tobu est en option : sans lui, les trains rapides Tobu sont compris, avec un changement à Shimo-Imaichi (~2 h 10) ; avec lui, le supplément se prend sur Tobuchike (トブチケ) ou en gare. HAKONE FREEPASS : la ligne « Hakone Freepass » plus haut (Klook, vente ouverte vers le 25 oct.), ou au guichet Odakyu d'Odawara le 25. Le détail, les bus compris et le mode d'emploi : page Les passes.",
-    title: 'Nikko Pass : à échanger à Asakusa',
+    title: 'Nikko Pass : le bon Klook à garder',
     what: "Le Freepass de Hakone (3 jours depuis Odawara) couvre les transports de Hakone du 25 au 27 : bus, train de montagne, funiculaire, téléphérique, bateau pirate. Le Nikko Pass couvre le train Tokyo ↔ Nikko (supplément express en plus) et les bus des sanctuaires, pas celui du lac Chuzenji. Pas de JR Pass : sur cet itinéraire, les billets à l'unité reviennent moins cher.",
     page: 'passes.html',
     pageLabel: 'Les passes',
-    when: 'La veille, à la gare Tobu d’Asakusa',
+    when: 'Avant de partir : le bon dans l’appli Klook ; l’échange le 11 nov., à la gare Tobu d’Asakusa',
     tag: null,
   },
   {
