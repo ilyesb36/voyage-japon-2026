@@ -133,8 +133,10 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 // prix payé au lieu de l'estimation (+30 € et +16 €) ;
 // le 19 octobre aussi, les tables ramenées à trois (Mitsukawa, The Sky le 10 nov. au soir, Tokyo Ten
 // le 30 nov. à midi), à leur prix réservé : −372 € de tables retirées, +129 € et −40 € (−283 €).
-ok('total du voyage = 8 022 €', total, 8022);
-ok('par personne = 4 011 €', total / 2, 4011);
+// le 22 octobre, l'excursion d'Arashiyama du 21 nov. (train Sagano + bateau Hozu, 157 €, Klook) :
+// total impair, chacun doit 4 089,5 €, la page écrit « ≈ 4 090 € ».
+ok('total du voyage = 8 179 €', total, 8179);
+ok('par personne = 4 089,5 €', total / 2, 4089.5);
 
 // Le budget donne son taux : les équivalents en yens de la page, et les montants `fix` en yens
 // arrondis en euros, s'y règlent. La ligne des valises suit la page Valises (une seule version de
@@ -192,7 +194,8 @@ assert('le Nintendo Museum a été payé par Ilyès', lignesBudget.find((i) => i
 const regle = lignesBudget
   .filter((i) => i.qui || (i.fromHotel && HOTELS.find((h) => h.id === i.fromHotel).paid))
   .reduce((s, i) => s + ligne(i), 0);
-ok('déjà réglé au total = 5 339 € (6 hôtels, vols, Nintendo, Junsei, teamLab)', regle, 5339);
+// 5 496 € le 22 octobre, avec l'excursion d'Arashiyama (157 €), payée par Ilyès.
+ok('déjà réglé au total = 5 496 € (6 hôtels, vols, Nintendo, Junsei, teamLab, Arashiyama)', regle, 5496);
 // 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
 ok('reste à payer = 2 683 €', total - regle, 2683);
 
