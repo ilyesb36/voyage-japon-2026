@@ -3615,3 +3615,14 @@
 @layer components {
   .qbloc__photo + .qbloc__nom { font-size: var(--t-lg); padding: var(--s-3) var(--s-4); }
 }
+@layer components {
+  /* Une rangée qui défile ne doit jamais élargir la page : la piste de grille et ses
+     parents restent à la largeur de l'écran (Safari iOS dimensionnait la piste sur
+     toute la rangée de cartes). */
+  .qblocs { grid-template-columns: minmax(0, 1fr); }
+  .qbloc, .qbloc__fam, .qbloc__defil, #manger, #evenements { min-width: 0; max-width: 100%; }
+}
+@layer components {
+  /* Filet : rien ne dépasse de la page (clip ne crée pas de zone de défilement, la barre des quartiers reste collante). */
+  main.villes { overflow-x: clip; }
+}
