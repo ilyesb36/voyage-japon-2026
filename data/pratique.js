@@ -16,6 +16,7 @@ export const AVANT = Object.freeze([
     when: 'Dans les jours avant le départ',
     url: 'https://services.digital.go.jp/en/visit-japan-web/',
     tag: 'Obligatoire en pratique',
+    etat: 'reserve',   // fait le 26 octobre 2026, un compte chacun ; garder une capture des deux QR codes
   },
   {
     id: 'esim',
