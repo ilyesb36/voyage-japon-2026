@@ -46,13 +46,14 @@ export const AVANT = Object.freeze([
     deadline: '2026-11-07',
     canal: 'en ligne',
     url: 'https://www.hakonenavi.jp/international/en/discount_passes/free_pass',
-    commentReserver: "NIKKO PASS WORLD HERITAGE AREA, 2 jours dès le 12 nov., 2 adultes : il est dans le panier Klook (16,90 € par personne) ; Klook demande le numéro de passeport de chacun pour payer. Bon papier à échanger au comptoir Tobu de la gare d'Asakusa, la veille ou le matin même. L'express Tobu est en option : sans lui, les trains rapides Tobu sont compris, avec un changement à Shimo-Imaichi (~2 h 10) ; avec lui, le supplément se prend sur Tobuchike (トブチケ) ou en gare. HAKONE FREEPASS : la ligne « Hakone Freepass » plus haut (Klook, vente ouverte vers le 25 oct.), ou au guichet Odakyu d'Odawara le 25. Le détail, les bus compris et le mode d'emploi : page Les passes.",
-    title: 'Nikko Pass : payer sur Klook (passeports)',
+    commentReserver: "Les deux pass s'achètent sur place, sans rien faire avant : jamais en rupture. NIKKO PASS WORLD HERITAGE AREA, 2 jours, 3 000 ¥ par adulte (même prix que Klook), au comptoir Tobu de la gare d'Asakusa la veille (11 nov.) ou le matin même, passeport en main. L'express Tobu est en option : sans lui, les trains rapides Tobu sont compris, avec un changement à Shimo-Imaichi (~2 h 10) ; avec lui, le supplément se prend sur Tobuchike (トブチケ) ou en gare. HAKONE FREEPASS « depuis Odawara », 3 jours, 6 400 ¥ par adulte, au guichet Odakyu de la gare d'Odawara en arrivant le 25 (Klook ne vend que le pass depuis Shinjuku, ~42,80 € par personne). Le détail, les bus compris et le mode d'emploi : page Les passes.",
+    title: 'Nikko Pass et Hakone Freepass : sur place',
     what: "Le Freepass de Hakone (3 jours depuis Odawara) couvre les transports de Hakone du 25 au 27 : bus, train de montagne, funiculaire, téléphérique, bateau pirate. Le Nikko Pass couvre le train Tokyo ↔ Nikko (supplément express en plus) et les bus des sanctuaires, pas celui du lac Chuzenji. Pas de JR Pass : sur cet itinéraire, les billets à l'unité reviennent moins cher.",
     page: 'passes.html',
     pageLabel: 'Les passes',
-    when: 'Avant de partir, passeports en main ; l’échange le 11 nov., à la gare Tobu d’Asakusa',
+    when: 'Le 11 nov. à Asakusa, le 25 nov. à Odawara',
     tag: null,
+    etat: 'reserve',   // rien à faire avant le départ : achat sur place
   },
   {
     id: 'medicaments',
@@ -70,9 +71,10 @@ export const AVANT = Object.freeze([
     id: 'assurance',
     deadline: '2026-10-25',
     title: 'Assurance santé',
-    what: "La carte européenne ne vaut rien au Japon : les soins sont payés d'avance, et une hospitalisation chiffre vite. Vérifier ce que couvre la carte bancaire — beaucoup de cartes premium incluent une couverture voyage, mais souvent limitée aux 90 premiers jours et sous conditions.",
+    what: "Couverts par Revolut Ultra (assurance voyage et frais médicaux, Chubb) : les vols ont été payés avec la carte, condition de la couverture. Avant de partir : dans l'app, rubrique Assurance, télécharger l'attestation et enregistrer le numéro d'assistance dans les contacts.",
     when: 'Avant de partir',
     tag: null,
+    etat: 'reserve',   // réglé le 26 octobre 2026 : Revolut Ultra
   },
   {
     id: 'precheckin-osaka',
@@ -103,7 +105,7 @@ export const AVANT = Object.freeze([
     when: 'Dans la valise',
     tag: null,
   },
-  {"id":"shinkansen-kanazawa","deadline":"2026-11-07","title":"Sièges shinkansen Tokyo → Kanazawa (sam 14 nov)","what":"Le Kagayaki du samedi 14 novembre n'a que des places réservées, et le Hokuriku shinkansen se remplit le week-end. La vente ouvre un mois avant sur Eki-Net (le 14 octobre pour le 14 novembre) : réserver avant de partir, billets à retirer à la gare de Tokyo. Prévenir Center Point si l'arrivée à Kanazawa passe 19h.","when":"Avant de partir — la vente est ouverte","tag":null,"commentReserver":""},
+  {"id":"shinkansen-kanazawa","deadline":"2026-11-07","title":"Shinkansen Tokyo → Kanazawa (sam 14 nov) : en gare, la veille","what":"Rien à réserver en ligne : acheter les places la veille, le 13, au distributeur ou au guichet JR (gare d'Ueno, à côté d'Asakusa, ou Tokyo), une fois l'heure de départ choisie. Le Kagayaki (2 h 30) n'a que des places réservées ; s'il est complet à l'heure voulue, le Hakutaka (~3 h) a des voitures sans réservation (faire la queue au départ de Tokyo pour être assis). Prévenir Center Point si l'arrivée à Kanazawa passe 19h.","when":"Le 13 novembre, en gare","tag":null,"commentReserver":"","etat":"reserve"},
 ]);
 
 // Chaque conseil a un identifiant, et UNE seule page, `place` : 'secours'
@@ -239,17 +241,7 @@ export const RESERVER = Object.freeze([
     deadline: '2026-10-28',
     forDate: '2026-11-11',
   },
-  {
-    id: 'hakone-freepass',
-    type: 'billet',
-    canal: 'en ligne',
-    url: 'https://www.klook.com/activity/821-hakone-transport-day-pass-tokyo/',
-    commentReserver: "Sur Klook : « Hakone », 3 jours, e-ticket (un billet par téléphone), 2 adultes, à partir du 25 novembre — environ 42,80 € par personne (le pass au départ de Shinjuku, le seul que vend Klook). La vente n'ouvre qu'un mois avant : le 25 novembre apparaît vers le 25 octobre. Sinon, au guichet Odakyu de la gare d'Odawara en arrivant le 25 (6 400 ¥ par personne, au départ d'Odawara).",
-    title: 'Hakone Freepass, 3 jours dès le 25 nov',
-    what: "Trains, bus, bateau et téléphérique de Hakone pendant les trois jours. Rien ne presse : il ne se vend jamais en rupture, seule la date d'ouverture de la vente compte.",
-    deadline: '2026-10-25',
-    forDate: '2026-11-25',
-  },
+
   {
     id: 'arashiyama-excursion',
     type: 'billet',
