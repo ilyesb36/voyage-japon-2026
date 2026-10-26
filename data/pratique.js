@@ -83,6 +83,7 @@ export const AVANT = Object.freeze([
     url: 'https://secure.booking.com/inbox.fr.html',
     hard: true,
     tag: 'Pas d’accès sinon',
+    etat: 'reserve',   // fait le 26 octobre 2026
   },
   {
     id: 'fiche-secours',
