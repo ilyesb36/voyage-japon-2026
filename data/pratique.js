@@ -21,7 +21,7 @@ export const AVANT = Object.freeze([
     id: 'esim',
     deadline: '2026-11-01',
     title: 'eSIM',
-    what: "À commander avant de partir et à activer une fois posés à Haneda. Compter 10–25 € pour 20 jours de data. Le wifi des konbini dépanne, mais pas pour naviguer.",
+    what: "Choisi le 26 oct. : Ilyès, eSIM Revolut « 20 Go, 30 jours » (22,49 €, dans l'app, plus les 3 Go par mois de l'offre Ultra) ; Mathilde, Ubigi « Japon 10 Go, 30 jours » (16,50 €, réseau KDDI) — surtout pas les forfaits « /mois », qui sont des abonnements. Installer en France, en wifi ; activer à l'atterrissage à Haneda (les 30 jours partent de la première connexion au Japon). Deux réseaux différents : chacun dépanne l'autre en partage de connexion.",
     when: 'Une semaine avant',
     tag: null,
   },
