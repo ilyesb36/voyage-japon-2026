@@ -287,84 +287,88 @@ export function quartiersOrdonnes(step) {
   return entries;
 }
 
-/** Un lien Maps non vide : la fiche de l'adresse, ou une recherche par nom. */
+/** Un lien Maps non vide : la fiche de l'adresse, ou une recherche par son nom japonais, à défaut par son nom. */
 export const lienMaps = (s) =>
-  (s && s.maps) || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(((s && s.name) || '') + ' Japon'));
+  (s && s.maps) || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(((s && (s.jp || s.name)) || '') + ' Japon'));
 
 // ---------------------------------------------------------------------------
 // Fragments HTML partagés (chaînes — la page les insère)
 // ---------------------------------------------------------------------------
 
-const PRIO_NOM = { ob: 'Obligatoire', top: 'Recommandé', symp: 'Sympa', niche: 'Niche' };
 const PRIO_ORDRE = ['ob', 'top', 'symp', 'niche'];
 const FAMILLE_NOM = { voir: 'À voir', faire: 'À faire', manger: 'À manger' };
 
-/**
- * Un bouton-adresse qui ouvre la fiche (la page écoute `[data-fiche]`).
- * `etoile` : l'adresse est un incontournable de l'étape, on la marque d'une étoile.
- */
-function spotBtn(s, { prio = false, etoile = false } = {}) {
-  return `<button class="qspot" type="button" data-fiche="${esc(s.id)}">`
-    + (etoile ? `<span class="etoile" role="img" aria-label="incontournable">★</span>` : '')
-    + `${esc(s.name)}`
-    + (prio ? `<span class="prio prio--${esc(s.priority)}">${PRIO_NOM[s.priority] || ''}</span>` : '')
+/** Les adresses d'un quartier pour une famille : l'essentiel d'abord, dans son ordre, puis par priorité. */
+function adressesRangees(q, fam) {
+  const ess = (q.essentiel && q.essentiel[fam]) || [];
+  return adressesDe(q.id)
+    .filter((x) => x.famille === fam)
+    .map((x) => x.spot)
+    .sort((a, b) => {
+      const ea = ess.indexOf(a.id), eb = ess.indexOf(b.id);
+      if (ea !== eb) return (ea < 0 ? Infinity : ea) - (eb < 0 ? Infinity : eb);
+      return PRIO_ORDRE.indexOf(a.priority) - PRIO_ORDRE.indexOf(b.priority);
+    });
+}
+
+/** Une carte photo (à voir, à faire) : la photo, sinon un aplat à l'initiale. Ouvre la fiche. */
+function cartePhoto(s, etoile) {
+  return `<button class="qph" type="button" data-fiche="${esc(s.id)}">`
+    + (s.img ? `<img class="qph__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">`
+      : `<span class="qph__img qph__img--nue" aria-hidden="true">${esc(s.name.trim()[0])}</span>`)
+    + `<span class="qph__nom">${etoile ? '<span class="etoile" role="img" aria-label="incontournable">★</span> ' : ''}${esc(s.name)}</span>`
+    + (s.blurb ? `<span class="qph__why">${esc(s.blurb)}</span>` : '')
     + `</button>`;
 }
 
-/** Une ligne d'essentiel (« À voir : … »), ou '' si rien de valide. `etoiles` : un Set d'ids d'adresses. */
-function ligneEssentiel(cle, ids, etoiles) {
-  const spots = (ids || []).map((id) => parId.get(id)).filter(Boolean);
-  if (!spots.length) return '';
-  return `<p class="qcard__ligne"><span class="qcard__fam">${FAMILLE_NOM[cle]}</span>`
-    + `<span class="qcard__spots">${spots.map((s) => spotBtn(s, { etoile: etoiles.has(s.id) })).join('')}</span></p>`;
-}
-
-/** Tout le quartier, rangé par famille puis priorité (ob, top, symp, niche). */
-function toutLeQuartier(qid) {
-  const items = adressesDe(qid);
-  if (!items.length) return '';
-  const blocs = ['voir', 'faire', 'manger'].map((fam) => {
-    const dedans = items
-      .filter((x) => x.famille === fam)
-      .sort((a, b) => PRIO_ORDRE.indexOf(a.spot.priority) - PRIO_ORDRE.indexOf(b.spot.priority));
-    if (!dedans.length) return '';
-    return `<div class="qall__fam"><span class="qcard__fam">${FAMILLE_NOM[fam]}</span>`
-      + `<span class="qcard__spots">${dedans.map((x) => spotBtn(x.spot, { prio: true })).join('')}</span></div>`;
-  }).filter(Boolean).join('');
-  return `<details class="qcard__all"><summary>Tout le quartier (${items.length})</summary>`
-    + `<div class="qall">${blocs}</div></details>`;
+/** Une table, sans photo : le nom, la spécialité, le prix, où c'est. */
+function ligneTable(s, etoile, hotel) {
+  const dist = distanceHotelTexte(s, hotel);
+  return `<li class="qtab">`
+    + `<button class="qtab__main" type="button" data-fiche="${esc(s.id)}">`
+    + `<b>${etoile ? '<span class="etoile" role="img" aria-label="incontournable">★</span> ' : ''}${esc(s.name)}</b>`
+    + (s.jp ? ` <span class="qtab__jp" lang="ja">${esc(s.jp)}</span>` : '')
+    + (s.blurb ? `<span class="qtab__spe">${esc(s.blurb)}</span>` : '')
+    + `<span class="qtab__meta">${[s.budget, dist && `${dist} de l'hôtel`].filter((x) => x && x !== 'variable').map(esc).join(' · ')}</span>`
+    + `</button>`
+    + `<a class="qtab__maps" href="${esc(lienMaps(s))}" target="_blank" rel="noopener">Maps</a>`
+    + fermeBadgeHTML(s)
+    + `</li>`;
 }
 
 /**
- * Une carte de quartier (chaîne HTML), repliée : le nom suffit à la reconnaître,
- * le reste s'ouvre au toucher. `entry` vient de quartiersOrdonnes ; `etoiles`
- * est un Set d'ids d'adresses à marquer d'une étoile (les incontournables de
- * l'étape) : la carte repliée en porte une aussi, si elle en cache au moins un.
- * La page insère, puis écoute `[data-fiche]` et les ancres de jour.
+ * Un quartier, ouvert (chaîne HTML) : sa photo, ce qu'il est, vos jours, puis
+ * À voir et À faire en cartes photo qui défilent, À manger en liste. `entry`
+ * vient de quartiersOrdonnes ; `etoiles` est un Set d'ids d'adresses à marquer
+ * (les incontournables de l'étape). La page écoute `[data-fiche]`.
  */
-export function carteQuartierHTML(entry, { etoiles = new Set() } = {}) {
+export function blocQuartierHTML(entry, { etoiles = new Set(), hotel = null } = {}) {
   const { q, jours } = entry;
-  const ess = q.essentiel || {};
-  const lignes = [
-    ligneEssentiel('voir', ess.voir, etoiles),
-    ligneEssentiel('faire', ess.faire, etoiles),
-    ligneEssentiel('manger', ess.manger, etoiles),
-  ].join('');
-  // Les étoiles se lisent dans l'essentiel, la carte repliée les annonce au même endroit.
-  const aUneEtoile = [ess.voir, ess.faire, ess.manger].some((ids) => (ids || []).some((id) => etoiles.has(id)));
+  const voir = adressesRangees(q, 'voir');
+  const faire = adressesRangees(q, 'faire');
+  const manger = adressesRangees(q, 'manger');
+  const photo = [...voir, ...faire].find((s) => s.img);
+  const rangee = (fam, spots) => (spots.length
+    ? `<div class="qbloc__fam"><h4>${FAMILLE_NOM[fam]} <span class="mut">${spots.length}</span></h4>`
+      + `<div class="qbloc__defil">${spots.map((s) => cartePhoto(s, etoiles.has(s.id))).join('')}</div></div>`
+    : '');
   return `
-  <details class="qcard" id="q-${esc(q.id)}" style="--c:var(--c-${esc(q.cityId)})">
-    <summary class="qcard__tete">
-      <h3 class="qcard__nom">${esc(q.nom)}${q.excursion ? ' <span class="qcard__exc">excursion</span>' : ''}${q.jp ? ` <span class="qcard__jp">${esc(q.jp)}</span>` : ''}</h3>
-      ${aUneEtoile ? '<span class="etoile qcard__star" role="img" aria-label="contient un incontournable">★</span>' : ''}
-    </summary>
-    ${q.gares?.length ? `<p class="qcard__acces"><span class="label">Accès</span> ${q.gares.map(esc).join(' · ')}</p>` : ''}
-    ${q.resume ? `<p class="qcard__resume">${esc(q.resume)}</p>` : ''}
-    ${q.moment ? `<p class="qcard__moment"><span class="label">Le bon moment</span> ${esc(q.moment)}</p>` : ''}
-    ${jours.length ? `<p class="qcard__jours"><span class="label">Au programme</span> ${jours.map((d) => `<a class="qcard__jour" href="jour.html?d=${d.n}">${esc(d.label)}</a>`).join(' · ')}</p>` : ''}
-    ${lignes ? `<div class="qcard__ess">${lignes}</div>` : ''}
-    ${toutLeQuartier(q.id)}
-  </details>`;
+  <section class="qbloc" id="q-${esc(q.id)}" style="--c:var(--c-${esc(q.cityId)})">
+    <div class="qbloc__tete">
+      ${photo ? `<img class="qbloc__photo" src="${esc(photo.img)}" alt="" loading="lazy" decoding="async">` : ''}
+      <h3 class="qbloc__nom">${esc(q.nom)}${q.excursion ? ' <span class="qcard__exc">excursion</span>' : ''}${q.jp ? ` <span class="qbloc__jp" lang="ja">${esc(q.jp)}</span>` : ''}</h3>
+    </div>
+    ${q.resume ? `<p class="qbloc__resume">${esc(q.resume)}</p>` : ''}
+    <dl class="qbloc__faits">
+      ${jours.length ? `<div><dt>Au programme</dt><dd>${jours.map((d) => `<a class="qcard__jour" href="jour.html?d=${d.n}">${esc(d.label)}</a>`).join(' · ')}</dd></div>` : ''}
+      ${q.gares?.length ? `<div><dt>Accès</dt><dd>${q.gares.map(esc).join(' · ')}</dd></div>` : ''}
+      ${q.moment ? `<div><dt>Le bon moment</dt><dd>${esc(q.moment)}</dd></div>` : ''}
+    </dl>
+    ${rangee('voir', voir)}
+    ${rangee('faire', faire)}
+    ${manger.length ? `<div class="qbloc__fam"><h4>${FAMILLE_NOM.manger} <span class="mut">${manger.length}</span></h4>`
+      + `<ul class="qbloc__tables">${manger.map((s) => ligneTable(s, etoiles.has(s.id), hotel)).join('')}</ul></div>` : ''}
+  </section>`;
 }
 
 /**

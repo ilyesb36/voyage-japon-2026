@@ -38,13 +38,18 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
   </section>
   <p class="hero__lede" id="lede"></p>
   <p class="mut villes__arb" id="arbitrage" hidden></p>
-  <section class="section" id="quartiers">
-    <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé. <span class="etoile">★</span> incontournable</p></div>
-    <div class="qcards" id="qcards"></div>
+  <section class="section" id="manger">
+    <div class="shead"><h2 id="manger-titre">Ce qu'on mange ici</h2><p>Les spécialités de la ville, à goûter.</p></div>
+    <div class="qbloc__defil" id="plats"></div>
   </section>
   <section class="section" id="evenements" hidden>
-    <div class="shead"><h2>Pendant votre séjour</h2><p>Fêtes et illuminations datées.</p></div>
-    <ol class="sel__list" id="events"></ol>
+    <div class="shead"><h2>Pendant votre séjour</h2><p>Fêtes et illuminations datées. <a href="itineraire.html?onglet=fetes">Toutes les fêtes du voyage</a></p></div>
+    <div class="qbloc__defil" id="events"></div>
+  </section>
+  <section class="section" id="quartiers">
+    <div class="shead"><h2>Les quartiers</h2><p>Ce qui se fait à pied, regroupé. <span class="etoile">★</span> incontournable</p></div>
+    <nav class="chipbar qnav" id="qnav" aria-label="Aller à un quartier"></nav>
+    <div class="qblocs" id="qcards"></div>
   </section>
   <section class="section" id="hotel"></section>
   <section class="section" id="types">
@@ -63,8 +68,9 @@ import { CITIES, STEPS, HOTELS } from './data/trip.js';
 import { TEMPLATES } from './data/days.js';
 import { SPOTS } from './data/spots.js';
 import { SELECTION } from './data/selection.js';
-import { mountChrome, esc, today, moment } from './app/ui.js';
-import { quartiersOrdonnes, carteQuartierHTML, maPosition, ouSuisJe, ficheExtra, quartierNomDeSpot } from './app/quartiers.js';
+import { DELICES } from './data/delices.js';
+import { mountChrome, esc, today, moment, formatDate } from './app/ui.js';
+import { quartiersOrdonnes, blocQuartierHTML, maPosition, ouSuisJe, ficheExtra } from './app/quartiers.js';
 
 // Une page par étape : on y trouve son quartier (« Où suis-je ? »), ce qu'il y a
 // à voir, à faire et à manger autour, et les fêtes datées. Les plats et les tables
@@ -107,33 +113,38 @@ q('lede').textContent = sel.intro || '';
 q('arbitrage').textContent = sel.arbitrage || '';
 q('arbitrage').hidden = !sel.arbitrage;
 
-// --- les fêtes et illuminations de l'étape ---------------------------------------
-function item(s, why) {
-  var nomQ = quartierNomDeSpot(s);
-  return '<li><button class="sel__item" type="button" data-id="' + esc(s.id) + '">' +
-    (s.img ? '<img class="sel__img" src="' + esc(s.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="sel__img sel__img--nue">' + esc(s.name.trim()[0]) + '</span>') +
-    '<span><b>' + esc(s.name) + '</b><span class="sel__why">' + esc(why || s.blurb || '') + '</span>' +
-    '<span class="sel__meta">' + [s.duration, s.budget, why ? null : s.when].filter(Boolean).map(esc).join(' · ') + '</span>' +
-    (nomQ ? '<span class="sel__q">' + esc(nomQ) + '</span>' : '') +
-    '</span></button></li>';
-}
+// --- les plats de la ville : la photo, sinon l'emoji (data/delices.js) -------------
+var plats = (DELICES.find(function (g) { return g.cityId === step.cityId; }) || { items: [] }).items;
+q('manger-titre').textContent = "Ce qu'on mange " + (city.id === 'hakone' ? 'à Hakone' : 'à ' + city.name);
+q('plats').innerHTML = plats.map(function (p) {
+  return '<div class="qph qph--plat">' +
+    (p.img ? '<img class="qph__img" src="' + esc(p.img) + '" alt="" loading="lazy" decoding="async">' : '<span class="qph__img qph__img--nue" aria-hidden="true">' + esc(p.e || '') + '</span>') +
+    '<span class="qph__nom">' + esc(p.n) + (p.jp ? ' <span class="qbloc__jp" lang="ja">' + esc(p.jp) + '</span>' : '') + '</span>' +
+    '<span class="qph__why">' + esc(p.d || '') + '</span></div>';
+}).join('') + '<a class="qph qph--plus" href="table.html?ville=' + esc(city.id) + '">Les bonnes tables de ' + esc(city.name) + ' →</a>';
+if (!plats.length) q('manger').hidden = true;
 
-// Une fête est rangée à l'étape que dit son champ `etape` (data/spots.js).
-// « à confirmer » si confirme === false.
-var evs = SPOTS.filter(function (s) { return s.kind === 'event' && s.etape === step.n; });
+// --- les fêtes de l'étape : le champ `etape` de data/spots.js ------------------------
+var court = function (iso) { return formatDate(iso, { weekday: true }).replace(/^(\S{3})\S*/, '$1.').replace(/ (novembre|décembre)/, function (m, p) { return ' ' + p.slice(0, 3) + '.'; }); };
+var evs = SPOTS.filter(function (s) { return s.kind === 'event' && s.etape === step.n; })
+  .sort(function (a, b) { return ((a.jours || [])[0] || a.du || '').localeCompare((b.jours || [])[0] || b.du || ''); });
 if (evs.length) {
   q('evenements').hidden = false;
   q('events').innerHTML = evs.map(function (s) {
-    var why = s.when || s.blurb || '';
-    if (s.confirme === false) why += (why ? ' · ' : '') + 'à confirmer';
-    return item(s, why);
+    return '<button class="qph qph--fete" type="button" data-fiche="' + esc(s.id) + '">' +
+      (s.img ? '<img class="qph__img" src="' + esc(s.img) + '" alt="" loading="lazy" decoding="async">' : '') +
+      '<span class="qph__date">' + esc((s.jours || []).map(court).join(' · ') || 'selon vos soirs') + '</span>' +
+      '<span class="qph__nom">' + esc(s.name) + (s.confirme === false ? ' <span class="fete__statut">à confirmer</span>' : '') + '</span>' +
+      '<span class="qph__why">' + esc([s.horaires, s.budget].filter(Boolean).join(' · ')) + '</span></button>';
   }).join('');
 }
 
-// --- les quartiers, dans l'ordre du programme ------------------------------------
+// --- les quartiers, ouverts, dans l'ordre du programme ---------------------------
 // Les incontournables de l'étape (SELECTION) ne sont plus une liste : ils portent une étoile.
 const etoiles = new Set(sel.picks.map((p) => p.id));
-q('qcards').innerHTML = quartiersOrdonnes(step).map((e) => carteQuartierHTML(e, { etoiles })).join('');
+const quartiers = quartiersOrdonnes(step);
+q('qnav').innerHTML = quartiers.map((e) => `<a class="chip" href="#q-${esc(e.q.id)}">${esc(e.q.nom.split(/ [:–] | et /)[0])}</a>`).join('');
+q('qcards').innerHTML = quartiers.map((e) => blocQuartierHTML(e, { etoiles, hotel })).join('');
 
 // --- l'hôtel de l'étape : une ligne, tout le reste est dans Secours --------------
 if (hotel) {
@@ -159,7 +170,6 @@ if (location.hash === '#table') location.replace(`table.html?ville=${city.id}`);
 const ouvrirQuartier = (id) => {
   const d = document.getElementById('q-' + id);
   if (!d) return false;
-  d.open = true;
   d.scrollIntoView({ behavior: 'instant', block: 'start' });
   return true;
 };
