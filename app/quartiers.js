@@ -311,11 +311,10 @@ function adressesRangees(q, fam) {
     });
 }
 
-/** Une carte photo (à voir, à faire) : la photo, sinon un aplat à l'initiale. Ouvre la fiche. */
+/** Une carte photo (à voir, à faire) : la photo, sinon le texte seul. Ouvre la fiche. */
 function cartePhoto(s, etoile) {
-  return `<button class="qph" type="button" data-fiche="${esc(s.id)}">`
-    + (s.img ? `<img class="qph__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">`
-      : `<span class="qph__img qph__img--nue" aria-hidden="true">${esc(s.name.trim()[0])}</span>`)
+  return `<button class="qph${s.img ? '' : ' qph--texte'}" type="button" data-fiche="${esc(s.id)}">`
+    + (s.img ? `<img class="qph__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : '')
     + `<span class="qph__nom">${etoile ? '<span class="etoile" role="img" aria-label="incontournable">★</span> ' : ''}${esc(s.name)}</span>`
     + (s.blurb ? `<span class="qph__why">${esc(s.blurb)}</span>` : '')
     + `</button>`;
