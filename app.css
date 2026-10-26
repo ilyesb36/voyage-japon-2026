@@ -3531,3 +3531,26 @@
     .valises__opt-cout { margin-left: 0; flex-basis: 100%; white-space: normal; }
   }
 }
+
+@layer components {
+  /* Le programme, onglet « Fêtes » : une liste datée par étape. */
+  .fetes__etape + .fetes__etape { margin-top: var(--s-6); }
+  .fetes__etape h3 { display: flex; align-items: baseline; gap: var(--s-2); flex-wrap: wrap; font-size: var(--t-lg); }
+  .fetes__etape h3 .data { font-size: var(--t-sm); font-weight: 400; }
+  .fetes__list { list-style: none; padding: 0; margin: var(--s-3) 0 0; display: grid; gap: var(--s-3); }
+  .fete { display: grid; grid-template-columns: 7.5rem 1fr; gap: var(--s-4); padding: var(--s-4);
+          border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: var(--r-m); background: var(--paper-2); }
+  .fete__jours { font-size: var(--t-sm); font-weight: 600; color: var(--c); }
+  .fete h4 { font-size: var(--t-md); font-weight: 600; }
+  .fete__statut { margin-left: var(--s-1); padding: 0 var(--s-2); border-radius: 99px; font-size: var(--t-xs); font-weight: 500;
+                  color: var(--mut); border: 1px solid var(--line-2); white-space: nowrap; }
+  .fete__why { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); }
+  .fete__kv { display: grid; grid-template-columns: auto 1fr; gap: var(--s-1) var(--s-3); margin-top: var(--s-3); font-size: var(--t-sm); }
+  .fete__kv dt { color: var(--mut); }
+  .fete__plus { margin-top: var(--s-3); font-size: var(--t-sm); }
+  .fete__plus summary { cursor: pointer; color: var(--ink-2); min-height: 44px; display: flex; align-items: center; }
+  .fete__plus p { color: var(--ink-2); line-height: 1.5; }
+  .fete__maps { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--t-sm); color: var(--acc); }
+  .fetes__note { margin-top: var(--s-5); font-size: var(--t-sm); }
+  @media (max-width: 640px) { .fete { grid-template-columns: 1fr; gap: var(--s-2); } }
+}

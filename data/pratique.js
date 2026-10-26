@@ -198,9 +198,10 @@ export const SURPLACE = Object.freeze([
 ]);
 
 // Normales de saison, en °C. Sert à savoir quoi mettre dans la valise,
-// pas à prévoir le temps qu'il fera. Revu le 19 oct. 2026 : la prévision à un mois de l'agence
-// météo japonaise (15 oct.) annonce un automne plus doux et plus pluvieux que la normale
-// (Kanto à Kinki) ; les normales restent le plancher, le conseil est dans « couches ».
+// pas à prévoir le temps qu'il fera. Revu le 26 oct. 2026 : la prévision à un mois de l'agence
+// météo japonaise (22 oct., jusqu'au 23 nov.) et la tendance à trois mois (20 oct.) annoncent
+// novembre plus doux (60–70 %) et plus pluvieux (50 %) que la normale, de Kanto à Kinki, avec
+// moins de soleil ; les normales restent le plancher, le conseil est dans « couches ».
 export const METEO = Object.freeze({
   tokyo:    { max: 17, min: 9,  note: 'doux en journée, frais le soir' },
   kanazawa: { max: 15, min: 8,  note: 'la côte de la mer du Japon : prévoir la pluie' },
@@ -270,20 +271,6 @@ export const RESERVER = Object.freeze([
     forDate: '2026-11-13',
     etat: 'reserve',
     heure: '17:30',
-  },
-  {
-    id: 'rikugien',
-    type: 'billet',
-    canal: 'en ligne',
-    url: 'https://www.tokyo-park.or.jp/event_search/special_nighttime_viewing_in_autumn.html',
-    commentReserver: "Illumination 2026 confirmée du 25 novembre au 6 décembre, 18:00 – 20:30, dernière entrée 19:30 (annonce du 3 septembre). En ligne via Asoview, 1 000 ¥, au plus tard la veille ; au guichet 1 200 ¥. La vente en ligne ouvre habituellement fin octobre. La page officielle montre encore l'édition 2024 : ne pas s'y fier pour les dates.",
-    check: true,
-    spotId: 'spot-rikugi-en',
-    title: 'Illumination de Rikugi-en',
-    what: "Le jardin ferme à 17h puis rouvre pour l'illumination, du 25 novembre au 6 décembre, avec un billet séparé — moins cher en ligne.",
-    deadline: '2026-11-15',
-    forDate: '2026-12-01',
-    check: true,
   },
   {"id":"the-sky","type":"table","canal":"en ligne","url":"https://www.tablecheck.com/en/shops/newotani-tokyo-restaurant-sky/reserve","commentReserver":"Réservé sur TableCheck : buffet du soir en semaine, tarif web (14 500 ¥ par personne, plus 15 % de service), côté fenêtre. Annulation après 17h la veille facturée à 100 %.","spotId":"spot-view-dining-the-sky","title":"VIEW & DINING THE SKY, dîner du 10 nov","what":"Le buffet tournant du 17e étage du New Otani : un tour complet de Tokyo de nuit pendant le repas, le deuxième soir.","deadline":"2026-10-30","forDate":"2026-11-10","etat":"reserve","heure":"18:00"},
   {"id":"tokyo-ten","type":"table","canal":"en ligne","url":"https://www.tablecheck.com/en/shops/sushitokyo-ten-shinjuku/reserve","commentReserver":"Réservé sur TableCheck : omakase du midi (5 500 ¥ par personne), au comptoir, table de 90 minutes.","spotId":"spot-sushi-tokyo-ten","title":"Sushi Tokyo Ten, omakase du midi","what":"L'omakase du midi au comptoir de NEWoMan Shinjuku, sur la route entre Kitanomaru et Gotoku-ji.","deadline":"2026-10-30","forDate":"2026-11-30","etat":"reserve","heure":"12:30"},

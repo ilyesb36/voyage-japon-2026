@@ -54,18 +54,21 @@ const ajouts = SPOTS.filter((s) => s.source === 'claude');
 // plus les 94 « Secrets de Tokyo » saisis à la main le 28 septembre (source 'secrets') ;
 // le 15 octobre 2026, 24 fausses adresses retirées : 23 plats ou produits génériques
 // rangés comme des adresses (leur plat vit dans data/delices.js) et « Faire suivre les
-// valises », qui donnait un faux prix.
-ok('290 spots d\'origine (236 − 16 retirés + 94 Secrets de Tokyo − 24 fausses adresses)', originaux.length, 290);
+// valises », qui donnait un faux prix ; le 26 octobre, le Kabuki au Shochikuza (salle fermée
+// le 26 mai 2026, avant démolition).
+ok('289 spots d\'origine (236 − 16 retirés + 94 Secrets de Tokyo − 24 fausses adresses − 1 salle fermée)', originaux.length, 289);
 // Les conseils de l'amie guide sont intouchables : ce compte ne bouge que par un
 // retrait volontaire, daté.
 // 20 depuis le 15 octobre 2026 : deux fiches en sont sorties, « Faire suivre les valises »
 // (faux prix) et « Yuba de Nikko » (un plat, désormais dans data/delices.js).
-ok('20 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 20);
+// 19 depuis le 26 octobre 2026 : le Shochikuza d'Osaka a fermé le 26 mai 2026.
+ok('19 conseils de l\'amie guide', originaux.filter((s) => s.source === 'guide').length, 19);
 // 57 au premier lot, 16 au second (cafés, bars, disquaires, ouvertures
 // 2025-2026), 13 au troisième (les lieux insolites, catégorie t6) = 99 ;
 // le 28 septembre, 13 retirées et 14 ajoutées à la main ; le 14 octobre,
-// 31 tables (tools/lib/spots-tables.json) et 11 événements datés.
-ok('143 idées ajoutées (99 − 13 + 14 + 31 tables + 11 événements + 1 à Uji)', ajouts.length, 143);
+// 31 tables (tools/lib/spots-tables.json) et 11 événements datés ; le 26 octobre, 5 fêtes
+// ajoutées (Kitano, Shōren-in, Shinnō-sai, Azabudai, Yebisu) et le Tori-no-ichi retiré (hors séjour).
+ok('147 idées ajoutées (99 − 13 + 14 + 31 tables + 11 événements + 1 à Uji + 5 fêtes − 1)', ajouts.length, 147);
 // Le premier lot venait de Commons, qui couvre bien les temples et les jardins.
 // Le second lot est fait de cafés de spécialité, de bars et de disquaires : ils
 // ne sont pas sur Commons, et un garde-fou anti-homonyme refuse d'illustrer
@@ -134,9 +137,10 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 // le 19 octobre aussi, les tables ramenées à trois (Mitsukawa, The Sky le 10 nov. au soir, Tokyo Ten
 // le 30 nov. à midi), à leur prix réservé : −372 € de tables retirées, +129 € et −40 € (−283 €).
 // le 22 octobre, l'excursion d'Arashiyama du 21 nov. (train Sagano + bateau Hozu, 157 €, Klook) :
-// total impair, chacun doit 4 089,5 €, la page écrit « ≈ 4 090 € ».
-ok('total du voyage = 8 179 €', total, 8179);
-ok('par personne = 4 089,5 €', total / 2, 4089.5);
+// total impair, chacun doit 4 089,5 €, la page écrit « ≈ 4 090 € » ;
+// le 26 octobre, Rikugi-en acheté au guichet (1 200 ¥ au lieu de 1 000 ¥ en ligne, +2 €).
+ok('total du voyage = 8 181 €', total, 8181);
+ok('par personne = 4 090,5 €', total / 2, 4090.5);
 
 // Le budget donne son taux : les équivalents en yens de la page, et les montants `fix` en yens
 // arrondis en euros, s'y règlent. La ligne des valises suit la page Valises (une seule version de
@@ -197,7 +201,7 @@ const regle = lignesBudget
 // 5 496 € le 22 octobre, avec l'excursion d'Arashiyama (157 €), payée par Ilyès.
 ok('déjà réglé au total = 5 496 € (6 hôtels, vols, Nintendo, Junsei, teamLab, Arashiyama)', regle, 5496);
 // 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
-ok('reste à payer = 2 683 €', total - regle, 2683);
+ok('reste à payer = 2 685 €', total - regle, 2685);
 
 // Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
 // réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
@@ -206,11 +210,12 @@ const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.f
 const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 // 785 € le 16 octobre ; 406 € le 19 octobre : Shibuya Sky et Rikugi-en (50 €), et les trois tables
-// réservées, payées au restaurant (356 €).
-ok('à réserver avant le départ = 406 € (2 billets : 50 €, 3 tables : 356 €)', avantLeDepart, 406);
+// réservées, payées au restaurant (356 €) ; 395 € le 26 octobre, Rikugi-en passé au guichet.
+ok('à réserver avant le départ = 395 € (Shibuya Sky : 39 €, 3 tables : 356 €)', avantLeDepart, 395);
 // 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises ;
-// 2 277 € le 19 octobre : le Nikko Pass (34 €) et l'express Tobu (42 €) sont des lignes à part.
-ok('sur place = 2 277 € (2 passes, express Tobu, trains, valises, repas et sorties)', surPlace, 2277);
+// 2 277 € le 19 octobre : le Nikko Pass (34 €) et l'express Tobu (42 €) sont des lignes à part ;
+// 2 290 € le 26 octobre, avec Rikugi-en au guichet (13 €).
+ok('sur place = 2 290 € (2 passes, express Tobu, trains, valises, Rikugi-en, repas et sorties)', surPlace, 2290);
 ok('payé + à réserver + sur place = le total', regle + avantLeDepart + surPlace, total);
 
 assert('la date limite d\'annulation du ryokan est connue',

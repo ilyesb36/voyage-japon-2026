@@ -18,7 +18,7 @@
 // Une adresse sans lieu fixe (un plat générique, un service) n'y figure pas.
 
 export const QUARTIERS = Object.freeze([
-  {"id":"tokyo-asakusa","cityId":"tokyo","nom":"Asakusa – Kappabashi – Skytree","jp":"浅草・かっぱ橋・スカイツリー","ll":[35.71213,139.79485],"rayon":1450,"gares":["Asakusa (métro Ginza · Tobu)","Tokyo Skytree (Tobu Skytree line)","Kuramae (Ōedo)"],"resume":"Le vieux Tokyo des pèlerins et des artisans, de la porte du Sensō-ji à la rue des couteaux, face à la Skytree.","moment":"à l'aube pour le temple désert, puis la Skytree au coucher du soleil","excursion":false,"essentiel":{"voir":["spot-senso-ji","spot-skytree","spot-yokoamicho-et-le-memorial-de-tokyo"],"faire":["spot-kappabashi","spot-kama-asa","spot-ev-tori-no-ichi"],"manger":["spot-tempura-daikokuya","spot-onigiri-yadoroku"]}},
+  {"id":"tokyo-asakusa","cityId":"tokyo","nom":"Asakusa – Kappabashi – Skytree","jp":"浅草・かっぱ橋・スカイツリー","ll":[35.71213,139.79485],"rayon":1450,"gares":["Asakusa (métro Ginza · Tobu)","Tokyo Skytree (Tobu Skytree line)","Kuramae (Ōedo)"],"resume":"Le vieux Tokyo des pèlerins et des artisans, de la porte du Sensō-ji à la rue des couteaux, face à la Skytree.","moment":"à l'aube pour le temple désert, puis la Skytree au coucher du soleil","excursion":false,"essentiel":{"voir":["spot-senso-ji","spot-skytree","spot-yokoamicho-et-le-memorial-de-tokyo"],"faire":["spot-kappabashi","spot-kama-asa"],"manger":["spot-tempura-daikokuya","spot-onigiri-yadoroku"]}},
   {"id":"tokyo-ueno-yanaka","cityId":"tokyo","nom":"Ueno – Yanaka – Nezu","jp":"上野・谷中・根津","ll":[35.72098,139.77302],"rayon":1750,"gares":["Nippori (Yamanote)","Sendagi (Chiyoda)","Ueno (Yamanote)"],"resume":"Le Tokyo d'avant-guerre épargné par les bombes : ruelles de bois, temples de quartier, chats et salons de thé.","moment":"en fin d'après-midi, quand la lumière descend sur les ruelles","excursion":false,"essentiel":{"voir":["spot-yanaka","spot-kyu-yasuda"],"faire":["spot-mominoki-house","spot-fuurin-shinohara","spot-kigaku-an"],"manger":["spot-amane-saryo","spot-rebon-kaisaiyu"]}},
   {"id":"tokyo-akihabara","cityId":"tokyo","nom":"Akihabara – Kanda – Jinbōchō","jp":"秋葉原・神田・神保町","ll":[35.6989,139.76993],"rayon":1160,"gares":["Akihabara (Yamanote · Hibiya)","Jimbōchō (Hanzōmon · Mita)"],"resume":"La ville électrique de l'otaku, le sanctuaire des geeks et, juste à côté, le quartier des libraires anciens.","moment":"l'après-midi et le début de soirée, néons allumés","excursion":false,"essentiel":{"voir":["spot-kanda-myojin","spot-yanagimori-jinja"],"faire":["spot-akihabara","spot-mandarake","spot-super-potato","spot-an-tokyo"],"manger":["spot-kufuku","spot-osuzunohimo"]}},
   {"id":"tokyo-marunouchi","cityId":"tokyo","nom":"Marunouchi – Gare de Tokyo – Nihonbashi","jp":"丸の内・東京駅・日本橋","ll":[35.68402,139.76895],"rayon":1254,"gares":["Tōkyō (Yamanote · Marunouchi)","Nihonbashi (Ginza · Tōzai)","Ōtemachi (5 lignes)"],"resume":"Les douves du palais, la façade de brique de la gare et les comptoirs historiques de Nihonbashi.","moment":"en journée pour les jardins, la gare illuminée à la nuit","excursion":false,"essentiel":{"voir":["spot-palais-imperial","spot-gare-de-tokyo-marunouchi","spot-masakado-zuka-le-tertre-de-la-tete"],"faire":["spot-donguri-kyowakoku","spot-tokyo-character-street","spot-tokyo-dream-park"],"manger":["spot-tsujihan","spot-sushi-koike","spot-jyanome-sushi"]}},
@@ -240,7 +240,6 @@ export const OU = Object.freeze({
   "spot-hokkyokusei": [34.66963, 135.49873, "osaka-minami", "sure", "manger"],
   "spot-hozen-ji-yokocho": [34.66818, 135.50267, "osaka-minami", "sure", "voir"],
   "spot-imai": [34.66863, 135.50271, "osaka-minami", "sure", "manger"],
-  "spot-kabuki-au-shochikuza": [34.66845, 135.50091, "osaka-minami", "sure", "faire"],
   "spot-le-resto-file-d-attente": [34.66806, 135.50079, "osaka-minami", "sure", "manger"],
   "spot-lilo-coffee-roasters": [34.67406, 135.49822, "osaka-minami", "sure", "manger"],
   "spot-marche-kuromon": [34.66525, 135.50629, "osaka-minami", "sure", "manger"],
@@ -290,7 +289,6 @@ export const OU = Object.freeze({
   "spot-8-cups": [35.71657, 139.78795, "tokyo-asakusa", "sure", "manger"],
   "spot-benitsuru": [35.71186, 139.79175, "tokyo-asakusa", "sure", "manger"],
   "spot-bevandaria": [35.71340, 139.79553, "tokyo-asakusa", "approx", "manger"],
-  "spot-ev-tori-no-ichi": [35.72252, 139.79169, "tokyo-asakusa", "sure", "faire"],
   "spot-faux-plats-en-cire": [35.71489, 139.78910, "tokyo-asakusa", "sure", "faire"],
   "spot-kama-asa": [35.71386, 139.78864, "tokyo-asakusa", "sure", "faire"],
   "spot-kappabashi": [35.71399, 139.78855, "tokyo-asakusa", "sure", "faire"],
@@ -415,6 +413,11 @@ export const OU = Object.freeze({
   "spot-momotose": [35.74900, 139.80500, "tokyo-nordest", "approx", "manger"],
   "spot-azabudai-hills": [35.66147, 139.74083, "tokyo-roppongi", "sure", "faire"],
   "spot-ev-midtown-xmas": [35.66650, 139.73090, "tokyo-roppongi", "sure", "faire"],
+  "spot-ev-kitano-momiji-night": [35.03048, 135.73492, "kyoto-nord-ouest", "sure", "voir"],
+  "spot-ev-shorenin-night": [35.00796, 135.78275, "kyoto-gion", "sure", "voir"],
+  "spot-ev-shinnosai": [34.69020, 135.50630, "osaka-kita", "approx", "faire"],
+  "spot-ev-azabudai-xmas": [35.66147, 139.74083, "tokyo-roppongi", "sure", "faire"],
+  "spot-ev-yebisu-baccarat": [35.64210, 139.71370, "tokyo-meguro", "approx", "voir"],
   "spot-ev-roppongi-xmas": [35.65910, 139.72940, "tokyo-roppongi", "sure", "faire"],
   "spot-kintsuta": [35.66300, 139.73100, "tokyo-roppongi", "approx", "manger"],
   "spot-shoun-ji": [35.64972, 139.71857, "tokyo-roppongi", "sure", "faire"],

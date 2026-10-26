@@ -79,7 +79,7 @@ export const SELECTION = Object.freeze([
   "cityId": "kyoto",
   "title": "Kyoto",
   "dates": "16 → 22 nov",
-  "intro": "Six nuits, la plus longue étape. Les érables seront en train de virer plutôt qu'au sommet (pic officiel annoncé le 11 décembre) : on joue donc les lieux en hauteur, les jardins frais et les illuminations du soir.",
+  "intro": "Six nuits, la plus longue étape. Les érables virent pendant la semaine et les grands temples culminent juste après le départ (22–24 nov.) ; Arashiyama, le 21, est à l'entrée du pic : on joue les jardins qui rougissent tôt et les illuminations du soir.",
   "arbitrage": "Le Nintendo Museum du 18 est déjà payé : Uji le matin, le musée l'après-midi, sur la même ligne. Arashiyama glisse au 21, jour du marché du Tō-ji.",
   "picks": [
    {
@@ -201,7 +201,7 @@ export const SELECTION = Object.freeze([
   "cityId": "tokyo",
   "title": "Tokyo · Ikebukuro",
   "dates": "27 nov → 2 déc",
-  "intro": "Le retour à Tokyo tombe au bon moment : les érables de la ville rougissent vers le 29 et les ginkgos dorent vers le 26. Yokohama le 28, Kamakura le 29.",
+  "intro": "Le retour à Tokyo tombe au bon moment : les ginkgos dorent vers le 26–29, en plein pic, et les érables de la ville rougissent juste derrière (Rikugi-en dès le 3 déc.). Yokohama le 28, Kamakura le 29.",
   "arbitrage": "La fin de séjour est aussi le moment des restos plus fancy, tous sous 100 € par personne.",
   "picks": [
    {

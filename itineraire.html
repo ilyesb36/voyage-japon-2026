@@ -44,6 +44,15 @@ try { if (localStorage.getItem('jp2026_theme') === 'dark')
     <div id="itin"></div>
   </section>
 
+  <section class="section">
+    <div class="shead disc">
+      <h2>Les fêtes</h2>
+      <p>Illuminations, matsuri, marchés de Noël : tout ce qui a lieu pendant le séjour, étape par étape.</p>
+      <span class="shead__meta" id="fetes-meta"></span>
+    </div>
+    <div id="fetes"></div>
+  </section>
+
   <!-- Les plats et les bonnes tables ont leur page : une seule place pour manger. -->
   <p class="more"><a href="table.html">Les spécialités et les bonnes tables, ville par ville</a></p>
 </main>
@@ -91,6 +100,7 @@ q('tpl-filter').addEventListener('click', (e) => {
   q('tpl-filter').querySelectorAll('.chip').forEach((c) =>
     c.setAttribute('aria-pressed', String(c === b)));
   paintTemplates();
+
 });
 
 function paintTemplates() {
@@ -119,6 +129,42 @@ function paintTemplates() {
   q('tpl-meta').textContent = `${list.length} sur ${TEMPLATES.length}`;
 }
 paintTemplates();
+
+// --- les fêtes : une seule liste pour tout le séjour ----------------------------
+// Les fiches `kind: 'event'` de data/spots.js, rangées à l'étape de leur champ
+// `etape`, puis par le premier jour où elles vous tombent (`jours`).
+const fetes = SPOTS.filter((s) => s.kind === 'event');
+const mois = (iso) => formatDate(iso).replace(/ (novembre|décembre|janvier|février|octobre|septembre)/, (m, p) => ' ' + p.slice(0, 3) + '.');
+const court = (iso) => mois(iso).replace(/^/, formatDate(iso, { weekday: true }).split(' ')[0].slice(0, 3) + '. ');
+const periode = (s) => (s.du && s.au ? (s.du === s.au ? formatDate(s.du) : `${formatDate(s.du)} → ${formatDate(s.au)}`) : '');
+const premier = (s) => (s.jours && s.jours[0]) || s.du || '9999';
+q('fetes').innerHTML = STEPS.map((step) => {
+  const c = CITIES[step.cityId];
+  const evs = fetes.filter((s) => s.etape === step.n).sort((a, b) => premier(a).localeCompare(premier(b)));
+  if (!evs.length) return '';
+  return `
+  <div class="fetes__etape" style="--c:var(--c-${c.id})">
+    <h3><span class="chip__dot" style="background:var(--c-${c.id})"></span>${esc(c.name)}${step.area ? ` <span class="mut">· ${esc(step.area)}</span>` : ''} <span class="mut data">${esc(mois(step.from))} → ${esc(mois(step.to))}</span></h3>
+    <ul class="fetes__list">${evs.map((s) => `
+      <li class="fete">
+        <p class="fete__jours data">${(s.jours || []).map(court).map(esc).join(' · ') || 'selon vos soirs'}</p>
+        <div>
+          <h4>${esc(s.name)}${s.confirme === false ? ' <span class="fete__statut">à confirmer</span>' : ''}</h4>
+          <p class="fete__why">${esc(s.blurb || '')}</p>
+          <dl class="fete__kv">
+            ${periode(s) ? `<dt>Dates</dt><dd>${esc(periode(s))}</dd>` : ''}
+            ${s.horaires ? `<dt>Horaires</dt><dd>${esc(s.horaires)}</dd>` : ''}
+            ${s.budget ? `<dt>Prix</dt><dd>${esc(s.budget)}</dd>` : ''}
+            ${s.resa ? `<dt>Billet</dt><dd>${esc(s.resa)}</dd>` : ''}
+          </dl>
+          ${s.lore ? `<details class="fete__plus"><summary>En savoir plus</summary><p>${esc(s.lore)}</p></details>` : ''}
+          ${s.maps ? `<a class="fete__maps" href="${esc(s.maps)}" target="_blank" rel="noopener">Ouvrir dans Maps</a>` : ''}
+        </div>
+      </li>`).join('')}
+    </ul>
+  </div>`;
+}).join('') + `<p class="mut fetes__note">Lundi 23 novembre : jour férié (Kinrō Kansha no Hi), long week-end du 21 au 23 — plus de monde partout, à Kyoto comme à Osaka.</p>`;
+q('fetes-meta').textContent = `${fetes.length} fêtes · ${fetes.filter((s) => s.confirme === false).length} à confirmer`;
 
 // --- navigation par étape -----------------------------------------------------
 q('daynav').innerHTML = STEPS.map((s) => {
@@ -256,7 +302,7 @@ initProgressBar();
 
 <script>
 (function(){
-  var CFG=[["jours","Les jours",["Les jours"]],["types","Journées type",["Les journées type"]]];
+  var CFG=[["jours","Les jours",["Les jours"]],["fetes","Fêtes",["Les fêtes"]],["types","Journées type",["Les journées type"]]];
   var secs=[].slice.call(document.querySelectorAll("main > section.section"));
   var h=function(s){var x=s.querySelector("h2");return x?x.textContent.trim():"";};
   var groups=CFG.map(function(c){return {id:c[0],label:c[1],els:secs.filter(function(s){return c[2].indexOf(h(s))>-1;})};}).filter(function(g){return g.els.length;});

@@ -5,8 +5,9 @@
 // Hakone tôt parce qu'on y est en altitude, Kyoto et Tokyo tard. On superpose
 // les dates du séjour à ces fenêtres pour le voir d'un coup d'œil.
 //
-// Les fenêtres suivent la prévision 2026 du Japan Meteorological Corporation
-// (1re édition du 2 septembre), élargies autour du pic annoncé par ville.
+// Les fenêtres suivent les prévisions par lieu de Weathernews (pages du 15 au 26 oct. 2026),
+// croisées avec tenki.jp (日本気象協会, édition du 14 oct.) et le Japan Meteorological
+// Corporation (2e édition du 1er oct.) : du début du pic au début de la chute des feuilles.
 
 import { CITIES, STEPS, TRIP } from '../data/trip.js';
 import { daysBetween, formatDate } from './ui.js';
@@ -23,9 +24,10 @@ export function momijiVerdict(step) {
 
   if (days >= stay) return { state: 'plein', days, text: 'en plein pic' };
   if (days > 0) return { state: 'partiel', days, text: `${days} j dans le pic` };
-  if (day(step.to) < day(p0)) {
+  // Un départ le jour même où le pic commence est encore « trop tôt » (Kyoto en a été un).
+  if (day(step.to) <= day(p0)) {
     const early = Math.round((day(p0) - day(step.to)) / 86400000);
-    return { state: 'tot', days: 0, text: `${early} j trop tôt` };
+    return { state: 'tot', days: 0, text: early ? `${early} j trop tôt` : 'le pic arrive au départ' };
   }
   const late = Math.round((day(step.from) - day(p1)) / 86400000);
   return { state: 'tard', days: 0, text: `${late} j trop tard` };
@@ -92,11 +94,14 @@ export function renderMomijiBand(el) {
         <span class="momiji__key momiji__key--stay"></span> vos dates sur place
       </p>
       <p class="momiji__note">
-        Calé sur la prévision officielle 2026 du Japan Meteorological Corporation (2 septembre), confirmée par Weathernews le 8 octobre : l'été chaud retarde les couleurs, partout.
-        Tokyo rougit vers le 29 novembre et ses ginkgos dorent vers le 26 — votre second séjour tombe pile dessus.
-        Kyoto est annoncé tard (pic officiel le 11 décembre) : du 16 au 22 novembre, les érables seront en train de virer, pas au sommet —
-        privilégiez les lieux frais et en hauteur (Takao, Ohara, Kurama, les collines d'Arashiyama) et les illuminations du soir.
-        Hakone, en altitude, arrive en fin de saison au bord du lac. Prévision réactualisée par l'institut chaque mois : à recontrôler début novembre.
+        Prévisions par lieu de Weathernews et tenki.jp, relevées le 26 octobre 2026 : une saison dans la normale, à peine en retard.
+        Nikkō le 12 : en plein pic en ville (Tōshōgū, Rinnō-ji), déjà en chute au lac Chūzenji et à Irohazaka.
+        Kanazawa : les couleurs commencent, Kenroku-en culmine vers le 20.
+        Kyoto du 16 au 22 : les érables virent, les grands temples culminent juste après votre départ (22–24 nov.) ;
+        Arashiyama le 21 est à l'entrée du pic (Tenryū-ji dès le 18) — et les illuminations du soir font le reste.
+        Osaka et Nara : en plein pic. Hakone : en plein pic à Gōra, en fin de saison au bord du lac.
+        Tokyo, second séjour : les ginkgos de Gaien au sommet (dès le 26–29), Rikugi-en juste avant le sien (dès le 3 déc.) ; Kamakura le 29, presque au pic.
+        Prochaine mise à jour des prévisions début novembre.
       </p>
     </div>`;
 }
