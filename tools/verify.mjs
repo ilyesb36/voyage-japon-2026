@@ -138,9 +138,10 @@ assert('chaque ligne dynamique a un multiplicateur connu',
 // le 30 nov. à midi), à leur prix réservé : −372 € de tables retirées, +129 € et −40 € (−283 €).
 // le 22 octobre, l'excursion d'Arashiyama du 21 nov. (train Sagano + bateau Hozu, 157 €, Klook) :
 // total impair, chacun doit 4 089,5 €, la page écrit « ≈ 4 090 € » ;
-// le 26 octobre, Rikugi-en acheté au guichet (1 200 ¥ au lieu de 1 000 ¥ en ligne, +2 €).
-ok('total du voyage = 8 181 €', total, 8181);
-ok('par personne = 4 090,5 €', total / 2, 4090.5);
+// le 26 octobre, Rikugi-en acheté au guichet (1 200 ¥ au lieu de 1 000 ¥ en ligne, +2 €) ;
+// le 29 octobre, Shibuya Sky retiré du voyage (−39 €).
+ok('total du voyage = 8 142 €', total, 8142);
+ok('par personne = 4 071 €', total / 2, 4071);
 
 // Le budget donne son taux : les équivalents en yens de la page, et les montants `fix` en yens
 // arrondis en euros, s'y règlent. La ligne des valises suit la page Valises (une seule version de
@@ -201,7 +202,7 @@ const regle = lignesBudget
 // 5 496 € le 22 octobre, avec l'excursion d'Arashiyama (157 €), payée par Ilyès.
 ok('déjà réglé au total = 5 496 € (6 hôtels, vols, Nintendo, Junsei, teamLab, Arashiyama)', regle, 5496);
 // 3 009 € le 15 octobre ; 3 062 € le 16 octobre, avec les valises (+53 €) ; 2 683 € le 19 octobre.
-ok('reste à payer = 2 685 €', total - regle, 2685);
+ok('reste à payer = 2 646 €', total - regle, 2646);
 
 // Ce reste se range comme la page Budget le range : les billets et les tables non réglés sont « à
 // réserver avant le départ », tout le reste est « sur place ». Les trois parts font le total.
@@ -210,8 +211,9 @@ const nonRegles = lignesBudget.filter((i) => !(i.qui || (i.fromHotel && HOTELS.f
 const avantLeDepart = nonRegles.filter((i) => ['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 const surPlace = nonRegles.filter((i) => !['billets', 'tables'].includes(catDe.get(i.key))).reduce((s, i) => s + ligne(i), 0);
 // 785 € le 16 octobre ; 406 € le 19 octobre : Shibuya Sky et Rikugi-en (50 €), et les trois tables
-// réservées, payées au restaurant (356 €) ; 395 € le 26 octobre, Rikugi-en passé au guichet.
-ok('à réserver avant le départ = 395 € (Shibuya Sky : 39 €, 3 tables : 356 €)', avantLeDepart, 395);
+// réservées, payées au restaurant (356 €) ; 395 € le 26 octobre, Rikugi-en passé au guichet ;
+// 356 € le 29 octobre, Shibuya Sky retiré : il ne reste que les trois tables.
+ok('à réserver avant le départ = 356 € (3 tables payées au restaurant)', avantLeDepart, 356);
 // 2 224 € le 15 octobre (2 passes, trains, repas et sorties) ; 2 277 € le 16 octobre, avec les valises ;
 // 2 277 € le 19 octobre : le Nikko Pass (34 €) et l'express Tobu (42 €) sont des lignes à part ;
 // 2 290 € le 26 octobre, avec Rikugi-en au guichet (13 €).

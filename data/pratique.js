@@ -230,19 +230,6 @@ export const METEO = Object.freeze({
 // pas rester dans une liste de choses à faire, sinon la liste ne se lit plus.
 
 export const RESERVER = Object.freeze([
-  {
-    id: 'shibuya-sky',
-    type: 'billet',
-    canal: 'en ligne',
-    url: 'https://www.shibuya-scramble-square.com/sky/en/ticket/',
-    commentReserver: "Sur Klook (dès 16,85 €) ou la billetterie officielle, date et créneau horodatés, nom du passeport sur le billet (contrôles au hasard). La vente ouvre deux semaines avant, à minuit heure du Japon : pour le 11 novembre, le mardi 27 octobre à 16:00 heure de Paris. Viser 15:40 ou 16:00 (coucher vers 16:35) ; les créneaux du couchant partent en quelques minutes — être connecté avant 16:00. Sinon 17:00–17:20 : la ville qui s'allume vaut le couchant. Revérifié le 19 octobre 2026.",
-    check: true,
-    spotId: 'spot-shibuya-sky',
-    title: 'Shibuya Sky, créneau coucher de soleil',
-    what: "Les créneaux du couchant partent des semaines à l'avance, et c'est la tranche la plus chère. Coucher de soleil vers 16h35 à la mi-novembre.",
-    deadline: '2026-10-28',
-    forDate: '2026-11-11',
-  },
 
   {
     id: 'arashiyama-excursion',

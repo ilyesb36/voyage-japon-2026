@@ -27,10 +27,6 @@ export const SELECTION = Object.freeze([
     "why": "Le croisement vu d'en bas, en plein flux, puis de l'étage du Starbucks — c'est la carte postale du voyage."
    },
    {
-    "id": "spot-shibuya-sky",
-    "why": "Le même quartier du 47e étage au coucher du soleil. Billet daté à prendre dès l'ouverture de la vente, vers le 14 octobre."
-   },
-   {
     "id": "spot-teamlab-planets",
     "why": "L'expérience immersive les pieds dans l'eau. Créneau horodaté à réserver pour le soir du 13 novembre, vers 18h30, après le coucher du soleil à Yanaka."
    },

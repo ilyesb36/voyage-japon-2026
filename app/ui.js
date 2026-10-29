@@ -24,17 +24,16 @@ export function moment() {
 }
 
 const PAGES_PAR_MOMENT = {
-  // Avant : préparer. Une entrée par besoin, six en tout.
+  // Avant : préparer. Une entrée par besoin, cinq en tout.
   avant: [
     { href: 'aujourdhui.html', label: 'À faire' },
     { href: 'itineraire.html', label: 'Le programme' },
     { href: 'villes.html',     label: 'Les villes' },
     { href: 'activites.html',  label: 'Activités' },
     { href: 'transports.html', label: 'Transports' },
-    { href: 'budget.html',     label: 'Le budget' },
   ],
   // Pendant : téléphone en main. La journée, ce qu'il y a autour, où manger,
-  // comment bouger, les urgences, l'argent.
+  // comment bouger, les urgences.
   pendant: [
     { href: 'jour.html',       label: "Aujourd'hui" },
     { href: 'villes.html',     label: 'Autour de moi' },
@@ -42,12 +41,10 @@ const PAGES_PAR_MOMENT = {
     { href: 'table.html',      label: 'À table' },
     { href: 'transports.html', label: 'Transports' },
     { href: 'secours.html',    label: 'Secours' },
-    { href: 'budget.html',     label: 'Le budget' },
   ],
   apres: [
     { href: 'index.html',      label: 'Le voyage' },
     { href: 'itineraire.html', label: 'Le programme' },
-    { href: 'budget.html',     label: 'Le budget' },
   ],
 };
 const PAGES = PAGES_PAR_MOMENT[moment()];
@@ -63,6 +60,8 @@ const PIED_EXTRA = [
   { href: 'index.html',      label: 'Le voyage' },
   { href: 'aujourdhui.html', label: 'À faire' },
   { href: 'secours.html',    label: 'Secours' },
+  // Hors du menu du haut (à la demande d'Ilyès), mais toujours joignable ici.
+  { href: 'budget.html',     label: 'Le budget' },
 ];
 
 export const esc = (s) =>
