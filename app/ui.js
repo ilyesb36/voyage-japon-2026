@@ -24,11 +24,12 @@ export function moment() {
 }
 
 const PAGES_PAR_MOMENT = {
-  // Avant : préparer. Une entrée par besoin, cinq en tout.
+  // Avant : préparer. Une entrée par besoin, six en tout.
   avant: [
     { href: 'aujourdhui.html', label: 'À faire' },
     { href: 'itineraire.html', label: 'Le programme' },
     { href: 'villes.html',     label: 'Les villes' },
+    { href: 'activites.html',  label: 'Activités' },
     { href: 'transports.html', label: 'Transports' },
     { href: 'budget.html',     label: 'Le budget' },
   ],
@@ -37,6 +38,7 @@ const PAGES_PAR_MOMENT = {
   pendant: [
     { href: 'jour.html',       label: "Aujourd'hui" },
     { href: 'villes.html',     label: 'Autour de moi' },
+    { href: 'activites.html',  label: 'Activités' },
     { href: 'table.html',      label: 'À table' },
     { href: 'transports.html', label: 'Transports' },
     { href: 'secours.html',    label: 'Secours' },

@@ -126,7 +126,7 @@ tout ce qui alimentait l'extraction :
 ## Après une modification de données
 
 ```bash
-node tools/verify.mjs        # 165 vérifications : totaux, argent, fermetures, notices, structure des pages, hors-ligne, images
+node tools/verify.mjs        # 167 vérifications : totaux, argent, fermetures, notices, structure des pages, hors-ligne, images
 node tools/coherence.mjs     # références croisées, heures des journées, quartiers, hôtels, pages et liens
 node tools/rapatrier-photos.mjs data/spots.js   # si une fiche a reçu une photo Wikimedia
 ```

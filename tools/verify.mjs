@@ -635,7 +635,7 @@ assert('chaque journée de visite a au moins un lieu situé', joursVides.length 
 // retrouvait plus étroite que le haut. Personne ne voit ça sans mesurer.
 
 const pages = ['index.html', 'itineraire.html', 'guide.html', 'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html',
-  'table.html', 'transports.html', 'passes.html', 'valises.html', 'secours.html', 'villes.html'];
+  'table.html', 'transports.html', 'passes.html', 'valises.html', 'secours.html', 'villes.html', 'activites.html'];
 
 console.log('\nStructure');
 for (const page of pages) {

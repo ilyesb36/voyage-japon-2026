@@ -3626,3 +3626,21 @@
   /* Filet : rien ne dépasse de la page (clip ne crée pas de zone de défilement, la barre des quartiers reste collante). */
   main.villes { overflow-x: clip; }
 }
+@layer components {
+  /* Activités : les réservations en liste datée, puis les catégories en rangées qui défilent. */
+  .aresas { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s-2); }
+  .aresa { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); padding: var(--s-3) var(--s-4);
+           border: 1px solid var(--line); border-left: 3px solid var(--pine); border-radius: var(--r-m); background: var(--paper-2); }
+  .aresa--a-reserver { border-left-color: var(--acc); }
+  .aresa--passe { opacity: .55; }
+  .aresa__quand { font-size: var(--t-sm); color: var(--mut); line-height: 1.4; }
+  .aresa__quoi { font-size: var(--t-xs); color: var(--mut); }
+  .aresa__etat { font-weight: 600; color: var(--pine); }
+  .aresa--a-reserver .aresa__etat { color: var(--acc); }
+  .aresa__titre { font-size: var(--t-md); font-weight: 600; margin-top: 2px; }
+  .aresa__btn { all: unset; cursor: pointer; text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: 3px; }
+  .aresa__ou { margin-top: var(--s-1); font-size: var(--t-sm); color: var(--ink-2); }
+  .aresa__ou a { color: var(--acc); }
+  .acat { font-size: var(--t-lg); font-weight: 600; margin-bottom: var(--s-2); }
+  @media (max-width: 640px) { .aresa { grid-template-columns: 1fr; gap: var(--s-1); } }
+}

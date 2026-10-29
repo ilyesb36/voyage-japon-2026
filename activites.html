@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Activités — Japon 2026</title>
+<meta name="description" content="Toutes vos réservations dans l'ordre du voyage, puis les activités rangées par catégorie, ville par ville.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#F5F0E6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1512" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Japon 2026">
+<link rel="stylesheet" href="app.css">
+<script>
+/* Avant le rendu : éviter l'éclair clair quand le sombre est choisi. */
+try { if (localStorage.getItem('jp2026_theme') === 'dark')
+  document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}
+</script>
+</head>
+<body>
+
+<header class="cover cover--short">
+  <img class="cover__img" src="img/hero/ouverture.webp" alt="" fetchpriority="high">
+  <div class="cover__text wrap">
+    <h1>Activités</h1>
+    <p class="cover__dates">Vos réservations, et tout ce qu'il y a à faire</p>
+  </div>
+</header>
+
+<main class="wrap villes">
+  <!-- 1 — Tout ce qui est réservé ou à réserver, dans l'ordre du voyage : vols, logements, billets, tables. -->
+  <section class="section" id="resas">
+    <div class="shead"><h2>Nos réservations</h2><p>Dans l'ordre du voyage.</p><span class="shead__meta" id="resas-meta"></span></div>
+    <ol class="aresas" id="resas-liste"></ol>
+  </section>
+
+  <!-- 2 — Les activités (hors repas, qui vivent sur table.html), par catégorie, filtrables par ville. -->
+  <section class="section" id="activites">
+    <div class="shead"><h2>Les activités par catégorie</h2><p><span class="etoile">★</span> incontournable · les repas sont sur <a href="table.html">À table</a></p></div>
+    <nav class="chipbar qnav" id="filtre" aria-label="Choisir une ville"></nav>
+    <div id="cats"></div>
+  </section>
+</main>
+
+<dialog class="tpldlg" id="fiche"><div class="tpldlg__in"><button class="tpldlg__x" id="fiche-x" aria-label="Fermer">&times;</button><div id="fiche-body"></div></div></dialog>
+
+<script type="module">
+import { CITIES, STEPS, HOTELS, FLIGHTS, RESERVATIONS } from './data/trip.js';
+import { SPOTS } from './data/spots.js';
+import { SELECTION } from './data/selection.js';
+import { RESERVER } from './data/pratique.js';
+import { mountChrome, esc, formatDate, today, moment } from './app/ui.js';
+import { etatDe, ETAT } from './app/resa.js';
+import { ficheExtra, lienMaps } from './app/quartiers.js';
+
+// Une page pour ne rien oublier : ce qu'on a réservé, puis tout ce qu'il y a à faire,
+// rangé par catégorie. Les repas ont leur page (table.html), les quartiers la leur (villes.html).
+mountChrome('activites.html');
+const q = (id) => document.getElementById(id);
+const parId = new Map(SPOTS.map((s) => [s.id, s]));
+
+// --- 1. les réservations ------------------------------------------------------
+// Chaque ligne : { date, heure, quoi, titre, ou, etat, lien }. Calculées depuis les données,
+// jamais recopiées : un vol, un logement, un billet ou une table.
+const lignes = [];
+for (const f of FLIGHTS) {
+  const [a, b] = f.legs;
+  lignes.push({ date: f.date, heure: a.depart, quoi: 'Vol', titre: `${f.label} : ${a.fromCity} → ${b.toCity}`,
+    ou: `${a.flight} ${a.from} → ${a.to}, puis ${b.flight} ${b.from} → ${b.to} · ${f.total}`, etat: 'reserve' });
+}
+for (const h of HOTELS) {
+  const step = STEPS.find((s) => s.id === h.stepId);
+  if (!step) continue;
+  lignes.push({ date: step.from, heure: `arrivée ${h.checkIn}`, quoi: 'Logement', titre: h.name,
+    ou: `${CITIES[step.cityId].name} · ${formatDate(step.from)} → ${formatDate(step.to)} · départ ${h.checkOut}`,
+    etat: 'reserve', lien: `secours.html#h-${h.id}` });
+}
+for (const r of RESERVATIONS) {
+  lignes.push({ date: r.date, heure: r.slot, quoi: 'Billet', titre: r.title, ou: `${r.where} · ${r.people} pers. · ${r.status}`, etat: 'reserve', spot: r.spotId });
+}
+for (const r of RESERVER) {
+  const s = parId.get(r.spotId);
+  lignes.push({ date: r.forDate, heure: r.heure || '', quoi: r.type === 'table' ? 'Table' : 'Billet', titre: r.title,
+    ou: s ? CITIES[s.cityId]?.name || '' : '', etat: etatDe(r), spot: r.spotId, url: r.url, comment: r.commentReserver });
+}
+lignes.sort((a, b) => a.date.localeCompare(b.date) || (a.quoi === 'Logement') - (b.quoi === 'Logement') || String(a.heure).localeCompare(String(b.heure)));
+const aFaire = lignes.filter((l) => l.etat === 'a-reserver').length;
+q('resas-meta').textContent = `${lignes.length} lignes${aFaire ? ` · ${aFaire} à réserver` : ''}`;
+const passe = (l) => l.date < today();
+q('resas-liste').innerHTML = lignes.map((l) => `
+  <li class="aresa aresa--${l.etat}${passe(l) ? ' aresa--passe' : ''}">
+    <p class="aresa__quand data">${esc(formatDate(l.date, { weekday: true }))}${l.heure ? `<br>${esc(l.heure)}` : ''}</p>
+    <div>
+      <p class="aresa__quoi">${esc(l.quoi)} · <span class="aresa__etat">${esc(ETAT[l.etat] || l.etat)}</span></p>
+      <h3 class="aresa__titre">${l.spot ? `<button type="button" class="aresa__btn" data-fiche="${esc(l.spot)}">${esc(l.titre)}</button>` : esc(l.titre)}</h3>
+      ${l.ou ? `<p class="aresa__ou">${esc(l.ou)}</p>` : ''}
+      ${l.lien ? `<p class="aresa__ou"><a href="${esc(l.lien)}">adresse, téléphone, arrivée</a></p>` : ''}
+      ${l.etat === 'a-reserver' && l.comment ? `<details class="fete__plus"><summary>Comment réserver</summary><p>${esc(l.comment)}</p>${l.url ? `<p><a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener">Réserver</a></p>` : ''}</details>` : ''}
+    </div>
+  </li>`).join('');
+
+// --- 2. les activités par catégorie -------------------------------------------
+// Les familles de data/spots.js (kind), sans les repas. L'ordre : ce qu'on vient voir d'abord.
+const CATS = [
+  ['temple', 'Temples & sanctuaires'], ['jardin', 'Parcs & jardins'], ['vue', 'Points de vue'],
+  ['quartier', 'Quartiers & balades'], ['nature', 'Nature & excursions'], ['musee', 'Musées & galeries'],
+  ['atelier', 'Expériences & ateliers'], ['onsen', 'Onsen & sento'], ['event', 'Fêtes & illuminations'],
+  ['shopping', 'Boutiques & shopping'],
+];
+const PRIO = ['ob', 'top', 'symp', 'niche'];
+const etoiles = new Set(SELECTION.flatMap((x) => x.picks.map((p) => p.id)));
+const villes = [...new Set(STEPS.map((s) => s.cityId))];
+const enCours = STEPS.find((s) => today() >= s.from && today() < s.to);
+const param = new URLSearchParams(location.search).get('ville');
+let ville = villes.includes(param) ? param : (moment() === 'pendant' && enCours ? enCours.cityId : 'all');
+
+function carte(s) {
+  return `<button class="qph${s.img ? '' : ' qph--texte'}" type="button" data-fiche="${esc(s.id)}">`
+    + (s.img ? `<img class="qph__img" src="${esc(s.img)}" alt="" loading="lazy" decoding="async">` : '')
+    + `<span class="qph__nom">${etoiles.has(s.id) ? '<span class="etoile" role="img" aria-label="incontournable">★</span> ' : ''}${esc(s.name)}</span>`
+    + `<span class="qph__why">${esc([ville === 'all' ? CITIES[s.cityId]?.name : null, s.blurb].filter(Boolean).join(' · '))}</span>`
+    + `</button>`;
+}
+function peindre() {
+  q('filtre').innerHTML = [['all', 'Toutes'], ...villes.map((id) => [id, CITIES[id].name])].map(([id, nom]) =>
+    `<button class="chip" type="button" data-ville="${id}" aria-pressed="${id === ville}">${id === 'all' ? '' : `<span class="chip__dot" style="background:var(--c-${id})"></span>`}${esc(nom)}</button>`).join('');
+  q('cats').innerHTML = CATS.map(([kind, nom]) => {
+    const liste = SPOTS.filter((s) => s.kind === kind && (ville === 'all' || s.cityId === ville))
+      .sort((a, b) => Number(etoiles.has(b.id)) - Number(etoiles.has(a.id)) || PRIO.indexOf(a.priority) - PRIO.indexOf(b.priority));
+    if (!liste.length) return '';
+    return `<div class="qbloc__fam"><h3 class="acat">${esc(nom)} <span class="mut">${liste.length}</span></h3>
+      <div class="qbloc__defil">${liste.map(carte).join('')}</div></div>`;
+  }).join('');
+}
+peindre();
+q('filtre').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-ville]');
+  if (!b) return;
+  ville = b.dataset.ville;
+  const u = new URL(location.href);
+  if (ville === 'all') u.searchParams.delete('ville'); else u.searchParams.set('ville', ville);
+  history.replaceState(null, '', u.pathname + u.search + u.hash);
+  peindre();
+});
+
+// --- la fiche d'une adresse ---------------------------------------------------
+const dlg = q('fiche');
+function ouvrir(id) {
+  const s = parId.get(id);
+  if (!s) return;
+  const city = CITIES[s.cityId];
+  const step = STEPS.find((x) => x.cityId === s.cityId);
+  const hotel = step && HOTELS.find((h) => h.id === step.hotelId);
+  q('fiche-body').innerHTML = (s.img ? `<img class="tpldlg__img" src="${esc(s.img)}" alt="">` : '')
+    + `<p class="tpldlg__kicker">${esc(city ? city.name : '')}</p><div class="tpldlg__head"><h3>${esc(s.name)}</h3><p class="mut">${esc(s.blurb || '')}</p></div>`
+    + (s.lore ? `<p class="fiche__lore">${esc(s.lore)}</p>` : '')
+    + `<dl class="fiche__facts">${[['Durée', s.duration], ['Budget', s.budget], ['Le bon moment', s.when]].filter((x) => x[1] && x[1] !== '—').map((x) => `<div><dt>${x[0]}</dt><dd>${esc(x[1])}</dd></div>`).join('')}</dl>`
+    + ficheExtra(s, hotel)
+    + `<p class="tpldlg__links"><a class="btn" href="${esc(lienMaps(s))}" target="_blank" rel="noopener">Ouvrir dans Google Maps</a></p>`;
+  dlg.showModal();
+}
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-fiche]'); if (b) ouvrir(b.dataset.fiche); });
+q('fiche-x').addEventListener('click', () => dlg.close());
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>

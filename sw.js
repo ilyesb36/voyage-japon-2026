@@ -24,7 +24,7 @@
 // Monter ce numéro à CHAQUE changement de CSS, de JS ou de données : l'ancienne
 // coque est supprimée, et la page À faire propose alors de retélécharger les
 // pages. Les photos et les tuiles ne dépendent pas de ce numéro : elles restent.
-const V = 'v61';
+const V = 'v62';
 const SHELL = `jp-shell-${V}`;
 // Les photos et les tuiles ne dépendent pas de la version : une mise à jour du
 // site pendant le voyage ne doit pas effacer ce qu'on a téléchargé à l'hôtel.
@@ -33,7 +33,7 @@ const TILES = 'jp-tiles';
 
 const PAGES = [
   './', 'index.html', 'aujourdhui.html', 'jour.html', 'itineraire.html', 'guide.html', 'budget.html', 'pratique.html',
-  'villes.html', 'secours.html', 'valises.html', 'table.html', 'transports.html', 'passes.html',
+  'villes.html', 'secours.html', 'valises.html', 'table.html', 'transports.html', 'passes.html', 'activites.html',
   'hotels.html', 'jour-par-jour.html', 'journees.html',   // anciens favoris : leur redirection marche hors-ligne
   'manifest.webmanifest', 'app.css',
   'app/ui.js', 'app/map.js', 'app/momiji.js', 'app/meteo.js', 'app/resa.js', 'app/quartiers.js',
@@ -178,7 +178,7 @@ async function mediaList() {
                    'index.html', 'itineraire.html', 'guide.html',
                    'pratique.html', 'aujourdhui.html', 'jour.html', 'budget.html',
                    'passes.html', 'valises.html', 'transports.html',
-                   'table.html', 'secours.html'];
+                   'table.html', 'secours.html', 'activites.html'];
   for (const file of sources) {
     let src = '';
     try {
